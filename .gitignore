@@ -23,7 +23,9 @@
 hs_err_pid*
 replay_pid*
 
-# Config and build folders
+# Config and build files / folders
 .idea/
 .vscode/
 **/build
+local.properties
+.gradle

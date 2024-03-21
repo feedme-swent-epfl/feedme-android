@@ -3,7 +3,10 @@ plugins {
     alias(libs.plugins.jetbrainsKotlinAndroid)
     alias(libs.plugins.ktfmt)
     alias(libs.plugins.sonar)
+
     id("jacoco")
+
+    id("com.google.gms.google-services")
 }
 
 android {
@@ -148,6 +151,13 @@ dependencies {
 
     // ----------       Robolectric     ------------
     testImplementation(libs.robolectric)
+
+    // ----------       Firebase     ------------
+    implementation(platform("com.google.firebase:firebase-bom:32.7.4"))
+    implementation("com.google.firebase:firebase-analytics")
+
+    // ----------       Google     ------------
+
 }
 
 tasks.withType<Test> {

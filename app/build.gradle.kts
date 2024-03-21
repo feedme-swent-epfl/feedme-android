@@ -121,6 +121,7 @@ dependencies {
     implementation(libs.material)
     implementation(libs.androidx.lifecycle.runtime.ktx)
     implementation(platform(libs.compose.bom))
+    implementation(libs.firebase.auth.ktx)
     testImplementation(libs.junit)
     globalTestImplementation(libs.androidx.junit)
     globalTestImplementation(libs.androidx.espresso.core)
@@ -157,6 +158,7 @@ dependencies {
     implementation("com.google.firebase:firebase-analytics")
 
     // ----------       Google     ------------
+    implementation("com.google.android.gms:play-services-auth:20.2.0")
 
 }
 

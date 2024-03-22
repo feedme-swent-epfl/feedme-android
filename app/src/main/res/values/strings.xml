@@ -2,5 +2,5 @@
     <string name="app_name">feedmeApp</string>
     <string name="title_activity_main">MainActivity</string>
     <string name="title_activity_second">SecondActivity</string>
-    <string name="web_client_id" /> <!-- TODO get it from google-json without leaking it -->
+    <string name="default_web_client_id">349095775752-nvll546n94rbkbohch2g3gk5vk0u1186.apps.googleusercontent.com</string>
 </resources>

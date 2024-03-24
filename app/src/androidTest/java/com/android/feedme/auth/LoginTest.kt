@@ -15,14 +15,12 @@ import org.junit.runner.RunWith
 
 @RunWith(AndroidJUnit4::class)
 class LoginTest : TestCase() {
-  @get:Rule
-  val composeTestRule = createAndroidComposeRule<MainActivity>()
+  @get:Rule val composeTestRule = createAndroidComposeRule<MainActivity>()
 
   // The IntentsTestRule simply calls Intents.init() before the @Test block
   // and Intents.release() after the @Test block is completed. IntentsTestRule
   // is deprecated, but it was MUCH faster than using IntentsRule in our tests
-  @get:Rule
-  val intentsTestRule = IntentsTestRule(MainActivity::class.java)
+  @get:Rule val intentsTestRule = IntentsTestRule(MainActivity::class.java)
 
   @Test
   fun titleAndButtonAreCorrectlyDisplayed() {

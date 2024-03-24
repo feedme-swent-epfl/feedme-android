@@ -61,33 +61,33 @@ import kotlinx.coroutines.tasks.await
 @SuppressLint("UnrememberedMutableState")
 @Composable
 fun LoginScreen() { // TODO : Add an argument for the navigation as in bootcamp : navAction:
-    // NavigationActions
+  // NavigationActions
 
-    // Make sure that there are no sign-in user
+  // Make sure that there are no sign-in user
   Firebase.auth.signOut()
 
-    val token = stringResource(R.string.default_web_client_id)
-    val context = LocalContext.current
-    val gso =
-        GoogleSignInOptions.Builder(GoogleSignInOptions.DEFAULT_SIGN_IN)
-            .requestIdToken(token)
-            .requestEmail()
-            .build()
-    val googleSignInClient = GoogleSignIn.getClient(context, gso)
+  val token = stringResource(R.string.default_web_client_id)
+  val context = LocalContext.current
+  val gso =
+      GoogleSignInOptions.Builder(GoogleSignInOptions.DEFAULT_SIGN_IN)
+          .requestIdToken(token)
+          .requestEmail()
+          .build()
+  val googleSignInClient = GoogleSignIn.getClient(context, gso)
 
-    /**
-     * Remember Firebase authentication launcher.
-     *
-     * This function returns a [ManagedActivityResultLauncher] that launches the Google sign-in
-     * activity. It handles authentication success and failure cases and communicates them back to the
-     * caller.
-     *
-     * @param onAuthComplete Callback function to be invoked when authentication is successful. It
-     *   takes [AuthResult] as a parameter.
-     * @param onAuthError Callback function to be invoked when authentication fails. It takes
-     *   [ApiException] as a parameter.
-     * @return A [ManagedActivityResultLauncher] to launch the Google sign-in activity.
-     */
+  /**
+   * Remember Firebase authentication launcher.
+   *
+   * This function returns a [ManagedActivityResultLauncher] that launches the Google sign-in
+   * activity. It handles authentication success and failure cases and communicates them back to the
+   * caller.
+   *
+   * @param onAuthComplete Callback function to be invoked when authentication is successful. It
+   *   takes [AuthResult] as a parameter.
+   * @param onAuthError Callback function to be invoked when authentication fails. It takes
+   *   [ApiException] as a parameter.
+   * @return A [ManagedActivityResultLauncher] to launch the Google sign-in activity.
+   */
   @Composable
   fun rememberFirebaseAuthLauncher(
       onAuthComplete: (AuthResult) -> Unit,
@@ -113,24 +113,19 @@ fun LoginScreen() { // TODO : Add an argument for the navigation as in bootcamp 
   val launcher =
       rememberFirebaseAuthLauncher(
           onAuthComplete = { result ->
-              Log.d("LOGIN", "Login was successful")
+            Log.d("LOGIN", "Login was successful")
             // TODO ADD NAVIGATION HERE
           },
           onAuthError = { e -> Log.d("LOGIN", "Login failed", e) })
 
   Column(
-      modifier = Modifier
-          .fillMaxSize()
-          .padding(16.dp)
-          .testTag("LoginScreen"),
+      modifier = Modifier.fillMaxSize().padding(16.dp).testTag("LoginScreen"),
       verticalArrangement = Arrangement.Center,
       horizontalAlignment = Alignment.CenterHorizontally) {
         Image(
             painter = painterResource(id = R.drawable.sign_in_logo),
             contentDescription = "Sign-in Logo",
-            modifier = Modifier
-                .width(189.dp)
-                .height(189.dp),
+            modifier = Modifier.width(189.dp).height(189.dp),
             contentScale = ContentScale.FillBounds)
 
         Spacer(modifier = Modifier.height(40.dp))
@@ -152,11 +147,10 @@ fun LoginScreen() { // TODO : Add an argument for the navigation as in bootcamp 
         Button(
             onClick = { launcher.launch(googleSignInClient.signInIntent) },
             modifier =
-            Modifier
-                .width(250.dp)
-                .height(40.dp)
-                .background(color = Color(0xFFFFFFFF), shape = RoundedCornerShape(size = 20.dp))
-                .testTag("LoginButton"),
+                Modifier.width(250.dp)
+                    .height(40.dp)
+                    .background(color = Color(0xFFFFFFFF), shape = RoundedCornerShape(size = 20.dp))
+                    .testTag("LoginButton"),
             colors = ButtonDefaults.buttonColors(Color.White),
             contentPadding = PaddingValues(2.dp),
             shape = RoundedCornerShape(20.dp),
@@ -173,9 +167,7 @@ fun LoginScreen() { // TODO : Add an argument for the navigation as in bootcamp 
                     Spacer(modifier = Modifier.width(4.dp))
 
                     Text(
-                        modifier = Modifier
-                            .width(125.dp)
-                            .height(17.dp),
+                        modifier = Modifier.width(125.dp).height(17.dp),
                         text = "Sign In with Google",
                         fontSize = 14.sp,
                         lineHeight = 17.sp,
@@ -193,5 +185,5 @@ fun LoginScreen() { // TODO : Add an argument for the navigation as in bootcamp 
 @Preview(showBackground = true)
 @Composable
 fun LoginScreenPreview() {
-    feedmeAppTheme { LoginScreen() }
+  feedmeAppTheme { LoginScreen() }
 }

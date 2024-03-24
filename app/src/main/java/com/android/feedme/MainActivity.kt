@@ -12,6 +12,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.semantics.testTag
 import androidx.compose.ui.tooling.preview.Preview
+import com.android.feedme.auth.LoginScreen
 import com.android.feedme.resources.C
 import com.android.feedme.ui.theme.feedmeAppTheme
 
@@ -24,7 +25,7 @@ class MainActivity : ComponentActivity() {
         Surface(
             modifier = Modifier.fillMaxSize().semantics { testTag = C.Tag.main_screen_container },
             color = MaterialTheme.colorScheme.background) {
-              Greeting("Android")
+              LoginScreen()
             }
       }
     }

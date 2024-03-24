@@ -3,7 +3,10 @@ plugins {
     alias(libs.plugins.jetbrainsKotlinAndroid)
     alias(libs.plugins.ktfmt)
     alias(libs.plugins.sonar)
+
     id("jacoco")
+
+    id("com.google.gms.google-services")
 }
 
 android {
@@ -62,6 +65,9 @@ android {
     packaging {
         resources {
             excludes += "/META-INF/{AL2.0,LGPL2.1}"
+
+            merges += "META-INF/LICENSE.md"
+            merges += "META-INF/LICENSE-notice.md"
         }
     }
 
@@ -69,6 +75,11 @@ android {
         unitTests {
             isIncludeAndroidResources = true
             isReturnDefaultValues = true
+        }
+        packagingOptions {
+            jniLibs {
+                useLegacyPackaging = true
+            }
         }
     }
 
@@ -118,6 +129,7 @@ dependencies {
     implementation(libs.material)
     implementation(libs.androidx.lifecycle.runtime.ktx)
     implementation(platform(libs.compose.bom))
+    implementation(libs.firebase.auth.ktx)
     testImplementation(libs.junit)
     globalTestImplementation(libs.androidx.junit)
     globalTestImplementation(libs.androidx.espresso.core)
@@ -148,6 +160,35 @@ dependencies {
 
     // ----------       Robolectric     ------------
     testImplementation(libs.robolectric)
+
+    // ----------       Firebase     ------------
+    implementation(platform("com.google.firebase:firebase-bom:32.7.4"))
+    implementation("com.google.firebase:firebase-analytics")
+
+    // ----------       Google     ------------
+    implementation("com.google.android.gms:play-services-auth:20.2.0")
+
+
+    // ----------       For testing     ------------
+    testImplementation("org.robolectric:robolectric:4.11.1")
+    testImplementation("androidx.test.ext:junit:1.1.5")
+    testImplementation("androidx.test.espresso:espresso-core:3.5.1")
+    testImplementation(platform("androidx.compose:compose-bom:2023.08.00"))
+    testImplementation("com.kaspersky.android-components:kaspresso:1.4.3")
+    // Allure support
+    testImplementation("com.kaspersky.android-components:kaspresso-allure-support:1.4.3")
+    // Jetpack Compose support
+    testImplementation("com.kaspersky.android-components:kaspresso-compose-support:1.4.1")
+    testImplementation("org.mockito:mockito-core:3.11.2")
+    testImplementation("org.mockito:mockito-inline:2.13.0")
+
+    // Dependency for using Intents in instrumented tests
+    androidTestImplementation("androidx.test.espresso:espresso-intents:3.5.1")
+
+    // Dependencies for using MockK in instrumented tests
+    androidTestImplementation("io.mockk:mockk:1.13.7")
+    androidTestImplementation("io.mockk:mockk-android:1.13.7")
+    androidTestImplementation("io.mockk:mockk-agent:1.13.7")
 }
 
 tasks.withType<Test> {

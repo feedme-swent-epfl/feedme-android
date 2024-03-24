@@ -63,8 +63,8 @@ import kotlinx.coroutines.tasks.await
 fun LoginScreen() { // TODO : Add an argument for the navigation as in bootcamp : navAction:
   // NavigationActions
 
-  // Make sure that there are no sign-in user
-  Firebase.auth.signOut()
+  // TODO Make sure that there are no sign-in user
+  // Firebase.auth.signOut() this line doesn't work.
 
   val token = stringResource(R.string.default_web_client_id)
   val context = LocalContext.current

@@ -37,11 +37,9 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.android.feedme.R
-import com.android.feedme.ui.theme.feedmeAppTheme
 import com.google.android.gms.auth.api.signin.GoogleSignIn
 import com.google.android.gms.auth.api.signin.GoogleSignInOptions
 import com.google.android.gms.common.api.ApiException
@@ -117,7 +115,6 @@ fun LoginScreen() { // TODO : Add an argument for the navigation as in bootcamp 
             // TODO ADD NAVIGATION HERE
           },
           onAuthError = { e -> Log.d("LOGIN", "Login failed", e) })
-
   Column(
       modifier = Modifier.fillMaxSize().padding(16.dp).testTag("LoginScreen"),
       verticalArrangement = Arrangement.Center,
@@ -179,11 +176,4 @@ fun LoginScreen() { // TODO : Add an argument for the navigation as in bootcamp 
                   }
             }
       }
-}
-
-/** Preview function for the [LoginScreen] composable. */
-@Preview(showBackground = true)
-@Composable
-fun LoginScreenPreview() {
-  feedmeAppTheme { LoginScreen() }
 }

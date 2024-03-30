@@ -39,6 +39,7 @@ android {
             enableUnitTestCoverage = true
             enableAndroidTestCoverage = true
         }
+
     }
 
     testCoverage {
@@ -201,6 +202,7 @@ tasks.withType<Test> {
 
 tasks.register("jacocoTestReport", JacocoReport::class) {
     mustRunAfter("testDebugUnitTest", "connectedDebugAndroidTest")
+    dependsOn("testDebugUnitTest", "connectedDebugAndroidTest")
 
     reports {
         xml.required = true
@@ -219,6 +221,7 @@ tasks.register("jacocoTestReport", JacocoReport::class) {
     val debugTree = fileTree("${project.layout.buildDirectory.get()}/tmp/kotlin-classes/debug") {
         exclude(fileFilter)
     }
+
 
     val mainSrc = "${project.layout.projectDirectory}/src/main/java"
     sourceDirectories.setFrom(files(mainSrc))

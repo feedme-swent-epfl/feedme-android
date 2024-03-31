@@ -9,6 +9,13 @@ plugins {
     id("com.google.gms.google-services")
 }
 
+
+
+jacoco {
+    toolVersion = "0.8.11"
+}
+
+
 android {
     namespace = "com.android.feedme"
     compileSdk = 34
@@ -43,7 +50,7 @@ android {
     }
 
     testCoverage {
-        jacocoVersion = "0.8.8"
+        jacocoVersion = "0.8.11"
     }
 
     buildFeatures {

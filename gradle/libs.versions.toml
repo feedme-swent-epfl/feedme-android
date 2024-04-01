@@ -15,6 +15,9 @@ lifecycleRuntimeKtx = "2.7.0"
 kaspresso = "1.5.5"
 robolectric = "4.11.1"
 sonar = "4.4.1.3373"
+firebaseFirestoreKtx = "24.11.0"
+mockito-core = "3.12.4"
+mockito-inline = "3.12.4"
 
 [libraries]
 androidx-core-ktx = { group = "androidx.core", name = "core-ktx", version.ref = "coreKtx" }
@@ -40,6 +43,10 @@ kaspresso = { group = "com.kaspersky.android-components", name = "kaspresso", ve
 kaspresso-compose = { group = "com.kaspersky.android-components", name = "kaspresso-compose-support", version.ref = "kaspresso" }
 
 robolectric = { module = "org.robolectric:robolectric", version.ref = "robolectric" }
+firebase-firestore-ktx = { group = "com.google.firebase", name = "firebase-firestore-ktx", version.ref = "firebaseFirestoreKtx" }
+
+mockito-core = { module = "org.mockito:mockito-core", version.ref = "mockito-core" }
+mockito-inline = { module = "org.mockito:mockito-inline", version.ref = "mockito-inline" }
 
 [plugins]
 androidApplication = { id = "com.android.application", version.ref = "agp" }

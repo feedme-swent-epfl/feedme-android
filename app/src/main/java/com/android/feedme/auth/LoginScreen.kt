@@ -1,6 +1,5 @@
 package com.android.feedme.auth
 
-import android.annotation.SuppressLint
 import android.content.Intent
 import android.util.Log
 import androidx.activity.compose.ManagedActivityResultLauncher
@@ -56,7 +55,6 @@ import kotlinx.coroutines.tasks.await
  * This function provides a UI for users to sign in with Google authentication. It includes a Google
  * sign-in button and handles authentication flow using Firebase authentication.
  */
-@SuppressLint("UnrememberedMutableState")
 @Composable
 fun LoginScreen() { // TODO : Add an argument for the navigation as in bootcamp : navAction:
   // NavigationActions
@@ -110,7 +108,7 @@ fun LoginScreen() { // TODO : Add an argument for the navigation as in bootcamp 
 
   val launcher =
       rememberFirebaseAuthLauncher(
-          onAuthComplete = { result ->
+          onAuthComplete = { _ ->
             Log.d("LOGIN", "Login was successful")
             // TODO ADD NAVIGATION HERE
           },

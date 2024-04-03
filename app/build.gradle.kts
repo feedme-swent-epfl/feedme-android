@@ -166,37 +166,35 @@ dependencies {
     globalTestImplementation(libs.kaspresso)
     globalTestImplementation(libs.kaspresso.compose)
 
-    // ----------       Robolectric     ------------
-    testImplementation(libs.robolectric)
 
     // ----------       Firebase     ------------
-    implementation(platform("com.google.firebase:firebase-bom:32.7.4"))
-    implementation("com.google.firebase:firebase-analytics")
+    implementation(platform(libs.firebase.bom))
+
 
     // ----------       Google     ------------
-    implementation("com.google.android.gms:play-services-auth:20.2.0")
+    implementation(libs.play.services.auth)
 
 
     // ----------       For testing     ------------
-    testImplementation("org.robolectric:robolectric:4.11.1")
-    testImplementation("androidx.test.ext:junit:1.1.5")
-    testImplementation("androidx.test.espresso:espresso-core:3.5.1")
-    testImplementation(platform("androidx.compose:compose-bom:2023.08.00"))
-    testImplementation("com.kaspersky.android-components:kaspresso:1.4.3")
+    testImplementation(libs.robolectric)
+    testImplementation(libs.androidx.junit)
+    testImplementation(libs.androidx.espresso.core)
+    testImplementation(platform(libs.androidx.compose.bom.v20230800))
+    testImplementation(libs.kaspresso.v143)
     // Allure support
-    testImplementation("com.kaspersky.android-components:kaspresso-allure-support:1.4.3")
+    testImplementation(libs.kaspresso.allure.support)
     // Jetpack Compose support
-    testImplementation("com.kaspersky.android-components:kaspresso-compose-support:1.4.1")
-    testImplementation("org.mockito:mockito-core:3.11.2")
-    testImplementation("org.mockito:mockito-inline:2.13.0")
+    testImplementation(libs.kaspresso.compose.support.v141)
+    testImplementation(libs.mockito.core)
+    testImplementation(libs.mockito.inline)
 
     // Dependency for using Intents in instrumented tests
-    androidTestImplementation("androidx.test.espresso:espresso-intents:3.5.1")
+    androidTestImplementation(libs.androidx.espresso.intents)
 
     // Dependencies for using MockK in instrumented tests
-    androidTestImplementation("io.mockk:mockk:1.13.7")
-    androidTestImplementation("io.mockk:mockk-android:1.13.7")
-    androidTestImplementation("io.mockk:mockk-agent:1.13.7")
+    androidTestImplementation(libs.mockk)
+    androidTestImplementation(libs.mockk.android)
+    androidTestImplementation(libs.mockk.agent)
 }
 
 tasks.withType<Test> {
@@ -236,4 +234,14 @@ tasks.register("jacocoTestReport", JacocoReport::class) {
         include("outputs/unit_test_code_coverage/debugUnitTest/testDebugUnitTest.exec")
         include("outputs/code_coverage/debugAndroidTest/connected/*/coverage.ec")
     })
+
+    doLast {
+        // New block to modify the XML report after it's generated
+        val reportFile = reports.xml.outputLocation.asFile.get()
+        if (reportFile.exists()) {
+            val content = reportFile.readText()
+            val cleanedContent = content.replace("<line[^>]+nr=\"65535\"[^>]*>".toRegex(), "")
+            reportFile.writeText(cleanedContent)
+        }
+    }
 }

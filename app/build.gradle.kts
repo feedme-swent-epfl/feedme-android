@@ -151,6 +151,7 @@ dependencies {
     implementation(libs.compose.ui.graphics)
     // Material Design 3
     implementation(libs.compose.material3)
+    implementation("androidx.compose.material:material-icons-extended:1.5.1")
     // Integration with activities
     implementation(libs.compose.activity)
     // Integration with ViewModels
@@ -161,6 +162,15 @@ dependencies {
     // UI Tests
     globalTestImplementation(libs.compose.test.junit)
     debugImplementation(libs.compose.test.manifest)
+
+    // ---------------- CameraX --------------------
+    val cameraxVersion = "1.3.0-rc01"
+    implementation("androidx.camera:camera-core:$cameraxVersion")
+    implementation("androidx.camera:camera-camera2:$cameraxVersion")
+    implementation("androidx.camera:camera-lifecycle:$cameraxVersion")
+    implementation("androidx.camera:camera-video:$cameraxVersion")
+    implementation("androidx.camera:camera-view:$cameraxVersion")
+    implementation("androidx.camera:camera-extensions:$cameraxVersion")
 
     // --------- Kaspresso test framework ----------
     globalTestImplementation(libs.kaspresso)

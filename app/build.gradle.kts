@@ -3,8 +3,18 @@ plugins {
     alias(libs.plugins.jetbrainsKotlinAndroid)
     alias(libs.plugins.ktfmt)
     alias(libs.plugins.sonar)
+
     id("jacoco")
+
+    id("com.google.gms.google-services")
 }
+
+
+
+jacoco {
+    toolVersion = "0.8.11"
+}
+
 
 android {
     namespace = "com.android.feedme"
@@ -36,10 +46,11 @@ android {
             enableUnitTestCoverage = true
             enableAndroidTestCoverage = true
         }
+
     }
 
     testCoverage {
-        jacocoVersion = "0.8.8"
+        jacocoVersion = "0.8.11"
     }
 
     buildFeatures {
@@ -62,6 +73,9 @@ android {
     packaging {
         resources {
             excludes += "/META-INF/{AL2.0,LGPL2.1}"
+
+            merges += "META-INF/LICENSE.md"
+            merges += "META-INF/LICENSE-notice.md"
         }
     }
 
@@ -69,6 +83,11 @@ android {
         unitTests {
             isIncludeAndroidResources = true
             isReturnDefaultValues = true
+        }
+        packagingOptions {
+            jniLibs {
+                useLegacyPackaging = true
+            }
         }
     }
 
@@ -118,6 +137,7 @@ dependencies {
     implementation(libs.material)
     implementation(libs.androidx.lifecycle.runtime.ktx)
     implementation(platform(libs.compose.bom))
+    implementation(libs.firebase.auth.ktx)
     testImplementation(libs.junit)
     globalTestImplementation(libs.androidx.junit)
     globalTestImplementation(libs.androidx.espresso.core)
@@ -146,8 +166,35 @@ dependencies {
     globalTestImplementation(libs.kaspresso)
     globalTestImplementation(libs.kaspresso.compose)
 
-    // ----------       Robolectric     ------------
+
+    // ----------       Firebase     ------------
+    implementation(platform(libs.firebase.bom))
+
+
+    // ----------       Google     ------------
+    implementation(libs.play.services.auth)
+
+
+    // ----------       For testing     ------------
     testImplementation(libs.robolectric)
+    testImplementation(libs.androidx.junit)
+    testImplementation(libs.androidx.espresso.core)
+    testImplementation(platform(libs.androidx.compose.bom.v20230800))
+    testImplementation(libs.kaspresso.v143)
+    // Allure support
+    testImplementation(libs.kaspresso.allure.support)
+    // Jetpack Compose support
+    testImplementation(libs.kaspresso.compose.support.v141)
+    testImplementation(libs.mockito.core)
+    testImplementation(libs.mockito.inline)
+
+    // Dependency for using Intents in instrumented tests
+    androidTestImplementation(libs.androidx.espresso.intents)
+
+    // Dependencies for using MockK in instrumented tests
+    androidTestImplementation(libs.mockk)
+    androidTestImplementation(libs.mockk.android)
+    androidTestImplementation(libs.mockk.agent)
 }
 
 tasks.withType<Test> {
@@ -179,6 +226,7 @@ tasks.register("jacocoTestReport", JacocoReport::class) {
         exclude(fileFilter)
     }
 
+
     val mainSrc = "${project.layout.projectDirectory}/src/main/java"
     sourceDirectories.setFrom(files(mainSrc))
     classDirectories.setFrom(files(debugTree))
@@ -186,4 +234,14 @@ tasks.register("jacocoTestReport", JacocoReport::class) {
         include("outputs/unit_test_code_coverage/debugUnitTest/testDebugUnitTest.exec")
         include("outputs/code_coverage/debugAndroidTest/connected/*/coverage.ec")
     })
+
+    doLast {
+        // New block to modify the XML report after it's generated
+        val reportFile = reports.xml.outputLocation.asFile.get()
+        if (reportFile.exists()) {
+            val content = reportFile.readText()
+            val cleanedContent = content.replace("<line[^>]+nr=\"65535\"[^>]*>".toRegex(), "")
+            reportFile.writeText(cleanedContent)
+        }
+    }
 }

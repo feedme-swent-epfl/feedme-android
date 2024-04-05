@@ -8,10 +8,12 @@ import androidx.compose.ui.test.onNodeWithText
 import androidx.test.espresso.intent.rule.IntentsTestRule
 import androidx.test.ext.junit.runners.AndroidJUnit4
 import androidx.test.rule.GrantPermissionRule
+import com.android.feedme.CurrentScreen
 import com.android.feedme.MainActivity
 import com.android.feedme.screen.CameraScreen
 import com.kaspersky.kaspresso.testcases.api.testcase.TestCase
 import io.github.kakaocup.compose.node.element.ComposeScreen
+import org.junit.BeforeClass
 import org.junit.Rule
 import org.junit.Test
 import org.junit.runner.RunWith
@@ -25,9 +27,19 @@ class CameraTest : TestCase() {
   @get:Rule
   val permissionRule: GrantPermissionRule = GrantPermissionRule.grant(Manifest.permission.CAMERA)
 
+  companion object {
+    @JvmStatic
+    @BeforeClass
+    fun setupClass() {
+      // Set the static state that should apply to all test instances
+      MainActivity.currentScreen = CurrentScreen.CAMERA
+    }
+  }
+
   @Test
   fun buttonsAreCorrectlyDisplayed() {
     ComposeScreen.onComposeScreen<CameraScreen>(composeTestRule) {
+      composeTestRule.waitForIdle()
       photoButton {
         assertIsDisplayed()
         assertHasClickAction()
@@ -42,10 +54,14 @@ class CameraTest : TestCase() {
   @Test
   fun galleryButtonDisplayGalleryWhenEmpty() {
     ComposeScreen.onComposeScreen<CameraScreen>(composeTestRule) {
-      photoButton { assertIsDisplayed() }
+      photoButton {
+        assertIsDisplayed()
+        assertHasClickAction()
+      }
 
       galleryButton {
         assertIsDisplayed()
+        assertHasClickAction()
         performClick()
       }
 
@@ -64,6 +80,7 @@ class CameraTest : TestCase() {
     ComposeScreen.onComposeScreen<CameraScreen>(composeTestRule) {
       photoButton {
         assertIsDisplayed()
+        assertHasClickAction()
         performClick()
       }
 
@@ -72,6 +89,7 @@ class CameraTest : TestCase() {
 
       galleryButton {
         assertIsDisplayed()
+        assertHasClickAction()
         performClick()
       }
 

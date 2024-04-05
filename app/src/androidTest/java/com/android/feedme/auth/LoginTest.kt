@@ -5,10 +5,12 @@ import androidx.test.espresso.intent.Intents.intended
 import androidx.test.espresso.intent.matcher.IntentMatchers.toPackage
 import androidx.test.espresso.intent.rule.IntentsTestRule
 import androidx.test.ext.junit.runners.AndroidJUnit4
+import com.android.feedme.CurrentScreen
 import com.android.feedme.MainActivity
 import com.android.feedme.screen.LoginScreen
 import com.kaspersky.kaspresso.testcases.api.testcase.TestCase
 import io.github.kakaocup.compose.node.element.ComposeScreen
+import org.junit.BeforeClass
 import org.junit.Rule
 import org.junit.Test
 import org.junit.runner.RunWith
@@ -21,6 +23,15 @@ class LoginTest : TestCase() {
   // and Intents.release() after the @Test block is completed. IntentsTestRule
   // is deprecated, but it was MUCH faster than using IntentsRule in our tests
   @get:Rule val intentsTestRule = IntentsTestRule(MainActivity::class.java)
+
+  companion object {
+    @JvmStatic
+    @BeforeClass
+    fun setupClass() {
+      // Set the static state that should apply to all test instances
+      MainActivity.currentScreen = CurrentScreen.LOGIN
+    }
+  }
 
   @Test
   fun titleAndButtonAreCorrectlyDisplayed() {

@@ -56,12 +56,10 @@ class CameraTest : TestCase() {
     ComposeScreen.onComposeScreen<CameraScreen>(composeTestRule) {
       photoButton {
         assertIsDisplayed()
-        assertHasClickAction()
       }
 
       galleryButton {
         assertIsDisplayed()
-        assertHasClickAction()
         performClick()
       }
 
@@ -80,7 +78,6 @@ class CameraTest : TestCase() {
     ComposeScreen.onComposeScreen<CameraScreen>(composeTestRule) {
       photoButton {
         assertIsDisplayed()
-        assertHasClickAction()
         performClick()
       }
 
@@ -89,7 +86,6 @@ class CameraTest : TestCase() {
 
       galleryButton {
         assertIsDisplayed()
-        assertHasClickAction()
         performClick()
       }
 

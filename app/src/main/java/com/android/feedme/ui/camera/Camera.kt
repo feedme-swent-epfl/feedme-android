@@ -75,6 +75,7 @@ fun CameraScreen() {
   val bitmaps by viewModel.bitmaps.collectAsState()
 
   BottomSheetScaffold(
+      modifier = Modifier.testTag("CameraScreen"),
       scaffoldState = scaffoldState,
       sheetPeekHeight = 0.dp,
       sheetContent = {
@@ -159,7 +160,7 @@ fun CameraPreview(controller: LifecycleCameraController, modifier: Modifier = Mo
 fun PhotoBottomSheetContent(bitmaps: List<Bitmap>, modifier: Modifier = Modifier) {
   if (bitmaps.isEmpty()) {
     Box(modifier = modifier.padding(16.dp), contentAlignment = Alignment.Center) {
-      Text(text = "There are no photos yet", modifier = Modifier.testTag("EmptyGalleryText"))
+      Text(text = "There are no photos yet")
     }
   } else {
     LazyVerticalStaggeredGrid(
@@ -172,7 +173,7 @@ fun PhotoBottomSheetContent(bitmaps: List<Bitmap>, modifier: Modifier = Modifier
             Image(
                 bitmap = bitmap.asImageBitmap(),
                 contentDescription = "Photo",
-                modifier = Modifier.clip(RoundedCornerShape(10.dp)).testTag("Photo"))
+                modifier = Modifier.clip(RoundedCornerShape(10.dp)))
           }
         }
   }

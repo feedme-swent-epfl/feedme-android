@@ -1,8 +1,13 @@
 package com.android.feedme.auth
 
+import android.Manifest
+import androidx.compose.ui.test.assertIsDisplayed
 import androidx.compose.ui.test.junit4.createAndroidComposeRule
+import androidx.compose.ui.test.onNodeWithContentDescription
+import androidx.compose.ui.test.onNodeWithText
 import androidx.test.espresso.intent.rule.IntentsTestRule
 import androidx.test.ext.junit.runners.AndroidJUnit4
+import androidx.test.rule.GrantPermissionRule
 import com.android.feedme.MainActivity
 import com.android.feedme.screen.CameraScreen
 import com.android.feedme.ui.camera.CameraScreen
@@ -16,6 +21,7 @@ import org.junit.runner.RunWith
 class CameraTest : TestCase() {
   @get:Rule val composeTestRule = createAndroidComposeRule<MainActivity>()
   @get:Rule val intentsTestRule = IntentsTestRule(MainActivity::class.java)
+  @get:Rule val permissionRule: GrantPermissionRule =  GrantPermissionRule.grant(Manifest.permission.CAMERA)
 
   @Test
   fun buttonsAreCorrectlyDisplayed() {
@@ -33,10 +39,6 @@ class CameraTest : TestCase() {
 
   @Test
   fun galleryButtonDisplayGalleryWhenEmpty() {
-    // The initial state of your ViewModel is an empty gallery
-    composeTestRule.setContent { CameraScreen() }
-
-    // Interact with the CameraScreen
     ComposeScreen.onComposeScreen<CameraScreen>(composeTestRule) {
       photoButton { assertIsDisplayed() }
 
@@ -45,32 +47,34 @@ class CameraTest : TestCase() {
         performClick()
       }
 
-      emptyGalleryText {
-        assertIsDisplayed()
-        assertTextEquals("There are no photos yet")
-      }
+      // Wait for the gallery to be displayed
+      composeTestRule.waitForIdle()
+
+      // Assert that the empty gallery text is displayed after clicking
+      composeTestRule.onNodeWithText("There are no photos yet", useUnmergedTree = true).assertIsDisplayed()
     }
   }
 
   @Test
   fun galleryButtonDisplayGalleryAfterTakingPhoto() {
-    // Provide the ViewModel with the dummy photo to the CameraScreen.
-    composeTestRule.setContent { CameraScreen() }
-
-    // Interact with the CameraScreen.
     ComposeScreen.onComposeScreen<CameraScreen>(composeTestRule) {
       photoButton {
         assertIsDisplayed()
         performClick()
       }
 
+      // Wait for the photo to be taken
+      composeTestRule.waitForIdle()
+
       galleryButton {
         assertIsDisplayed()
         performClick()
       }
 
-      // Assert that the photos are displayed
-      photos { assertIsDisplayed() }
-    }
+      // Wait for the gallery to be displayed
+      composeTestRule.waitForIdle()
+
+      // Assert that the photos are displayed after clicking
+      composeTestRule.onNodeWithContentDescription("Photo", useUnmergedTree = true).assertIsDisplayed()    }
   }
 }

@@ -10,7 +10,6 @@ import androidx.test.ext.junit.runners.AndroidJUnit4
 import androidx.test.rule.GrantPermissionRule
 import com.android.feedme.MainActivity
 import com.android.feedme.screen.CameraScreen
-import com.android.feedme.ui.camera.CameraScreen
 import com.kaspersky.kaspresso.testcases.api.testcase.TestCase
 import io.github.kakaocup.compose.node.element.ComposeScreen
 import org.junit.Rule
@@ -21,7 +20,10 @@ import org.junit.runner.RunWith
 class CameraTest : TestCase() {
   @get:Rule val composeTestRule = createAndroidComposeRule<MainActivity>()
   @get:Rule val intentsTestRule = IntentsTestRule(MainActivity::class.java)
-  @get:Rule val permissionRule: GrantPermissionRule =  GrantPermissionRule.grant(Manifest.permission.CAMERA)
+
+  // Grant camera permission for tests
+  @get:Rule
+  val permissionRule: GrantPermissionRule = GrantPermissionRule.grant(Manifest.permission.CAMERA)
 
   @Test
   fun buttonsAreCorrectlyDisplayed() {
@@ -51,7 +53,9 @@ class CameraTest : TestCase() {
       composeTestRule.waitForIdle()
 
       // Assert that the empty gallery text is displayed after clicking
-      composeTestRule.onNodeWithText("There are no photos yet", useUnmergedTree = true).assertIsDisplayed()
+      composeTestRule
+          .onNodeWithText("There are no photos yet", useUnmergedTree = true)
+          .assertIsDisplayed()
     }
   }
 
@@ -75,6 +79,9 @@ class CameraTest : TestCase() {
       composeTestRule.waitForIdle()
 
       // Assert that the photos are displayed after clicking
-      composeTestRule.onNodeWithContentDescription("Photo", useUnmergedTree = true).assertIsDisplayed()    }
+      composeTestRule
+          .onNodeWithContentDescription("Photo", useUnmergedTree = true)
+          .assertIsDisplayed()
+    }
   }
 }

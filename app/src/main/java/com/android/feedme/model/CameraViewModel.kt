@@ -7,10 +7,10 @@ import kotlinx.coroutines.flow.asStateFlow
 
 class CameraViewModel : ViewModel() {
 
-    private val _bitmaps = MutableStateFlow<List<Bitmap>>(emptyList())
-    val bitmaps = _bitmaps.asStateFlow()
+  private val _bitmaps = MutableStateFlow<List<Bitmap>>(emptyList())
+  val bitmaps = _bitmaps.asStateFlow()
 
-    fun onTakePhoto(bitmap: Bitmap) {
-        _bitmaps.value += bitmap
-    }
+  fun onTakePhoto(bitmap: Bitmap) {
+    _bitmaps.value += bitmap
+  }
 }

@@ -38,9 +38,7 @@ class CameraTest : TestCase() {
 
     // Interact with the CameraScreen
     ComposeScreen.onComposeScreen<CameraScreen>(composeTestRule) {
-      photoButton {
-        assertIsDisplayed()
-      }
+      photoButton { assertIsDisplayed() }
 
       galleryButton {
         assertIsDisplayed()
@@ -72,9 +70,7 @@ class CameraTest : TestCase() {
       }
 
       // Assert that the photos are displayed
-      photos {
-        assertIsDisplayed()
-      }
+      photos { assertIsDisplayed() }
     }
   }
 }

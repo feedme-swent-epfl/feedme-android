@@ -54,203 +54,126 @@ import androidx.lifecycle.viewmodel.compose.viewModel
 import com.android.feedme.model.CameraViewModel
 import kotlinx.coroutines.launch
 
-
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun CameraScreen() {
-    val applicationContext = LocalContext.current
+  val applicationContext = LocalContext.current
 
-    if (!hasRequiredPermissions(applicationContext)) {
-        ActivityCompat.requestPermissions(
-            applicationContext as Activity, arrayOf(Manifest.permission.CAMERA), 0
-        )
+  if (!hasRequiredPermissions(applicationContext)) {
+    ActivityCompat.requestPermissions(
+        applicationContext as Activity, arrayOf(Manifest.permission.CAMERA), 0)
+  }
+
+  val scope = rememberCoroutineScope()
+  val scaffoldState = rememberBottomSheetScaffoldState()
+  val controller = remember {
+    LifecycleCameraController(applicationContext).apply {
+      setEnabledUseCases(CameraController.IMAGE_CAPTURE or CameraController.VIDEO_CAPTURE)
     }
+  }
+  val viewModel = viewModel<CameraViewModel>()
+  val bitmaps by viewModel.bitmaps.collectAsState()
 
-    val scope = rememberCoroutineScope()
-    val scaffoldState = rememberBottomSheetScaffoldState()
-    val controller = remember {
-        LifecycleCameraController(applicationContext).apply {
-            setEnabledUseCases(
-                CameraController.IMAGE_CAPTURE or
-                        CameraController.VIDEO_CAPTURE
-            )
-        }
-    }
-    val viewModel = viewModel<CameraViewModel>()
-    val bitmaps by viewModel.bitmaps.collectAsState()
+  BottomSheetScaffold(
+      scaffoldState = scaffoldState,
+      sheetPeekHeight = 0.dp,
+      sheetContent = {
+        PhotoBottomSheetContent(bitmaps = bitmaps, modifier = Modifier.fillMaxWidth())
+      }) { padding ->
+        Box(modifier = Modifier.fillMaxSize().padding(padding)) {
+          CameraPreview(controller = controller, modifier = Modifier.fillMaxSize())
 
-    BottomSheetScaffold(
-        scaffoldState = scaffoldState,
-        sheetPeekHeight = 0.dp,
-        sheetContent = {
-            PhotoBottomSheetContent(
-                bitmaps = bitmaps,
-                modifier = Modifier
-                    .fillMaxWidth()
-            )
-        }
-    ) { padding ->
-        Box(
-            modifier = Modifier
-                .fillMaxSize()
-                .padding(padding)
-        ) {
-            CameraPreview(
-                controller = controller,
-                modifier = Modifier
-                    .fillMaxSize()
-            )
-
-            Row(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .align(Alignment.BottomCenter)
-                    .padding(16.dp),
-                horizontalArrangement = Arrangement.SpaceAround
-            ) {
+          Row(
+              modifier = Modifier.fillMaxWidth().align(Alignment.BottomCenter).padding(16.dp),
+              horizontalArrangement = Arrangement.SpaceAround) {
                 IconButton(
                     modifier = Modifier.testTag("GalleryButton"),
-                    onClick = {
-                        scope.launch {
-                            scaffoldState.bottomSheetState.expand()
-                        }
+                    onClick = { scope.launch { scaffoldState.bottomSheetState.expand() } }) {
+                      Icon(imageVector = Icons.Default.Photo, contentDescription = "Open gallery")
                     }
-                ) {
-                    Icon(
-                        imageVector = Icons.Default.Photo,
-                        contentDescription = "Open gallery"
-                    )
-                }
                 IconButton(
                     modifier = Modifier.testTag("PhotoButton"),
                     onClick = {
-                        takePhoto(
-                            controller = controller,
-                            onPhotoTaken = viewModel::onTakePhoto,
-                            context = applicationContext
-                        )
+                      takePhoto(
+                          controller = controller,
+                          onPhotoTaken = viewModel::onTakePhoto,
+                          context = applicationContext)
+                    }) {
+                      Icon(
+                          imageVector = Icons.Default.PhotoCamera,
+                          contentDescription = "Take photo")
                     }
-                ) {
-                    Icon(
-                        imageVector = Icons.Default.PhotoCamera,
-                        contentDescription = "Take photo"
-                    )
-                }
-            }
+              }
         }
-    }
+      }
 }
 
-
-
-
-/**
- * Create a new [LifecycleCameraController] to control the camera.
- */
+/** Create a new [LifecycleCameraController] to control the camera. */
 fun takePhoto(
     controller: LifecycleCameraController,
     onPhotoTaken: (Bitmap) -> Unit,
     context: Context
 ) {
-    controller.takePicture(
-        ContextCompat.getMainExecutor(context),
-        object : ImageCapture.OnImageCapturedCallback() {
-            override fun onCaptureSuccess(image: ImageProxy) {
-                super.onCaptureSuccess(image)
+  controller.takePicture(
+      ContextCompat.getMainExecutor(context),
+      object : ImageCapture.OnImageCapturedCallback() {
+        override fun onCaptureSuccess(image: ImageProxy) {
+          super.onCaptureSuccess(image)
 
-                // Rotate the image to match the device's orientation
-                val matrix = Matrix().apply {
-                    postRotate(image.imageInfo.rotationDegrees.toFloat())
-                }
-                val rotatedBitmap = Bitmap.createBitmap(
-                    image.toBitmap(),
-                    0,
-                    0,
-                    image.width,
-                    image.height,
-                    matrix,
-                    true
-                )
+          // Rotate the image to match the device's orientation
+          val matrix = Matrix().apply { postRotate(image.imageInfo.rotationDegrees.toFloat()) }
+          val rotatedBitmap =
+              Bitmap.createBitmap(image.toBitmap(), 0, 0, image.width, image.height, matrix, true)
 
-                onPhotoTaken(rotatedBitmap)
-            }
-
-            override fun onError(exception: ImageCaptureException) {
-                super.onError(exception)
-                Log.e("Camera", "Couldn't take photo: ", exception)
-            }
+          onPhotoTaken(rotatedBitmap)
         }
-    )
+
+        override fun onError(exception: ImageCaptureException) {
+          super.onError(exception)
+          Log.e("Camera", "Couldn't take photo: ", exception)
+        }
+      })
 }
 
-
-/**
- * Check if the app has the required permissions to use the camera.
- */
+/** Check if the app has the required permissions to use the camera. */
 fun hasRequiredPermissions(context: Context): Boolean {
-    return ContextCompat.checkSelfPermission(
-            context,
-            Manifest.permission.CAMERA
-        ) == PackageManager.PERMISSION_GRANTED
+  return ContextCompat.checkSelfPermission(context, Manifest.permission.CAMERA) ==
+      PackageManager.PERMISSION_GRANTED
 }
 
-
-
-
-
-/**
- * Composable that displays the camera preview.
- */
+/** Composable that displays the camera preview. */
 @Composable
-fun CameraPreview(
-    controller: LifecycleCameraController,
-    modifier: Modifier = Modifier
-) {
-    val lifecycleOwner = LocalLifecycleOwner.current
-    AndroidView(
-        factory = {
-            PreviewView(it).apply {
-                this.controller = controller
-                controller.bindToLifecycle(lifecycleOwner)
-            }
-        },
-        modifier = modifier
-    )
+fun CameraPreview(controller: LifecycleCameraController, modifier: Modifier = Modifier) {
+  val lifecycleOwner = LocalLifecycleOwner.current
+  AndroidView(
+      factory = {
+        PreviewView(it).apply {
+          this.controller = controller
+          controller.bindToLifecycle(lifecycleOwner)
+        }
+      },
+      modifier = modifier)
 }
 
 @Composable
-fun PhotoBottomSheetContent(
-    bitmaps: List<Bitmap>,
-    modifier: Modifier = Modifier
-) {
-    if(bitmaps.isEmpty()) {
-        Box(
-            modifier = modifier
-                .padding(16.dp),
-            contentAlignment = Alignment.Center
-        ) {
-            Text(
-                text = "There are no photos yet",
-                modifier = Modifier.testTag("EmptyGalleryText")
-            )
-        }
-    } else {
-        LazyVerticalStaggeredGrid(
-            columns = StaggeredGridCells.Fixed(2),
-            horizontalArrangement = Arrangement.spacedBy(16.dp),
-            verticalItemSpacing = 16.dp,
-            contentPadding = PaddingValues(16.dp),
-            modifier = modifier
-        ) {
-            items(bitmaps) { bitmap ->
-                Image(
-                    bitmap = bitmap.asImageBitmap(),
-                    contentDescription = "Photo",
-                    modifier = Modifier
-                        .clip(RoundedCornerShape(10.dp))
-                        .testTag("Photo")
-                )
-            }
-        }
+fun PhotoBottomSheetContent(bitmaps: List<Bitmap>, modifier: Modifier = Modifier) {
+  if (bitmaps.isEmpty()) {
+    Box(modifier = modifier.padding(16.dp), contentAlignment = Alignment.Center) {
+      Text(text = "There are no photos yet", modifier = Modifier.testTag("EmptyGalleryText"))
     }
+  } else {
+    LazyVerticalStaggeredGrid(
+        columns = StaggeredGridCells.Fixed(2),
+        horizontalArrangement = Arrangement.spacedBy(16.dp),
+        verticalItemSpacing = 16.dp,
+        contentPadding = PaddingValues(16.dp),
+        modifier = modifier) {
+          items(bitmaps) { bitmap ->
+            Image(
+                bitmap = bitmap.asImageBitmap(),
+                contentDescription = "Photo",
+                modifier = Modifier.clip(RoundedCornerShape(10.dp)).testTag("Photo"))
+          }
+        }
+  }
 }

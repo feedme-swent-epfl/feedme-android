@@ -7,7 +7,6 @@ import android.content.pm.PackageManager
 import android.graphics.Bitmap
 import android.graphics.Matrix
 import android.util.Log
-import androidx.camera.core.CameraSelector
 import androidx.camera.core.ImageCapture
 import androidx.camera.core.ImageCaptureException
 import androidx.camera.core.ImageProxy
@@ -21,14 +20,12 @@ import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.offset
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.staggeredgrid.LazyVerticalStaggeredGrid
 import androidx.compose.foundation.lazy.staggeredgrid.StaggeredGridCells
 import androidx.compose.foundation.lazy.staggeredgrid.items
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.Cameraswitch
 import androidx.compose.material.icons.filled.Photo
 import androidx.compose.material.icons.filled.PhotoCamera
 import androidx.compose.material3.BottomSheetScaffold
@@ -48,6 +45,7 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.asImageBitmap
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalLifecycleOwner
+import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.viewinterop.AndroidView
 import androidx.core.app.ActivityCompat
@@ -103,22 +101,6 @@ fun CameraScreen() {
                     .fillMaxSize()
             )
 
-            /*IconButton(
-                onClick = {
-                    controller.cameraSelector =
-                        if (controller.cameraSelector == CameraSelector.DEFAULT_BACK_CAMERA) {
-                            CameraSelector.DEFAULT_FRONT_CAMERA
-                        } else CameraSelector.DEFAULT_BACK_CAMERA
-                },
-                modifier = Modifier
-                    .offset(16.dp, 16.dp)
-            ) {
-                Icon(
-                    imageVector = Icons.Default.Cameraswitch,
-                    contentDescription = "Switch camera"
-                )
-            }*/
-
             Row(
                 modifier = Modifier
                     .fillMaxWidth()
@@ -127,6 +109,7 @@ fun CameraScreen() {
                 horizontalArrangement = Arrangement.SpaceAround
             ) {
                 IconButton(
+                    modifier = Modifier.testTag("GalleryButton"),
                     onClick = {
                         scope.launch {
                             scaffoldState.bottomSheetState.expand()
@@ -139,6 +122,7 @@ fun CameraScreen() {
                     )
                 }
                 IconButton(
+                    modifier = Modifier.testTag("PhotoButton"),
                     onClick = {
                         takePhoto(
                             controller = controller,
@@ -245,7 +229,10 @@ fun PhotoBottomSheetContent(
                 .padding(16.dp),
             contentAlignment = Alignment.Center
         ) {
-            Text("There are no photos yet")
+            Text(
+                text = "There are no photos yet",
+                modifier = Modifier.testTag("EmptyGalleryText")
+            )
         }
     } else {
         LazyVerticalStaggeredGrid(
@@ -258,9 +245,10 @@ fun PhotoBottomSheetContent(
             items(bitmaps) { bitmap ->
                 Image(
                     bitmap = bitmap.asImageBitmap(),
-                    contentDescription = null,
+                    contentDescription = "Photo",
                     modifier = Modifier
                         .clip(RoundedCornerShape(10.dp))
+                        .testTag("Photo")
                 )
             }
         }

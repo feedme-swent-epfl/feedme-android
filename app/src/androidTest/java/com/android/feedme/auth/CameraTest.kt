@@ -54,9 +54,7 @@ class CameraTest : TestCase() {
   @Test
   fun galleryButtonDisplayGalleryWhenEmpty() {
     ComposeScreen.onComposeScreen<CameraScreen>(composeTestRule) {
-      photoButton {
-        assertIsDisplayed()
-      }
+      photoButton { assertIsDisplayed() }
 
       galleryButton {
         assertIsDisplayed()

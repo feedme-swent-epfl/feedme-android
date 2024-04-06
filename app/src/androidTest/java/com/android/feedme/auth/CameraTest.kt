@@ -37,9 +37,10 @@ class CameraTest : TestCase() {
   }
 
   @Test
-  fun buttonsAreCorrectlyDisplayed() {
+  fun buttonsAndCameraCorrectlyDisplayed() {
     ComposeScreen.onComposeScreen<CameraScreen>(composeTestRule) {
-      composeTestRule.waitForIdle()
+      cameraPreview { assertIsDisplayed() }
+
       photoButton {
         assertIsDisplayed()
         assertHasClickAction()
@@ -54,6 +55,8 @@ class CameraTest : TestCase() {
   @Test
   fun galleryButtonDisplayGalleryWhenEmpty() {
     ComposeScreen.onComposeScreen<CameraScreen>(composeTestRule) {
+      cameraPreview { assertIsDisplayed() }
+
       photoButton { assertIsDisplayed() }
 
       galleryButton {
@@ -74,6 +77,8 @@ class CameraTest : TestCase() {
   @Test
   fun galleryButtonDisplayGalleryAfterTakingPhoto() {
     ComposeScreen.onComposeScreen<CameraScreen>(composeTestRule) {
+      cameraPreview { assertIsDisplayed() }
+
       photoButton {
         assertIsDisplayed()
         performClick()

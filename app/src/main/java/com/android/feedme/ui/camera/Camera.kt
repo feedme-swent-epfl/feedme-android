@@ -176,7 +176,7 @@ fun CameraPreview(controller: LifecycleCameraController, modifier: Modifier = Mo
           controller.bindToLifecycle(lifecycleOwner)
         }
       },
-      modifier = modifier)
+      modifier = modifier.testTag("CameraPreview"))
 }
 
 @Composable

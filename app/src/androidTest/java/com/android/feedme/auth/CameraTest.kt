@@ -80,7 +80,7 @@ class CameraTest : TestCase() {
       }
 
       // Wait for the photo to be taken
-      composeTestRule.waitForIdle()
+      Thread.sleep(2500)
 
       galleryButton {
         assertIsDisplayed()

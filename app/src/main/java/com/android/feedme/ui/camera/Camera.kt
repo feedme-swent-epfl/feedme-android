@@ -14,6 +14,7 @@ import androidx.camera.view.CameraController
 import androidx.camera.view.LifecycleCameraController
 import androidx.camera.view.PreviewView
 import androidx.compose.foundation.Image
+import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.PaddingValues
@@ -42,6 +43,7 @@ import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.asImageBitmap
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalLifecycleOwner
@@ -73,6 +75,7 @@ fun CameraScreen() {
   }
   val viewModel = viewModel<CameraViewModel>()
   val bitmaps by viewModel.bitmaps.collectAsState()
+  val photoSavedMessageVisible by viewModel.photoSavedMessageVisible.collectAsState()
 
   BottomSheetScaffold(
       modifier = Modifier.testTag("CameraScreen"),
@@ -92,12 +95,14 @@ fun CameraScreen() {
                     onClick = { scope.launch { scaffoldState.bottomSheetState.expand() } }) {
                       Icon(imageVector = Icons.Default.Photo, contentDescription = "Open gallery")
                     }
+
                 IconButton(
                     modifier = Modifier.testTag("PhotoButton"),
                     onClick = {
                       takePhoto(
                           controller = controller,
                           onPhotoTaken = viewModel::onTakePhoto,
+                          showText = viewModel::onPhotoSaved,
                           context = applicationContext)
                     }) {
                       Icon(
@@ -105,6 +110,22 @@ fun CameraScreen() {
                           contentDescription = "Take photo")
                     }
               }
+          if (photoSavedMessageVisible) {
+            Log.d("CameraScreen", "Photo saved message visible")
+            // Show the message box
+            Box(
+                modifier =
+                    Modifier.padding(16.dp)
+                        .background(
+                            Color.Black.copy(alpha = 0.7f), shape = RoundedCornerShape(8.dp))
+                        .padding(horizontal = 24.dp, vertical = 16.dp)
+                        .align(Alignment.BottomCenter)) {
+                  Text(
+                      text = "Photo saved",
+                      color = Color.White,
+                      modifier = Modifier.testTag("PhotoSavedMessage"))
+                }
+          }
         }
       }
 }
@@ -113,6 +134,7 @@ fun CameraScreen() {
 fun takePhoto(
     controller: LifecycleCameraController,
     onPhotoTaken: (Bitmap) -> Unit,
+    showText: () -> Unit,
     context: Context
 ) {
   controller.takePicture(
@@ -127,6 +149,7 @@ fun takePhoto(
               Bitmap.createBitmap(image.toBitmap(), 0, 0, image.width, image.height, matrix, true)
 
           onPhotoTaken(rotatedBitmap)
+          showText()
         }
 
         override fun onError(exception: ImageCaptureException) {

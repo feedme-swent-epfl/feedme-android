@@ -79,8 +79,15 @@ class CameraTest : TestCase() {
         performClick()
       }
 
-      // Wait for the photo to be taken
-      Thread.sleep(2500)
+      // Wait until the "Photo saved" text appears on the UI.
+      composeTestRule.waitUntil(timeoutMillis = 5000) {
+        try {
+          composeTestRule.onNodeWithText("Photo saved", useUnmergedTree = true).assertExists()
+          true // If assertExists() succeeds, return true to end waitUntil.
+        } catch (e: AssertionError) {
+          false // If the node isn't found, return false so waitUntil keeps trying.
+        }
+      }
 
       galleryButton {
         assertIsDisplayed()

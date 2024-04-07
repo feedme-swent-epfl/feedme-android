@@ -1,0 +1,38 @@
+name: APK Building
+# Run the workflow when commits are pushed on main or when a PR is modified
+on:
+  push:
+    branches:
+      - main
+      - 17-setup-apk-building
+            
+jobs:
+    build:
+      name: Build Release APK
+      runs-on: ubuntu-latest
+  
+      steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+  
+      - name: Set up JDK
+        uses: actions/setup-java@v4
+        with:
+          java-version: '17'
+          distribution: 'temurin'
+  
+      - name: Grant execute permission for gradlew
+        run: chmod +x ./gradlew
+  
+      - name: Build APK
+        run: ./gradlew assembleRelease
+        
+      - name: Release APK
+        uses: softprops/action-gh-release@v2
+        with:
+          name: FeedMe
+          files: app/build/outputs/apk/release/app-release-unsigned.apk
+          draft: true
+          token: ${{ secrets.GITHUB_TOKEN }}
+        
+    

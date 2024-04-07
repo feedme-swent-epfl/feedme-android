@@ -38,12 +38,15 @@ jobs:
   
       - name: Build APK
         run: ./gradlew assembleRelease
+
+      - name: Rename APK
+        run: mv app/build/outputs/apk/release/app-release-unsigned.apk app/build/outputs/apk/release/feedme-android-v1.x.x.apk
         
       - name: Release APK
         uses: softprops/action-gh-release@v2
         with:
-          name: FeedMe
-          files: app/build/outputs/apk/release/app-release-unsigned.apk
+          name: FeedMe v1.x.x
+          files: app/build/outputs/apk/release/feedme-android-v1.x.x.apk
           draft: true
           token: ${{ secrets.GITHUB_TOKEN }}
         

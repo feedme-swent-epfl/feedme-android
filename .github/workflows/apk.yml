@@ -5,7 +5,10 @@ on:
     branches:
       - main
       - 17-setup-apk-building
-            
+
+permissions:
+    contents: write
+      
 jobs:
     build:
       name: Build Release APK

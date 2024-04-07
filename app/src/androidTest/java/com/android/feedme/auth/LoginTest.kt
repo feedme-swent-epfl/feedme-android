@@ -1,6 +1,7 @@
 package com.android.feedme.auth
 
 import androidx.compose.ui.test.junit4.createAndroidComposeRule
+import androidx.test.core.app.ActivityScenario
 import androidx.test.espresso.intent.Intents.intended
 import androidx.test.espresso.intent.matcher.IntentMatchers.toPackage
 import androidx.test.espresso.intent.rule.IntentsTestRule
@@ -10,7 +11,7 @@ import com.android.feedme.MainActivity
 import com.android.feedme.screen.LoginScreen
 import com.kaspersky.kaspresso.testcases.api.testcase.TestCase
 import io.github.kakaocup.compose.node.element.ComposeScreen
-import org.junit.BeforeClass
+import org.junit.Before
 import org.junit.Rule
 import org.junit.Test
 import org.junit.runner.RunWith
@@ -24,12 +25,11 @@ class LoginTest : TestCase() {
   // is deprecated, but it was MUCH faster than using IntentsRule in our tests
   @get:Rule val intentsTestRule = IntentsTestRule(MainActivity::class.java)
 
-  companion object {
-    @JvmStatic
-    @BeforeClass
-    fun setupClass() {
-      // Set the static state that should apply to all test instances
-      MainActivity.currentScreen = CurrentScreen.LOGIN
+  @Before
+  fun setup() {
+    val scenario = ActivityScenario.launch(MainActivity::class.java)
+    scenario.onActivity { activity ->
+      activity.setScreen(CurrentScreen.LOGIN) // For CameraTest
     }
   }
 

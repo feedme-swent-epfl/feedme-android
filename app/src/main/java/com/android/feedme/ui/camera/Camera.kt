@@ -61,16 +61,18 @@ import kotlinx.coroutines.launch
 fun CameraScreen() {
   val applicationContext = LocalContext.current
 
+  // Request camera permission if not already granted
   if (!hasRequiredPermissions(applicationContext)) {
     ActivityCompat.requestPermissions(
         applicationContext as Activity, arrayOf(Manifest.permission.CAMERA), 0)
   }
 
+  // Set up the camera controller, view model, and coroutine scope
   val scope = rememberCoroutineScope()
   val scaffoldState = rememberBottomSheetScaffoldState()
   val controller = remember {
     LifecycleCameraController(applicationContext).apply {
-      setEnabledUseCases(CameraController.IMAGE_CAPTURE or CameraController.VIDEO_CAPTURE)
+      setEnabledUseCases(CameraController.IMAGE_CAPTURE)
     }
   }
   val viewModel = viewModel<CameraViewModel>()
@@ -92,12 +94,14 @@ fun CameraScreen() {
               horizontalArrangement = Arrangement.SpaceAround) {
                 IconButton(
                     modifier = Modifier.testTag("GalleryButton"),
+                    // Open the local gallery when the gallery button is clicked
                     onClick = { scope.launch { scaffoldState.bottomSheetState.expand() } }) {
                       Icon(imageVector = Icons.Default.Photo, contentDescription = "Open gallery")
                     }
 
                 IconButton(
                     modifier = Modifier.testTag("PhotoButton"),
+                    // Take a photo when the photo button is clicked
                     onClick = {
                       takePhoto(
                           controller = controller,
@@ -110,6 +114,7 @@ fun CameraScreen() {
                           contentDescription = "Take photo")
                     }
               }
+          // Show the message box if the photo was taken
           if (photoSavedMessageVisible) {
             Log.d("CameraScreen", "Photo saved message visible")
             // Show the message box
@@ -152,6 +157,7 @@ fun takePhoto(
           showText()
         }
 
+        // Log an error if the photo couldn't be taken
         override fun onError(exception: ImageCaptureException) {
           super.onError(exception)
           Log.e("Camera", "Couldn't take photo: ", exception)
@@ -169,6 +175,7 @@ fun hasRequiredPermissions(context: Context): Boolean {
 @Composable
 fun CameraPreview(controller: LifecycleCameraController, modifier: Modifier = Modifier) {
   val lifecycleOwner = LocalLifecycleOwner.current
+  // Display the camera preview using the CameraX PreviewView
   AndroidView(
       factory = {
         PreviewView(it).apply {
@@ -181,11 +188,13 @@ fun CameraPreview(controller: LifecycleCameraController, modifier: Modifier = Mo
 
 @Composable
 fun PhotoBottomSheetContent(bitmaps: List<Bitmap>, modifier: Modifier = Modifier) {
+  // Show a message if there are no photos
   if (bitmaps.isEmpty()) {
     Box(modifier = modifier.padding(16.dp), contentAlignment = Alignment.Center) {
       Text(text = "There are no photos yet")
     }
   } else {
+    // Display the photos in a grid
     LazyVerticalStaggeredGrid(
         columns = StaggeredGridCells.Fixed(2),
         horizontalArrangement = Arrangement.spacedBy(16.dp),

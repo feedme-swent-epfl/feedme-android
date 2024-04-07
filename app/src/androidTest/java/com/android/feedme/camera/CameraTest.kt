@@ -1,4 +1,4 @@
-package com.android.feedme.auth
+package com.android.feedme.camera
 
 import android.Manifest
 import androidx.compose.ui.test.assertIsDisplayed

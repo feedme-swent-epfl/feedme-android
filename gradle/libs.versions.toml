@@ -25,17 +25,10 @@ mockkAgent = "1.13.7"
 mockkAndroid = "1.13.7"
 playServicesAuth = "21.0.0"
 robolectric = "4.11.1"
-<<<<<<< HEAD
+
 sonar = "5.0.0.4638"
 firebaseAuthKtx = "22.3.1"
 firebaseFirestoreKtx = "24.11.0"
-
-=======
-sonar = "4.4.1.3373"
-firebaseFirestoreKtx = "24.11.0"
-mockito-core = "3.12.4"
-mockito-inline = "3.12.4"
->>>>>>> 7ecef13a08396678f773f9579f5f3183ab898137
 
 [libraries]
 androidx-compose-bom-v20230800 = { module = "androidx.compose:compose-bom", version.ref = "composeBomVersion" }
@@ -73,16 +66,10 @@ mockk-agent = { module = "io.mockk:mockk-agent", version.ref = "mockkAgent" }
 mockk-android = { module = "io.mockk:mockk-android", version.ref = "mockkAndroid" }
 play-services-auth = { module = "com.google.android.gms:play-services-auth", version.ref = "playServicesAuth" }
 robolectric = { module = "org.robolectric:robolectric", version.ref = "robolectric" }
-<<<<<<< HEAD
+
 firebase-auth-ktx = { group = "com.google.firebase", name = "firebase-auth-ktx", version.ref = "firebaseAuthKtx" }
 firebase-firestore-ktx = { group = "com.google.firebase", name = "firebase-firestore-ktx", version.ref = "firebaseFirestoreKtx" }
 
-=======
-firebase-firestore-ktx = { group = "com.google.firebase", name = "firebase-firestore-ktx", version.ref = "firebaseFirestoreKtx" }
-
-mockito-core = { module = "org.mockito:mockito-core", version.ref = "mockito-core" }
-mockito-inline = { module = "org.mockito:mockito-inline", version.ref = "mockito-inline" }
->>>>>>> 7ecef13a08396678f773f9579f5f3183ab898137
 
 [plugins]
 androidApplication = { id = "com.android.application", version.ref = "agp" }

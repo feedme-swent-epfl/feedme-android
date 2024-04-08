@@ -137,13 +137,10 @@ dependencies {
     implementation(libs.material)
     implementation(libs.androidx.lifecycle.runtime.ktx)
     implementation(platform(libs.compose.bom))
-<<<<<<< HEAD
-    implementation(libs.firebase.auth.ktx)
-    implementation(libs.firebase.firestore.ktx)
 
-=======
-    implementation(libs.firebase.firestore.ktx)
->>>>>>> 7ecef13a08396678f773f9579f5f3183ab898137
+    implementation(libs.firebase.auth.ktx)
+
+
     testImplementation(libs.junit)
     globalTestImplementation(libs.androidx.junit)
     globalTestImplementation(libs.androidx.espresso.core)
@@ -183,7 +180,7 @@ dependencies {
 
     // ----------       For testing     ------------
     testImplementation(libs.robolectric)
-<<<<<<< HEAD
+
     testImplementation(libs.androidx.junit)
     testImplementation(libs.androidx.espresso.core)
     testImplementation(platform(libs.androidx.compose.bom.v20230800))
@@ -203,12 +200,6 @@ dependencies {
     androidTestImplementation(libs.mockk.android)
     androidTestImplementation(libs.mockk.agent)
 
-=======
-
-    // ----------       Mockito     ------------
-    testImplementation(libs.mockito.core)
-    testImplementation(libs.mockito.inline)
->>>>>>> 7ecef13a08396678f773f9579f5f3183ab898137
 }
 
 tasks.withType<Test> {

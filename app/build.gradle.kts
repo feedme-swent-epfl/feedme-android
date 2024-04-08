@@ -131,6 +131,7 @@ fun DependencyHandlerScope.globalTestImplementation(dep: Any) {
     testImplementation(dep)
 }
 
+
 dependencies {
     implementation(libs.androidx.core.ktx)
     implementation(libs.androidx.appcompat)
@@ -139,9 +140,6 @@ dependencies {
     implementation(platform(libs.compose.bom))
 
     implementation(libs.firebase.auth.ktx)
-    implementation(libs.firebase.firestore.ktx)
-    implementation(libs.junit)
-
 
     testImplementation(libs.junit)
     globalTestImplementation(libs.androidx.junit)
@@ -203,6 +201,7 @@ dependencies {
     androidTestImplementation(libs.mockk.agent)
 
 }
+
 
 tasks.withType<Test> {
     // Configure Jacoco for each tests

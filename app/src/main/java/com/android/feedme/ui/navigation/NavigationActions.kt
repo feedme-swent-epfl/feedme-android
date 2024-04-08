@@ -10,6 +10,15 @@ import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.navigation.NavGraph.Companion.findStartDestination
 import androidx.navigation.NavHostController
 
+/**
+ * Handles navigation within an app's composable navigation graph.
+ *
+ * Utilizes a `NavHostController` to perform navigation actions, offering methods to navigate to
+ * various app destinations with enhanced features like state preservation and avoiding duplicate
+ * destinations in the stack.
+ *
+ * @param navController The controller managing app navigation.
+ */
 class NavigationActions(private val navController: NavHostController) {
   fun navigateTo(destination: TopLevelDestination) {
     navController.navigate(destination.route) {

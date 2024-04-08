@@ -1,5 +1,11 @@
 [versions]
 agp = "8.3.1"
+composeBomVersion = "2024.03.00"
+firebaseBom = "32.8.0"
+junitJunit = "4.12"
+kaspressoAllureSupport = "1.4.3"
+kaspressoComposeSupport = "1.5.5"
+kaspressoVersion = "1.5.5"
 kotlin = "1.8.10"
 coreKtx = "1.12.0"
 ktfmt = "0.17.0"
@@ -8,21 +14,38 @@ junitVersion = "1.1.5"
 espressoCore = "3.5.1"
 appcompat = "1.6.1"
 material = "1.11.0"
-composeBom = "2024.02.02"
+composeBom = "2024.03.00"
 composeActivity = "1.8.2"
 composeViewModel = "2.7.0"
 lifecycleRuntimeKtx = "2.7.0"
 kaspresso = "1.5.5"
+mockitoCore = "3.12.4"
+mockitoInline = "3.12.4"
+mockk = "1.13.7"
+mockkAgent = "1.13.7"
+mockkAndroid = "1.13.7"
+playServicesAuth = "21.0.0"
 robolectric = "4.11.1"
-sonar = "4.4.1.3373"
+sonar = "5.0.0.4638"
+firebaseAuthKtx = "22.3.1"
+firebaseFirestoreKtx = "24.11.0"
+gms = "4.4.1"
 navigationRuntimeKtx = "2.7.7"
 
+
 [libraries]
+androidx-compose-bom-v20230800 = { module = "androidx.compose:compose-bom", version.ref = "composeBomVersion" }
 androidx-core-ktx = { group = "androidx.core", name = "core-ktx", version.ref = "coreKtx" }
+androidx-espresso-intents = { module = "androidx.test.espresso:espresso-intents", version.ref = "espressoCore" }
+firebase-bom = { module = "com.google.firebase:firebase-bom", version.ref = "firebaseBom" }
 junit = { group = "junit", name = "junit", version.ref = "junit" }
 androidx-junit = { group = "androidx.test.ext", name = "junit", version.ref = "junitVersion" }
 androidx-espresso-core = { group = "androidx.test.espresso", name = "espresso-core", version.ref = "espressoCore" }
 androidx-appcompat = { group = "androidx.appcompat", name = "appcompat", version.ref = "appcompat" }
+junit-v412 = { module = "junit:junit", version.ref = "junitJunit" }
+kaspresso-allure-support = { module = "com.kaspersky.android-components:kaspresso-allure-support", version.ref = "kaspressoAllureSupport" }
+kaspresso-compose-support-v141 = { module = "com.kaspersky.android-components:kaspresso-compose-support", version.ref = "kaspressoComposeSupport" }
+kaspresso-v143 = { module = "com.kaspersky.android-components:kaspresso", version.ref = "kaspressoVersion" }
 material = { group = "com.google.android.material", name = "material", version.ref = "material" }
 androidx-lifecycle-runtime-ktx = { group = "androidx.lifecycle", name = "lifecycle-runtime-ktx", version.ref = "lifecycleRuntimeKtx" }
 
@@ -40,11 +63,21 @@ compose-test-manifest = { group = "androidx.compose.ui", name = "ui-test-manifes
 kaspresso = { group = "com.kaspersky.android-components", name = "kaspresso", version.ref = "kaspresso" }
 kaspresso-compose = { group = "com.kaspersky.android-components", name = "kaspresso-compose-support", version.ref = "kaspresso" }
 
+mockito-core = { module = "org.mockito:mockito-core", version.ref = "mockitoCore" }
+mockito-inline = { module = "org.mockito:mockito-inline", version.ref = "mockitoInline" }
+mockk = { module = "io.mockk:mockk", version.ref = "mockk" }
+mockk-agent = { module = "io.mockk:mockk-agent", version.ref = "mockkAgent" }
+mockk-android = { module = "io.mockk:mockk-android", version.ref = "mockkAndroid" }
+play-services-auth = { module = "com.google.android.gms:play-services-auth", version.ref = "playServicesAuth" }
 robolectric = { module = "org.robolectric:robolectric", version.ref = "robolectric" }
+firebase-auth-ktx = { group = "com.google.firebase", name = "firebase-auth-ktx", version.ref = "firebaseAuthKtx" }
+firebase-firestore-ktx = { group = "com.google.firebase", name = "firebase-firestore-ktx", version.ref = "firebaseFirestoreKtx" }
 androidx-navigation-runtime-ktx = { group = "androidx.navigation", name = "navigation-runtime-ktx", version.ref = "navigationRuntimeKtx" }
+
 
 [plugins]
 androidApplication = { id = "com.android.application", version.ref = "agp" }
 jetbrainsKotlinAndroid = { id = "org.jetbrains.kotlin.android", version.ref = "kotlin" }
 ktfmt = { id = "com.ncorti.ktfmt.gradle", version.ref = "ktfmt" }
 sonar = { id = "org.sonarqube", version.ref = "sonar" }
+gms = { id = "com.google.gms.google-services", version.ref = "gms"}

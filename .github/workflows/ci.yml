@@ -40,6 +40,14 @@ jobs:
           distribution: "temurin"
           java-version: "17"
 
+      - name: Create file
+        run: cat /home/runner/work/feedme-android/app/google-services.json | base64
+
+      - name: Load Google Service file
+        env:
+          DATA: ${{ secrets.GOOGLE_SERVICES_JSON }}
+        run: echo $DATA | base64 -di > app/google-services.json
+
       # Caching is a very useful part of a CI, as a workflow is executed in a clean environment every time,
       # this means that one would need to re-download and re-process gradle files for every run. Which is very time consuming.
       #
@@ -97,7 +105,7 @@ jobs:
           api-level: 34
           target: google_apis
           arch: x86_64
-          force-avd-creation: false
+          force-avd-creation: true
           emulator-options: -no-snapshot-save -no-window -gpu swiftshader_indirect -noaudio -no-boot-anim -camera-back none
           disable-animations: true
           script: ./gradlew connectedCheck --parallel --build-cache

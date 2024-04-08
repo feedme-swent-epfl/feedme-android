@@ -1,7 +1,7 @@
 package com.android.feedme.model.data
 
 data class Recipe(
-        val recipeId: String, // Unique identifier for the recipe
+    val recipeId: String, // Unique identifier for the recipe
     val title: String, // Title of the recipe
     val description: String, // Description of the recipe for the thumbnail
     val ingredients: List<IngredientMetaData>, // List of ingredients with quantity and measure
@@ -10,7 +10,7 @@ data class Recipe(
     val time: Double, // Time to prepare the recipe
     val rating: Double, // Rating of the recipe
     val userid: String, // User id of the recipe creator
-    val difficulty : String, // Difficulty level of the recipe
+    val difficulty: String, // Difficulty level of the recipe
     val imageUrl: String // Image URL of the recipe
 )
 
@@ -26,12 +26,12 @@ data class IngredientMetaData(
 )
 
 enum class MeasureUnit {
-    TEASPOON,
-    TABLESPOON,
-    CUP,
-    G,
-    KG,
-    L,
-    ML,
-    // Add more units as needed
+  TEASPOON,
+  TABLESPOON,
+  CUP,
+  G,
+  KG,
+  L,
+  ML,
+  // Add more units as needed
 }

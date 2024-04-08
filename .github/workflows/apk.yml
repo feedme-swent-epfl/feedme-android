@@ -1,0 +1,53 @@
+name: APK Building
+# Run the workflow when commits are pushed on main or when a PR is modified
+on:
+  push:
+    branches:
+      - main
+      - 17-setup-apk-building
+
+permissions:
+    contents: write
+      
+jobs:
+    build:
+      name: Build Release APK
+      runs-on: ubuntu-latest
+  
+      steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+  
+      - name: Set up JDK
+        uses: actions/setup-java@v4
+        with:
+          java-version: '17'
+          distribution: 'temurin'
+
+      - name: Create file
+        run: cat /home/runner/work/feedme-android/app/google-services.json | base64
+
+      - name: Load Google Service file
+        env:
+            DATA: ${{ secrets.GOOGLE_SERVICES_JSON }}
+        run: echo $DATA | base64 -di > app/google-services.json
+  
+  
+      - name: Grant execute permission for gradlew
+        run: chmod +x ./gradlew
+  
+      - name: Build APK
+        run: ./gradlew assembleRelease
+
+      - name: Rename APK
+        run: mv app/build/outputs/apk/release/app-release-unsigned.apk app/build/outputs/apk/release/feedme-android-v1.x.x.apk
+        
+      - name: Release APK
+        uses: softprops/action-gh-release@v2
+        with:
+          name: FeedMe v1.x.x
+          files: app/build/outputs/apk/release/feedme-android-v1.x.x.apk
+          draft: true
+          token: ${{ secrets.GITHUB_TOKEN }}
+        
+    

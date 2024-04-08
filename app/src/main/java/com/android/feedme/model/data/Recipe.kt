@@ -8,8 +8,7 @@ data class Recipe(
     val ingredients: List<IngredientMetaData>,
     val steps: List<Step>,
     val tags: List<String>,
-
-    )
+)
 
 data class Step(
     val stepNumber: Int,
@@ -22,4 +21,3 @@ data class IngredientMetaData(
     val measure: String,
     val ingredient: Ingredient
 )
-

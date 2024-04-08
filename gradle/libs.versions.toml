@@ -26,10 +26,10 @@ mockkAgent = "1.13.7"
 mockkAndroid = "1.13.7"
 playServicesAuth = "21.0.0"
 robolectric = "4.11.1"
-
 sonar = "5.0.0.4638"
 firebaseAuthKtx = "22.3.1"
 firebaseFirestoreKtx = "24.11.0"
+gms = "4.4.1"
 
 [libraries]
 androidx-compose-bom-v20230800 = { module = "androidx.compose:compose-bom", version.ref = "composeBomVersion" }
@@ -78,3 +78,4 @@ androidApplication = { id = "com.android.application", version.ref = "agp" }
 jetbrainsKotlinAndroid = { id = "org.jetbrains.kotlin.android", version.ref = "kotlin" }
 ktfmt = { id = "com.ncorti.ktfmt.gradle", version.ref = "ktfmt" }
 sonar = { id = "org.sonarqube", version.ref = "sonar" }
+gms = { id = "com.google.gms.google-services", version.ref = "gms"}

@@ -56,6 +56,14 @@ import androidx.lifecycle.viewmodel.compose.viewModel
 import com.android.feedme.model.CameraViewModel
 import kotlinx.coroutines.launch
 
+/**
+ * A composable function representing the camera screen.
+ *
+ * This function displays a UI for camera functionality, allowing users to capture photos.
+ * It manages camera permissions, sets up a live camera preview, and includes UI elements for
+ * capturing images and viewing them in a gallery.
+ * Utilizes CameraX for camera operations and Jetpack Compose for the UI components.
+ */
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun CameraScreen() {

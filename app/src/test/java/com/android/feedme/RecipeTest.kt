@@ -1,66 +1,44 @@
-package com.android.feedme
+package com.android.feedme.model.data
 
-import com.android.feedme.model.data.*
-import com.android.feedme.model.data.Ingredient
-import org.junit.Assert.assertEquals
-import org.junit.Before
 import org.junit.Test
+import org.junit.Assert.*
 
 class RecipeTest {
 
-  private lateinit var recipeProcessor: RecipeProcessor
-  private lateinit var recipes: List<Recipe>
+    @Test
+    fun createAndRetrieveRecipeProperties() {
+        // Given
+        val steps = listOf(Step(1, "Mix ingredients", "Mixing"))
+        val ingredients = listOf(
+            IngredientMetaData(
+                1.0,
+                MeasureUnit.CUP,
+                Ingredient("Flour", "Dry", "1")
+            )
+        )
+        val recipe = Recipe(
+            recipeId = "1",
+            title = "Simple Cake",
+            description = "A simple cake recipe.",
+            ingredients = ingredients,
+            steps = steps,
+            tags = listOf("dessert", "cake"),
+            time = 60.0,
+            rating = 4.5,
+            userid = "user123",
+            difficulty = "Easy",
+            imageUrl = "https://example.com/cake.jpg"
+        )
 
-  @Before
-  fun setUp() {
-    recipeProcessor = RecipeProcessor()
+        // When - Retrieving properties (implicitly in assertions)
 
-    // Setup test data
-    val ingredientSalt = Ingredient("Salt", "Condiment", "1")
-    val ingredientSugar = Ingredient("Sugar", "Sweetener", "2")
-
-    val recipe1 =
-        Recipe(
-            "1",
-            "Pasta",
-            "Delicious pasta",
-            "Boil pasta, add sauce",
-            ingredients = listOf(IngredientMetaData("1 tsp", "Teaspoon", ingredientSalt)),
-            steps = listOf(Step(1, "Boil water", "Fill a pot with water, boil")),
-            tags = listOf("Italian", "Dinner"))
-
-    val recipe2 =
-        Recipe(
-            "2",
-            "Cake",
-            "Sweet cake",
-            "Mix ingredients, bake",
-            ingredients = listOf(IngredientMetaData("2 cups", "Cup", ingredientSugar)),
-            steps = listOf(Step(1, "Mix ingredients", "Mix all together")),
-            tags = listOf("Dessert", "Sweet"))
-
-    recipes = listOf(recipe1, recipe2)
-  }
-
-  @Test
-  fun filterRecipesByIngredientType_condimentFiltersCorrectly() {
-    // Filtering by "Condiment"
-    val result = recipeProcessor.filterRecipesByIngredientType(recipes, "Condiment")
-    assertEquals(1, result.size)
-    assertEquals("Pasta", result.first().name)
-  }
-
-  @Test
-  fun filterRecipesByIngredientType_sweetenerFiltersCorrectly() {
-    // Filtering by "Sweetener"
-    val result = recipeProcessor.filterRecipesByIngredientType(recipes, "Sweetener")
-    assertEquals(1, result.size)
-    assertEquals("Cake", result.first().name)
-  }
-}
-
-class RecipeProcessor {
-  fun filterRecipesByIngredientType(recipes: List<Recipe>, type: String): List<Recipe> {
-    return recipes.filter { recipe -> recipe.ingredients.any { it.ingredient.type == type } }
-  }
+        // Then
+        assertEquals("1", recipe.recipeId)
+        assertEquals("Simple Cake", recipe.title)
+        assertEquals(1, recipe.steps.size)
+        assertEquals("Mix ingredients", recipe.steps.first().description)
+        assertEquals(MeasureUnit.CUP, recipe.ingredients.first().measure)
+        assertEquals(4.5, recipe.rating, 0.0)
+        // You can continue asserting other properties as needed
+    }
 }

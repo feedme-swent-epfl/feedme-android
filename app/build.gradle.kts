@@ -139,6 +139,8 @@ dependencies {
     implementation(platform(libs.compose.bom))
 
     implementation(libs.firebase.auth.ktx)
+    implementation(libs.firebase.firestore.ktx)
+    implementation(libs.junit)
 
 
     testImplementation(libs.junit)

@@ -2,6 +2,7 @@
 agp = "8.3.1"
 composeBomVersion = "2024.03.00"
 firebaseBom = "32.8.0"
+junitJunit = "4.12"
 kaspressoAllureSupport = "1.4.3"
 kaspressoComposeSupport = "1.5.5"
 kaspressoVersion = "1.5.5"
@@ -39,6 +40,7 @@ junit = { group = "junit", name = "junit", version.ref = "junit" }
 androidx-junit = { group = "androidx.test.ext", name = "junit", version.ref = "junitVersion" }
 androidx-espresso-core = { group = "androidx.test.espresso", name = "espresso-core", version.ref = "espressoCore" }
 androidx-appcompat = { group = "androidx.appcompat", name = "appcompat", version.ref = "appcompat" }
+junit-v412 = { module = "junit:junit", version.ref = "junitJunit" }
 kaspresso-allure-support = { module = "com.kaspersky.android-components:kaspresso-allure-support", version.ref = "kaspressoAllureSupport" }
 kaspresso-compose-support-v141 = { module = "com.kaspersky.android-components:kaspresso-compose-support", version.ref = "kaspressoComposeSupport" }
 kaspresso-v143 = { module = "com.kaspersky.android-components:kaspresso", version.ref = "kaspressoVersion" }

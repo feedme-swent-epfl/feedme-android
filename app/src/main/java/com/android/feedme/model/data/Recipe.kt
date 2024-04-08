@@ -8,6 +8,11 @@ data class Recipe(
     val ingredients: List<IngredientMetaData>,
     val steps: List<Step>,
     val tags: List<String>,
+    val time: String,
+    val rating: Double,
+    val userid: String,
+    val difficultly : String,
+    val imageUrl: String
 )
 
 data class Step(

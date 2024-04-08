@@ -18,6 +18,10 @@ import com.android.feedme.ui.camera.CameraScreen
 import com.android.feedme.ui.theme.feedmeAppTheme
 
 class MainActivity : ComponentActivity() {
+  /**
+   * currentScreen and setScreen are used for testing, this is temporary since we still aren't
+   * testing Navigation
+   */
   // Use mutableStateOf for the currentScreen. Initialize with LOGIN.
   var currentScreen by mutableStateOf(CurrentScreen.LOGIN)
     private set // Make the setter private to control state changes from outside

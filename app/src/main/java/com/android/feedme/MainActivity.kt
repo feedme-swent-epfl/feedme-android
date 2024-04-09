@@ -42,6 +42,7 @@ class MainActivity : ComponentActivity() {
               when (currentScreen) {
                 CurrentScreen.LOGIN -> LoginScreen()
                 CurrentScreen.CAMERA -> CameraScreen()
+                CurrentScreen.LANDING -> TODO()
               }
             }
       }
@@ -51,5 +52,6 @@ class MainActivity : ComponentActivity() {
 
 enum class CurrentScreen {
   LOGIN,
-  CAMERA
+  CAMERA,
+  LANDING
 }

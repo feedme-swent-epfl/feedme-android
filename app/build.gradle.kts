@@ -156,6 +156,8 @@ dependencies {
     // UI Tests
     globalTestImplementation(libs.compose.test.junit)
     debugImplementation(libs.compose.test.manifest)
+    // load Images from URL
+    implementation("io.coil-kt:coil-compose:2.4.0")
 
     // --------- Kaspresso test framework ----------
     globalTestImplementation(libs.kaspresso)

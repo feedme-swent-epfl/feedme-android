@@ -16,6 +16,7 @@ class ProfileTest {
 
     val profile =
         Profile(
+            id = "1",
             name = "John Doe",
             username = "johndoe123",
             email = "john@example.com",

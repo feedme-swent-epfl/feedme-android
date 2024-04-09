@@ -1,10 +1,9 @@
 package com.android.feedme.model.data
 
-import android.icu.text.SimpleDateFormat
+import java.time.Instant
 import java.util.Date
 import org.junit.Assert.*
 import org.junit.Test
-import java.time.Instant
 
 class CommentTest {
 
@@ -20,9 +19,7 @@ class CommentTest {
             time = 120.0,
             title = "Delicious!",
             content = "This recipe is fantastic!",
-            creationDate =
-             Date.from(Instant.now())
-            )
+            creationDate = Date.from(Instant.now()))
 
     // Then
     assertEquals("user123", comment.authorId)

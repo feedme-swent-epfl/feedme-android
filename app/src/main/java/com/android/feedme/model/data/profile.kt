@@ -1,6 +1,7 @@
 package com.android.feedme.model.data
 
 data class Profile(
+    val id: String,
     val name: String,
     val username: String,
     val email: String,

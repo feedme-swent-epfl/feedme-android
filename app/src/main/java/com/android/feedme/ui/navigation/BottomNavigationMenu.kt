@@ -5,6 +5,8 @@ import androidx.compose.material3.NavigationBar
 import androidx.compose.material3.NavigationBarItem
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.testTag
 
 /**
  * Displays a bottom navigation bar with tabs based on provided destinations.
@@ -23,7 +25,7 @@ fun BottomNavigationMenu(
     onTabSelect: (TopLevelDestination) -> Unit,
     tabList: List<TopLevelDestination>,
 ) {
-  NavigationBar {
+  NavigationBar(modifier = Modifier.testTag("BottomNavigationMenu")) {
     tabList.forEach { replyDestination ->
       NavigationBarItem(
           selected = selectedItem == replyDestination.route,

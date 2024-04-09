@@ -1,4 +1,4 @@
-package com.android.feedme.camera
+package com.android.feedme.test.camera
 
 import android.Manifest
 import androidx.compose.ui.test.assertIsDisplayed

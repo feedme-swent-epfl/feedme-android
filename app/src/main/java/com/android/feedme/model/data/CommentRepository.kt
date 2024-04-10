@@ -34,23 +34,4 @@ class CommentRepository(firestore: FirebaseFirestore) {
         }
         .addOnFailureListener { exception -> onFailure(exception) }
   }
-
-  fun addProfile(profile: Profile, onSuccess: () -> Unit, onFailure: (Exception) -> Unit) {
-    db.collection("profiles")
-        .document(profile.username)
-        .set(profile)
-        .addOnSuccessListener { onSuccess() }
-        .addOnFailureListener { exception -> onFailure(exception) }
-  }
-
-  fun getProfile(username: String, onSuccess: (Profile?) -> Unit, onFailure: (Exception) -> Unit) {
-    db.collection("profiles")
-        .document(username)
-        .get()
-        .addOnSuccessListener { documentSnapshot ->
-          val profile = documentSnapshot.toObject(Profile::class.java)
-          onSuccess(profile)
-        }
-        .addOnFailureListener { exception -> onFailure(exception) }
-  }
 }

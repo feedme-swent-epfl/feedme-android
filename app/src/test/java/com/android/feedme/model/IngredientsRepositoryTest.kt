@@ -169,4 +169,12 @@ class IngredientsRepositoryTest {
 
     assertTrue("Failure callback was not called as expected", failureCalled)
   }
+
+  @Test
+  fun testSingletonInitialization() {
+    val mockFirestore = mock(FirebaseFirestore::class.java)
+    IngredientsRepository.initialize(mockFirestore)
+
+    assertNotNull("Singleton instance should be initialized", IngredientsRepository.instance)
+  }
 }

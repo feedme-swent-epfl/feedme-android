@@ -140,4 +140,12 @@ class ProfileRepositoryTest {
 
     assertTrue("Failure callback was not called", failureCalled)
   }
+
+  @Test
+  fun testSingletonInitialization() {
+    val mockFirestore = mock(FirebaseFirestore::class.java)
+    ProfileRepository.initialize(mockFirestore)
+
+    assertNotNull("Singleton instance should be initialized", ProfileRepository.instance)
+  }
 }

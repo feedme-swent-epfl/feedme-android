@@ -72,42 +72,66 @@ class RecipeRepository(private val db: FirebaseFirestore) {
       onSuccess: (Recipe?) -> Unit,
       onFailure: (Exception) -> Unit
   ) {
-    // Extract ingredient IDs from the map
-    val ingredientMaps = map["ingredients"] as? List<Map<String, Any>> ?: listOf()
-    val ingredientIds = ingredientMaps.mapNotNull { it["ingredientId"] as? String }
-    // Fetch ingredients from the repository
+    // Attempt to safely extract the list of ingredient IDs
+    val rawIngredientsList = map["ingredients"]
+    val ingredientIds =
+        if (rawIngredientsList is List<*>) {
+          rawIngredientsList.mapNotNull { (it as? Map<*, *>)?.get("ingredientId") as? String }
+        } else {
+          listOf<String>()
+        }
+
+    // Safely process the tags
+    val rawTagsList = map["tags"]
+    val tags =
+        if (rawTagsList is List<*>) {
+          rawTagsList.mapNotNull { it as? String }
+        } else {
+          listOf()
+        }
+
     ingredientsRepository.getIngredients(
         ingredientIds,
         onSuccess = { ingredients ->
           try {
-            // Convert the map and fetched ingredients into a Recipe object
+            // Safely process the steps
+            val rawStepsList = map["steps"]
+            val steps =
+                if (rawStepsList is List<*>) {
+                  rawStepsList.mapNotNull { rawStep ->
+                    (rawStep as? Map<*, *>)?.let { stepMap ->
+                      val stepNumber = (stepMap["stepNumber"] as? Number)?.toInt()
+                      val description = stepMap["description"] as? String
+                      val title = stepMap["title"] as? String
+                      if (stepNumber != null && description != null && title != null) {
+                        Step(stepNumber, description, title)
+                      } else null
+                    }
+                  }
+                } else {
+                  listOf<Step>()
+                }
+
+            // Construct the Recipe object
             val recipe =
                 Recipe(
-                    recipeId = map["recipeId"] as String,
-                    title = map["title"] as String,
-                    description = map["description"] as String,
-                    ingredients = ingredients, // Directly use the fetched ingredients
-                    steps =
-                        (map["steps"] as List<Map<String, Any>>).map { stepMap ->
-                          Step(
-                              stepNumber = stepMap["stepNumber"] as Int,
-                              description = stepMap["description"] as String,
-                              title = stepMap["title"] as String)
-                        },
-                    tags = map["tags"] as List<String>,
-                    time = map["time"] as Double,
-                    rating = map["rating"] as Double,
-                    userid = map["userid"] as String,
-                    difficulty = map["difficulty"] as String,
-                    imageUrl = map["imageUrl"] as String)
+                    recipeId = map["recipeId"] as? String ?: "",
+                    title = map["title"] as? String ?: "",
+                    description = map["description"] as? String ?: "",
+                    ingredients = ingredients,
+                    steps = steps,
+                    tags = tags,
+                    time = (map["time"] as? Number)?.toDouble() ?: 0.0,
+                    rating = (map["rating"] as? Number)?.toDouble() ?: 0.0,
+                    userid = map["userid"] as? String ?: "",
+                    difficulty = map["difficulty"] as? String ?: "",
+                    imageUrl = map["imageUrl"] as? String ?: "")
+
             onSuccess(recipe)
           } catch (e: Exception) {
             onFailure(e)
           }
         },
-        onFailure = {
-          // Handle failure in fetching ingredients
-          onFailure(it)
-        })
+        onFailure = onFailure)
   }
 }

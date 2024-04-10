@@ -8,7 +8,6 @@ import com.android.feedme.model.data.RecipeRepository
 import com.google.android.gms.tasks.Tasks
 import com.google.firebase.FirebaseApp
 import com.google.firebase.firestore.*
-import java.util.*
 import junit.framework.TestCase.*
 import org.junit.Before
 import org.junit.Test
@@ -189,5 +188,13 @@ class RecipeRepositoryTest {
     shadowOf(Looper.getMainLooper()).idle()
 
     assertTrue("Failure callback was not called", failureCalled)
+  }
+
+  @Test
+  fun testSingletonInitialization() {
+    val mockFirestore = mock(FirebaseFirestore::class.java)
+    RecipeRepository.initialize(mockFirestore)
+
+    assertNotNull("Singleton instance should be initialized", RecipeRepository.instance)
   }
 }

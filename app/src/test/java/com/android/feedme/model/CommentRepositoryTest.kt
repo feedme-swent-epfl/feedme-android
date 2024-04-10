@@ -13,6 +13,7 @@ import com.google.firebase.firestore.FirebaseFirestore
 import java.time.Instant
 import java.util.Date
 import junit.framework.TestCase.assertEquals
+import junit.framework.TestCase.assertNotNull
 import junit.framework.TestCase.fail
 import org.junit.Assert.assertTrue
 import org.junit.Before
@@ -151,5 +152,13 @@ class CommentRepositoryTest {
     shadowOf(Looper.getMainLooper()).idle()
 
     assertTrue("Failure callback was not called", failureCalled)
+  }
+
+  @Test
+  fun testSingletonInitialization() {
+    val mockFirestore = mock(FirebaseFirestore::class.java)
+    CommentRepository.initialize(mockFirestore)
+
+    assertNotNull("Singleton instance should be initialized", CommentRepository.instance)
   }
 }

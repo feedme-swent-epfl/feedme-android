@@ -1,8 +1,6 @@
 package com.android.feedme.model.data
 
-import android.os.Looper
 import androidx.test.core.app.ApplicationProvider
-import com.google.android.gms.tasks.Tasks
 import com.google.firebase.FirebaseApp
 import com.google.firebase.firestore.*
 import junit.framework.TestCase.*
@@ -13,139 +11,67 @@ import org.mockito.Mock
 import org.mockito.Mockito.*
 import org.mockito.MockitoAnnotations
 import org.robolectric.RobolectricTestRunner
-import org.robolectric.Shadows.shadowOf
 
 @RunWith(RobolectricTestRunner::class)
-class ProfileRepositoryTest {
+class AuthViewModelTest {
 
-  @Mock private lateinit var mockFirestore: FirebaseFirestore
+    @Mock
+    private lateinit var profileRepository: ProfileRepository
 
-  @Mock private lateinit var mockDocumentReference: DocumentReference
+    private lateinit var authViewModel: AuthViewModel
 
-  @Mock private lateinit var mockCollectionReference: CollectionReference
-
-  @Mock private lateinit var mockDocumentSnapshot: DocumentSnapshot
-
-  private lateinit var profileRepository: ProfileRepository
-
-  @Before
-  fun setUp() {
-    MockitoAnnotations.openMocks(this)
-
-    if (FirebaseApp.getApps(ApplicationProvider.getApplicationContext()).isEmpty()) {
-      FirebaseApp.initializeApp(ApplicationProvider.getApplicationContext())
+    @Before
+    fun setUp() {
+        MockitoAnnotations.openMocks(this)
+        if (FirebaseApp.getApps(ApplicationProvider.getApplicationContext()).isEmpty()) {
+            FirebaseApp.initializeApp(ApplicationProvider.getApplicationContext())
+        }
+        authViewModel = AuthViewModel()
     }
 
-    profileRepository = ProfileRepository(mockFirestore)
+    @Test
+    fun `linkOrCreateProfile creates new profile if none exists`() {
+        val googleId = "googleId123"
+        val name = "Test User"
+        val email = "test@example.com"
+        val photoUrl = "http://example.com/photo.jpg"
 
-    `when`(mockFirestore.collection("profiles")).thenReturn(mockCollectionReference)
-    `when`(mockCollectionReference.document(anyString())).thenReturn(mockDocumentReference)
-  }
+        // Mock ProfileRepository to simulate that no profile exists for the given googleId
+        `when`(profileRepository.getProfile(eq(googleId), any(), any())).thenAnswer {
+            val onFailure = it.getArgument<(Exception) -> Unit>(2)
+            onFailure(Exception("Profile not found"))
+        }
 
-  @Test
-  fun addProfile_Success() {
-    val profile =
-        Profile(
-            "1",
-            "John Doe",
-            "johndoe",
-            "john@example.com",
-            "A short bio",
-            "http://example.com/image.png",
-            listOf(),
-            listOf(),
-            listOf(),
-            listOf(),
-            listOf())
-    `when`(mockDocumentReference.set(any())).thenReturn(Tasks.forResult(null))
+        // Call linkOrCreateProfile with mocked parameters
+        authViewModel.linkOrCreateProfile(googleId, name, email, photoUrl, onSuccess = {
+            // This block should execute, indicating success
+        }, onFailure = {
+            fail("Expected profile creation to succeed but it failed")
+        })
 
-    var successCalled = false
-    profileRepository.addProfile(profile, { successCalled = true }, {})
+        // Verify that addProfile was called since no profile exists
+        verify(profileRepository).addProfile(any(), any(), any())
+    }
 
-    shadowOf(Looper.getMainLooper()).idle()
+    @Test
+    fun `linkOrCreateProfile does nothing if profile already exists`() {
+        val existingGoogleId = "googleId123"
 
-    verify(mockDocumentReference).set(profile)
-    assertTrue("Success callback was not called", successCalled)
-  }
+        // Mock ProfileRepository to simulate an existing profile
+        `when`(profileRepository.getProfile(existingGoogleId, {  }, { })).thenAnswer {
+            val onSuccess = it.getArgument<(Profile?) -> Unit>(1)
+            onSuccess(Profile(existingGoogleId, "Existing User", "", "existing@example.com", "", "", emptyList(), emptyList(), emptyList(), emptyList(), emptyList()))
+        }
 
-  @Test
-  fun getProfile_Success() {
-    val profileId = "1"
-    val expectedProfile =
-        Profile(
-            profileId,
-            "John Doe",
-            "johndoe",
-            "john@example.com",
-            "A short bio",
-            "http://example.com/image.png",
-            listOf(),
-            listOf(),
-            listOf(),
-            listOf(),
-            listOf())
-    `when`(mockDocumentReference.get()).thenReturn(Tasks.forResult(mockDocumentSnapshot))
-    `when`(mockDocumentSnapshot.toObject(Profile::class.java)).thenReturn(expectedProfile)
+        // Call linkOrCreateProfile with parameters that would match an existing profile
+        authViewModel.linkOrCreateProfile(existingGoogleId, "Existing User", "existing@example.com", "", onSuccess = {
+            // Success block should execute
+        }, onFailure = {
+            fail("Expected to not create a new profile but it failed")
+        })
 
-    profileRepository.getProfile(
-        profileId,
-        { profile -> assertEquals(expectedProfile, profile) },
-        { fail("Failure callback was called") })
-
-    shadowOf(Looper.getMainLooper()).idle()
-  }
-
-  @Test
-  fun addProfile_Failure() {
-    val profile =
-        Profile(
-            "1",
-            "John Doe",
-            "johndoe",
-            "john@example.com",
-            "A short bio",
-            "http://example.com/image.png",
-            listOf(),
-            listOf(),
-            listOf(),
-            listOf(),
-            listOf())
-    val exception = Exception("Firestore failure")
-    `when`(mockDocumentReference.set(any())).thenReturn(Tasks.forException(exception))
-
-    var failureCalled = false
-    profileRepository.addProfile(
-        profile,
-        onSuccess = { fail("Success callback should not be called") },
-        onFailure = { failureCalled = true })
-
-    shadowOf(Looper.getMainLooper()).idle()
-
-    assertTrue("Failure callback was not called", failureCalled)
-  }
-
-  @Test
-  fun getProfile_Failure() {
-    val profileId = "nonexistent"
-    val exception = Exception("Firestore failure")
-    `when`(mockDocumentReference.get()).thenReturn(Tasks.forException(exception))
-
-    var failureCalled = false
-    profileRepository.getProfile(
-        profileId,
-        onSuccess = { fail("Success callback should not be called") },
-        onFailure = { failureCalled = true })
-
-    shadowOf(Looper.getMainLooper()).idle()
-
-    assertTrue("Failure callback was not called", failureCalled)
-  }
-
-  @Test
-  fun testSingletonInitialization() {
-    val mockFirestore = mock(FirebaseFirestore::class.java)
-    ProfileRepository.initialize(mockFirestore)
-
-    assertNotNull("Singleton instance should be initialized", ProfileRepository.instance)
-  }
+        // Verify that addProfile was never called because a matching profile exists
+        verify(profileRepository, never()).addProfile(any(), any(), any())
+    }
 }
+

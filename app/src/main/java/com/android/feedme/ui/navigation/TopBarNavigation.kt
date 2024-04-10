@@ -1,4 +1,4 @@
-package com.android.feedme.ui
+package com.android.feedme.ui.navigation
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
@@ -17,7 +17,6 @@ import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.sp
-import androidx.navigation.NavController
 import com.android.feedme.ui.theme.TemplateColor
 import com.android.feedme.ui.theme.TopBarColor
 
@@ -35,7 +34,7 @@ import com.android.feedme.ui.theme.TopBarColor
 @Composable
 fun TopBarNavigation(
     title: String,
-    navAction: NavController? = null, //TODO change navController to navAction
+    navAction: NavigationActions? = null,
     rightIcon: ImageVector? = null,
     rightIconOnClickAction: (() -> Unit) = {}
 ) {
@@ -52,15 +51,15 @@ fun TopBarNavigation(
                   modifier = Modifier.weight(1f).testTag("LeftIconBox"),
                   contentAlignment = Alignment.CenterStart) {
                     if (navAction != null) {
-                      if (navAction.previousBackStackEntry != null) {
+                      if (navAction.canGoBack()) {
                         IconButton(
                             modifier = Modifier.testTag("LeftIconButton"),
-                            onClick = { navAction.popBackStack() },
+                            onClick = { navAction.goBack() },
                         ) {
                           Icon(
                               modifier = Modifier.testTag("LeftIcon"),
                               imageVector = Icons.AutoMirrored.Filled.ArrowBack,
-                              contentDescription = "Back",
+                              contentDescription = "BackArrow",
                               tint = TopBarColor)
                         }
                       }
@@ -90,7 +89,7 @@ fun TopBarNavigation(
                             Icon(
                                 modifier = Modifier.testTag("RightIcon"),
                                 imageVector = rightIcon,
-                                contentDescription = "Save",
+                                contentDescription = "Right Icon",
                                 tint = TopBarColor)
                           }
                     }

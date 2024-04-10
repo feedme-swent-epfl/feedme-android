@@ -72,29 +72,42 @@ class RecipeRepository(private val db: FirebaseFirestore) {
       onSuccess: (Recipe?) -> Unit,
       onFailure: (Exception) -> Unit
   ) {
-    // Assuming an `ingredients` collection exists with Ingredient documents
-    val ingredientIds =
-        (map["ingredients"] as List<Map<String, Any>>).map { it["ingredientId"] as String }
-
-    ingredientsRepository.getIngredients(ingredientIds) { ingredients ->
-      val recipe =
-          Recipe(
-              recipeId = map["recipeId"] as String,
-              title = map["title"] as String,
-              description = map["description"] as String,
-              ingredients = ingredients,
-              steps =
-                  (map["steps"] as List<Map<String, Any>>).map {
-                    Step(
-                        it["stepNumber"] as Int, it["description"] as String, it["title"] as String)
-                  },
-              tags = map["tags"] as List<String>,
-              time = map["time"] as Double,
-              rating = map["rating"] as Double,
-              userid = map["userid"] as String,
-              difficulty = map["difficulty"] as String,
-              imageUrl = map["imageUrl"] as String)
-      onSuccess(recipe)
-    }
+    // Extract ingredient IDs from the map
+    val ingredientMaps = map["ingredients"] as? List<Map<String, Any>> ?: listOf()
+    val ingredientIds = ingredientMaps.mapNotNull { it["ingredientId"] as? String }
+    // Fetch ingredients from the repository
+    ingredientsRepository.getIngredients(
+        ingredientIds,
+        onSuccess = { ingredients ->
+          try {
+            // Convert the map and fetched ingredients into a Recipe object
+            val recipe =
+                Recipe(
+                    recipeId = map["recipeId"] as String,
+                    title = map["title"] as String,
+                    description = map["description"] as String,
+                    ingredients = ingredients, // Directly use the fetched ingredients
+                    steps =
+                        (map["steps"] as List<Map<String, Any>>).map { stepMap ->
+                          Step(
+                              stepNumber = stepMap["stepNumber"] as Int,
+                              description = stepMap["description"] as String,
+                              title = stepMap["title"] as String)
+                        },
+                    tags = map["tags"] as List<String>,
+                    time = map["time"] as Double,
+                    rating = map["rating"] as Double,
+                    userid = map["userid"] as String,
+                    difficulty = map["difficulty"] as String,
+                    imageUrl = map["imageUrl"] as String)
+            onSuccess(recipe)
+          } catch (e: Exception) {
+            onFailure(e)
+          }
+        },
+        onFailure = {
+          // Handle failure in fetching ingredients
+          onFailure(it)
+        })
   }
 }

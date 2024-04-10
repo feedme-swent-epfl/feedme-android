@@ -40,11 +40,20 @@ class IngredientsRepository(private val db: FirebaseFirestore) {
         .addOnFailureListener { exception -> onFailure(exception) }
   }
 
-  fun getIngredients(ingredientIds: List<String>, onComplete: (List<IngredientMetaData>) -> Unit) {
-    // Fetch each Ingredient by its ID and construct the IngredientMetaData list
+  fun getIngredients(
+      ingredientIds: List<String>,
+      onSuccess: (List<IngredientMetaData>) -> Unit,
+      onFailure: (Exception) -> Unit
+  ) {
     val ingredients = mutableListOf<IngredientMetaData>()
-    // Simplified: in a real application, consider fetching all ingredients in parallel or using a
-    // batch get
+    if (ingredientIds.isEmpty()) {
+      onSuccess(ingredients) // Handle empty input case immediately
+      return
+    }
+
+    var completedRequests = 0
+    var hasFailed = false
+
     ingredientIds.forEach { id ->
       db.collection(collectionPath)
           .document(id)
@@ -52,18 +61,19 @@ class IngredientsRepository(private val db: FirebaseFirestore) {
           .addOnSuccessListener { documentSnapshot ->
             val ingredient = documentSnapshot.toObject(Ingredient::class.java)
             if (ingredient != null) {
-              // Assuming a predefined quantity and measure for simplification
               ingredients.add(IngredientMetaData(1.0, MeasureUnit.CUP, ingredient))
             }
-            if (ingredients.size == ingredientIds.size) {
-              onComplete(ingredients)
+            completedRequests++
+            if (completedRequests == ingredientIds.size && !hasFailed) {
+              onSuccess(ingredients)
             }
           }
-          .addOnFailureListener {
-            // Handle failure
+          .addOnFailureListener { exception ->
+            if (!hasFailed) {
+              hasFailed = true
+              onFailure(exception) // Call onFailure at the first failure occurrence
+            }
           }
     }
   }
-
-  // Additional CRUD operations (update, delete) can be implemented following the same pattern
 }

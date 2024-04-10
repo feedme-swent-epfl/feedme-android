@@ -8,8 +8,6 @@ import com.android.feedme.model.data.IngredientsRepository
 import com.google.android.gms.tasks.Tasks
 import com.google.firebase.FirebaseApp
 import com.google.firebase.firestore.*
-import java.util.concurrent.CountDownLatch
-import java.util.concurrent.TimeUnit
 import junit.framework.TestCase.*
 import org.junit.Before
 import org.junit.Test
@@ -79,44 +77,96 @@ class IngredientsRepositoryTest {
 
   @Test
   fun getIngredients_Success() {
-    // Setup ingredient IDs
     val ingredientIds = listOf("sugarId", "flourId")
     val sugar = Ingredient("Sugar", "Sweetener", "sugarId")
-    val flour = Ingredient("Flour", "Dry", "flourId")
+    val flour = Ingredient("Flour", "Baking", "flourId")
 
-    // Mock Firestore responses for each ingredient ID
-    `when`(mockFirestore.collection("ingredients"))
-        .thenReturn(Mockito.mock(CollectionReference::class.java))
-    `when`(mockFirestore.collection("ingredients").document("sugarId"))
-        .thenReturn(mockDocumentReference)
-    `when`(mockFirestore.collection("ingredients").document("flourId"))
-        .thenReturn(mockDocumentReference)
+    // Setup responses for fetching each ingredient by ID
+    `when`(mockFirestore.collection("ingredients")).thenReturn(mockCollectionReference)
+
+    // Mock fetching sugar and flour documents
+    val sugarDocumentSnapshot = Mockito.mock(DocumentSnapshot::class.java)
+    val flourDocumentSnapshot = Mockito.mock(DocumentSnapshot::class.java)
+
+    `when`(sugarDocumentSnapshot.toObject(Ingredient::class.java)).thenReturn(sugar)
+    `when`(flourDocumentSnapshot.toObject(Ingredient::class.java)).thenReturn(flour)
+
+    // Simulate fetching ingredients
+    `when`(mockCollectionReference.document("sugarId")).thenReturn(mockDocumentReference)
+    `when`(mockCollectionReference.document("flourId")).thenReturn(mockDocumentReference)
+
     `when`(mockDocumentReference.get())
-        .thenReturn(Tasks.forResult(mockDocumentSnapshot))
-        .thenReturn(Tasks.forResult(mockDocumentSnapshot))
-    `when`(mockDocumentSnapshot.toObject(Ingredient::class.java))
-        .thenReturn(sugar)
-        .thenReturn(flour)
+        .thenReturn(Tasks.forResult(sugarDocumentSnapshot))
+        .thenReturn(Tasks.forResult(flourDocumentSnapshot))
 
-    val latch = CountDownLatch(1)
-    var ingredientsMetaDataList: List<IngredientMetaData>? = null
+    // Capturing onSuccess callback execution
+    var ingredientsMetaDataResult: List<IngredientMetaData>? = null
+    ingredientsRepository.getIngredients(
+        ingredientIds,
+        onSuccess = { ingredients -> ingredientsMetaDataResult = ingredients },
+        onFailure = { /* Should NOT HAPPENED */})
 
-    // Execute fetchIngredients
-    ingredientsRepository.getIngredients(ingredientIds) { ingredients ->
-      ingredientsMetaDataList = ingredients
-      latch.countDown()
-    }
-
-    // Wait for async operations to complete
-    latch.await(2, TimeUnit.SECONDS)
+    // Wait for async tasks to complete
     shadowOf(Looper.getMainLooper()).idle()
 
-    // Verify
-    assertNotNull("IngredientsMetaDataList is null", ingredientsMetaDataList)
-    assertEquals("IngredientsMetaDataList size incorrect", 2, ingredientsMetaDataList?.size)
+    // Assertions
+    assertNotNull("IngredientsMetaData result should not be null", ingredientsMetaDataResult)
+    assertEquals("IngredientsMetaData list size incorrect", 2, ingredientsMetaDataResult?.size)
 
-    // Additional checks can be performed on the contents of ingredientsMetaDataList
+    // Further assertions can be made regarding the contents of the ingredientsMetaDataResult list
   }
 
-  // Add more tests for update, delete, etc.
+  @Test
+  fun addIngredient_Failure() {
+    val ingredient = Ingredient("Sugar", "Sweetener", "sugarId")
+    val exception = Exception("Firestore add failure")
+    `when`(mockDocumentReference.set(ingredient)).thenReturn(Tasks.forException(exception))
+
+    var failureCalled = false
+    ingredientsRepository.addIngredient(
+        ingredient,
+        onSuccess = { fail("Success callback should not be called on failure") },
+        onFailure = { failureCalled = true })
+
+    shadowOf(Looper.getMainLooper()).idle()
+
+    assertTrue("Failure callback was not called", failureCalled)
+  }
+
+  @Test
+  fun getIngredient_Failure() {
+    val ingredientId = "nonexistentId"
+    val exception = Exception("Firestore operation failed")
+    `when`(mockDocumentReference.get()).thenReturn(Tasks.forException(exception))
+
+    var failureCalled = false
+    ingredientsRepository.getIngredient(
+        ingredientId,
+        onSuccess = { fail("Success callback should not be called") },
+        onFailure = { failureCalled = true })
+
+    shadowOf(Looper.getMainLooper()).idle()
+
+    assertTrue("Failure callback was not called", failureCalled)
+  }
+
+  @Test
+  fun getIngredients_Failure() {
+    val ingredientIds = listOf("sugarId", "flourId")
+    val exception = Exception("Firestore fetch failed")
+
+    // Setup mocks to simulate a failure for any fetch attempt
+    `when`(mockDocumentReference.get()).thenReturn(Tasks.forException(exception))
+
+    var failureCalled = false
+
+    ingredientsRepository.getIngredients(
+        ingredientIds,
+        onSuccess = { fail("Success callback should not be called in failure scenario") },
+        onFailure = { failureCalled = true })
+
+    shadowOf(Looper.getMainLooper()).idle()
+
+    assertTrue("Failure callback was not called as expected", failureCalled)
+  }
 }

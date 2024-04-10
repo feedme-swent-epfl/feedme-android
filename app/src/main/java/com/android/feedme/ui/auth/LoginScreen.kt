@@ -39,6 +39,8 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.android.feedme.R
+import com.android.feedme.model.data.Profile
+import com.android.feedme.model.data.ProfileRepository
 import com.google.android.gms.auth.api.signin.GoogleSignIn
 import com.google.android.gms.auth.api.signin.GoogleSignInOptions
 import com.google.android.gms.common.api.ApiException
@@ -48,9 +50,6 @@ import com.google.firebase.auth.ktx.auth
 import com.google.firebase.ktx.Firebase
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.tasks.await
-import com.android.feedme.model.data.Profile
-import com.android.feedme.model.data.ProfileRepository
-
 
 /**
  * A composable function representing the login screen.
@@ -114,17 +113,17 @@ fun LoginScreen() { // TODO : Add an argument for the navigation as in bootcamp 
           onAuthComplete = { _ ->
             Log.d("LOGIN", "Login was successful")
 
-                  val account = GoogleSignIn.getLastSignedInAccount(context)
-                  account?.let {
-                      val googleId = it.id
-                      val name = it.displayName.orEmpty()
-                      val email = it.email.orEmpty()
-                      val photoUrl = it.photoUrl.toString()
-                      // Use these details to link with your custom profile or create a new one
-                      if (googleId != null) {
-                          linkOrCreateProfile(googleId, name, email, photoUrl)
-                      }
-                  }
+            val account = GoogleSignIn.getLastSignedInAccount(context)
+            account?.let {
+              val googleId = it.id
+              val name = it.displayName.orEmpty()
+              val email = it.email.orEmpty()
+              val photoUrl = it.photoUrl.toString()
+              // Use these details to link with your custom profile or create a new one
+              if (googleId != null) {
+                linkOrCreateProfile(googleId, name, email, photoUrl)
+              }
+            }
           },
           onAuthError = { e -> Log.d("LOGIN", "Login failed", e) })
   Column(
@@ -189,7 +188,6 @@ fun LoginScreen() { // TODO : Add an argument for the navigation as in bootcamp 
             }
       }
 }
-
 
 fun linkOrCreateProfile(googleId: String, name: String?, email: String?, photoUrl: String?) {
   ProfileRepository.instance.getProfile(

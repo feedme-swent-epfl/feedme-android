@@ -94,4 +94,50 @@ class ProfileRepositoryTest {
 
     shadowOf(Looper.getMainLooper()).idle()
   }
+
+  @Test
+  fun addProfile_Failure() {
+    val profile =
+        Profile(
+            "1",
+            "John Doe",
+            "johndoe",
+            "john@example.com",
+            "A short bio",
+            "http://example.com/image.png",
+            listOf(),
+            listOf(),
+            listOf(),
+            listOf(),
+            listOf())
+    val exception = Exception("Firestore failure")
+    `when`(mockDocumentReference.set(any())).thenReturn(Tasks.forException(exception))
+
+    var failureCalled = false
+    profileRepository.addProfile(
+        profile,
+        onSuccess = { fail("Success callback should not be called") },
+        onFailure = { failureCalled = true })
+
+    shadowOf(Looper.getMainLooper()).idle()
+
+    assertTrue("Failure callback was not called", failureCalled)
+  }
+
+  @Test
+  fun getProfile_Failure() {
+    val profileId = "nonexistent"
+    val exception = Exception("Firestore failure")
+    `when`(mockDocumentReference.get()).thenReturn(Tasks.forException(exception))
+
+    var failureCalled = false
+    profileRepository.getProfile(
+        profileId,
+        onSuccess = { fail("Success callback should not be called") },
+        onFailure = { failureCalled = true })
+
+    shadowOf(Looper.getMainLooper()).idle()
+
+    assertTrue("Failure callback was not called", failureCalled)
+  }
 }

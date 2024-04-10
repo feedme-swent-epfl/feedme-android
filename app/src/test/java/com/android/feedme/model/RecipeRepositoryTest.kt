@@ -145,5 +145,49 @@ class RecipeRepositoryTest {
     shadowOf(Looper.getMainLooper()).idle()
   }
 
-  // Add more tests as needed...
+  @Test
+  fun addRecipe_Failure() {
+    val recipe =
+        Recipe(
+            "1",
+            "Chocolate Cake",
+            "Delicious chocolate cake",
+            listOf(),
+            listOf(),
+            listOf("dessert"),
+            60.0,
+            4.5,
+            "user123",
+            "Easy",
+            "http://image.url")
+    val exception = Exception("Firestore set operation failed")
+    `when`(mockDocumentReference.set(any())).thenReturn(Tasks.forException(exception))
+
+    var failureCalled = false
+    recipeRepository.addRecipe(
+        recipe,
+        onSuccess = { fail("Success callback should not be called") },
+        onFailure = { failureCalled = true })
+
+    shadowOf(Looper.getMainLooper()).idle()
+
+    assertTrue("Failure callback was not called", failureCalled)
+  }
+
+  @Test
+  fun getRecipe_Failure() {
+    val recipeId = "1"
+    val exception = Exception("Firestore get operation failed")
+    `when`(mockDocumentReference.get()).thenReturn(Tasks.forException(exception))
+
+    var failureCalled = false
+    recipeRepository.getRecipe(
+        recipeId,
+        onSuccess = { fail("Success callback should not be called") },
+        onFailure = { failureCalled = true })
+
+    shadowOf(Looper.getMainLooper()).idle()
+
+    assertTrue("Failure callback was not called", failureCalled)
+  }
 }

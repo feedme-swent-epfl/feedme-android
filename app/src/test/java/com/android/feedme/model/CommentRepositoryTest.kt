@@ -109,4 +109,47 @@ class CommentRepositoryTest {
         { comment -> assertEquals(expectedComment, comment) },
         { fail("Failure callback was called") })
   }
+
+  @Test
+  fun addComment_Failure() {
+    val comment =
+        Comment(
+            "authorId",
+            "recipeId",
+            "photoURL",
+            5.0,
+            120.0,
+            "Title",
+            "Content",
+            Date.from(Instant.now()))
+    val exception = Exception("Firestore set operation failed")
+    `when`(mockDocumentReference.set(any())).thenReturn(Tasks.forException(exception))
+
+    var failureCalled = false
+    commentRepository.addComment(
+        comment,
+        onSuccess = { fail("Success callback should not be called") },
+        onFailure = { failureCalled = true })
+
+    shadowOf(Looper.getMainLooper()).idle()
+
+    assertTrue("Failure callback was not called", failureCalled)
+  }
+
+  @Test
+  fun getComment_Failure() {
+    val commentId = "nonexistentId"
+    val exception = Exception("Firestore get operation failed")
+    `when`(mockDocumentReference.get()).thenReturn(Tasks.forException(exception))
+
+    var failureCalled = false
+    commentRepository.getComment(
+        commentId,
+        onSuccess = { fail("Success callback should not be called") },
+        onFailure = { failureCalled = true })
+
+    shadowOf(Looper.getMainLooper()).idle()
+
+    assertTrue("Failure callback was not called", failureCalled)
+  }
 }

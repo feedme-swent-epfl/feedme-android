@@ -4,6 +4,7 @@ import android.os.Looper
 import androidx.test.core.app.ApplicationProvider
 import com.android.feedme.model.data.Ingredient
 import com.android.feedme.model.data.IngredientMetaData
+import com.android.feedme.model.data.IngredientsRepository
 import com.google.android.gms.tasks.Tasks
 import com.google.firebase.FirebaseApp
 import com.google.firebase.firestore.*

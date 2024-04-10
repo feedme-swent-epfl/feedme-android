@@ -1,23 +1,33 @@
-package com.android.feedme.model
+package com.android.feedme.model.data
 
-import com.android.feedme.model.data.Profile
 import com.google.firebase.firestore.FirebaseFirestore
 
 class ProfileRepository(private val db: FirebaseFirestore) {
 
   private val collectionPath = "profiles"
 
+  companion object {
+    // Placeholder for the singleton instance
+    lateinit var instance: ProfileRepository
+      private set
+
+    // Initialization method to be called once, e.g., in your Application class
+    fun initialize(db: FirebaseFirestore) {
+      instance = ProfileRepository(db)
+    }
+  }
+
   fun addProfile(profile: Profile, onSuccess: () -> Unit, onFailure: (Exception) -> Unit) {
     db.collection(collectionPath)
-        .document(profile.username)
+        .document(profile.id)
         .set(profile)
         .addOnSuccessListener { onSuccess() }
         .addOnFailureListener { exception -> onFailure(exception) }
   }
 
-  fun getProfile(username: String, onSuccess: (Profile?) -> Unit, onFailure: (Exception) -> Unit) {
+  fun getProfile(id: String, onSuccess: (Profile?) -> Unit, onFailure: (Exception) -> Unit) {
     db.collection(collectionPath)
-        .document(username)
+        .document(id)
         .get()
         .addOnSuccessListener { documentSnapshot ->
           val profile = documentSnapshot.toObject(Profile::class.java)

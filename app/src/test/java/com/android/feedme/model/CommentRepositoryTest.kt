@@ -3,6 +3,7 @@ package com.android.feedme.model
 import android.os.Looper
 import androidx.test.core.app.ApplicationProvider
 import com.android.feedme.model.data.Comment
+import com.android.feedme.model.data.CommentRepository
 import com.google.android.gms.tasks.Tasks
 import com.google.firebase.FirebaseApp
 import com.google.firebase.firestore.CollectionReference

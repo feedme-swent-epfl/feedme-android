@@ -1,13 +1,21 @@
-package com.android.feedme.model
+package com.android.feedme.model.data
 
-import com.android.feedme.model.data.Ingredient
-import com.android.feedme.model.data.IngredientMetaData
-import com.android.feedme.model.data.MeasureUnit
 import com.google.firebase.firestore.FirebaseFirestore
 
 class IngredientsRepository(private val db: FirebaseFirestore) {
 
   private val collectionPath = "ingredients"
+
+  companion object {
+    // Placeholder for the singleton instance
+    lateinit var instance: IngredientsRepository
+      private set
+
+    // Initialization method to be called once, e.g., in your Application class
+    fun initialize(db: FirebaseFirestore) {
+      instance = IngredientsRepository(db)
+    }
+  }
 
   fun addIngredient(ingredient: Ingredient, onSuccess: () -> Unit, onFailure: (Exception) -> Unit) {
     db.collection(collectionPath)

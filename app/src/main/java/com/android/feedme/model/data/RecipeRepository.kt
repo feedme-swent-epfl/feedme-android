@@ -1,12 +1,22 @@
 package com.android.feedme.model.data
 
-import com.android.feedme.model.IngredientsRepository
 import com.google.firebase.firestore.FirebaseFirestore
 
 class RecipeRepository(private val db: FirebaseFirestore) {
 
   private val ingredientsRepository = IngredientsRepository(db)
   private val collectionPath = "recipes"
+
+  companion object {
+    // Placeholder for the singleton instance
+    lateinit var instance: RecipeRepository
+      private set
+
+    // Initialization method to be called once, e.g., in your Application class
+    fun initialize(db: FirebaseFirestore) {
+      instance = RecipeRepository(db)
+    }
+  }
 
   fun addRecipe(recipe: Recipe, onSuccess: () -> Unit, onFailure: (Exception) -> Unit) {
     // Convert Recipe to a map, replacing Ingredient objects with their IDs

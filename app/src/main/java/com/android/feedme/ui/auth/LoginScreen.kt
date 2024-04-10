@@ -48,6 +48,9 @@ import com.google.firebase.auth.ktx.auth
 import com.google.firebase.ktx.Firebase
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.tasks.await
+import com.android.feedme.model.data.Profile
+import com.android.feedme.model.data.ProfileRepository
+
 
 /**
  * A composable function representing the login screen.
@@ -110,7 +113,18 @@ fun LoginScreen() { // TODO : Add an argument for the navigation as in bootcamp 
       rememberFirebaseAuthLauncher(
           onAuthComplete = { _ ->
             Log.d("LOGIN", "Login was successful")
-            // TODO ADD NAVIGATION HERE
+
+                  val account = GoogleSignIn.getLastSignedInAccount(context)
+                  account?.let {
+                      val googleId = it.id
+                      val name = it.displayName.orEmpty()
+                      val email = it.email.orEmpty()
+                      val photoUrl = it.photoUrl.toString()
+                      // Use these details to link with your custom profile or create a new one
+                      if (googleId != null) {
+                          linkOrCreateProfile(googleId, name, email, photoUrl)
+                      }
+                  }
           },
           onAuthError = { e -> Log.d("LOGIN", "Login failed", e) })
   Column(
@@ -174,4 +188,41 @@ fun LoginScreen() { // TODO : Add an argument for the navigation as in bootcamp 
                   }
             }
       }
+}
+
+
+fun linkOrCreateProfile(googleId: String, name: String?, email: String?, photoUrl: String?) {
+  ProfileRepository.instance.getProfile(
+      googleId,
+      onSuccess = { existingProfile ->
+        if (existingProfile != null) {
+          // Profile exists, proceed with linking or updating as necessary
+        } else {
+          // No existing profile, create a new one
+          val newProfile =
+              Profile(
+                  id = googleId, // Consider using googleId as the profile ID or a separate field
+                  name = name ?: "",
+                  username = name ?: "",
+                  email = email ?: "",
+                  description = "",
+                  imageUrl = photoUrl ?: "",
+                  followers = listOf(),
+                  following = listOf(),
+                  filter = listOf(),
+                  recipeList = listOf(),
+                  commentList = listOf())
+          ProfileRepository.instance.addProfile(
+              newProfile,
+              onSuccess = {
+                // Handle successful profile creation
+              },
+              onFailure = {
+                // Handle failure
+              })
+        }
+      },
+      onFailure = {
+        // Handle failure to check existing profile
+      })
 }

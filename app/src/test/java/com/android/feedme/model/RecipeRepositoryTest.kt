@@ -248,4 +248,49 @@ class RecipeRepositoryTest {
 
     assertTrue("Success callback was not called as expected", successCalled)
   }
+
+  @Test
+  fun addRecipe_Success2() {
+    // Preparing the ingredients
+    val ingredient1 = Ingredient("Flour", "Dry", "1")
+    val ingredientMetaData1 = IngredientMetaData(2.0, MeasureUnit.CUP, ingredient1)
+
+    val ingredient2 = Ingredient("Sugar", "Dry", "2")
+    val ingredientMetaData2 = IngredientMetaData(1.0, MeasureUnit.CUP, ingredient2)
+
+    // Preparing the steps
+    val step1 = Step(1, "Mix Ingredients", "Mix flour and sugar.")
+    val step2 = Step(2, "Bake", "Bake for 30 minutes at 350 degrees.")
+
+    // Crafting the recipe
+    val recipe =
+        Recipe(
+            "1",
+            "Chocolate Cake",
+            "A rich chocolate cake",
+            listOf(ingredientMetaData1, ingredientMetaData2),
+            listOf(step1, step2),
+            listOf("Dessert", "Chocolate"),
+            60.0,
+            5.0,
+            "userId123",
+            "Medium",
+            "http://example.com/chocolate_cake.jpg")
+
+    // Mocking Firestore response for a successful set operation
+    `when`(mockDocumentReference.set(any())).thenReturn(Tasks.forResult(null))
+
+    // Action: Attempt to add the recipe
+    var successCalled = false
+    recipeRepository.addRecipe(recipe, onSuccess = { successCalled = true }, onFailure = {})
+
+    // Ensuring all async operations complete
+    shadowOf(Looper.getMainLooper()).idle()
+
+    // Verification: Check if the Firestore set method was called
+    verify(mockDocumentReference).set(any())
+
+    // Assert: Verify the success callback was invoked
+    assertTrue("Expected the success callback to be invoked", successCalled)
+  }
 }

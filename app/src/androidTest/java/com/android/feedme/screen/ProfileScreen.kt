@@ -7,7 +7,7 @@ import io.github.kakaocup.compose.node.element.KNode
 /** This class represents the Profile Screen and the elements it contains. */
 class ProfileScreen(semanticsProvider: SemanticsNodeInteractionsProvider):
     ComposeScreen<ProfileScreen>(
-        semanticsProvider = semanticsProvider, viewBuilderAction = { hasTestTag("Profile Screen") }
+        semanticsProvider = semanticsProvider, viewBuilderAction = { hasTestTag("ProfileScreen") }
     ) {
     // Structural elements of the UI
     val topBarProfile: KNode = child { hasTestTag("TopBarProfile") }

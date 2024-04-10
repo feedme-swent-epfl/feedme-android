@@ -3,7 +3,6 @@ package com.android.feedme.test.navigation
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.SaveAlt
 import androidx.compose.ui.test.assertHasClickAction
-import androidx.compose.ui.test.assertHasNoClickAction
 import androidx.compose.ui.test.assertIsDisplayed
 import androidx.compose.ui.test.assertIsNotDisplayed
 import androidx.compose.ui.test.junit4.createComposeRule
@@ -68,8 +67,8 @@ class TopBarNavigationTest : TestCase() {
     composeTestRule.onNodeWithTag("TitleBox").assertIsDisplayed()
     composeTestRule.onNodeWithTag("TitleText").assertIsDisplayed()
 
-    composeTestRule.onNodeWithTag("RightIconBox").assertIsDisplayed()
-    composeTestRule.onNodeWithTag("RightIconButton").assertIsNotDisplayed().assertHasNoClickAction()
+    composeTestRule.onNodeWithTag("RightIconBox").assertIsNotDisplayed()
+    composeTestRule.onNodeWithTag("RightIconButton").assertIsNotDisplayed()
   }
 
   @Test
@@ -88,8 +87,8 @@ class TopBarNavigationTest : TestCase() {
 
     composeTestRule.onNodeWithTag("TopBarNavigation").assertIsDisplayed()
 
-    composeTestRule.onNodeWithTag("LeftIconBox").assertIsDisplayed()
-    composeTestRule.onNodeWithTag("LeftIconButton").assertIsNotDisplayed().assertHasNoClickAction()
+    composeTestRule.onNodeWithTag("LeftIconBox").assertIsNotDisplayed()
+    composeTestRule.onNodeWithTag("LeftIconButton").assertIsNotDisplayed()
 
     composeTestRule.onNodeWithTag("TitleBox").assertIsDisplayed()
     composeTestRule.onNodeWithTag("TitleText").assertIsDisplayed()

@@ -15,47 +15,47 @@ import org.junit.runner.RunWith
 
 @RunWith(AndroidJUnit4::class)
 class ProfileTest {
-    @get:Rule val composeTestRule = createAndroidComposeRule<MainActivity>()
-    @get:Rule val intentsTestRule = IntentsTestRule(MainActivity::class.java)
+  @get:Rule val composeTestRule = createAndroidComposeRule<MainActivity>()
+  @get:Rule val intentsTestRule = IntentsTestRule(MainActivity::class.java)
 
-    @Before
-    fun setup() {
-        val scenario = ActivityScenario.launch(MainActivity::class.java)
-        scenario.onActivity { activity ->
-            activity.setScreen(CurrentScreen.PROFILE) // For ProfileTest
-        }
+  @Before
+  fun setup() {
+    val scenario = ActivityScenario.launch(MainActivity::class.java)
+    scenario.onActivity { activity ->
+      activity.setScreen(CurrentScreen.PROFILE) // For ProfileTest
     }
+  }
 
-    @Test
-    fun profileBoxAndComponentsCorrectlyDisplayed() {
-        ComposeScreen.onComposeScreen<ProfileScreen>(composeTestRule) {
-            profileBox { assertIsDisplayed() }
+  @Test
+  fun profileBoxAndComponentsCorrectlyDisplayed() {
+    ComposeScreen.onComposeScreen<ProfileScreen>(composeTestRule) {
+      profileBox { assertIsDisplayed() }
 
-            profileName { assertIsDisplayed() }
+      profileName { assertIsDisplayed() }
 
-            profileIcon { assertIsDisplayed() }
+      profileIcon { assertIsDisplayed() }
 
-            profileBio { assertIsDisplayed() }
+      profileBio { assertIsDisplayed() }
 
-            followerButton {
-                assertIsDisplayed()
-                assertHasClickAction()
-            }
+      followerButton {
+        assertIsDisplayed()
+        assertHasClickAction()
+      }
 
-            followingButton {
-                assertIsDisplayed()
-                assertHasClickAction()
-            }
+      followingButton {
+        assertIsDisplayed()
+        assertHasClickAction()
+      }
 
-            editButton {
-                assertIsDisplayed()
-                assertHasClickAction()
-            }
+      editButton {
+        assertIsDisplayed()
+        assertHasClickAction()
+      }
 
-            shareButton {
-                assertIsDisplayed()
-                assertHasClickAction()
-            }
-        }
+      shareButton {
+        assertIsDisplayed()
+        assertHasClickAction()
+      }
     }
+  }
 }

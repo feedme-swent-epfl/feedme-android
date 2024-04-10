@@ -62,26 +62,25 @@ fun ProfileScreen(navigationActions: NavigationActions) {
 fun ProfileBox(padding: PaddingValues) { // TODO add font
   Column(
       modifier = Modifier.padding(padding).testTag("ProfileBox"),
-      verticalArrangement = Arrangement.Top
-  ) {
-    Row(
-        modifier = Modifier.fillMaxWidth().padding(vertical = 20.dp),
-        horizontalArrangement = Arrangement.Center,
-        verticalAlignment = Alignment.CenterVertically) {
-          UserProfilePicture()
-          Spacer(modifier = Modifier.width(20.dp))
-          UserNameBox()
-          Spacer(modifier = Modifier.width(5.dp))
-          Row(
-              horizontalArrangement = Arrangement.Center,
-              verticalAlignment = Alignment.CenterVertically) {
-                FollowersButton()
-                FollowingButton()
-              }
-        }
-    UserBio()
-    ProfileButtons()
-  }
+      verticalArrangement = Arrangement.Top) {
+        Row(
+            modifier = Modifier.fillMaxWidth().padding(vertical = 20.dp),
+            horizontalArrangement = Arrangement.Center,
+            verticalAlignment = Alignment.CenterVertically) {
+              UserProfilePicture()
+              Spacer(modifier = Modifier.width(20.dp))
+              UserNameBox()
+              Spacer(modifier = Modifier.width(5.dp))
+              Row(
+                  horizontalArrangement = Arrangement.Center,
+                  verticalAlignment = Alignment.CenterVertically) {
+                    FollowersButton()
+                    FollowingButton()
+                  }
+            }
+        UserBio()
+        ProfileButtons()
+      }
 }
 
 /** A composable function that generates the user's profile picture */

@@ -9,9 +9,11 @@ class ProfileScreen(semanticsProvider: SemanticsNodeInteractionsProvider) :
     ComposeScreen<ProfileScreen>(
         semanticsProvider = semanticsProvider,
         viewBuilderAction = { hasTestTag("ProfileScreen") }) {
+
   // Structural elements of the UI
-  val topBarProfile: KNode = child { hasTestTag("TopBarProfile") }
-  val bottomBarProfile: KNode = child { hasTestTag("BottomBarProfile") }
+  val topBarProfile: KNode = child { hasTestTag("TopBarNavigation") }
+  val bottomBarProfile: KNode = child { hasTestTag("BottomNavigationMenu") }
+
   val profileBox: KNode = child { hasTestTag("ProfileBox") }
   val profileName: KNode = child { hasTestTag("ProfileName") }
   val profileIcon: KNode = child { hasTestTag("ProfileIcon") }

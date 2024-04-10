@@ -21,87 +21,80 @@ import org.junit.runner.RunWith
 @RunWith(AndroidJUnit4::class)
 class TopBarNavigationTest : TestCase() {
 
-    @get:Rule val composeTestRule = createComposeRule()
+  @get:Rule val composeTestRule = createComposeRule()
 
+  @Test
+  fun testTopBarNavigationEverythingDisplayed() {
+    // Create NavigationActions instance with the mock NavController
+    val navActions = mockk<NavigationActions>()
+    every { navActions.canGoBack() } returns true
 
-    @Test
-    fun testTopBarNavigationEverythingDisplayed() {
-        // Create NavigationActions instance with the mock NavController
-        val navActions = mockk<NavigationActions>()
-        every { navActions.canGoBack() } returns true
-
-        composeTestRule.setContent {
-            TopBarNavigation(
-                title = "Test",
-                navAction = navActions,
-                rightIcon = Icons.Default.SaveAlt,
-                rightIconOnClickAction = {}
-            )
-        }
-
-        composeTestRule.onNodeWithTag("TopBarNavigation").assertIsDisplayed()
-
-        composeTestRule.onNodeWithTag("LeftIconBox").assertIsDisplayed()
-        composeTestRule.onNodeWithTag("LeftIconButton").assertIsDisplayed().assertHasClickAction()
-
-        composeTestRule.onNodeWithTag("TitleBox").assertIsDisplayed()
-        composeTestRule.onNodeWithTag("TitleText").assertIsDisplayed()
-
-        composeTestRule.onNodeWithTag("RightIconBox").assertIsDisplayed()
-        composeTestRule.onNodeWithTag("RightIconButton").assertIsDisplayed().assertHasClickAction()
+    composeTestRule.setContent {
+      TopBarNavigation(
+          title = "Test",
+          navAction = navActions,
+          rightIcon = Icons.Default.SaveAlt,
+          rightIconOnClickAction = {})
     }
 
-    @Test
-    fun testTopBarNavigationRightIconDoesNotAppear() {
-        // Create NavigationActions instance with the mock NavController
-        val navActions = mockk<NavigationActions>()
-        every { navActions.canGoBack() } returns true
+    composeTestRule.onNodeWithTag("TopBarNavigation").assertIsDisplayed()
 
-        composeTestRule.setContent {
-            TopBarNavigation(
-                title = "Test",
-                navAction = navActions,
-                rightIcon = null,
-                rightIconOnClickAction = {}
-            )
-        }
+    composeTestRule.onNodeWithTag("LeftIconBox").assertIsDisplayed()
+    composeTestRule.onNodeWithTag("LeftIconButton").assertIsDisplayed().assertHasClickAction()
 
-        composeTestRule.onNodeWithTag("TopBarNavigation").assertIsDisplayed()
+    composeTestRule.onNodeWithTag("TitleBox").assertIsDisplayed()
+    composeTestRule.onNodeWithTag("TitleText").assertIsDisplayed()
 
-        composeTestRule.onNodeWithTag("LeftIconBox").assertIsDisplayed()
-        composeTestRule.onNodeWithTag("LeftIconButton").assertIsDisplayed().assertHasClickAction()
+    composeTestRule.onNodeWithTag("RightIconBox").assertIsDisplayed()
+    composeTestRule.onNodeWithTag("RightIconButton").assertIsDisplayed().assertHasClickAction()
+  }
 
-        composeTestRule.onNodeWithTag("TitleBox").assertIsDisplayed()
-        composeTestRule.onNodeWithTag("TitleText").assertIsDisplayed()
+  @Test
+  fun testTopBarNavigationRightIconDoesNotAppear() {
+    // Create NavigationActions instance with the mock NavController
+    val navActions = mockk<NavigationActions>()
+    every { navActions.canGoBack() } returns true
 
-        composeTestRule.onNodeWithTag("RightIconBox").assertIsDisplayed()
-        composeTestRule.onNodeWithTag("RightIconButton").assertIsNotDisplayed().assertHasNoClickAction()
+    composeTestRule.setContent {
+      TopBarNavigation(
+          title = "Test", navAction = navActions, rightIcon = null, rightIconOnClickAction = {})
     }
 
-    @Test
-    fun testTopBarNavigationLeftIconDoesNotAppear() {
-        // Create NavigationActions instance with the mock NavController
-        val navActions = mockk<NavigationActions>()
-        every { navActions.canGoBack() } returns true
+    composeTestRule.onNodeWithTag("TopBarNavigation").assertIsDisplayed()
 
-        composeTestRule.setContent {
-            TopBarNavigation(
-                title = "Test",
-                navAction = null,
-                rightIcon = Icons.Default.SaveAlt,
-                rightIconOnClickAction = {}
-            )
-        }
+    composeTestRule.onNodeWithTag("LeftIconBox").assertIsDisplayed()
+    composeTestRule.onNodeWithTag("LeftIconButton").assertIsDisplayed().assertHasClickAction()
 
-        composeTestRule.onNodeWithTag("TopBarNavigation").assertIsDisplayed()
+    composeTestRule.onNodeWithTag("TitleBox").assertIsDisplayed()
+    composeTestRule.onNodeWithTag("TitleText").assertIsDisplayed()
 
-        composeTestRule.onNodeWithTag("LeftIconBox").assertIsDisplayed()
-        composeTestRule.onNodeWithTag("LeftIconButton").assertIsNotDisplayed().assertHasNoClickAction()
+    composeTestRule.onNodeWithTag("RightIconBox").assertIsDisplayed()
+    composeTestRule.onNodeWithTag("RightIconButton").assertIsNotDisplayed().assertHasNoClickAction()
+  }
 
-        composeTestRule.onNodeWithTag("TitleBox").assertIsDisplayed()
-        composeTestRule.onNodeWithTag("TitleText").assertIsDisplayed()
+  @Test
+  fun testTopBarNavigationLeftIconDoesNotAppear() {
+    // Create NavigationActions instance with the mock NavController
+    val navActions = mockk<NavigationActions>()
+    every { navActions.canGoBack() } returns true
 
-        composeTestRule.onNodeWithTag("RightIconBox").assertIsDisplayed()
-        composeTestRule.onNodeWithTag("RightIconButton").assertIsDisplayed().assertHasClickAction()
+    composeTestRule.setContent {
+      TopBarNavigation(
+          title = "Test",
+          navAction = null,
+          rightIcon = Icons.Default.SaveAlt,
+          rightIconOnClickAction = {})
     }
+
+    composeTestRule.onNodeWithTag("TopBarNavigation").assertIsDisplayed()
+
+    composeTestRule.onNodeWithTag("LeftIconBox").assertIsDisplayed()
+    composeTestRule.onNodeWithTag("LeftIconButton").assertIsNotDisplayed().assertHasNoClickAction()
+
+    composeTestRule.onNodeWithTag("TitleBox").assertIsDisplayed()
+    composeTestRule.onNodeWithTag("TitleText").assertIsDisplayed()
+
+    composeTestRule.onNodeWithTag("RightIconBox").assertIsDisplayed()
+    composeTestRule.onNodeWithTag("RightIconButton").assertIsDisplayed().assertHasClickAction()
+  }
 }

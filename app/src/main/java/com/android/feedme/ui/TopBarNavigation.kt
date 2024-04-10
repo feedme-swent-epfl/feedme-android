@@ -35,7 +35,7 @@ import com.android.feedme.ui.theme.TopBarColor
 @Composable
 fun TopBarNavigation(
     title: String,
-    navAction: NavController? = null, //TODO change navController to navAction
+    navAction: NavController? = null, // TODO change navController to navAction
     rightIcon: ImageVector? = null,
     rightIconOnClickAction: (() -> Unit) = {}
 ) {

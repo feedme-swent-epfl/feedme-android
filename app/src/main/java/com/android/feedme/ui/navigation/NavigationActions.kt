@@ -21,11 +21,11 @@ import androidx.navigation.NavHostController
  */
 class NavigationActions(private val navController: NavHostController) {
 
-    /**
-     * Navigates to the specified [TopLevelDestination] destination.
-     *
-     * @param destination The destination to navigate to.
-     */
+  /**
+   * Navigates to the specified [TopLevelDestination] destination.
+   *
+   * @param destination The destination to navigate to.
+   */
   fun navigateTo(destination: TopLevelDestination) {
     navController.navigate(destination.route) {
       // Pop up to the start destination of the graph to
@@ -40,27 +40,23 @@ class NavigationActions(private val navController: NavHostController) {
     }
   }
 
-    /**
-     * Navigates back to the previous destination in the navigation stack.
-     */
-    fun goBack(){
-        navController.popBackStack()
-    }
+  /** Navigates back to the previous destination in the navigation stack. */
+  fun goBack() {
+    navController.popBackStack()
+  }
 
-    /**
-     * Checks if there is a previous destination in the navigation stack that the app can navigate back to.
-     *
-     * @return True if there is a previous destination to navigate back to, false otherwise.
-     */
-    fun canGoBack(): Boolean {
-        return navController.previousBackStackEntry != null
-    }
+  /**
+   * Checks if there is a previous destination in the navigation stack that the app can navigate
+   * back to.
+   *
+   * @return True if there is a previous destination to navigate back to, false otherwise.
+   */
+  fun canGoBack(): Boolean {
+    return navController.previousBackStackEntry != null
+  }
 }
 
-
-/**
- * Contains route constants used for navigating within the app.
- */
+/** Contains route constants used for navigating within the app. */
 object Route {
   const val HOME = "Home"
   const val EXPLORE = "Explore"
@@ -78,10 +74,7 @@ object Route {
  */
 data class TopLevelDestination(val route: String, val icon: ImageVector, val textId: String)
 
-
-/**
- * List of top-level destinations within the app navigation.
- */
+/** List of top-level destinations within the app navigation. */
 val TOP_LEVEL_DESTINATIONS =
     listOf(
         TopLevelDestination(route = Route.HOME, icon = Icons.Default.Home, textId = "Home"),
@@ -90,5 +83,4 @@ val TOP_LEVEL_DESTINATIONS =
         TopLevelDestination(
             route = Route.PROFILE, icon = Icons.Default.AccountCircle, textId = "Profile"),
         TopLevelDestination(
-            route = Route.SETTINGS, icon = Icons.Default.Settings, textId = "Settings")
-    )
+            route = Route.SETTINGS, icon = Icons.Default.Settings, textId = "Settings"))

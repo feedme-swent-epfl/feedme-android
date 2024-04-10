@@ -17,7 +17,7 @@ import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.sp
-import androidx.navigation.NavController
+import com.android.feedme.ui.navigation.NavigationActions
 import com.android.feedme.ui.theme.TemplateColor
 import com.android.feedme.ui.theme.TopBarColor
 
@@ -35,7 +35,7 @@ import com.android.feedme.ui.theme.TopBarColor
 @Composable
 fun TopBarNavigation(
     title: String,
-    navAction: NavController? = null, // TODO change navController to navAction
+    navAction: NavigationActions? = null, //
     rightIcon: ImageVector? = null,
     rightIconOnClickAction: (() -> Unit) = {}
 ) {
@@ -52,10 +52,10 @@ fun TopBarNavigation(
                   modifier = Modifier.weight(1f).testTag("LeftIconBox"),
                   contentAlignment = Alignment.CenterStart) {
                     if (navAction != null) {
-                      if (navAction.previousBackStackEntry != null) {
+                      if (navAction.canGoBack()) {
                         IconButton(
                             modifier = Modifier.testTag("LeftIconButton"),
-                            onClick = { navAction.popBackStack() },
+                            onClick = { navAction.goBack() },
                         ) {
                           Icon(
                               modifier = Modifier.testTag("LeftIcon"),

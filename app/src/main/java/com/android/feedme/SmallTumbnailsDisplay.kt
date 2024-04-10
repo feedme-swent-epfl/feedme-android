@@ -22,6 +22,16 @@ import coil.compose.AsyncImage
 import com.android.feedme.model.data.Recipe
 import com.android.feedme.ui.theme.YellowStar
 
+import androidx.compose.ui.tooling.preview.Preview
+import androidx.compose.ui.unit.dp
+import coil.compose.AsyncImage
+import com.android.feedme.model.data.Ingredient
+import com.android.feedme.model.data.IngredientMetaData
+import com.android.feedme.model.data.MeasureUnit
+import com.android.feedme.model.data.Step
+import com.android.feedme.ui.theme.YellowStar
+
+
 /**
  * Composable function to display a list of recipes as small thumbnails with additional information.
  * Each thumbnail includes an image, rating, cooking time, and title. Thumbnails are displayed two
@@ -73,7 +83,14 @@ fun SmallThumbnailsDisplay(listRecipe: List<Recipe>) {
             }
 
             Text(text = listRecipe[i].title, modifier = Modifier.testTag("Recipe Title"))
+
+              Text(listRecipe[i].time.toString(), modifier = Modifier.padding(end = 45.dp))
+
+              // There is no save icon in Material, so for now i'm using the "build" icon
+              Icon(imageVector = Icons.Outlined.Build, contentDescription = null)
+            }
+
+            Text(text = listRecipe[i].title)
           }
     }
   }
-}

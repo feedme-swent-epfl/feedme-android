@@ -4,6 +4,9 @@ import androidx.compose.ui.test.assertIsDisplayed
 import androidx.compose.ui.test.assertTextEquals
 import androidx.compose.ui.test.junit4.createComposeRule
 import androidx.compose.ui.test.onNodeWithTag
+import androidx.compose.ui.test.assertTextEquals
+import androidx.compose.ui.test.assertIsDisplayed
+import androidx.compose.ui.test.onNodeWithTag
 import androidx.test.ext.junit.runners.AndroidJUnit4
 import com.android.feedme.SmallThumbnailsDisplay
 import com.android.feedme.model.data.Ingredient
@@ -27,12 +30,11 @@ class SmallThumbnailsDisplayTest {
             recipeId = "lasagna1",
             title = "Tasty Lasagna",
             description = "a",
-            ingredients =
-                listOf(
-                    IngredientMetaData(
-                        quantity = 2.0,
-                        measure = MeasureUnit.ML,
-                        ingredient = Ingredient("Tomato", "Vegetables", "tomatoID"))),
+            ingredients = listOf(
+                IngredientMetaData(
+                    quantity = 2.0,
+                    measure = MeasureUnit.ML,
+                    ingredient = Ingredient("Tomato", "Vegetables", "tomatoID"))),
             steps = listOf(Step(1, "a", "Step1")),
             tags = listOf("Meat"),
             time = 1.15,

@@ -60,7 +60,10 @@ fun ProfileScreen(navigationActions: NavigationActions) {
  */
 @Composable
 fun ProfileBox(padding: PaddingValues) { // TODO add font
-  Column(modifier = Modifier.padding(padding), verticalArrangement = Arrangement.Top) {
+  Column(
+      modifier = Modifier.padding(padding).testTag("ProfileBox"),
+      verticalArrangement = Arrangement.Top
+  ) {
     Row(
         modifier = Modifier.fillMaxWidth().padding(vertical = 20.dp),
         horizontalArrangement = Arrangement.Center,
@@ -85,16 +88,16 @@ fun ProfileBox(padding: PaddingValues) { // TODO add font
 @Composable
 fun UserProfilePicture() {
   Image(
+      modifier = Modifier.width(100.dp).height(100.dp).clip(CircleShape).testTag("ProfileIcon"),
       painter = painterResource(id = R.drawable.user_logo),
       contentDescription = "User Profile Image",
-      modifier = Modifier.width(100.dp).height(100.dp).clip(CircleShape),
       contentScale = ContentScale.FillBounds)
 }
 
 /** A composable function that generates the user's name and username */
 @Composable
 fun UserNameBox() {
-  Column(modifier = Modifier.width(100.dp)) {
+  Column(modifier = Modifier.width(100.dp).testTag("ProfileName")) {
     Text(
         text = "User Name",
         style =
@@ -123,6 +126,7 @@ fun UserNameBox() {
 @Composable
 fun FollowersButton() {
   TextButton(
+      modifier = Modifier.testTag("FollowerButton"),
       onClick = {
         /*TODO*/
       }) {
@@ -158,6 +162,7 @@ fun FollowersButton() {
 @Composable
 fun FollowingButton() {
   TextButton(
+      modifier = Modifier.testTag("FollowingButton"),
       onClick = {
         /*TODO*/
       }) {
@@ -193,7 +198,7 @@ fun FollowingButton() {
 @Composable
 fun UserBio() {
   Text(
-      modifier = Modifier.padding(horizontal = 18.dp),
+      modifier = Modifier.padding(horizontal = 18.dp).testTag("ProfileBio"),
       text =
           "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed. And the oceans we pigs.",
       style =
@@ -214,6 +219,7 @@ fun ProfileButtons() {
       horizontalArrangement = Arrangement.SpaceEvenly,
       verticalAlignment = Alignment.CenterVertically) {
         OutlinedButton(
+            modifier = Modifier.testTag("EditButton"),
             onClick = {
               /*TODO*/
             }) {
@@ -230,6 +236,7 @@ fun ProfileButtons() {
                       ))
             }
         OutlinedButton(
+            modifier = Modifier.testTag("ShareButton"),
             onClick = {
               /*TODO*/
             }) {

@@ -7,10 +7,12 @@ import androidx.compose.ui.test.assertIsDisplayed
 import androidx.compose.ui.test.assertIsNotDisplayed
 import androidx.compose.ui.test.junit4.createComposeRule
 import androidx.compose.ui.test.onNodeWithTag
+import androidx.compose.ui.test.performClick
 import androidx.test.ext.junit.runners.AndroidJUnit4
 import com.android.feedme.ui.navigation.NavigationActions
 import com.android.feedme.ui.navigation.TopBarNavigation
 import com.kaspersky.kaspresso.testcases.api.testcase.TestCase
+import io.mockk.coVerify
 import io.mockk.every
 import io.mockk.mockk
 import org.junit.Rule
@@ -27,6 +29,8 @@ class TopBarNavigationTest : TestCase() {
     // Create NavigationActions instance with the mock NavController
     val navActions = mockk<NavigationActions>()
     every { navActions.canGoBack() } returns true
+    every { navActions.goBack() } returns
+
 
     composeTestRule.setContent {
       TopBarNavigation(
@@ -39,13 +43,15 @@ class TopBarNavigationTest : TestCase() {
     composeTestRule.onNodeWithTag("TopBarNavigation").assertIsDisplayed()
 
     composeTestRule.onNodeWithTag("LeftIconBox").assertIsDisplayed()
-    composeTestRule.onNodeWithTag("LeftIconButton").assertIsDisplayed().assertHasClickAction()
+    composeTestRule.onNodeWithTag("LeftIconButton").assertIsDisplayed().assertHasClickAction().performClick()
 
     composeTestRule.onNodeWithTag("TitleBox").assertIsDisplayed()
     composeTestRule.onNodeWithTag("TitleText").assertIsDisplayed()
 
     composeTestRule.onNodeWithTag("RightIconBox").assertIsDisplayed()
     composeTestRule.onNodeWithTag("RightIconButton").assertIsDisplayed().assertHasClickAction()
+    coVerify {navActions.goBack() }
+
   }
 
   @Test

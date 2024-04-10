@@ -50,8 +50,7 @@ fun TopBarNavigation(
               Box(
                   modifier = Modifier.weight(1f).testTag("LeftIconBox"),
                   contentAlignment = Alignment.CenterStart) {
-                    if (navAction != null) {
-                      if (navAction.canGoBack()) {
+                    if (navAction != null && navAction.canGoBack()) {
                         IconButton(
                             modifier = Modifier.testTag("LeftIconButton"),
                             onClick = { navAction.goBack() },
@@ -62,7 +61,6 @@ fun TopBarNavigation(
                               contentDescription = "BackArrow",
                               tint = TopBarColor)
                         }
-                      }
                     }
                   }
 

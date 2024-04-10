@@ -25,6 +25,13 @@ import com.android.feedme.model.data.Recipe
 import com.android.feedme.model.data.Step
 import com.android.feedme.ui.theme.YellowStar
 
+
+/**
+ * Composable function to display a list of recipes as small thumbnails with additional information.
+ * Each thumbnail includes an image, rating, cooking time, and title.
+ *
+ * @param listRecipe List of Recipe objects to be displayed.
+ */
 @Composable
 fun SmallThumbnailsDisplay(listRecipe: List<Recipe>) {
   val IMAGE_WIDTH = LocalConfiguration.current.screenWidthDp / 2

@@ -18,6 +18,16 @@ class RecipeRepository(private val db: FirebaseFirestore) {
     }
   }
 
+  /**
+   * Adds a recipe to the Firestore database.
+   *
+   * This method serializes the Recipe object into a map, replacing complex objects like Ingredient
+   * with their IDs, and then stores it in Firestore under the recipes collection.
+   *
+   * @param recipe The Recipe object to be added to Firestore.
+   * @param onSuccess A callback invoked upon successful addition of the recipe.
+   * @param onFailure A callback invoked upon failure to add the recipe, with an exception.
+   */
   fun addRecipe(recipe: Recipe, onSuccess: () -> Unit, onFailure: (Exception) -> Unit) {
     // Convert Recipe to a map, replacing Ingredient objects with their IDs
     val recipeMap = recipeToMap(recipe)
@@ -27,7 +37,17 @@ class RecipeRepository(private val db: FirebaseFirestore) {
         .addOnSuccessListener { onSuccess() }
         .addOnFailureListener { onFailure(it) }
   }
-
+  /**
+   * Retrieves a recipe from Firestore by its ID.
+   *
+   * Fetches the recipe document from Firestore, deserializes it back into a Recipe object, and then
+   * invokes the onSuccess callback with it. If the recipe is not found or an error occurs,
+   * onFailure is called with an exception.
+   *
+   * @param recipeId The ID of the recipe to retrieve.
+   * @param onSuccess A callback invoked with the retrieved Recipe object upon success.
+   * @param onFailure A callback invoked upon failure to retrieve the recipe, with an exception.
+   */
   fun getRecipe(recipeId: String, onSuccess: (Recipe?) -> Unit, onFailure: (Exception) -> Unit) {
     db.collection(collectionPath)
         .document(recipeId)

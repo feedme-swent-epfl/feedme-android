@@ -1,10 +1,7 @@
 package com.android.feedme.ui.auth
 
-import android.content.Intent
 import android.util.Log
-import androidx.activity.compose.ManagedActivityResultLauncher
 import androidx.activity.compose.rememberLauncherForActivityResult
-import androidx.activity.result.ActivityResult
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.Image
@@ -32,100 +29,58 @@ import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.res.painterResource
-import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.lifecycle.viewmodel.compose.viewModel
 import com.android.feedme.R
-import com.android.feedme.model.data.Profile
-import com.android.feedme.model.data.ProfileRepository
 import com.google.android.gms.auth.api.signin.GoogleSignIn
 import com.google.android.gms.auth.api.signin.GoogleSignInOptions
 import com.google.android.gms.common.api.ApiException
-import com.google.firebase.auth.AuthResult
-import com.google.firebase.auth.GoogleAuthProvider
-import com.google.firebase.auth.ktx.auth
-import com.google.firebase.ktx.Firebase
 import kotlinx.coroutines.launch
-import kotlinx.coroutines.tasks.await
 
-/**
- * A composable function representing the login screen.
- *
- * This function provides a UI for users to sign in with Google authentication. It includes a Google
- * sign-in button and handles authentication flow using Firebase authentication.
- */
 @Composable
-fun LoginScreen() { // TODO : Add an argument for the navigation as in bootcamp : navAction:
-  // NavigationActions
-
-  // TODO Make sure that there are no sign-in user
-  // Firebase.auth.signOut() this line doesn't work.
-
-  val token = stringResource(R.string.default_web_client_id)
+fun LoginScreen(authViewModel: AuthViewModel = viewModel()) {
   val context = LocalContext.current
+  val coroutineScope = rememberCoroutineScope()
+
+  // Configuration for Google Sign-In
   val gso =
       GoogleSignInOptions.Builder(GoogleSignInOptions.DEFAULT_SIGN_IN)
-          .requestIdToken(token)
+          .requestIdToken(context.getString(R.string.default_web_client_id))
           .requestEmail()
           .build()
   val googleSignInClient = GoogleSignIn.getClient(context, gso)
 
-  /**
-   * Remember Firebase authentication launcher.
-   *
-   * This function returns a [ManagedActivityResultLauncher] that launches the Google sign-in
-   * activity. It handles authentication success and failure cases and communicates them back to the
-   * caller.
-   *
-   * @param onAuthComplete Callback function to be invoked when authentication is successful. It
-   *   takes [AuthResult] as a parameter.
-   * @param onAuthError Callback function to be invoked when authentication fails. It takes
-   *   [ApiException] as a parameter.
-   * @return A [ManagedActivityResultLauncher] to launch the Google sign-in activity.
-   */
-  @Composable
-  fun rememberFirebaseAuthLauncher(
-      onAuthComplete: (AuthResult) -> Unit,
-      onAuthError: (ApiException) -> Unit
-  ): ManagedActivityResultLauncher<Intent, ActivityResult> {
-    val scope = rememberCoroutineScope()
-    return rememberLauncherForActivityResult(ActivityResultContracts.StartActivityForResult()) {
-        result ->
-      val task = GoogleSignIn.getSignedInAccountFromIntent(result.data)
-      try {
-        val account = task.getResult(ApiException::class.java)!!
-        val credential = GoogleAuthProvider.getCredential(account.idToken!!, null)
-        scope.launch {
-          val authResult = Firebase.auth.signInWithCredential(credential).await()
-          onAuthComplete(authResult)
-        }
-      } catch (e: ApiException) {
-        onAuthError(e)
-      }
-    }
-  }
-
-  val launcher =
-      rememberFirebaseAuthLauncher(
-          onAuthComplete = { _ ->
-            Log.d("LOGIN", "Login was successful")
-
-            val account = GoogleSignIn.getLastSignedInAccount(context)
-            account?.let {
-              val googleId = it.id
-              val name = it.displayName.orEmpty()
-              val email = it.email.orEmpty()
-              val photoUrl = it.photoUrl.toString()
-              // Use these details to link with your custom profile or create a new one
-              if (googleId != null) {
-                linkOrCreateProfile(googleId, name, email, photoUrl)
+  // Activity Result Launcher for Google Sign-In
+  val googleSignInLauncher =
+      rememberLauncherForActivityResult(
+          contract = ActivityResultContracts.StartActivityForResult(),
+          onResult = { result ->
+            val task = GoogleSignIn.getSignedInAccountFromIntent(result.data)
+            try {
+              val account = task.getResult(ApiException::class.java)
+              account?.idToken?.let { idToken ->
+                coroutineScope.launch {
+                  authViewModel.authenticateWithGoogle(
+                      idToken = idToken,
+                      onSuccess = {
+                        // Navigate to next screen or show success message
+                      },
+                      onFailure = { exception ->
+                        // Log error or show error message
+                        Log.e("LoginScreen", "Authentication failed", exception)
+                      })
+                }
               }
+            } catch (e: ApiException) {
+              // Handle API exception
+              Log.e("LoginScreen", "Sign in failed", e)
             }
-          },
-          onAuthError = { e -> Log.d("LOGIN", "Login failed", e) })
+          })
+
   Column(
       modifier = Modifier.fillMaxSize().padding(16.dp).testTag("LoginScreen"),
       verticalArrangement = Arrangement.Center,
@@ -153,7 +108,7 @@ fun LoginScreen() { // TODO : Add an argument for the navigation as in bootcamp 
 
         Spacer(modifier = Modifier.height(176.dp))
         Button(
-            onClick = { launcher.launch(googleSignInClient.signInIntent) },
+            onClick = { googleSignInLauncher.launch(googleSignInClient.signInIntent) },
             modifier =
                 Modifier.width(250.dp)
                     .height(40.dp)
@@ -187,40 +142,4 @@ fun LoginScreen() { // TODO : Add an argument for the navigation as in bootcamp 
                   }
             }
       }
-}
-
-fun linkOrCreateProfile(googleId: String, name: String?, email: String?, photoUrl: String?) {
-  ProfileRepository.instance.getProfile(
-      googleId,
-      onSuccess = { existingProfile ->
-        if (existingProfile != null) {
-          // Profile exists, proceed with linking or updating as necessary
-        } else {
-          // No existing profile, create a new one
-          val newProfile =
-              Profile(
-                  id = googleId, // Consider using googleId as the profile ID or a separate field
-                  name = name ?: "",
-                  username = name ?: "",
-                  email = email ?: "",
-                  description = "",
-                  imageUrl = photoUrl ?: "",
-                  followers = listOf(),
-                  following = listOf(),
-                  filter = listOf(),
-                  recipeList = listOf(),
-                  commentList = listOf())
-          ProfileRepository.instance.addProfile(
-              newProfile,
-              onSuccess = {
-                // Handle successful profile creation
-              },
-              onFailure = {
-                // Handle failure
-              })
-        }
-      },
-      onFailure = {
-        // Handle failure to check existing profile
-      })
 }

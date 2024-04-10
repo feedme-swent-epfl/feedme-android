@@ -2,9 +2,12 @@ package com.android.feedme.model
 
 import android.os.Looper
 import androidx.test.core.app.ApplicationProvider
+import com.android.feedme.model.data.Ingredient
+import com.android.feedme.model.data.IngredientMetaData
 import com.android.feedme.model.data.MeasureUnit
 import com.android.feedme.model.data.Recipe
 import com.android.feedme.model.data.RecipeRepository
+import com.android.feedme.model.data.Step
 import com.google.android.gms.tasks.Tasks
 import com.google.firebase.FirebaseApp
 import com.google.firebase.firestore.*
@@ -53,6 +56,13 @@ class RecipeRepositoryTest {
     `when`(mockIngredientsCollectionReference.document(anyString()))
         .thenReturn(mockDocumentReference)
     `when`(mockDocumentReference.get()).thenReturn(Tasks.forResult(mockIngredientDocumentSnapshot))
+
+    `when`(mockFirestore.collection("recipes")).thenReturn(mock(CollectionReference::class.java))
+    `when`(mockFirestore.collection("recipes").document(anyString()))
+        .thenReturn(mockDocumentReference)
+
+    // Here's the critical part: ensure a Task<Void> is returned
+    `when`(mockDocumentReference.set(any())).thenReturn(Tasks.forResult(null))
   }
 
   @Test
@@ -196,5 +206,46 @@ class RecipeRepositoryTest {
     RecipeRepository.initialize(mockFirestore)
 
     assertNotNull("Singleton instance should be initialized", RecipeRepository.instance)
+  }
+
+  @Test
+  fun addRecipe_CorrectlySerializesRecipe() {
+    val recipe =
+        Recipe(
+            recipeId = "1",
+            title = "Chocolate Cake",
+            description = "Delicious chocolate cake recipe.",
+            ingredients =
+                listOf(
+                    IngredientMetaData(
+                        1.0, MeasureUnit.CUP, Ingredient("Flour", "Baking", "flourId")),
+                    IngredientMetaData(
+                        2.0,
+                        MeasureUnit.TABLESPOON,
+                        Ingredient("Cocoa Powder", "Baking", "cocoaId"))),
+            steps =
+                listOf(
+                    Step(1, "Mix ingredients.", "Mix all dry ingredients together."),
+                    Step(2, "Bake", "Bake in the oven for 45 minutes.")),
+            tags = listOf("dessert", "cake", "chocolate"),
+            time = 60.0,
+            rating = 4.5,
+            userid = "user123",
+            difficulty = "Medium",
+            imageUrl = "http://example.com/cake.jpg")
+
+    var successCalled = false
+
+    `when`(mockDocumentReference.get()).thenReturn(Tasks.forResult(mockDocumentSnapshot))
+    `when`(mockDocumentSnapshot.exists()).thenReturn(true)
+
+    recipeRepository.addRecipe(recipe, onSuccess = { successCalled = true }, onFailure = {})
+
+    // Execute all tasks scheduled on the main thread to simulate the Firestore callback
+    shadowOf(Looper.getMainLooper()).idle()
+
+    verify(mockDocumentReference).set(any())
+
+    assertTrue("Success callback was not called as expected", successCalled)
   }
 }

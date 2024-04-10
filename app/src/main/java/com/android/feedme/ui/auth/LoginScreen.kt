@@ -57,66 +57,66 @@ import kotlinx.coroutines.tasks.await
  */
 @Composable
 fun LoginScreen() { // TODO : Add an argument for the navigation as in bootcamp : navAction:
-    // NavigationActions
+  // NavigationActions
 
-    // TODO Make sure that there are no sign-in user
-    // Firebase.auth.signOut() this line doesn't work.
+  // TODO Make sure that there are no sign-in user
+  // Firebase.auth.signOut() this line doesn't work.
 
-    val token = stringResource(R.string.default_web_client_id)
-    val context = LocalContext.current
-    val gso =
-        GoogleSignInOptions.Builder(GoogleSignInOptions.DEFAULT_SIGN_IN)
-            .requestIdToken(token)
-            .requestEmail()
-            .build()
-    val googleSignInClient = GoogleSignIn.getClient(context, gso)
+  val token = stringResource(R.string.default_web_client_id)
+  val context = LocalContext.current
+  val gso =
+      GoogleSignInOptions.Builder(GoogleSignInOptions.DEFAULT_SIGN_IN)
+          .requestIdToken(token)
+          .requestEmail()
+          .build()
+  val googleSignInClient = GoogleSignIn.getClient(context, gso)
 
-    /**
-     * Remember Firebase authentication launcher.
-     *
-     * This function returns a [ManagedActivityResultLauncher] that launches the Google sign-in
-     * activity. It handles authentication success and failure cases and communicates them back to the
-     * caller.
-     *
-     * @param onAuthComplete Callback function to be invoked when authentication is successful. It
-     *   takes [AuthResult] as a parameter.
-     * @param onAuthError Callback function to be invoked when authentication fails. It takes
-     *   [ApiException] as a parameter.
-     * @return A [ManagedActivityResultLauncher] to launch the Google sign-in activity.
-     */
-    @Composable
-    fun rememberFirebaseAuthLauncher(
-        onAuthComplete: (AuthResult) -> Unit,
-        onAuthError: (ApiException) -> Unit
-    ): ManagedActivityResultLauncher<Intent, ActivityResult> {
-        val scope = rememberCoroutineScope()
-        return rememberLauncherForActivityResult(ActivityResultContracts.StartActivityForResult()) {
-                result ->
-            val task = GoogleSignIn.getSignedInAccountFromIntent(result.data)
-            try {
-                val account = task.getResult(ApiException::class.java)!!
-                val credential = GoogleAuthProvider.getCredential(account.idToken!!, null)
-                scope.launch {
-                    val authResult = Firebase.auth.signInWithCredential(credential).await()
-                    onAuthComplete(authResult)
-                }
-            } catch (e: ApiException) {
-                onAuthError(e)
-            }
+  /**
+   * Remember Firebase authentication launcher.
+   *
+   * This function returns a [ManagedActivityResultLauncher] that launches the Google sign-in
+   * activity. It handles authentication success and failure cases and communicates them back to the
+   * caller.
+   *
+   * @param onAuthComplete Callback function to be invoked when authentication is successful. It
+   *   takes [AuthResult] as a parameter.
+   * @param onAuthError Callback function to be invoked when authentication fails. It takes
+   *   [ApiException] as a parameter.
+   * @return A [ManagedActivityResultLauncher] to launch the Google sign-in activity.
+   */
+  @Composable
+  fun rememberFirebaseAuthLauncher(
+      onAuthComplete: (AuthResult) -> Unit,
+      onAuthError: (ApiException) -> Unit
+  ): ManagedActivityResultLauncher<Intent, ActivityResult> {
+    val scope = rememberCoroutineScope()
+    return rememberLauncherForActivityResult(ActivityResultContracts.StartActivityForResult()) {
+        result ->
+      val task = GoogleSignIn.getSignedInAccountFromIntent(result.data)
+      try {
+        val account = task.getResult(ApiException::class.java)!!
+        val credential = GoogleAuthProvider.getCredential(account.idToken!!, null)
+        scope.launch {
+          val authResult = Firebase.auth.signInWithCredential(credential).await()
+          onAuthComplete(authResult)
         }
+      } catch (e: ApiException) {
+        onAuthError(e)
+      }
     }
+  }
 
-    val launcher =
-        rememberFirebaseAuthLauncher(
-            onAuthComplete = { _ ->
-                Log.d("LOGIN", "Login was successful")
-                // TODO ADD NAVIGATION HERE
-            },
-            onAuthError = { e -> Log.d("LOGIN", "Login failed", e) })
-    Column(
-        modifier = Modifier.fillMaxSize().padding(16.dp).testTag("LoginScreen"),
-        verticalArrangement = Arrangement.Center,
-        horizontalAlignment = Alignment.CenterHorizontally) {
+  val launcher =
+      rememberFirebaseAuthLauncher(
+          onAuthComplete = { _ ->
+            Log.d("LOGIN", "Login was successful")
+            // TODO ADD NAVIGATION HERE
+          },
+          onAuthError = { e -> Log.d("LOGIN", "Login failed", e) })
+  Column(
+      modifier = Modifier.fillMaxSize().padding(16.dp).testTag("LoginScreen"),
+      verticalArrangement = Arrangement.Center,
+      horizontalAlignment = Alignment.CenterHorizontally) {
         Image(
             painter = painterResource(id = R.drawable.sign_in_logo),
             contentDescription = "Sign-in Logo",
@@ -130,48 +130,48 @@ fun LoginScreen() { // TODO : Add an argument for the navigation as in bootcamp 
             modifier = Modifier.testTag("LoginTitle"),
             // M3/display/large
             style =
-            TextStyle(
-                fontSize = 57.sp,
-                lineHeight = 64.sp,
-                fontWeight = FontWeight(400),
-                color = Color(0xFF191C1E),
-                textAlign = TextAlign.Center,
-            ))
+                TextStyle(
+                    fontSize = 57.sp,
+                    lineHeight = 64.sp,
+                    fontWeight = FontWeight(400),
+                    color = Color(0xFF191C1E),
+                    textAlign = TextAlign.Center,
+                ))
 
         Spacer(modifier = Modifier.height(176.dp))
         Button(
             onClick = { launcher.launch(googleSignInClient.signInIntent) },
             modifier =
-            Modifier.width(250.dp)
-                .height(40.dp)
-                .background(color = Color(0xFFFFFFFF), shape = RoundedCornerShape(size = 20.dp))
-                .testTag("LoginButton"),
+                Modifier.width(250.dp)
+                    .height(40.dp)
+                    .background(color = Color(0xFFFFFFFF), shape = RoundedCornerShape(size = 20.dp))
+                    .testTag("LoginButton"),
             colors = ButtonDefaults.buttonColors(Color.White),
             contentPadding = PaddingValues(2.dp),
             shape = RoundedCornerShape(20.dp),
             border = BorderStroke(2.dp, Color(0xFFDADCE0))) {
-            Row(
-                verticalAlignment = Alignment.CenterVertically,
-                horizontalArrangement = Arrangement.spacedBy(8.dp)) {
-                // Replace R.drawable.ic_google_logo with the actual resource ID for
-                // the Google logo
-                Image(
-                    painter = painterResource(id = R.drawable.google_logo),
-                    contentDescription = null, // Provide a meaningful content description
-                    modifier = Modifier.size(24.dp))
-                Spacer(modifier = Modifier.width(4.dp))
+              Row(
+                  verticalAlignment = Alignment.CenterVertically,
+                  horizontalArrangement = Arrangement.spacedBy(8.dp)) {
+                    // Replace R.drawable.ic_google_logo with the actual resource ID for
+                    // the Google logo
+                    Image(
+                        painter = painterResource(id = R.drawable.google_logo),
+                        contentDescription = null, // Provide a meaningful content description
+                        modifier = Modifier.size(24.dp))
+                    Spacer(modifier = Modifier.width(4.dp))
 
-                Text(
-                    modifier = Modifier.width(125.dp).height(17.dp),
-                    text = "Sign In with Google",
-                    fontSize = 14.sp,
-                    lineHeight = 17.sp,
-                    fontWeight = FontWeight(500),
-                    color = Color(0xFF3C4043),
-                    textAlign = TextAlign.Center,
-                    letterSpacing = 0.25.sp,
-                )
+                    Text(
+                        modifier = Modifier.width(125.dp).height(17.dp),
+                        text = "Sign In with Google",
+                        fontSize = 14.sp,
+                        lineHeight = 17.sp,
+                        fontWeight = FontWeight(500),
+                        color = Color(0xFF3C4043),
+                        textAlign = TextAlign.Center,
+                        letterSpacing = 0.25.sp,
+                    )
+                  }
             }
-        }
-    }
+      }
 }

@@ -1,20 +1,12 @@
 plugins {
+    // Jacoco is a built-in plugin, no need to go through the version catalog
+    jacoco
     alias(libs.plugins.androidApplication)
     alias(libs.plugins.jetbrainsKotlinAndroid)
     alias(libs.plugins.ktfmt)
     alias(libs.plugins.sonar)
-
-    id("jacoco")
-
-    id("com.google.gms.google-services")
+    alias(libs.plugins.gms)
 }
-
-
-
-jacoco {
-    toolVersion = "0.8.11"
-}
-
 
 android {
     namespace = "com.android.feedme"
@@ -131,16 +123,21 @@ fun DependencyHandlerScope.globalTestImplementation(dep: Any) {
     testImplementation(dep)
 }
 
+
 dependencies {
     implementation(libs.androidx.core.ktx)
     implementation(libs.androidx.appcompat)
     implementation(libs.material)
     implementation(libs.androidx.lifecycle.runtime.ktx)
     implementation(platform(libs.compose.bom))
+
     implementation(libs.firebase.auth.ktx)
+
     testImplementation(libs.junit)
     globalTestImplementation(libs.androidx.junit)
     globalTestImplementation(libs.androidx.espresso.core)
+    // Android Navigation
+    implementation(libs.androidx.navigation.runtime.ktx)
 
     // ------------- Jetpack Compose ------------------
     val composeBom = platform(libs.compose.bom)
@@ -151,6 +148,7 @@ dependencies {
     implementation(libs.compose.ui.graphics)
     // Material Design 3
     implementation(libs.compose.material3)
+    implementation(libs.material.icons.extended)
     // Integration with activities
     implementation(libs.compose.activity)
     // Integration with ViewModels
@@ -161,6 +159,16 @@ dependencies {
     // UI Tests
     globalTestImplementation(libs.compose.test.junit)
     debugImplementation(libs.compose.test.manifest)
+
+
+    // ---------------- CameraX --------------------
+    implementation(libs.camera.core)
+    implementation(libs.camera.camera2)
+    implementation(libs.camera.lifecycle)
+    implementation(libs.camera.video)
+    implementation(libs.camera.view)
+    implementation(libs.camera.extensions)
+
 
     // --------- Kaspresso test framework ----------
     globalTestImplementation(libs.kaspresso)
@@ -177,6 +185,7 @@ dependencies {
 
     // ----------       For testing     ------------
     testImplementation(libs.robolectric)
+
     testImplementation(libs.androidx.junit)
     testImplementation(libs.androidx.espresso.core)
     testImplementation(platform(libs.androidx.compose.bom.v20230800))
@@ -195,7 +204,9 @@ dependencies {
     androidTestImplementation(libs.mockk)
     androidTestImplementation(libs.mockk.android)
     androidTestImplementation(libs.mockk.agent)
+
 }
+
 
 tasks.withType<Test> {
     // Configure Jacoco for each tests

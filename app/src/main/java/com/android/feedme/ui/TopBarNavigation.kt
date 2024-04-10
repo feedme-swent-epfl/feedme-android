@@ -21,10 +21,21 @@ import androidx.navigation.NavController
 import com.android.feedme.ui.theme.TemplateColor
 import com.android.feedme.ui.theme.TopBarColor
 
+/**
+ * TopBarNavigation is a composable function used to display a top navigation bar. The left icon
+ * (which is a back arrow) will appear only if the navAction can pop back; otherwise, it won't be
+ * displayed, even if it isn't null.
+ *
+ * @param title The title text to be displayed in the center of the top bar.
+ * @param navAction The navigation action instance for handling back navigation. Default is null.
+ * @param rightIcon The icon to be displayed on the right side of the top bar. Default is null.
+ * @param rightIconOnClickAction The action to be performed when the right icon is clicked. Default
+ *   is Unit. No action is taken if rightIcon is null.
+ */
 @Composable
 fun TopBarNavigation(
     title: String,
-    navController: NavController? = null,
+    navAction: NavController? = null, //TODO change navController to navAction
     rightIcon: ImageVector? = null,
     rightIconOnClickAction: (() -> Unit) = {}
 ) {
@@ -40,11 +51,11 @@ fun TopBarNavigation(
               Box(
                   modifier = Modifier.weight(1f).testTag("LeftIconBox"),
                   contentAlignment = Alignment.CenterStart) {
-                    if (navController != null) {
-                      if (navController.previousBackStackEntry != null) {
+                    if (navAction != null) {
+                      if (navAction.previousBackStackEntry != null) {
                         IconButton(
                             modifier = Modifier.testTag("LeftIconButton"),
-                            onClick = { navController.popBackStack() },
+                            onClick = { navAction.popBackStack() },
                         ) {
                           Icon(
                               modifier = Modifier.testTag("LeftIcon"),
@@ -87,4 +98,3 @@ fun TopBarNavigation(
             }
       }
 }
-

@@ -51,16 +51,16 @@ fun TopBarNavigation(
                   modifier = Modifier.weight(1f).testTag("LeftIconBox"),
                   contentAlignment = Alignment.CenterStart) {
                     if (navAction != null && navAction.canGoBack()) {
-                        IconButton(
-                            modifier = Modifier.testTag("LeftIconButton"),
-                            onClick = { navAction.goBack() },
-                        ) {
-                          Icon(
-                              modifier = Modifier.testTag("LeftIcon"),
-                              imageVector = Icons.AutoMirrored.Filled.ArrowBack,
-                              contentDescription = "BackArrow",
-                              tint = TopBarColor)
-                        }
+                      IconButton(
+                          modifier = Modifier.testTag("LeftIconButton"),
+                          onClick = { navAction.goBack() },
+                      ) {
+                        Icon(
+                            modifier = Modifier.testTag("LeftIcon"),
+                            imageVector = Icons.AutoMirrored.Filled.ArrowBack,
+                            contentDescription = "BackArrow",
+                            tint = TopBarColor)
+                      }
                     }
                   }
 

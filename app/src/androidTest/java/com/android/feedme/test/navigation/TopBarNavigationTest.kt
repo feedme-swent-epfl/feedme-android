@@ -30,28 +30,29 @@ class TopBarNavigationTest : TestCase() {
     val navActions = mockk<NavigationActions>()
     every { navActions.canGoBack() } returns true
     every { navActions.goBack() } returns
-
-
-    composeTestRule.setContent {
-      TopBarNavigation(
-          title = "Test",
-          navAction = navActions,
-          rightIcon = Icons.Default.SaveAlt,
-          rightIconOnClickAction = {})
-    }
+        composeTestRule.setContent {
+          TopBarNavigation(
+              title = "Test",
+              navAction = navActions,
+              rightIcon = Icons.Default.SaveAlt,
+              rightIconOnClickAction = {})
+        }
 
     composeTestRule.onNodeWithTag("TopBarNavigation").assertIsDisplayed()
 
     composeTestRule.onNodeWithTag("LeftIconBox").assertIsDisplayed()
-    composeTestRule.onNodeWithTag("LeftIconButton").assertIsDisplayed().assertHasClickAction().performClick()
+    composeTestRule
+        .onNodeWithTag("LeftIconButton")
+        .assertIsDisplayed()
+        .assertHasClickAction()
+        .performClick()
 
     composeTestRule.onNodeWithTag("TitleBox").assertIsDisplayed()
     composeTestRule.onNodeWithTag("TitleText").assertIsDisplayed()
 
     composeTestRule.onNodeWithTag("RightIconBox").assertIsDisplayed()
     composeTestRule.onNodeWithTag("RightIconButton").assertIsDisplayed().assertHasClickAction()
-    coVerify {navActions.goBack() }
-
+    coVerify { navActions.goBack() }
   }
 
   @Test

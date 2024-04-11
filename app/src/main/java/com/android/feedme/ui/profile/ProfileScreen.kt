@@ -20,14 +20,12 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
-import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.android.feedme.R
@@ -46,9 +44,7 @@ import com.android.feedme.ui.theme.DarkGrey
 @Composable
 fun ProfileScreen(navigationActions: NavigationActions) {
   Scaffold(
-      modifier = Modifier
-          .fillMaxSize()
-          .testTag("ProfileScreen"),
+      modifier = Modifier.fillMaxSize().testTag("ProfileScreen"),
       // topBar = { TODO() },
       bottomBar = {
         BottomNavigationMenu(Route.PROFILE, navigationActions::navigateTo, TOP_LEVEL_DESTINATIONS)
@@ -65,14 +61,10 @@ fun ProfileScreen(navigationActions: NavigationActions) {
 @Composable
 fun ProfileBox(padding: PaddingValues) { // TODO add font
   Column(
-      modifier = Modifier
-          .padding(padding)
-          .testTag("ProfileBox"),
+      modifier = Modifier.padding(padding).testTag("ProfileBox"),
       verticalArrangement = Arrangement.Top) {
         Row(
-            modifier = Modifier
-                .fillMaxWidth()
-                .padding(vertical = 20.dp),
+            modifier = Modifier.fillMaxWidth().padding(vertical = 20.dp),
             horizontalArrangement = Arrangement.Center,
             verticalAlignment = Alignment.CenterVertically) {
               UserProfilePicture()
@@ -95,11 +87,7 @@ fun ProfileBox(padding: PaddingValues) { // TODO add font
 @Composable
 fun UserProfilePicture() {
   Image(
-      modifier = Modifier
-          .width(100.dp)
-          .height(100.dp)
-          .clip(CircleShape)
-          .testTag("ProfileIcon"),
+      modifier = Modifier.width(100.dp).height(100.dp).clip(CircleShape).testTag("ProfileIcon"),
       painter = painterResource(id = R.drawable.user_logo),
       contentDescription = "User Profile Image",
       contentScale = ContentScale.FillBounds)
@@ -108,16 +96,10 @@ fun UserProfilePicture() {
 /** A composable function that generates the user's name and username */
 @Composable
 fun UserNameBox() {
-  Column(modifier = Modifier
-      .width(100.dp)
-      .testTag("ProfileName")) {
-    Text(
-        text = "User Name",
-        style = textStyle(17, 15, 700, TextAlign.Center))
+  Column(modifier = Modifier.width(100.dp).testTag("ProfileName")) {
+    Text(text = "User Name", style = textStyle(17, 15, 700, TextAlign.Center))
     Spacer(modifier = Modifier.height(10.dp))
-    Text(
-        text = "@username",
-        style = textStyle(14, 15, 700, TextAlign.Center))
+    Text(text = "@username", style = textStyle(14, 15, 700, TextAlign.Center))
   }
 }
 
@@ -132,14 +114,10 @@ fun FollowersButton() {
         Column(
             horizontalAlignment = Alignment.CenterHorizontally,
             verticalArrangement = Arrangement.Center) {
-            Text(
-                text = "Followers",
-                style = textStyle(10, 20, 600, TextAlign.Center))
-            Spacer(modifier = Modifier.height(5.dp))
-            Text(
-                text = "0",
-                style = textStyle(10, 30, 600, TextAlign.Center))
-        }
+              Text(text = "Followers", style = textStyle(10, 20, 600, TextAlign.Center))
+              Spacer(modifier = Modifier.height(5.dp))
+              Text(text = "0", style = textStyle(10, 30, 600, TextAlign.Center))
+            }
       }
 }
 
@@ -154,13 +132,9 @@ fun FollowingButton() {
         Column(
             horizontalAlignment = Alignment.CenterHorizontally,
             verticalArrangement = Arrangement.Center) {
-              Text(
-                  text = "Following",
-                  style = textStyle(10, 20, 600, TextAlign.Center))
+              Text(text = "Following", style = textStyle(10, 20, 600, TextAlign.Center))
               Spacer(modifier = Modifier.height(5.dp))
-              Text(
-                  text = "0",
-                  style = textStyle(10, 30, 600, TextAlign.Center))
+              Text(text = "0", style = textStyle(10, 30, 600, TextAlign.Center))
             }
       }
 }
@@ -169,9 +143,7 @@ fun FollowingButton() {
 @Composable
 fun UserBio() {
   Text(
-      modifier = Modifier
-          .padding(horizontal = 18.dp)
-          .testTag("ProfileBio"),
+      modifier = Modifier.padding(horizontal = 18.dp).testTag("ProfileBio"),
       text =
           "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed. And the oceans we pigs.",
       style = textStyle(13, 15, 400, TextAlign.Justify))
@@ -181,9 +153,7 @@ fun UserBio() {
 @Composable
 fun ProfileButtons() {
   Row(
-      modifier = Modifier
-          .fillMaxWidth()
-          .padding(vertical = 20.dp),
+      modifier = Modifier.fillMaxWidth().padding(vertical = 20.dp),
       horizontalArrangement = Arrangement.SpaceEvenly,
       verticalAlignment = Alignment.CenterVertically) {
         OutlinedButton(
@@ -192,11 +162,9 @@ fun ProfileButtons() {
               /*TODO*/
             }) {
               Text(
-                  modifier = Modifier
-                      .width(110.dp)
-                      .height(13.dp),
+                  modifier = Modifier.width(110.dp).height(13.dp),
                   text = "Edit Profile",
-                  style = textStyle(13, 0,400, TextAlign.Center))
+                  style = textStyle(13, 0, 400, TextAlign.Center))
             }
         OutlinedButton(
             modifier = Modifier.testTag("ShareButton"),
@@ -213,5 +181,10 @@ fun ProfileButtons() {
 
 @Composable
 fun textStyle(fontSize: Int, height: Int, weight: Int, align: TextAlign): TextStyle {
-    return TextStyle(fontSize = fontSize.sp, lineHeight = height.sp, fontWeight = FontWeight(weight), color = DarkGrey, textAlign = align)
+  return TextStyle(
+      fontSize = fontSize.sp,
+      lineHeight = height.sp,
+      fontWeight = FontWeight(weight),
+      color = DarkGrey,
+      textAlign = align)
 }

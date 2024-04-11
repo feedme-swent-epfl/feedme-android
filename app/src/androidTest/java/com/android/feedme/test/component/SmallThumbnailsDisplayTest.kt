@@ -11,13 +11,12 @@ import com.android.feedme.model.data.IngredientMetaData
 import com.android.feedme.model.data.MeasureUnit
 import com.android.feedme.model.data.Recipe
 import com.android.feedme.model.data.Step
-import junit.framework.TestCase
 import org.junit.Rule
 import org.junit.Test
 import org.junit.runner.RunWith
 
 @RunWith(AndroidJUnit4::class)
-class SmallThumbnailsDisplayTest : TestCase() {
+class SmallThumbnailsDisplayTest {
 
   @get:Rule val composeTestRule = createComposeRule()
 
@@ -44,7 +43,7 @@ class SmallThumbnailsDisplayTest : TestCase() {
 
     composeTestRule.setContent { SmallThumbnailsDisplay(listRecipe = listOf(recipe1)) }
 
-    composeTestRule.waitForIdle()
+    // composeTestRule.waitForIdle()
 
     // Check whether the Image or the warning message is displayed
     /*try {

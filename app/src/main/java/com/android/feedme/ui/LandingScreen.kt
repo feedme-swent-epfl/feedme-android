@@ -202,10 +202,8 @@ fun RecipeList(padding: PaddingValues, recipes: List<Recipe>) {
                         modifier =
                             Modifier.weight(1f)
                                 .padding(start = 8.dp)
-                                .width(
-                                    4
-                                        .dp) // TODO() : fix button size and align to the left of
-                                             // the card
+                                .width(4.dp) // TODO() : fix button size and align to the left of
+                                // the card
                                 .testTag("Rating")) {
                           Row(verticalAlignment = Alignment.CenterVertically) {
                             Text(

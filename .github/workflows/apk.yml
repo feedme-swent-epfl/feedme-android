@@ -4,7 +4,6 @@ on:
   push:
     branches:
       - main
-      - 17-fix-apk-building
 
 permissions:
     contents: write

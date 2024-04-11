@@ -27,6 +27,7 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
+import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.android.feedme.R
@@ -34,6 +35,7 @@ import com.android.feedme.ui.navigation.BottomNavigationMenu
 import com.android.feedme.ui.navigation.NavigationActions
 import com.android.feedme.ui.navigation.Route
 import com.android.feedme.ui.navigation.TOP_LEVEL_DESTINATIONS
+import com.android.feedme.ui.theme.DarkGrey
 
 /**
  * A composable function that generates the profile screen
@@ -44,7 +46,9 @@ import com.android.feedme.ui.navigation.TOP_LEVEL_DESTINATIONS
 @Composable
 fun ProfileScreen(navigationActions: NavigationActions) {
   Scaffold(
-      modifier = Modifier.fillMaxSize().testTag("ProfileScreen"),
+      modifier = Modifier
+          .fillMaxSize()
+          .testTag("ProfileScreen"),
       // topBar = { TODO() },
       bottomBar = {
         BottomNavigationMenu(Route.PROFILE, navigationActions::navigateTo, TOP_LEVEL_DESTINATIONS)
@@ -61,10 +65,14 @@ fun ProfileScreen(navigationActions: NavigationActions) {
 @Composable
 fun ProfileBox(padding: PaddingValues) { // TODO add font
   Column(
-      modifier = Modifier.padding(padding).testTag("ProfileBox"),
+      modifier = Modifier
+          .padding(padding)
+          .testTag("ProfileBox"),
       verticalArrangement = Arrangement.Top) {
         Row(
-            modifier = Modifier.fillMaxWidth().padding(vertical = 20.dp),
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(vertical = 20.dp),
             horizontalArrangement = Arrangement.Center,
             verticalAlignment = Alignment.CenterVertically) {
               UserProfilePicture()
@@ -87,7 +95,11 @@ fun ProfileBox(padding: PaddingValues) { // TODO add font
 @Composable
 fun UserProfilePicture() {
   Image(
-      modifier = Modifier.width(100.dp).height(100.dp).clip(CircleShape).testTag("ProfileIcon"),
+      modifier = Modifier
+          .width(100.dp)
+          .height(100.dp)
+          .clip(CircleShape)
+          .testTag("ProfileIcon"),
       painter = painterResource(id = R.drawable.user_logo),
       contentDescription = "User Profile Image",
       contentScale = ContentScale.FillBounds)
@@ -96,28 +108,16 @@ fun UserProfilePicture() {
 /** A composable function that generates the user's name and username */
 @Composable
 fun UserNameBox() {
-  Column(modifier = Modifier.width(100.dp).testTag("ProfileName")) {
+  Column(modifier = Modifier
+      .width(100.dp)
+      .testTag("ProfileName")) {
     Text(
         text = "User Name",
-        style =
-            TextStyle(
-                fontSize = 17.sp,
-                lineHeight = 15.sp,
-                fontWeight = FontWeight(700),
-                color = Color(0xFF191C1E),
-                textAlign = TextAlign.Center,
-            ))
+        style = textStyle(17, 15, 700, TextAlign.Center))
     Spacer(modifier = Modifier.height(10.dp))
     Text(
         text = "@username",
-        style =
-            TextStyle(
-                fontSize = 14.sp,
-                lineHeight = 15.sp,
-                fontWeight = FontWeight(700),
-                color = Color(0xFF191C1E),
-                textAlign = TextAlign.Center,
-            ))
+        style = textStyle(14, 15, 700, TextAlign.Center))
   }
 }
 
@@ -132,28 +132,14 @@ fun FollowersButton() {
         Column(
             horizontalAlignment = Alignment.CenterHorizontally,
             verticalArrangement = Arrangement.Center) {
-              Text(
-                  text = "Followers",
-                  style =
-                      TextStyle(
-                          fontSize = 10.sp,
-                          lineHeight = 20.sp,
-                          fontWeight = FontWeight(600),
-                          color = Color(0xFF191C1E),
-                          textAlign = TextAlign.Center,
-                      ))
-              Spacer(modifier = Modifier.height(5.dp))
-              Text(
-                  text = "0",
-                  style =
-                      TextStyle(
-                          fontSize = 10.sp,
-                          lineHeight = 30.sp,
-                          fontWeight = FontWeight(600),
-                          color = Color(0xFF191C1E),
-                          textAlign = TextAlign.Center,
-                      ))
-            }
+            Text(
+                text = "Followers",
+                style = textStyle(10, 20, 600, TextAlign.Center))
+            Spacer(modifier = Modifier.height(5.dp))
+            Text(
+                text = "0",
+                style = textStyle(10, 30, 600, TextAlign.Center))
+        }
       }
 }
 
@@ -170,25 +156,11 @@ fun FollowingButton() {
             verticalArrangement = Arrangement.Center) {
               Text(
                   text = "Following",
-                  style =
-                      TextStyle(
-                          fontSize = 10.sp,
-                          lineHeight = 20.sp,
-                          fontWeight = FontWeight(600),
-                          color = Color(0xFF191C1E),
-                          textAlign = TextAlign.Center,
-                      ))
+                  style = textStyle(10, 20, 600, TextAlign.Center))
               Spacer(modifier = Modifier.height(5.dp))
               Text(
                   text = "0",
-                  style =
-                      TextStyle(
-                          fontSize = 10.sp,
-                          lineHeight = 30.sp,
-                          fontWeight = FontWeight(600),
-                          color = Color(0xFF191C1E),
-                          textAlign = TextAlign.Center,
-                      ))
+                  style = textStyle(10, 30, 600, TextAlign.Center))
             }
       }
 }
@@ -197,24 +169,21 @@ fun FollowingButton() {
 @Composable
 fun UserBio() {
   Text(
-      modifier = Modifier.padding(horizontal = 18.dp).testTag("ProfileBio"),
+      modifier = Modifier
+          .padding(horizontal = 18.dp)
+          .testTag("ProfileBio"),
       text =
           "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed. And the oceans we pigs.",
-      style =
-          TextStyle(
-              fontSize = 13.sp,
-              lineHeight = 15.sp,
-              fontWeight = FontWeight(400),
-              color = Color(0xFF191C1E),
-              textAlign = TextAlign.Justify,
-          ))
+      style = textStyle(13, 15, 400, TextAlign.Justify))
 }
 
 /** A composable function that generates the Edit profile and Share profile buttons */
 @Composable
 fun ProfileButtons() {
   Row(
-      modifier = Modifier.fillMaxWidth().padding(vertical = 20.dp),
+      modifier = Modifier
+          .fillMaxWidth()
+          .padding(vertical = 20.dp),
       horizontalArrangement = Arrangement.SpaceEvenly,
       verticalAlignment = Alignment.CenterVertically) {
         OutlinedButton(
@@ -223,16 +192,11 @@ fun ProfileButtons() {
               /*TODO*/
             }) {
               Text(
-                  modifier = Modifier.width(110.dp).height(13.dp),
+                  modifier = Modifier
+                      .width(110.dp)
+                      .height(13.dp),
                   text = "Edit Profile",
-                  style =
-                      TextStyle(
-                          fontSize = 13.sp,
-                          lineHeight = 0.sp,
-                          fontWeight = FontWeight(400),
-                          color = Color(0xFF191C1E),
-                          textAlign = TextAlign.Center,
-                      ))
+                  style = textStyle(13, 0,400, TextAlign.Center))
             }
         OutlinedButton(
             modifier = Modifier.testTag("ShareButton"),
@@ -242,14 +206,12 @@ fun ProfileButtons() {
               Text(
                   modifier = Modifier.width(110.dp),
                   text = "Share Profile",
-                  style =
-                      TextStyle(
-                          fontSize = 13.sp,
-                          lineHeight = 15.sp,
-                          fontWeight = FontWeight(400),
-                          color = Color(0xFF191C1E),
-                          textAlign = TextAlign.Center,
-                      ))
+                  style = textStyle(13, 0, 400, TextAlign.Center))
             }
       }
+}
+
+@Composable
+fun textStyle(fontSize: Int, height: Int, weight: Int, align: TextAlign): TextStyle {
+    return TextStyle(fontSize = fontSize.sp, lineHeight = height.sp, fontWeight = FontWeight(weight), color = DarkGrey, textAlign = align)
 }

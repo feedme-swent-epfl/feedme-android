@@ -55,10 +55,10 @@ class SmallThumbnailsDisplayTest {
     }*/
 
     // Thread.sleep(30000)
-    composeTestRule.onNodeWithContentDescription("Star Icon").assertIsDisplayed()
+    // composeTestRule.onNodeWithContentDescription("Star Icon").assertIsDisplayed()
     composeTestRule.onNodeWithText(recipe1.rating.toString()).assertIsDisplayed()
 
-    // composeTestRule.onNodeWithContentDescription("Info Icon").assertIsDisplayed()
+    composeTestRule.onNodeWithContentDescription("Info Icon").assertIsDisplayed()
     composeTestRule.onNodeWithText(recipe1.time.toString()).assertIsDisplayed()
 
     // composeTestRule.onNodeWithTag("Save Icon").assertIsDisplayed().assertHasClickAction()

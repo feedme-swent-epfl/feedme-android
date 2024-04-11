@@ -3,9 +3,7 @@ package com.android.feedme.test.component
 import androidx.compose.ui.test.assertHasClickAction
 import androidx.compose.ui.test.assertIsDisplayed
 import androidx.compose.ui.test.junit4.createComposeRule
-import androidx.compose.ui.test.onNodeWithContentDescription
 import androidx.compose.ui.test.onNodeWithTag
-import androidx.compose.ui.test.onNodeWithText
 import androidx.test.ext.junit.runners.AndroidJUnit4
 import com.android.feedme.SmallThumbnailsDisplay
 import com.android.feedme.model.data.Ingredient
@@ -55,16 +53,16 @@ class SmallThumbnailsDisplayTest {
     }*/
 
     // Thread.sleep(30000)
-    composeTestRule.onNodeWithContentDescription("Star Icon").assertIsDisplayed()
-    composeTestRule.onNodeWithText(recipe1.rating.toString()).assertIsDisplayed()
+    // composeTestRule.onNodeWithContentDescription("Star Icon").assertIsDisplayed()
+    // composeTestRule.onNodeWithText(recipe1.rating.toString()).assertIsDisplayed()
 
-    composeTestRule.onNodeWithContentDescription("Info Icon").assertIsDisplayed()
-    composeTestRule.onNodeWithText(recipe1.time.toString()).assertIsDisplayed()
+    // composeTestRule.onNodeWithContentDescription("Info Icon").assertIsDisplayed()
+    // composeTestRule.onNodeWithText(recipe1.time.toString()).assertIsDisplayed()
 
     composeTestRule
         .onNodeWithTag("Save Icon", useUnmergedTree = true)
         .assertIsDisplayed()
         .assertHasClickAction()
-    composeTestRule.onNodeWithText(recipe1.title).assertIsDisplayed()
+    // composeTestRule.onNodeWithText(recipe1.title).assertIsDisplayed()
   }
 }

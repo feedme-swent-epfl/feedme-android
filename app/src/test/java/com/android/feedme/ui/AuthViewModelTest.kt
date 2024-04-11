@@ -81,10 +81,14 @@ class AuthViewModelTest {
             },{}
         )
 
+        authViewModel.authenticateWithGoogle("johndoe",{},{})
+
 
 
         shadowOf(Looper.getMainLooper()).idle()
         assertTrue(bool)
 
     }
+
+
 }

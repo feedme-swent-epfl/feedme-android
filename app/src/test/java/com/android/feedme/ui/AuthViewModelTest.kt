@@ -79,9 +79,20 @@ class AuthViewModelTest {
 
     shadowOf(Looper.getMainLooper()).idle()
 
+    authViewModel.linkOrCreateProfile(
+        profileId, "dd", "john@example.com", "ss", { bool = true }, {})
+
     authViewModel.authenticateWithGoogle("johndoe", {}, {})
 
     shadowOf(Looper.getMainLooper()).idle()
+    assertTrue(bool)
+  }
+
+  fun makeProfileTest() {
+    var bool = false
+    authViewModel.makeNewProfile("FAKE", "ALED", "FLEP", "??", { bool = true }, {})
+    shadowOf(Looper.getMainLooper()).idle()
+
     assertTrue(bool)
   }
 }

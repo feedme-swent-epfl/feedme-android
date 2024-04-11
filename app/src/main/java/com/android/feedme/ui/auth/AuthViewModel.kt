@@ -49,23 +49,34 @@ class AuthViewModel() : ViewModel() {
             if (existingProfile != null) {
               onSuccess()
             } else {
-              val newProfile =
-                  Profile(
-                      id = googleId,
-                      name = name ?: "",
-                      username = name ?: "",
-                      email = email ?: "",
-                      description = "",
-                      imageUrl = photoUrl ?: "",
-                      followers = listOf(),
-                      following = listOf(),
-                      filter = listOf(),
-                      recipeList = listOf(),
-                      commentList = listOf())
-              ProfileRepository.instance.addProfile(newProfile, onSuccess, onFailure)
+              makeNewProfile(googleId, name, email, photoUrl, onSuccess, onFailure)
             }
           },
           onFailure = onFailure)
     }
+  }
+
+  fun makeNewProfile(
+      googleId: String,
+      name: String?,
+      email: String?,
+      photoUrl: String?,
+      onSuccess: () -> Unit,
+      onFailure: (Exception) -> Unit
+  ) {
+    val newProfile =
+        Profile(
+            id = googleId,
+            name = name ?: "",
+            username = name ?: "",
+            email = email ?: "",
+            description = "",
+            imageUrl = photoUrl ?: "",
+            followers = listOf(),
+            following = listOf(),
+            filter = listOf(),
+            recipeList = listOf(),
+            commentList = listOf())
+    ProfileRepository.instance.addProfile(newProfile, onSuccess, onFailure)
   }
 }

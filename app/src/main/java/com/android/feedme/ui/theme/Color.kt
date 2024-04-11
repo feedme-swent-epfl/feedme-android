@@ -13,6 +13,6 @@ val DarkGrey = Color(0xFF191C1E)
 
 val YellowStar = Color(0xFFFFE600)
 val TemplateColor = Color(0xFF002C47)
-val TopBarColor = Color(0xFFFFFFFF)
+val TextBarColor = Color(0xFFFFFFFF)
 
 val BlueUser = Color(0xff0008bf)

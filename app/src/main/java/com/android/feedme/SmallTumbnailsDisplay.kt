@@ -19,16 +19,10 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.platform.testTag
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import coil.compose.AsyncImage
-import com.android.feedme.model.data.Ingredient
-import com.android.feedme.model.data.IngredientMetaData
-import com.android.feedme.model.data.MeasureUnit
 import com.android.feedme.model.data.Recipe
-import com.android.feedme.model.data.Step
 import com.android.feedme.ui.theme.YellowStar
-import com.android.feedme.ui.theme.feedmeAppTheme
 
 /**
  * Composable function to display a list of recipes as small thumbnails with additional information.

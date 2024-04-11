@@ -1,5 +1,6 @@
 package com.android.feedme.test.component
 
+import androidx.compose.ui.test.assertHasClickAction
 import androidx.compose.ui.test.assertIsDisplayed
 import androidx.compose.ui.test.junit4.createComposeRule
 import androidx.compose.ui.test.onNodeWithContentDescription
@@ -56,10 +57,13 @@ class SmallThumbnailsDisplayTest {
     composeTestRule.onNodeWithContentDescription("Star Icon").assertIsDisplayed()
     composeTestRule.onNodeWithText(recipe1.rating.toString()).assertIsDisplayed()
 
-    // composeTestRule.onNodeWithContentDescription("Info Icon").assertIsDisplayed()
+    composeTestRule.onNodeWithContentDescription("Info Icon").assertIsDisplayed()
     composeTestRule.onNodeWithText(recipe1.time.toString()).assertIsDisplayed()
 
-    // composeTestRule.onNodeWithTag("Save Icon").assertIsDisplayed().assertHasClickAction()
+    composeTestRule
+        .onNodeWithContentDescription("Save Icon")
+        .assertIsDisplayed()
+        .assertHasClickAction()
     composeTestRule.onNodeWithText(recipe1.title).assertIsDisplayed()
   }
 }

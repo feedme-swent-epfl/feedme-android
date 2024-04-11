@@ -4,7 +4,7 @@ on:
   push:
     branches:
       - main
-      - 17-setup-apk-building
+      - 17-fix-apk-building
 
 permissions:
     contents: write
@@ -37,16 +37,16 @@ jobs:
         run: chmod +x ./gradlew
   
       - name: Build APK
-        run: ./gradlew assembleRelease
+        run: ./gradlew build
 
       - name: Rename APK
-        run: mv app/build/outputs/apk/release/app-release-unsigned.apk app/build/outputs/apk/release/feedme-android-v1.x.x.apk
+        run: mv app/build/outputs/apk/debug/app-debug.apk app/build/outputs/apk/debug/feedme-android-v1.x.x.apk
         
       - name: Release APK
         uses: softprops/action-gh-release@v2
         with:
           name: FeedMe v1.x.x
-          files: app/build/outputs/apk/release/feedme-android-v1.x.x.apk
+          files: app/build/outputs/apk/debug/feedme-android-v1.x.x.apk
           draft: true
           token: ${{ secrets.GITHUB_TOKEN }}
         

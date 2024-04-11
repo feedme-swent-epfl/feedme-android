@@ -59,6 +59,7 @@ class SmallThumbnailsDisplayTest {
     // composeTestRule.onNodeWithContentDescription("Info Icon").assertIsDisplayed()
     // composeTestRule.onNodeWithText(recipe1.time.toString()).assertIsDisplayed()
 
+      composeTestRule.waitForIdle()
     composeTestRule
         .onNodeWithTag("Save Icon", useUnmergedTree = true)
         .assertIsDisplayed()

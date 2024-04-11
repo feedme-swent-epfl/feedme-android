@@ -20,7 +20,6 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.semantics.contentDescription
-import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.unit.dp
 import coil.compose.AsyncImage
 import com.android.feedme.model.data.Recipe
@@ -88,7 +87,7 @@ fun SmallThumbnailsDisplay(listRecipe: List<Recipe>) {
               // There is no save icon in Material, so for now i'm using the "build" icon
               IconButton(
                   onClick = { /*TODO call to the database function for saving recipes*/},
-                  modifier = Modifier.semantics { contentDescription = "Save Icon" }) {
+                  modifier = Modifier.testTag("Save Icon")) {
                     Icon(imageVector = Icons.Outlined.Build, contentDescription = "Save Icon")
                   }
             }

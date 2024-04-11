@@ -12,11 +12,14 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.semantics.testTag
+import androidx.navigation.compose.rememberNavController
 import com.android.feedme.model.data.ProfileRepository
 import com.android.feedme.model.data.RecipeRepository
 import com.android.feedme.resources.C
 import com.android.feedme.ui.auth.LoginScreen
 import com.android.feedme.ui.camera.CameraScreen
+import com.android.feedme.ui.navigation.NavigationActions
+import com.android.feedme.ui.profile.ProfileScreen
 import com.android.feedme.ui.theme.feedmeAppTheme
 import com.google.firebase.firestore.FirebaseFirestore
 
@@ -45,10 +48,13 @@ class MainActivity : ComponentActivity() {
         Surface(
             modifier = Modifier.fillMaxSize().semantics { testTag = C.Tag.main_screen_container },
             color = MaterialTheme.colorScheme.background) {
+              val navController = rememberNavController()
+              val navigationActions = NavigationActions(navController)
               when (currentScreen) {
                 CurrentScreen.LOGIN -> LoginScreen()
                 CurrentScreen.CAMERA -> CameraScreen()
                 CurrentScreen.LANDING -> TODO()
+                CurrentScreen.PROFILE -> ProfileScreen(navigationActions)
               }
             }
       }
@@ -59,5 +65,6 @@ class MainActivity : ComponentActivity() {
 enum class CurrentScreen {
   LOGIN,
   CAMERA,
-  LANDING
+  LANDING,
+  PROFILE
 }

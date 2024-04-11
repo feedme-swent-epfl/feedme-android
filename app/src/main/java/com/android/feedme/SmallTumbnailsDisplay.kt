@@ -43,8 +43,7 @@ fun SmallThumbnailsDisplay(listRecipe: List<Recipe>) {
   LazyVerticalGrid(columns = GridCells.Adaptive(minSize = IMAGE_WIDTH.dp)) {
     items(listRecipe.size) { i ->
       Column(
-          horizontalAlignment = Alignment.CenterHorizontally,
-          modifier = Modifier.testTag("Column").padding(3.dp)) {
+          horizontalAlignment = Alignment.CenterHorizontally, modifier = Modifier.padding(3.dp)) {
             // Recipe photo, downloaded from internet
             AsyncImage(
                 model = listRecipe[i].imageUrl,
@@ -67,9 +66,7 @@ fun SmallThumbnailsDisplay(listRecipe: List<Recipe>) {
                   modifier = Modifier.padding(end = 3.dp))
 
               // Recipe rating
-              Text(
-                  listRecipe[i].rating.toString(),
-                  modifier = Modifier.testTag("Rating").padding(end = 10.dp))
+              Text(listRecipe[i].rating.toString(), modifier = Modifier.padding(end = 10.dp))
 
               // Clock icon for the time
               // There is no clock icon in Material, so for now i'm using the "build" icon
@@ -79,9 +76,7 @@ fun SmallThumbnailsDisplay(listRecipe: List<Recipe>) {
                   modifier = Modifier.padding(end = 3.dp))
 
               // Recipe time
-              Text(
-                  listRecipe[i].time.toString(),
-                  modifier = Modifier.testTag("Time").padding(end = 45.dp))
+              Text(listRecipe[i].time.toString(), modifier = Modifier.padding(end = 45.dp))
 
               // Save button, to keep the recipe accessible even offline
               // There is no save icon in Material, so for now i'm using the "build" icon
@@ -90,7 +85,7 @@ fun SmallThumbnailsDisplay(listRecipe: List<Recipe>) {
               }
             }
             // Recipe Title
-            Text(text = listRecipe[i].title, modifier = Modifier.testTag("Recipe Title"))
+            Text(text = listRecipe[i].title)
           }
     }
   }

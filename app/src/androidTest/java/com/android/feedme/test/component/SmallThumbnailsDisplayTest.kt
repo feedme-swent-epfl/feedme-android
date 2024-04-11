@@ -44,8 +44,6 @@ class SmallThumbnailsDisplayTest {
 
     composeTestRule.setContent { SmallThumbnailsDisplay(listRecipe = listOf(recipe1)) }
 
-    // composeTestRule.waitForIdle()
-
     // Check whether the Image or the warning message is displayed
     try {
       composeTestRule.onNodeWithTag("Recipe Image").assertIsDisplayed()

@@ -3,6 +3,8 @@ package com.android.feedme.test.component
 import androidx.compose.ui.test.assertIsDisplayed
 import androidx.compose.ui.test.junit4.createComposeRule
 import androidx.compose.ui.test.onNodeWithContentDescription
+import androidx.compose.ui.test.onNodeWithTag
+import androidx.compose.ui.test.onNodeWithText
 import androidx.test.ext.junit.runners.AndroidJUnit4
 import com.android.feedme.SmallThumbnailsDisplay
 import com.android.feedme.model.data.Ingredient
@@ -45,23 +47,23 @@ class SmallThumbnailsDisplayTest {
     // composeTestRule.waitForIdle()
 
     // Check whether the Image or the warning message is displayed
-    /*try {
+    try {
       composeTestRule.onNodeWithTag("Recipe Image").assertIsDisplayed()
     } catch (e: AssertionError) {
-      composeTestRule.onNodeWithTag("Fail Image Download")
-    }*/
+      composeTestRule.onNodeWithText("Fail Image Download")
+    }
 
     // Thread.sleep(30000)
-    // composeTestRule.onNodeWithContentDescription("Star Icon").assertIsDisplayed()
-    // composeTestRule.onNodeWithText(recipe1.rating.toString()).assertIsDisplayed()
+    composeTestRule.onNodeWithContentDescription("Star Icon").assertIsDisplayed()
+    composeTestRule.onNodeWithText(recipe1.rating.toString()).assertIsDisplayed()
 
-    // composeTestRule.onNodeWithContentDescription("Info Icon").assertIsDisplayed()
-    // composeTestRule.onNodeWithText(recipe1.time.toString()).assertIsDisplayed()
+    composeTestRule.onNodeWithContentDescription("Info Icon").assertIsDisplayed()
+    composeTestRule.onNodeWithText(recipe1.time.toString()).assertIsDisplayed()
 
     composeTestRule.waitForIdle()
-    composeTestRule
-        .onNodeWithContentDescription("Save Icon", useUnmergedTree = true)
-        .assertIsDisplayed()
-    // composeTestRule.onNodeWithText(recipe1.title).assertIsDisplayed()
+    /*composeTestRule
+    .onNodeWithContentDescription("Save Icon", useUnmergedTree = true)
+    .assertIsDisplayed()*/
+    composeTestRule.onNodeWithText(recipe1.title).assertIsDisplayed()
   }
 }

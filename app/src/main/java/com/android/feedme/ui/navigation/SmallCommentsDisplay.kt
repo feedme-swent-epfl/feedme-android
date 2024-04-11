@@ -2,17 +2,29 @@ package com.android.feedme.ui.navigation
 
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.aspectRatio
+import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.grid.GridCells
 import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
+import androidx.compose.foundation.lazy.items
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.outlined.Info
 import androidx.compose.material.icons.twotone.Star
 import androidx.compose.material3.Icon
+import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.tooling.preview.Preview
@@ -24,59 +36,47 @@ import java.util.Date
 
 @Composable
 fun SmallCommentsDisplay(listComment: List<Comment>) {
-  val IMAGE_WIDTH = LocalConfiguration.current.screenWidthDp / 2
-
-  LazyVerticalGrid(columns = GridCells.Adaptive(minSize = IMAGE_WIDTH.dp)) {
-    items(listComment.size) { i ->
-      Column(
-          horizontalAlignment = Alignment.CenterHorizontally,
-          modifier = Modifier
-              .padding(3.dp)) {
-
-            // Recipe photo, downloaded from internet
-            AsyncImage(
-                model = listComment[i].photoURL,
-                contentDescription = "Comment Image",
-                modifier = Modifier.testTag("Recipe Image"))
-
-            Row(verticalAlignment = Alignment.CenterVertically) {
-
-              // Star icon for ratings
-              Icon(
-                  imageVector = Icons.TwoTone.Star,
-                  contentDescription = null,
-                  tint = YellowStar,
-                  modifier = Modifier
-                      .testTag("Star Icon")
-                      .padding(end = 3.dp))
-
-              // Recipe rating
-              Text(
-                  listComment[i].rating.toString(),
-                  modifier = Modifier
-                      .testTag("Rating")
-                      .padding(end = 10.dp))
-
-              // Clock icon for the time
-              // There is no clock icon in Material, so for now i'm using the "build" icon
-              Icon(
-                  imageVector = Icons.Outlined.Info,
-                  contentDescription = null,
-                  modifier = Modifier
-                      .testTag("Info Icon")
-                      .padding(end = 3.dp))
-
-              // Recipe time
-              Text(
-                  listComment[i].time.toString(),
-                  modifier = Modifier
-                      .testTag("Time")
-                      .padding(end = 45.dp))
-            }
-          Text(listComment[i].title)
-          }
-    }
+  LazyColumn {
+      items(listComment) {item ->
+          ItemRow(item = item)
+      }
   }
+}
+
+@Composable
+fun ItemRow(item: Comment) {
+    Surface(
+        modifier = Modifier.fillMaxWidth(),
+        color = Color.White,
+        shape = RoundedCornerShape(8.dp)
+    ) {
+        Row(
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(16.dp)
+        ) {
+            // Image on the left
+            AsyncImage(
+                model = item.photoURL,
+                contentDescription = "Comment Image",
+                modifier = Modifier
+                    .size(100.dp)
+                    .aspectRatio(1f),
+                contentScale = ContentScale.Crop)
+
+            // Title and description on the right
+            Column(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(start = 16.dp)
+                    .align(Alignment.CenterVertically)
+            ) {
+                Text(text = item.title)
+                Spacer(modifier = Modifier.height(8.dp))
+                Text(text = item.content)
+            }
+        }
+    }
 }
 
 @Preview

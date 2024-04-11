@@ -11,6 +11,7 @@ class LandingScreen(semanticsProvider: SemanticsNodeInteractionsProvider) :
         viewBuilderAction = { hasTestTag("LandingScreen") }) {
 
   // Structural elements of the UI
-  val bottomBar: KNode = child { hasTestTag("BottomNavigationMenu") }
-  //  TODO()
+  val topBarProfile: KNode = child { hasTestTag("TopBarNavigation") }
+  val bottomBarProfile: KNode = child { hasTestTag("BottomNavigationMenu") }
+
 }

@@ -16,13 +16,13 @@ import androidx.navigation.compose.rememberNavController
 import com.android.feedme.model.data.ProfileRepository
 import com.android.feedme.model.data.RecipeRepository
 import com.android.feedme.resources.C
+import com.android.feedme.ui.LandingPage
 import com.android.feedme.ui.auth.LoginScreen
 import com.android.feedme.ui.camera.CameraScreen
 import com.android.feedme.ui.navigation.NavigationActions
 import com.android.feedme.ui.profile.ProfileScreen
 import com.android.feedme.ui.theme.feedmeAppTheme
 import com.google.firebase.firestore.FirebaseFirestore
-import com.android.feedme.ui.LandingPage
 
 class MainActivity : ComponentActivity() {
   /**

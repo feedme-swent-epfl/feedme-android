@@ -12,10 +12,13 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.semantics.testTag
+import com.android.feedme.model.data.ProfileRepository
+import com.android.feedme.model.data.RecipeRepository
 import com.android.feedme.resources.C
 import com.android.feedme.ui.auth.LoginScreen
 import com.android.feedme.ui.camera.CameraScreen
 import com.android.feedme.ui.theme.feedmeAppTheme
+import com.google.firebase.firestore.FirebaseFirestore
 
 class MainActivity : ComponentActivity() {
   /**
@@ -33,6 +36,9 @@ class MainActivity : ComponentActivity() {
 
   override fun onCreate(savedInstanceState: Bundle?) {
     super.onCreate(savedInstanceState)
+    val firebase = FirebaseFirestore.getInstance()
+    ProfileRepository.initialize(firebase)
+    RecipeRepository.initialize(firebase)
     setContent {
       feedmeAppTheme {
         // A surface container using the 'background' color from the theme

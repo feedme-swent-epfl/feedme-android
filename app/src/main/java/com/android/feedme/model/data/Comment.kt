@@ -1,6 +1,6 @@
 package com.android.feedme.model.data
 
-import android.icu.text.SimpleDateFormat
+import java.util.Date
 
 data class Comment(
     val authorId: String,
@@ -10,5 +10,5 @@ data class Comment(
     val time: Double,
     val title: String,
     val content: String,
-    val creationDate: SimpleDateFormat
+    val creationDate: Date
 )

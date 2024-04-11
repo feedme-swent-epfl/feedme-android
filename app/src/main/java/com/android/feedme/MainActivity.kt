@@ -16,6 +16,7 @@ import androidx.navigation.compose.rememberNavController
 import com.android.feedme.model.data.ProfileRepository
 import com.android.feedme.model.data.RecipeRepository
 import com.android.feedme.resources.C
+import com.android.feedme.ui.LandingPage
 import com.android.feedme.ui.auth.LoginScreen
 import com.android.feedme.ui.camera.CameraScreen
 import com.android.feedme.ui.navigation.NavigationActions
@@ -53,7 +54,7 @@ class MainActivity : ComponentActivity() {
               when (currentScreen) {
                 CurrentScreen.LOGIN -> LoginScreen()
                 CurrentScreen.CAMERA -> CameraScreen()
-                CurrentScreen.LANDING -> TODO()
+                CurrentScreen.LANDING -> LandingPage(navigationActions)
                 CurrentScreen.PROFILE -> ProfileScreen(navigationActions)
               }
             }

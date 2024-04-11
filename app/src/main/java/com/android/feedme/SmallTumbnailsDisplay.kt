@@ -31,39 +31,48 @@ import com.android.feedme.ui.theme.YellowStar
  */
 @Composable
 fun SmallThumbnailsDisplay(listRecipe: List<Recipe>) {
-  val IMAGE_WIDTH = LocalConfiguration.current.screenWidthDp / 2
+  // Calculate the width of each image based on the screen width
+  val NB_IMAGE_PER_LINE = 2
+  val IMAGE_WIDTH = LocalConfiguration.current.screenWidthDp / NB_IMAGE_PER_LINE
 
   LazyVerticalGrid(columns = GridCells.Adaptive(minSize = IMAGE_WIDTH.dp)) {
     items(listRecipe.size) { i ->
       Column(
           horizontalAlignment = Alignment.CenterHorizontally,
           modifier = Modifier.testTag("Column").padding(3.dp)) {
+            // Recipe photo, downloaded from internet
             AsyncImage(
                 model = listRecipe[i].imageUrl,
                 contentDescription = "Recipe Image",
                 modifier = Modifier.testTag("Recipe Image"))
 
             Row(verticalAlignment = Alignment.CenterVertically) {
+
+              // Star icon for ratings
               Icon(
                   imageVector = Icons.TwoTone.Star,
                   contentDescription = null,
                   tint = YellowStar,
                   modifier = Modifier.testTag("Star Icon").padding(end = 3.dp))
 
+              // Recipe rating
               Text(
                   listRecipe[i].rating.toString(),
                   modifier = Modifier.testTag("Rating").padding(end = 10.dp))
 
+              // Clock icon for the time
               // There is no clock icon in Material, so for now i'm using the "build" icon
               Icon(
                   imageVector = Icons.Outlined.Info,
                   contentDescription = null,
                   modifier = Modifier.testTag("Info Icon").padding(end = 3.dp))
 
+              // Recipe time
               Text(
                   listRecipe[i].time.toString(),
                   modifier = Modifier.testTag("Time").padding(end = 45.dp))
 
+              // Save button, to keep the recipe accessible even offline
               // There is no save icon in Material, so for now i'm using the "build" icon
               IconButton(
                   onClick = { /*TODO call to the database function for saving recipes*/},
@@ -71,16 +80,9 @@ fun SmallThumbnailsDisplay(listRecipe: List<Recipe>) {
                     Icon(imageVector = Icons.Outlined.Build, contentDescription = null)
                   }
             }
-
+            // Recipe Title
             Text(text = listRecipe[i].title, modifier = Modifier.testTag("Recipe Title"))
-
-            Text(listRecipe[i].time.toString(), modifier = Modifier.padding(end = 45.dp))
-
-            // There is no save icon in Material, so for now i'm using the "build" icon
-            Icon(imageVector = Icons.Outlined.Build, contentDescription = null)
           }
-
-      Text(text = listRecipe[i].title)
     }
   }
 }

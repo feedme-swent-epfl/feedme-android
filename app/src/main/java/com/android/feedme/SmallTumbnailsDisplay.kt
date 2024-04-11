@@ -61,9 +61,9 @@ fun SmallThumbnailsDisplay(listRecipe: List<Recipe>) {
               // Star icon for ratings
               Icon(
                   imageVector = Icons.TwoTone.Star,
-                  contentDescription = null,
+                  contentDescription = "Star Icon",
                   tint = YellowStar,
-                  modifier = Modifier.testTag("Star Icon").padding(end = 3.dp))
+                  modifier = Modifier.padding(end = 3.dp))
 
               // Recipe rating
               Text(
@@ -74,8 +74,8 @@ fun SmallThumbnailsDisplay(listRecipe: List<Recipe>) {
               // There is no clock icon in Material, so for now i'm using the "build" icon
               Icon(
                   imageVector = Icons.Outlined.Info,
-                  contentDescription = null,
-                  modifier = Modifier.testTag("Info Icon").padding(end = 3.dp))
+                  contentDescription = "Info Icon",
+                  modifier = Modifier.padding(end = 3.dp))
 
               // Recipe time
               Text(
@@ -87,7 +87,7 @@ fun SmallThumbnailsDisplay(listRecipe: List<Recipe>) {
               IconButton(
                   onClick = { /*TODO call to the database function for saving recipes*/},
                   modifier = Modifier.testTag("Save Icon")) {
-                    Icon(imageVector = Icons.Outlined.Build, contentDescription = null)
+                    Icon(imageVector = Icons.Outlined.Build, contentDescription = "Save Icon")
                   }
             }
             // Recipe Title

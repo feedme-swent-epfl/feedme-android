@@ -32,12 +32,26 @@ class LandingTest : TestCase() {
   @Test
   fun mainComponentsAreDisplayed() {
     ComposeScreen.onComposeScreen<LandingScreen>(composeTestRule) {
-      // Add top bar TODO()
+      topBarLanding { assertIsDisplayed() }
 
-      // Commenting for now since LandingPage isn't available yet
-      // bottomBar { assertIsDisplayed() }
+      bottomBarLanding { assertIsDisplayed() }
 
-      // Add other main components of landing page TODO()
+      recipeList { assertIsDisplayed() }
+
+      saveIcon {
+        assertIsDisplayed()
+        assertHasClickAction()
+      }
+
+      userName {
+        assertIsDisplayed()
+        assertHasClickAction()
+      }
+
+      ratingButton {
+        assertIsDisplayed()
+        assertHasClickAction()
+      }
     }
   }
 }

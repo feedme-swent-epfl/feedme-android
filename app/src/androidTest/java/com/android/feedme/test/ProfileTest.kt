@@ -29,7 +29,8 @@ class ProfileTest {
   @Test
   fun profileBoxAndComponentsCorrectlyDisplayed() {
     ComposeScreen.onComposeScreen<ProfileScreen>(composeTestRule) {
-      // topBarProfile { assertIsDisplayed() }
+      topBarProfile { assertIsDisplayed() }
+
       bottomBarProfile { assertIsDisplayed() }
 
       profileBox { assertIsDisplayed() }

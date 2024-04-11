@@ -26,7 +26,7 @@ class MainActivity : ComponentActivity() {
    * testing Navigation
    */
   // Use mutableStateOf for the currentScreen. Initialize with LOGIN.
-  var currentScreen by mutableStateOf(CurrentScreen.LOGIN)
+  var currentScreen by mutableStateOf(CurrentScreen.PROFILE)
     private set // Make the setter private to control state changes from outside
 
   // Public method to change the screen, ensuring recomposition

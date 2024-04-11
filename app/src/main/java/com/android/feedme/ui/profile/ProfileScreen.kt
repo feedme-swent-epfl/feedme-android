@@ -33,6 +33,7 @@ import com.android.feedme.ui.navigation.BottomNavigationMenu
 import com.android.feedme.ui.navigation.NavigationActions
 import com.android.feedme.ui.navigation.Route
 import com.android.feedme.ui.navigation.TOP_LEVEL_DESTINATIONS
+import com.android.feedme.ui.navigation.TopBarNavigation
 import com.android.feedme.ui.theme.DarkGrey
 
 /**
@@ -45,7 +46,7 @@ import com.android.feedme.ui.theme.DarkGrey
 fun ProfileScreen(navigationActions: NavigationActions) {
   Scaffold(
       modifier = Modifier.fillMaxSize().testTag("ProfileScreen"),
-      // topBar = { TODO() },
+      topBar = { TopBarNavigation(title = "Profile") },
       bottomBar = {
         BottomNavigationMenu(Route.PROFILE, navigationActions::navigateTo, TOP_LEVEL_DESTINATIONS)
       },

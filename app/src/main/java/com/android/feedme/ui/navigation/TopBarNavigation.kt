@@ -5,6 +5,7 @@ import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
 import androidx.compose.material3.Icon
@@ -15,10 +16,12 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.platform.testTag
+import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
+import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.android.feedme.ui.theme.TemplateColor
-import com.android.feedme.ui.theme.TopBarColor
+import com.android.feedme.ui.theme.TextBarColor
 
 /**
  * TopBarNavigation is a composable function used to display a top navigation bar. The left icon
@@ -39,7 +42,11 @@ fun TopBarNavigation(
     rightIconOnClickAction: (() -> Unit) = {}
 ) {
   Box(
-      modifier = Modifier.fillMaxWidth().testTag("TopBarNavigation").background(TemplateColor),
+      modifier =
+          Modifier.fillMaxWidth()
+              .height(60.dp)
+              .testTag("TopBarNavigation")
+              .background(TemplateColor),
       contentAlignment = Alignment.Center) {
         Row(
             modifier = Modifier.fillMaxWidth(),
@@ -59,7 +66,7 @@ fun TopBarNavigation(
                             modifier = Modifier.testTag("LeftIcon"),
                             imageVector = Icons.AutoMirrored.Filled.ArrowBack,
                             contentDescription = "BackArrow",
-                            tint = TopBarColor)
+                            tint = TextBarColor)
                       }
                     }
                   }
@@ -72,7 +79,8 @@ fun TopBarNavigation(
                         modifier = Modifier.testTag("TitleText"),
                         text = title,
                         fontSize = 20.sp,
-                        color = TopBarColor,
+                        fontWeight = FontWeight.Bold,
+                        color = TextBarColor,
                         textAlign = TextAlign.Center)
                   }
 
@@ -88,7 +96,7 @@ fun TopBarNavigation(
                                 modifier = Modifier.testTag("RightIcon"),
                                 imageVector = rightIcon,
                                 contentDescription = "Right Icon",
-                                tint = TopBarColor)
+                                tint = TextBarColor)
                           }
                     }
                   }

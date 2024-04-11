@@ -43,7 +43,11 @@ import com.android.feedme.ui.navigation.TopBarNavigation
 import com.android.feedme.ui.theme.TemplateColor
 import com.android.feedme.ui.theme.TopBarColor
 
-/** Composable function that generates the landing page */
+/**
+ * Composable function that generates the landing page
+ *
+ * @param navigationActions : the nav actions given in the MainActivity
+ */
 @Composable
 fun LandingPage(navigationActions: NavigationActions) {
   /** For testing purposes, keeping arguments static for now TODO ViewModel for the recipe lists */

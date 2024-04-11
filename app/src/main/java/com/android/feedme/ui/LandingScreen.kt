@@ -41,7 +41,7 @@ import com.android.feedme.ui.navigation.Route
 import com.android.feedme.ui.navigation.TOP_LEVEL_DESTINATIONS
 import com.android.feedme.ui.navigation.TopBarNavigation
 import com.android.feedme.ui.theme.TemplateColor
-import com.android.feedme.ui.theme.TopBarColor
+import com.android.feedme.ui.theme.TextBarColor
 
 /**
  * Composable function that generates the landing page
@@ -88,26 +88,31 @@ fun LandingPage(navigationActions: NavigationActions) {
  */
 @Composable
 fun RecipeList(padding: PaddingValues, recipes: List<Recipe>) {
-  LazyColumn(modifier = Modifier.padding(padding).testTag("RecipeList").background(TopBarColor)) {
+  // Scrollable list of recipes
+  LazyColumn(modifier = Modifier.padding(padding).testTag("RecipeList").background(TextBarColor)) {
     items(recipes) { recipe ->
+      // Recipe card
       Card(
-          modifier = Modifier.padding(16.dp).clickable(onClick = {}),
+          modifier = Modifier.padding(16.dp).clickable(onClick = { /* TODO() */}),
           elevation = CardDefaults.elevatedCardElevation()) {
             Column(modifier = Modifier.fillMaxWidth().background(Color.White).padding(16.dp)) {
+              // Top layer of the card
               Row(
                   verticalAlignment = Alignment.CenterVertically,
                   horizontalArrangement = Arrangement.SpaceBetween,
                   modifier = Modifier.fillMaxWidth()) {
                     Text(text = recipe.title, fontWeight = FontWeight.Bold, fontSize = 24.sp)
                     IconButton(
-                        onClick = { /* Handle save icon click */},
+                        onClick = { /* Handle save icon click TODO() */},
                         modifier = Modifier.testTag("SaveIcon")) {
                           Icon(
                               imageVector = Icons.Outlined.Save, contentDescription = "Save Recipe")
                         }
                   }
 
+              // Middle layer of the card
               Row(modifier = Modifier.height(100.dp).fillMaxWidth()) {
+                // Recipe image extracted from the URL
                 AsyncImage(
                     model = recipe.imageUrl,
                     contentDescription = "Recipe Image",
@@ -129,10 +134,12 @@ fun RecipeList(padding: PaddingValues, recipes: List<Recipe>) {
                 }
               }
               Spacer(modifier = Modifier.height(8.dp).width(10.dp))
+              // Bottom layer of the card
               Row(
                   modifier = Modifier.fillMaxWidth(),
                   horizontalArrangement = Arrangement.SpaceBetween) {
-                    Column() {
+                    // Time
+                    Column {
                       Icon(
                           imageVector = Icons.Outlined.Timer,
                           contentDescription = null,
@@ -142,7 +149,7 @@ fun RecipeList(padding: PaddingValues, recipes: List<Recipe>) {
                           modifier = Modifier.padding(end = 8.dp))
                     }
                     OutlinedButton(
-                        onClick = {},
+                        onClick = { /* TODO() - I don't think we want this to be clickable (not a button ?) */},
                         border = BorderStroke(1.dp, Color.Black),
                         colors = ButtonDefaults.outlinedButtonColors(contentColor = TemplateColor),
                         modifier = Modifier.weight(1f) // TODO() : fix button size
@@ -159,6 +166,7 @@ fun RecipeList(padding: PaddingValues, recipes: List<Recipe>) {
                                 .width(4.dp) // TODO() : fix button size and align to the left of
                                 // the card
                                 .testTag("Rating")) {
+                          // Rating icon and text
                           Row(verticalAlignment = Alignment.CenterVertically) {
                             Text(
                                 text = String.format("%.1f", recipe.rating),

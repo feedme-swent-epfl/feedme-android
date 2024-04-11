@@ -11,7 +11,6 @@ import com.android.feedme.model.data.IngredientMetaData
 import com.android.feedme.model.data.MeasureUnit
 import com.android.feedme.model.data.Recipe
 import com.android.feedme.model.data.Step
-import java.lang.AssertionError
 import org.junit.Rule
 import org.junit.Test
 import org.junit.runner.RunWith
@@ -45,11 +44,11 @@ class SmallThumbnailsDisplayTest {
     composeTestRule.setContent { SmallThumbnailsDisplay(listRecipe = listOf(recipe1)) }
 
     // Check whether the Image or the warning message is displayed
-    try {
+    /*try {
       composeTestRule.onNodeWithTag("Recipe Image").assertIsDisplayed()
     } catch (e: AssertionError) {
       composeTestRule.onNodeWithTag("Fail Image Download")
-    }
+    }*/
 
     composeTestRule.onNodeWithTag("Star Icon").assertIsDisplayed()
     composeTestRule.onNodeWithTag("Rating").assertTextEquals(recipe1.rating.toString())

@@ -13,6 +13,8 @@ import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalConfiguration
@@ -25,7 +27,8 @@ import com.android.feedme.ui.theme.YellowStar
 /**
  * Composable function to display a list of recipes as small thumbnails with additional information.
  * Each thumbnail includes an image, rating, cooking time, and title. Thumbnails are displayed two
- * by two in a column.
+ * by two in a column. If the image couldn't be downloaded from internet a message is displayed
+ * instead.
  *
  * @param listRecipe List of Recipe objects to be displayed.
  */
@@ -34,6 +37,7 @@ fun SmallThumbnailsDisplay(listRecipe: List<Recipe>) {
   // Calculate the width of each image based on the screen width
   val NB_IMAGE_PER_LINE = 2
   val IMAGE_WIDTH = LocalConfiguration.current.screenWidthDp / NB_IMAGE_PER_LINE
+  var ImageSuccessfulDownload = remember { mutableStateOf(false) }
 
   LazyVerticalGrid(columns = GridCells.Adaptive(minSize = IMAGE_WIDTH.dp)) {
     items(listRecipe.size) { i ->
@@ -44,7 +48,13 @@ fun SmallThumbnailsDisplay(listRecipe: List<Recipe>) {
             AsyncImage(
                 model = listRecipe[i].imageUrl,
                 contentDescription = "Recipe Image",
-                modifier = Modifier.testTag("Recipe Image"))
+                modifier = Modifier.testTag("Recipe Image"),
+                onSuccess = { ImageSuccessfulDownload.value = true })
+
+            // Display a warning message if image couldn't be downloaded from internet
+            if (!ImageSuccessfulDownload.value) {
+              Text("Failed to download image", modifier = Modifier.testTag("Fail Image Download"))
+            }
 
             Row(verticalAlignment = Alignment.CenterVertically) {
 

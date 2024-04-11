@@ -50,6 +50,7 @@ class SmallThumbnailsDisplayTest {
       composeTestRule.onNodeWithTag("Fail Image Download")
     }*/
 
+    Thread.sleep(30000)
     composeTestRule.onNodeWithTag("Star Icon").assertIsDisplayed()
     composeTestRule.onNodeWithTag("Rating").assertTextEquals(recipe1.rating.toString())
 

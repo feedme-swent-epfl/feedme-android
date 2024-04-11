@@ -1,9 +1,9 @@
-package com.android.feedme.screen
+package com.android.feedme.test.component
 
 import androidx.compose.ui.test.assertIsDisplayed
-import androidx.compose.ui.test.assertTextEquals
 import androidx.compose.ui.test.junit4.createComposeRule
 import androidx.compose.ui.test.onNodeWithTag
+import androidx.compose.ui.test.onNodeWithText
 import androidx.test.ext.junit.runners.AndroidJUnit4
 import com.android.feedme.SmallThumbnailsDisplay
 import com.android.feedme.model.data.Ingredient
@@ -11,12 +11,13 @@ import com.android.feedme.model.data.IngredientMetaData
 import com.android.feedme.model.data.MeasureUnit
 import com.android.feedme.model.data.Recipe
 import com.android.feedme.model.data.Step
+import junit.framework.TestCase
 import org.junit.Rule
 import org.junit.Test
 import org.junit.runner.RunWith
 
 @RunWith(AndroidJUnit4::class)
-class SmallThumbnailsDisplayTest {
+class SmallThumbnailsDisplayTest : TestCase() {
 
   @get:Rule val composeTestRule = createComposeRule()
 
@@ -43,6 +44,8 @@ class SmallThumbnailsDisplayTest {
 
     composeTestRule.setContent { SmallThumbnailsDisplay(listRecipe = listOf(recipe1)) }
 
+    composeTestRule.waitForIdle()
+
     // Check whether the Image or the warning message is displayed
     /*try {
       composeTestRule.onNodeWithTag("Recipe Image").assertIsDisplayed()
@@ -52,12 +55,12 @@ class SmallThumbnailsDisplayTest {
 
     Thread.sleep(30000)
     composeTestRule.onNodeWithTag("Star Icon").assertIsDisplayed()
-    composeTestRule.onNodeWithTag("Rating").assertTextEquals(recipe1.rating.toString())
+    composeTestRule.onNodeWithText(recipe1.rating.toString()).assertIsDisplayed()
 
     composeTestRule.onNodeWithTag("Info Icon").assertIsDisplayed()
-    composeTestRule.onNodeWithTag("Time").assertTextEquals(recipe1.time.toString())
+    composeTestRule.onNodeWithText(recipe1.time.toString()).assertIsDisplayed()
 
     composeTestRule.onNodeWithTag("Save Icon").assertIsDisplayed()
-    composeTestRule.onNodeWithTag("Recipe Title").assertTextEquals(recipe1.title)
+    composeTestRule.onNodeWithText(recipe1.title).assertIsDisplayed()
   }
 }

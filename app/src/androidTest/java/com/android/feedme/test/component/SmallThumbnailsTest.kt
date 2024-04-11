@@ -11,7 +11,6 @@ import com.android.feedme.model.data.IngredientMetaData
 import com.android.feedme.model.data.MeasureUnit
 import com.android.feedme.model.data.Recipe
 import com.android.feedme.model.data.Step
-import junit.framework.TestCase
 import java.lang.AssertionError
 import org.junit.Rule
 import org.junit.Test

@@ -51,7 +51,7 @@ fun SmallThumbnailsDisplay(listRecipe: List<Recipe>) {
                 modifier = Modifier.testTag("Recipe Image"),
                 onSuccess = { ImageSuccessfulDownload.value = true })
 
-            // Display a warning message if image couldn't be downloaded from internet
+            // Display a warning message if image couldn't be downloaded from internets
             if (!ImageSuccessfulDownload.value) {
               Text("Failed to download image", modifier = Modifier.testTag("Fail Image Download"))
             }

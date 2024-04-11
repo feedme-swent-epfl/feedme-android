@@ -13,12 +13,15 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.semantics.testTag
 import androidx.navigation.compose.rememberNavController
+import com.android.feedme.model.data.ProfileRepository
+import com.android.feedme.model.data.RecipeRepository
 import com.android.feedme.resources.C
 import com.android.feedme.ui.auth.LoginScreen
 import com.android.feedme.ui.camera.CameraScreen
 import com.android.feedme.ui.navigation.NavigationActions
 import com.android.feedme.ui.profile.ProfileScreen
 import com.android.feedme.ui.theme.feedmeAppTheme
+import com.google.firebase.firestore.FirebaseFirestore
 
 class MainActivity : ComponentActivity() {
   /**
@@ -26,7 +29,7 @@ class MainActivity : ComponentActivity() {
    * testing Navigation
    */
   // Use mutableStateOf for the currentScreen. Initialize with LOGIN.
-  var currentScreen by mutableStateOf(CurrentScreen.PROFILE)
+  var currentScreen by mutableStateOf(CurrentScreen.LOGIN)
     private set // Make the setter private to control state changes from outside
 
   // Public method to change the screen, ensuring recomposition
@@ -36,6 +39,9 @@ class MainActivity : ComponentActivity() {
 
   override fun onCreate(savedInstanceState: Bundle?) {
     super.onCreate(savedInstanceState)
+    val firebase = FirebaseFirestore.getInstance()
+    ProfileRepository.initialize(firebase)
+    RecipeRepository.initialize(firebase)
     setContent {
       feedmeAppTheme {
         // A surface container using the 'background' color from the theme

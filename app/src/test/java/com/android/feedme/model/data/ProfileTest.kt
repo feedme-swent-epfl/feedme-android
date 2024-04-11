@@ -11,11 +11,12 @@ class ProfileTest {
     val followers = listOf("user1", "user2")
     val following = listOf("user3", "user4")
     val filters = listOf("filter1", "filter2")
-    val recipeList = listOf<Recipe>() // Assuming recipes are created elsewhere or mocked
+    val recipeList = listOf("") // Assuming recipes are created elsewhere or mocked
     val commentList = listOf("comment1", "comment2")
 
     val profile =
         Profile(
+            id = "1",
             name = "John Doe",
             username = "johndoe123",
             email = "john@example.com",

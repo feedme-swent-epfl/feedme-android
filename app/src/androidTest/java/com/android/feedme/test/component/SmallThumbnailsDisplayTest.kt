@@ -2,7 +2,6 @@ package com.android.feedme.test.component
 
 import androidx.compose.ui.test.assertIsDisplayed
 import androidx.compose.ui.test.junit4.createComposeRule
-import androidx.compose.ui.test.onNodeWithTag
 import androidx.compose.ui.test.onNodeWithText
 import androidx.test.ext.junit.runners.AndroidJUnit4
 import com.android.feedme.SmallThumbnailsDisplay
@@ -51,13 +50,13 @@ class SmallThumbnailsDisplayTest : TestCase() {
       composeTestRule.onNodeWithTag("Fail Image Download")
     }*/
 
-    //composeTestRule.onNodeWithTag("Star Icon").assertIsDisplayed()
+    // composeTestRule.onNodeWithTag("Star Icon").assertIsDisplayed()
     composeTestRule.onNodeWithText(recipe1.rating.toString()).assertIsDisplayed()
 
-    //composeTestRule.onNodeWithTag("Info Icon").assertIsDisplayed()
+    // composeTestRule.onNodeWithTag("Info Icon").assertIsDisplayed()
     composeTestRule.onNodeWithText(recipe1.time.toString()).assertIsDisplayed()
 
-    //composeTestRule.onNodeWithTag("Save Icon").assertIsDisplayed()
+    // composeTestRule.onNodeWithTag("Save Icon").assertIsDisplayed()
     composeTestRule.onNodeWithText(recipe1.title).assertIsDisplayed()
   }
 }

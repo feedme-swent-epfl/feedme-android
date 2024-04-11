@@ -28,6 +28,7 @@ import com.android.feedme.model.data.MeasureUnit
 import com.android.feedme.model.data.Recipe
 import com.android.feedme.model.data.Step
 import com.android.feedme.ui.theme.YellowStar
+import com.android.feedme.ui.theme.feedmeAppTheme
 
 /**
  * Composable function to display a list of recipes as small thumbnails with additional information.
@@ -100,48 +101,4 @@ fun SmallThumbnailsDisplay(listRecipe: List<Recipe>) {
           }
     }
   }
-}
-
-@Preview
-@Composable
-fun SmallThumbnailsDisplayPreview() {
-  val recipe1 =
-      Recipe(
-          recipeId = "lasagna1",
-          title = "Tasty Lasagna",
-          description = "a",
-          ingredients =
-              listOf(
-                  IngredientMetaData(
-                      quantity = 2.0,
-                      measure = MeasureUnit.ML,
-                      ingredient = Ingredient("Tomato", "Vegetables", "tomatoID"))),
-          steps = listOf(Step(1, "a", "Step1")),
-          tags = listOf("Meat"),
-          time = 1.15,
-          rating = 4.5,
-          userid = "PasDavid",
-          difficulty = "Intermediate",
-          imageUrl =
-              "https://external-content.duckduckgo.com/iu/?u=https%3A%2F%2Fwww.mamablip.com%2Fstorage%2FLasagna%2520with%2520Meat%2520and%2520Tomato%2520Sauce_3481612355355.jpg&f=1&nofb=1&ipt=8e887ba99ce20a85fb867dabbe0206c1146ebf2f13548b5653a2778e3ea18c54&ipo=images")
-
-  val recipe2 =
-      Recipe(
-          recipeId = "lasagna2",
-          title = "Tasty Lasagna",
-          description = "a",
-          ingredients =
-              listOf(
-                  IngredientMetaData(
-                      quantity = 2.0,
-                      measure = MeasureUnit.ML,
-                      ingredient = Ingredient("Tomato", "Vegetables", "tomatoID"))),
-          steps = listOf(Step(1, "a", "Step1")),
-          tags = listOf("Meat"),
-          time = 1.15,
-          rating = 4.5,
-          userid = "PasDavid",
-          difficulty = "Intermediate",
-          imageUrl =
-              "https://external-content.duckduckgo.com/iu/?u=https%3A%2F%2Fwww.mamablip.com%2Fstorage%2FLasagna%2520with%2520Meat%2520and%2520Tomato%2520Sauce_3481612355355.jpg&f=1&nofb=1&ipt=8e887ba99ce20a85fb867dabbe0206c1146ebf2f13548b5653a2778e3ea18c54&ipo=images")
 }

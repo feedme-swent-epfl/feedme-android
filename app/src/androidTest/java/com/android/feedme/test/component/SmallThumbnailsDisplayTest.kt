@@ -1,9 +1,9 @@
 package com.android.feedme.test.component
 
 import androidx.compose.ui.test.assertIsDisplayed
-import androidx.compose.ui.test.assertTextEquals
 import androidx.compose.ui.test.junit4.createComposeRule
 import androidx.compose.ui.test.onNodeWithTag
+import androidx.compose.ui.test.onNodeWithText
 import androidx.test.ext.junit.runners.AndroidJUnit4
 import com.android.feedme.SmallThumbnailsDisplay
 import com.android.feedme.model.data.Ingredient
@@ -52,12 +52,12 @@ class SmallThumbnailsDisplayTest : TestCase() {
     }*/
 
     composeTestRule.onNodeWithTag("Star Icon").assertIsDisplayed()
-    composeTestRule.onNodeWithTag("Rating").assertTextEquals(recipe1.rating.toString())
+    composeTestRule.onNodeWithText(recipe1.rating.toString()).assertIsDisplayed()
 
     composeTestRule.onNodeWithTag("Info Icon").assertIsDisplayed()
-    composeTestRule.onNodeWithTag("Time").assertTextEquals(recipe1.time.toString())
+    composeTestRule.onNodeWithText(recipe1.time.toString()).assertIsDisplayed()
 
     composeTestRule.onNodeWithTag("Save Icon").assertIsDisplayed()
-    composeTestRule.onNodeWithTag("Recipe Title").assertTextEquals(recipe1.title)
+    composeTestRule.onNodeWithText(recipe1.title).assertIsDisplayed()
   }
 }

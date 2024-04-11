@@ -31,7 +31,6 @@ fun SmallCommentsDisplay(listComment: List<Comment>) {
       Column(
           horizontalAlignment = Alignment.CenterHorizontally,
           modifier = Modifier
-              .testTag("Column")
               .padding(3.dp)) {
 
             // Recipe photo, downloaded from internet

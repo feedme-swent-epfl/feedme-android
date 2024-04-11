@@ -33,7 +33,8 @@ fun BottomNavigationMenu(
           icon = {
             Icon(imageVector = replyDestination.icon, contentDescription = replyDestination.textId)
           },
-          label = { Text(replyDestination.textId) })
+          label = { Text(replyDestination.textId) },
+          modifier = Modifier.testTag(replyDestination.textId))
     }
   }
 }

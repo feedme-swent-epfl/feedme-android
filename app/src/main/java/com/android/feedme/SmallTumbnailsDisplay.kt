@@ -85,11 +85,9 @@ fun SmallThumbnailsDisplay(listRecipe: List<Recipe>) {
 
               // Save button, to keep the recipe accessible even offline
               // There is no save icon in Material, so for now i'm using the "build" icon
-              IconButton(
-                  onClick = { /*TODO call to the database function for saving recipes*/},
-                  modifier = Modifier.testTag("Save Icon")) {
-                    Icon(imageVector = Icons.Outlined.Build, contentDescription = "Save Icon")
-                  }
+              IconButton(onClick = { /*TODO call to the database function for saving recipes*/}) {
+                Icon(imageVector = Icons.Outlined.Build, contentDescription = "Save Icon")
+              }
             }
             // Recipe Title
             Text(text = listRecipe[i].title, modifier = Modifier.testTag("Recipe Title"))

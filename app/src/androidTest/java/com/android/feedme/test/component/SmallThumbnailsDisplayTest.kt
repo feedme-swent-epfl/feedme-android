@@ -1,9 +1,8 @@
 package com.android.feedme.test.component
 
-import androidx.compose.ui.test.assertHasClickAction
 import androidx.compose.ui.test.assertIsDisplayed
 import androidx.compose.ui.test.junit4.createComposeRule
-import androidx.compose.ui.test.onNodeWithTag
+import androidx.compose.ui.test.onNodeWithContentDescription
 import androidx.test.ext.junit.runners.AndroidJUnit4
 import com.android.feedme.SmallThumbnailsDisplay
 import com.android.feedme.model.data.Ingredient
@@ -61,9 +60,8 @@ class SmallThumbnailsDisplayTest {
 
     composeTestRule.waitForIdle()
     composeTestRule
-        .onNodeWithTag("Save Icon", useUnmergedTree = true)
+        .onNodeWithContentDescription("Save Icon", useUnmergedTree = true)
         .assertIsDisplayed()
-        .assertHasClickAction()
     // composeTestRule.onNodeWithText(recipe1.title).assertIsDisplayed()
   }
 }

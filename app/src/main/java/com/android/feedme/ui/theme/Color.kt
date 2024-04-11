@@ -13,3 +13,4 @@ val DarkGrey = Color(0xFF191C1E)
 
 val TemplateColor = Color(0xFF002C47)
 val TopBarColor = Color(0xFFFFFFFF)
+val CardBackground = Color(0xC9C2E1EE)

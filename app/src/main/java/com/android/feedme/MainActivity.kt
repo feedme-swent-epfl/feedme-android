@@ -22,6 +22,7 @@ import com.android.feedme.ui.navigation.NavigationActions
 import com.android.feedme.ui.profile.ProfileScreen
 import com.android.feedme.ui.theme.feedmeAppTheme
 import com.google.firebase.firestore.FirebaseFirestore
+import com.android.feedme.ui.LandingPage
 
 class MainActivity : ComponentActivity() {
   /**
@@ -53,7 +54,7 @@ class MainActivity : ComponentActivity() {
               when (currentScreen) {
                 CurrentScreen.LOGIN -> LoginScreen()
                 CurrentScreen.CAMERA -> CameraScreen()
-                CurrentScreen.LANDING -> TODO()
+                CurrentScreen.LANDING -> LandingPage(navigationActions)
                 CurrentScreen.PROFILE -> ProfileScreen(navigationActions)
               }
             }

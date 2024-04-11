@@ -73,8 +73,11 @@ class AuthViewModelTest {
     authViewModel.linkOrCreateProfile(
         profileId, "johndoe", "john@example.com", "ss", { bool = true }, {})
 
+    shadowOf(Looper.getMainLooper()).idle()
     authViewModel.linkOrCreateProfile(
         "aaa", "johndoe", "john@example.com", "ss", { bool = true }, {})
+
+    shadowOf(Looper.getMainLooper()).idle()
 
     authViewModel.authenticateWithGoogle("johndoe", {}, {})
 

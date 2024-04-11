@@ -17,6 +17,7 @@ import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.collectAsState
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -28,7 +29,9 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.lifecycle.viewmodel.compose.viewModel
 import com.android.feedme.R
+import com.android.feedme.model.data.Profile
 import com.android.feedme.ui.navigation.BottomNavigationMenu
 import com.android.feedme.ui.navigation.NavigationActions
 import com.android.feedme.ui.navigation.Route
@@ -45,14 +48,17 @@ import com.android.feedme.ui.theme.DarkGrey
  * @param navigationActions The navigation actions instance for handling back navigation.
  */
 @Composable
-fun ProfileScreen(navigationActions: NavigationActions) {
+fun ProfileScreen(navigationActions: NavigationActions, profileViewModel: ProfileViewModel = viewModel()) {
+    val profile = profileViewModel.profile.collectAsState().value
   Scaffold(
-      modifier = Modifier.fillMaxSize().testTag("ProfileScreen"),
+      modifier = Modifier
+          .fillMaxSize()
+          .testTag("ProfileScreen"),
       topBar = { TopBarNavigation(title = "Profile") },
       bottomBar = {
         BottomNavigationMenu(Route.PROFILE, navigationActions::navigateTo, TOP_LEVEL_DESTINATIONS)
       },
-      content = { padding -> ProfileBox(padding) })
+      content = { padding -> ProfileBox(padding, profile) })
 }
 
 /**
@@ -62,12 +68,16 @@ fun ProfileScreen(navigationActions: NavigationActions) {
  * username, biography, followers and following of the user.
  */
 @Composable
-fun ProfileBox(padding: PaddingValues) { // TODO add font
+fun ProfileBox(padding: PaddingValues, profile: Profile?) { // TODO add font
   Column(
-      modifier = Modifier.padding(padding).testTag("ProfileBox"),
+      modifier = Modifier
+          .padding(padding)
+          .testTag("ProfileBox"),
       verticalArrangement = Arrangement.Top) {
         Row(
-            modifier = Modifier.fillMaxWidth().padding(vertical = 20.dp),
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(vertical = 20.dp),
             horizontalArrangement = Arrangement.Center,
             verticalAlignment = Alignment.CenterVertically) {
               UserProfilePicture()
@@ -90,7 +100,11 @@ fun ProfileBox(padding: PaddingValues) { // TODO add font
 @Composable
 fun UserProfilePicture() {
   Image(
-      modifier = Modifier.width(100.dp).height(100.dp).clip(CircleShape).testTag("ProfileIcon"),
+      modifier = Modifier
+          .width(100.dp)
+          .height(100.dp)
+          .clip(CircleShape)
+          .testTag("ProfileIcon"),
       painter = painterResource(id = R.drawable.user_logo),
       contentDescription = "User Profile Image",
       contentScale = ContentScale.FillBounds)
@@ -99,7 +113,9 @@ fun UserProfilePicture() {
 /** A composable function that generates the user's name and username */
 @Composable
 fun UserNameBox() {
-  Column(modifier = Modifier.width(100.dp).testTag("ProfileName")) {
+  Column(modifier = Modifier
+      .width(100.dp)
+      .testTag("ProfileName")) {
     Text(text = "User Name", style = textStyle(17, 15, 700, TextAlign.Center))
     Spacer(modifier = Modifier.height(10.dp))
     Text(text = "@username", style = textStyle(14, 15, 700, TextAlign.Center))
@@ -146,7 +162,9 @@ fun FollowingButton() {
 @Composable
 fun UserBio() {
   Text(
-      modifier = Modifier.padding(horizontal = 18.dp).testTag("ProfileBio"),
+      modifier = Modifier
+          .padding(horizontal = 18.dp)
+          .testTag("ProfileBio"),
       text =
           "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed. And the oceans we pigs.",
       style = textStyle(13, 15, 400, TextAlign.Justify))
@@ -156,7 +174,9 @@ fun UserBio() {
 @Composable
 fun ProfileButtons() {
   Row(
-      modifier = Modifier.fillMaxWidth().padding(vertical = 20.dp),
+      modifier = Modifier
+          .fillMaxWidth()
+          .padding(vertical = 20.dp),
       horizontalArrangement = Arrangement.SpaceEvenly,
       verticalAlignment = Alignment.CenterVertically) {
         OutlinedButton(
@@ -165,7 +185,9 @@ fun ProfileButtons() {
               /*TODO*/
             }) {
               Text(
-                  modifier = Modifier.width(110.dp).height(13.dp),
+                  modifier = Modifier
+                      .width(110.dp)
+                      .height(13.dp),
                   text = "Edit Profile",
                   style = textStyle(13, 0, 400, TextAlign.Center))
             }

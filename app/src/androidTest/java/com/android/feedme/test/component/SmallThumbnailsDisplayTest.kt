@@ -1,10 +1,15 @@
 package com.android.feedme.test.component
 
+import androidx.compose.foundation.Image
+import androidx.compose.runtime.Composable
+import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.test.assertIsDisplayed
 import androidx.compose.ui.test.junit4.createComposeRule
 import androidx.compose.ui.test.onNodeWithTag
 import androidx.compose.ui.test.onNodeWithText
 import androidx.test.ext.junit.runners.AndroidJUnit4
+import com.android.feedme.R
+import com.android.feedme.SmallThumbnails
 import com.android.feedme.SmallThumbnailsDisplay
 import com.android.feedme.model.data.Ingredient
 import com.android.feedme.model.data.IngredientMetaData
@@ -21,6 +26,7 @@ class SmallThumbnailsDisplayTest {
   @get:Rule val composeTestRule = createComposeRule()
 
   @Test
+  @Composable
   fun checkThumbnailsDisplay() {
     val recipe1 =
         Recipe(
@@ -39,20 +45,20 @@ class SmallThumbnailsDisplayTest {
             rating = 4.5,
             userid = "PasDavid",
             difficulty = "Intermediate",
-            "https://external-content.duckduckgo.com/iu/?u=https%3A%2F%2Fwww.mamablip.com%2Fstorage%2FLasagna%2520with%2520Meat%2520and%2520Tomato%2520Sauce_3481612355355.jpg&f=1&nofb=1&ipt=8e887ba99ce20a85fb867dabbe0206c1146ebf2f13548b5653a2778e3ea18c54&ipo=images")
+            image = Image(painter = painterResource(id = R.drawable.test_image_pasta), contentDescription = null)
+        )
 
-    composeTestRule.setContent { SmallThumbnailsDisplay(listRecipe = listOf(recipe1)) }
+    composeTestRule.setContent { SmallThumbnails(recipe1) }
 
     // composeTestRule.waitForIdle()
 
     // Check whether the Image or the warning message is displayed
-    /*try {
+    try {
       composeTestRule.onNodeWithTag("Recipe Image").assertIsDisplayed()
     } catch (e: AssertionError) {
       composeTestRule.onNodeWithTag("Fail Image Download")
-    }*/
+    }
 
-    Thread.sleep(30000)
     composeTestRule.onNodeWithTag("Star Icon").assertIsDisplayed()
     composeTestRule.onNodeWithText(recipe1.rating.toString()).assertIsDisplayed()
 

@@ -164,6 +164,8 @@ dependencies {
     debugImplementation(libs.compose.test.manifest)
     // Accompanist library
     implementation(libs.coil.compose)
+    // load Images from URL
+    implementation("io.coil-kt:coil-compose:2.4.0")
 
 
     // ---------------- CameraX --------------------

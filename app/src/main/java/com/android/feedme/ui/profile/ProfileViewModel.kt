@@ -10,24 +10,23 @@ import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.launch
 
 class ProfileViewModel : ViewModel() {
-    private val repository = ProfileRepository.instance
-    private val _profile = MutableStateFlow<Profile?>(null)
-    val profile: StateFlow<Profile?> = _profile
-    val googleId = FirebaseAuth.getInstance().uid
+  private val repository = ProfileRepository.instance
+  private val _profile = MutableStateFlow<Profile?>(null)
+  val profile: StateFlow<Profile?> = _profile
+  val googleId = FirebaseAuth.getInstance().uid
 
-    init {
-        if (googleId != null)
-            fetchProfile(googleId)
-    }
+  init {
+    if (googleId != null) fetchProfile(googleId)
+  }
 
-    fun fetchProfile(id: String) {
-        viewModelScope.launch {
-            repository.getProfile(
-                id,
-                onSuccess = { profile -> _profile.value = profile },
-                onFailure = {
-                    // Handle failure, e.g., by setting _profile.value to null or showing an error message
-                })
-        }
+  fun fetchProfile(id: String) {
+    viewModelScope.launch {
+      repository.getProfile(
+          id,
+          onSuccess = { profile -> _profile.value = profile },
+          onFailure = {
+            // Handle failure, e.g., by setting _profile.value to null or showing an error message
+          })
     }
+  }
 }

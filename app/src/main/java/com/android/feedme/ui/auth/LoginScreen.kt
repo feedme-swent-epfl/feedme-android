@@ -43,48 +43,48 @@ import kotlinx.coroutines.launch
 
 @Composable
 fun LoginScreen(authViewModel: AuthViewModel = viewModel()) {
-    val context = LocalContext.current
-    val coroutineScope = rememberCoroutineScope()
+  val context = LocalContext.current
+  val coroutineScope = rememberCoroutineScope()
 
-    // Configuration for Google Sign-In
-    val gso =
-        GoogleSignInOptions.Builder(GoogleSignInOptions.DEFAULT_SIGN_IN)
-            .requestIdToken(context.getString(R.string.default_web_client_id))
-            .requestEmail()
-            .build()
-    val googleSignInClient = GoogleSignIn.getClient(context, gso)
+  // Configuration for Google Sign-In
+  val gso =
+      GoogleSignInOptions.Builder(GoogleSignInOptions.DEFAULT_SIGN_IN)
+          .requestIdToken(context.getString(R.string.default_web_client_id))
+          .requestEmail()
+          .build()
+  val googleSignInClient = GoogleSignIn.getClient(context, gso)
 
-    // Activity Result Launcher for Google Sign-In
-    val googleSignInLauncher =
-        rememberLauncherForActivityResult(
-            contract = ActivityResultContracts.StartActivityForResult(),
-            onResult = { result ->
-                val task = GoogleSignIn.getSignedInAccountFromIntent(result.data)
-                try {
-                    val account = task.getResult(ApiException::class.java)
-                    account?.idToken?.let { idToken ->
-                        coroutineScope.launch {
-                            authViewModel.authenticateWithGoogle(
-                                idToken = idToken,
-                                onSuccess = {
-                                    // Navigate to next screen or show success message
-                                },
-                                onFailure = { exception ->
-                                    // Log error or show error message
-                                    Log.e("LoginScreen", "Authentication failed", exception)
-                                })
-                        }
-                    }
-                } catch (e: ApiException) {
-                    // Handle API exception
-                    Log.e("LoginScreen", "Sign in failed", e)
+  // Activity Result Launcher for Google Sign-In
+  val googleSignInLauncher =
+      rememberLauncherForActivityResult(
+          contract = ActivityResultContracts.StartActivityForResult(),
+          onResult = { result ->
+            val task = GoogleSignIn.getSignedInAccountFromIntent(result.data)
+            try {
+              val account = task.getResult(ApiException::class.java)
+              account?.idToken?.let { idToken ->
+                coroutineScope.launch {
+                  authViewModel.authenticateWithGoogle(
+                      idToken = idToken,
+                      onSuccess = {
+                        // Navigate to next screen or show success message
+                      },
+                      onFailure = { exception ->
+                        // Log error or show error message
+                        Log.e("LoginScreen", "Authentication failed", exception)
+                      })
                 }
-            })
+              }
+            } catch (e: ApiException) {
+              // Handle API exception
+              Log.e("LoginScreen", "Sign in failed", e)
+            }
+          })
 
-    Column(
-        modifier = Modifier.fillMaxSize().padding(16.dp).testTag("LoginScreen"),
-        verticalArrangement = Arrangement.Center,
-        horizontalAlignment = Alignment.CenterHorizontally) {
+  Column(
+      modifier = Modifier.fillMaxSize().padding(16.dp).testTag("LoginScreen"),
+      verticalArrangement = Arrangement.Center,
+      horizontalAlignment = Alignment.CenterHorizontally) {
         Image(
             painter = painterResource(id = R.drawable.sign_in_logo),
             contentDescription = "Sign-in Logo",
@@ -98,48 +98,48 @@ fun LoginScreen(authViewModel: AuthViewModel = viewModel()) {
             modifier = Modifier.testTag("LoginTitle"),
             // M3/display/large
             style =
-            TextStyle(
-                fontSize = 57.sp,
-                lineHeight = 64.sp,
-                fontWeight = FontWeight(400),
-                color = Color(0xFF191C1E),
-                textAlign = TextAlign.Center,
-            ))
+                TextStyle(
+                    fontSize = 57.sp,
+                    lineHeight = 64.sp,
+                    fontWeight = FontWeight(400),
+                    color = Color(0xFF191C1E),
+                    textAlign = TextAlign.Center,
+                ))
 
         Spacer(modifier = Modifier.height(176.dp))
         Button(
             onClick = { googleSignInLauncher.launch(googleSignInClient.signInIntent) },
             modifier =
-            Modifier.width(250.dp)
-                .height(40.dp)
-                .background(color = Color(0xFFFFFFFF), shape = RoundedCornerShape(size = 20.dp))
-                .testTag("LoginButton"),
+                Modifier.width(250.dp)
+                    .height(40.dp)
+                    .background(color = Color(0xFFFFFFFF), shape = RoundedCornerShape(size = 20.dp))
+                    .testTag("LoginButton"),
             colors = ButtonDefaults.buttonColors(Color.White),
             contentPadding = PaddingValues(2.dp),
             shape = RoundedCornerShape(20.dp),
             border = BorderStroke(2.dp, Color(0xFFDADCE0))) {
-            Row(
-                verticalAlignment = Alignment.CenterVertically,
-                horizontalArrangement = Arrangement.spacedBy(8.dp)) {
-                // Replace R.drawable.ic_google_logo with the actual resource ID for
-                // the Google logo
-                Image(
-                    painter = painterResource(id = R.drawable.google_logo),
-                    contentDescription = null, // Provide a meaningful content description
-                    modifier = Modifier.size(24.dp))
-                Spacer(modifier = Modifier.width(4.dp))
+              Row(
+                  verticalAlignment = Alignment.CenterVertically,
+                  horizontalArrangement = Arrangement.spacedBy(8.dp)) {
+                    // Replace R.drawable.ic_google_logo with the actual resource ID for
+                    // the Google logo
+                    Image(
+                        painter = painterResource(id = R.drawable.google_logo),
+                        contentDescription = null, // Provide a meaningful content description
+                        modifier = Modifier.size(24.dp))
+                    Spacer(modifier = Modifier.width(4.dp))
 
-                Text(
-                    modifier = Modifier.width(125.dp).height(17.dp),
-                    text = "Sign In with Google",
-                    fontSize = 14.sp,
-                    lineHeight = 17.sp,
-                    fontWeight = FontWeight(500),
-                    color = Color(0xFF3C4043),
-                    textAlign = TextAlign.Center,
-                    letterSpacing = 0.25.sp,
-                )
+                    Text(
+                        modifier = Modifier.width(125.dp).height(17.dp),
+                        text = "Sign In with Google",
+                        fontSize = 14.sp,
+                        lineHeight = 17.sp,
+                        fontWeight = FontWeight(500),
+                        color = Color(0xFF3C4043),
+                        textAlign = TextAlign.Center,
+                        letterSpacing = 0.25.sp,
+                    )
+                  }
             }
-        }
-    }
+      }
 }

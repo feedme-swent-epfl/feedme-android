@@ -1,4 +1,4 @@
-package com.android.feedme.screen
+package com.android.feedme.test.component
 
 import androidx.compose.ui.test.assertIsDisplayed
 import androidx.compose.ui.test.assertTextEquals
@@ -11,12 +11,13 @@ import com.android.feedme.model.data.IngredientMetaData
 import com.android.feedme.model.data.MeasureUnit
 import com.android.feedme.model.data.Recipe
 import com.android.feedme.model.data.Step
+import junit.framework.TestCase
 import org.junit.Rule
 import org.junit.Test
 import org.junit.runner.RunWith
 
 @RunWith(AndroidJUnit4::class)
-class SmallThumbnailsDisplayTest {
+class SmallThumbnailsDisplayTest : TestCase() {
 
   @get:Rule val composeTestRule = createComposeRule()
 

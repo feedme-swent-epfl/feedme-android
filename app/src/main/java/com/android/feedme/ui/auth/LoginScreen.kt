@@ -43,6 +43,14 @@ import com.google.android.gms.auth.api.signin.GoogleSignInOptions
 import com.google.android.gms.common.api.ApiException
 import kotlinx.coroutines.launch
 
+/**
+ * A composable function representing the login screen.
+ *
+ * This function provides a UI for users to sign in with Google authentication. It includes a Google
+ * sign-in button and handles authentication flow using Firebase authentication.
+ *
+ * @param navigationActions : the nav actions given in the MainActivity
+ */
 @Composable
 fun LoginScreen(navigationActions: NavigationActions, authViewModel: AuthViewModel = viewModel()) {
   val context = LocalContext.current

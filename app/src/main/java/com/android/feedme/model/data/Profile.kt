@@ -1,9 +1,9 @@
 package com.android.feedme.model.data
 
 data class Profile(
-    val id: String = "HARDCODED_ID",
+    val id: String = "DEFAULT_ID",
     val name: String = "John Doe",
-    val username: String = "johndoe",
+    val username: String = "defaultusername",
     val email: String = "johndoe@gmail.com",
     val description: String = "No Bio Yet",
     val imageUrl: String = "jajaj",

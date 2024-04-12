@@ -9,6 +9,12 @@ import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.launch
 
+/**
+ * A function that generates the profile view model
+ *
+ * This function provides the link between the Profile database and the rest of the code. It can be
+ * used in order to extract the profile information of the connected user
+ */
 class ProfileViewModel : ViewModel() {
   private val repository = ProfileRepository.instance
   private val _profile = MutableStateFlow<Profile?>(null)

@@ -66,6 +66,10 @@ fun ProfileScreen(
  *
  * This function provides the UI interface of the profile box of the user, which includes the name,
  * username, biography, followers and following of the user.
+ *
+ * It uses the parameter padding in order to pad around the profile box depending on the format of
+ * the phone It uses the parameter profile in order to extract the needed information from the
+ * user's profile in the database
  */
 @Composable
 fun ProfileBox(padding: PaddingValues, profile: Profile) { // TODO add font
@@ -92,7 +96,12 @@ fun ProfileBox(padding: PaddingValues, profile: Profile) { // TODO add font
       }
 }
 
-/** A composable function that generates the user's profile picture */
+/**
+ * A composable function that generates the user's profile picture
+ *
+ * It uses the parameter profile in order to extract the needed information from the user's profile
+ * in the database
+ */
 @Composable
 fun UserProfilePicture() {
   Image(
@@ -102,7 +111,12 @@ fun UserProfilePicture() {
       contentScale = ContentScale.FillBounds)
 }
 
-/** A composable function that generates the user's name and username */
+/**
+ * A composable function that generates the user's name and username
+ *
+ * It uses the parameter profile in order to extract the needed information from the user's profile
+ * in the database
+ */
 @Composable
 fun UserNameBox(profile: Profile) {
   Column(modifier = Modifier.width(100.dp).testTag("ProfileName")) {
@@ -118,13 +132,18 @@ fun UserNameBox(profile: Profile) {
   }
 }
 
-/** A composable function that generates the user's followers */
+/**
+ * A composable function that generates the user's followers
+ *
+ * It uses the parameter profile in order to extract the needed information from the user's profile
+ * in the database
+ */
 @Composable
 fun FollowersButton(profile: Profile) {
   TextButton(
       modifier = Modifier.testTag("FollowerButton"),
       onClick = {
-        /*TODO*/
+        /*TODO Implement the onclick for the followers button */
       }) {
         Column(
             horizontalAlignment = Alignment.CenterHorizontally,
@@ -138,13 +157,18 @@ fun FollowersButton(profile: Profile) {
       }
 }
 
-/** A composable function that generates the user's following */
+/**
+ * A composable function that generates the user's following
+ *
+ * It uses the parameter profile in order to extract the needed information from the user's profile
+ * in the database
+ */
 @Composable
 fun FollowingButton(profile: Profile) {
   TextButton(
       modifier = Modifier.testTag("FollowingButton"),
       onClick = {
-        /*TODO*/
+        /*TODO Implement the onclick for the following button */
       }) {
         Column(
             horizontalAlignment = Alignment.CenterHorizontally,
@@ -158,7 +182,12 @@ fun FollowingButton(profile: Profile) {
       }
 }
 
-/** A composable function that generates the user's biography */
+/**
+ * A composable function that generates the user's biography
+ *
+ * It uses the parameter profile in order to extract the needed information from the user's profile
+ * in the database
+ */
 @Composable
 fun UserBio(profile: Profile) {
   Text(
@@ -197,6 +226,7 @@ fun ProfileButtons() {
       }
 }
 
+/** A composable helper function that generates the font style for the Text */
 @Composable
 fun textStyle(fontSize: Int, height: Int, weight: Int, align: TextAlign): TextStyle {
   return TextStyle(

@@ -30,9 +30,7 @@ class LoginTest : TestCase() {
         assertIsDisplayed()
         assertTextEquals("Welcome")
       }
-      loginButton {
-        assertIsDisplayed()
-      }
+      loginButton { assertIsDisplayed() }
     }
   }
 

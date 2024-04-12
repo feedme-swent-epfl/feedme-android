@@ -7,7 +7,10 @@ import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.CircleShape
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.FilterList
+import androidx.compose.material.icons.filled.Search
 import androidx.compose.material.icons.outlined.Save
 import androidx.compose.material.icons.outlined.Star
 import androidx.compose.material.icons.outlined.Timer
@@ -17,9 +20,13 @@ import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.OutlinedButton
+import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.MutableState
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -27,8 +34,10 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.navigation.compose.rememberNavController
 import coil.compose.AsyncImage
 import com.android.feedme.model.data.Ingredient
 import com.android.feedme.model.data.IngredientMetaData
@@ -55,8 +64,8 @@ fun LandingPage(navigationActions: NavigationActions) {
       listOf(
           Recipe(
               recipeId = "lasagna1",
-              title = "Tasty Lasagna",
-              description = "a",
+              title = "Not So Tasty Lasagna",
+              description = "I am gatekeeping this recipe",
               ingredients =
                   listOf(
                       IngredientMetaData(
@@ -67,35 +76,44 @@ fun LandingPage(navigationActions: NavigationActions) {
               tags = listOf("Meat"),
               time = 1.15,
               rating = 4.5,
-              userid = "PasDavid",
+              userid = "EtienneBoisson",
               difficulty = "Intermediate",
               "https://external-content.duckduckgo.com/iu/?u=https%3A%2F%2Fwww.mamablip.com%2Fstorage%2FLasagna%2520with%2520Meat%2520and%2520Tomato%2520Sauce_3481612355355.jpg&f=1&nofb=1&ipt=8e887ba99ce20a85fb867dabbe0206c1146ebf2f13548b5653a2778e3ea18c54&ipo=images"),
       )
   Scaffold(
-      modifier = Modifier.fillMaxSize().testTag("LandingScreen"),
+      modifier = Modifier
+          .fillMaxSize()
+          .testTag("LandingScreen"),
       topBar = { TopBarNavigation(title = "FeedMe") },
       bottomBar = {
         BottomNavigationMenu(Route.HOME, navigationActions::navigateTo, TOP_LEVEL_DESTINATIONS)
       },
-      content = { padding -> RecipeList(padding, testRecipes) })
+      content = { padding -> LandingScreenComplete(padding, testRecipes) }
+  )
 }
 
 /**
  * A function that iterates over the list of recipes and generates a card for each one
  *
- * @param padding : the PaddingValues to allow the function to be added in the scaffold
  * @param recipes : the list of recipes to be displayed
  */
 @Composable
-fun RecipeList(padding: PaddingValues, recipes: List<Recipe>) {
+fun RecipeList(recipes: List<Recipe>) {
   // Scrollable list of recipes
-  LazyColumn(modifier = Modifier.padding(padding).testTag("RecipeList").background(TextBarColor)) {
+  LazyColumn(modifier = Modifier
+      .testTag("RecipeList")
+      .background(TextBarColor)) {
     items(recipes) { recipe ->
       // Recipe card
       Card(
-          modifier = Modifier.padding(16.dp).clickable(onClick = { /* TODO() */}),
+          modifier = Modifier
+              .padding(16.dp)
+              .clickable(onClick = { /* TODO() */ }),
           elevation = CardDefaults.elevatedCardElevation()) {
-            Column(modifier = Modifier.fillMaxWidth().background(Color.White).padding(16.dp)) {
+            Column(modifier = Modifier
+                .fillMaxWidth()
+                .background(Color.White)
+                .padding(16.dp)) {
               // Top layer of the card
               Row(
                   verticalAlignment = Alignment.CenterVertically,
@@ -111,14 +129,20 @@ fun RecipeList(padding: PaddingValues, recipes: List<Recipe>) {
                   }
 
               // Middle layer of the card
-              Row(modifier = Modifier.height(100.dp).fillMaxWidth()) {
+              Row(modifier = Modifier
+                  .height(100.dp)
+                  .fillMaxWidth()) {
                 // Recipe image extracted from the URL
                 AsyncImage(
                     model = recipe.imageUrl,
                     contentDescription = "Recipe Image",
                     contentScale = ContentScale.Fit,
-                    modifier = Modifier.size(width = 100.dp, height = 100.dp).clip(CircleShape))
-                Column(modifier = Modifier.height(100.dp).fillMaxWidth()) {
+                    modifier = Modifier
+                        .size(width = 100.dp, height = 100.dp)
+                        .clip(CircleShape))
+                Column(modifier = Modifier
+                    .height(100.dp)
+                    .fillMaxWidth()) {
                   Text(
                       text = recipe.description,
                       modifier = Modifier.fillMaxWidth(),
@@ -127,13 +151,16 @@ fun RecipeList(padding: PaddingValues, recipes: List<Recipe>) {
                       "@${recipe.userid}",
                       color = TemplateColor,
                       modifier =
-                          Modifier.padding(top = 8.dp)
-                              .clickable(
-                                  onClick = { /* TODO : implement the clicking on username */})
-                              .testTag("UserName"))
+                      Modifier
+                          .padding(top = 8.dp)
+                          .clickable(
+                              onClick = { /* TODO : implement the clicking on username */ })
+                          .testTag("UserName"))
                 }
               }
-              Spacer(modifier = Modifier.height(8.dp).width(10.dp))
+              Spacer(modifier = Modifier
+                  .height(8.dp)
+                  .width(10.dp))
               // Bottom layer of the card
               Row(
                   modifier = Modifier.fillMaxWidth(),
@@ -143,7 +170,9 @@ fun RecipeList(padding: PaddingValues, recipes: List<Recipe>) {
                       Icon(
                           imageVector = Icons.Outlined.Timer,
                           contentDescription = null,
-                          modifier = Modifier.size(24.dp).padding(end = 4.dp))
+                          modifier = Modifier
+                              .size(24.dp)
+                              .padding(end = 4.dp))
                       Text(
                           text = "${recipe.time.toInt()} min",
                           modifier = Modifier.padding(end = 8.dp))
@@ -161,11 +190,12 @@ fun RecipeList(padding: PaddingValues, recipes: List<Recipe>) {
                         border = BorderStroke(1.dp, Color.Transparent),
                         colors = ButtonDefaults.outlinedButtonColors(contentColor = TemplateColor),
                         modifier =
-                            Modifier.weight(1f)
-                                .padding(start = 8.dp)
-                                .width(4.dp) // TODO() : fix button size and align to the left of
-                                // the card
-                                .testTag("Rating")) {
+                        Modifier
+                            .weight(1f)
+                            .padding(start = 8.dp)
+                            .width(4.dp) // TODO() : fix button size and align to the left of
+                            // the card
+                            .testTag("Rating")) {
                           // Rating icon and text
                           Row(verticalAlignment = Alignment.CenterVertically) {
                             Text(
@@ -183,4 +213,76 @@ fun RecipeList(padding: PaddingValues, recipes: List<Recipe>) {
           }
     }
   }
+}
+
+@Composable
+fun SearchBar(
+    searchText: MutableState<String>,
+    onSearchTextChanged: (String) -> Unit,
+    onFilterClicked: () -> Unit
+) {
+    Row(
+        modifier = Modifier
+            .fillMaxWidth()
+            .background(Color.White)
+            .padding(16.dp),
+        verticalAlignment = Alignment.CenterVertically
+    ) {
+        OutlinedTextField(
+            value = searchText.value,
+            onValueChange = {
+                searchText.value = it
+                onSearchTextChanged(it)
+            },
+            placeholder = {
+                Text(text = "Find a friend or recipe", fontSize = 18.sp)
+            },
+            leadingIcon = {
+                Icon(imageVector = Icons.Default.Search, contentDescription = "Search")
+            },
+            modifier = Modifier
+                .weight(1f)
+                .background(Color.Transparent),
+            shape = RoundedCornerShape(50) // Set a large rounded shape to create a pill effect
+        )
+        Spacer(modifier = Modifier.width(16.dp))
+        Icon(
+            imageVector = Icons.Default.FilterList,
+            contentDescription = "Filter",
+            modifier = Modifier
+                .size(48.dp)
+                .clickable(onClick = onFilterClicked)
+                .padding(8.dp)
+                .testTag("FilterClick")
+        )
+    }
+}
+
+@Composable
+fun LandingScreenComplete(padding: PaddingValues, recipes: List<Recipe>) {
+    Column(
+        modifier = Modifier
+            .padding(padding)
+            .testTag("CompleteScreen")
+            .background(TextBarColor)
+    ) {
+        val searchText = remember { mutableStateOf("") }
+        SearchBar(searchText = searchText, onSearchTextChanged = { /*TODO()*/ }, onFilterClicked = { /*TODO()*/ } )
+        RecipeList(recipes = recipes)
+    }
+}
+/*@Composable
+fun SearchBarPreview() {
+    val searchText = remember { mutableStateOf("") }
+    SearchBar(
+        searchText = searchText,
+        onSearchTextChanged = {},
+        onFilterClicked = { /* TODO: Implement filter click action */ }
+    )
+}*/
+
+@Preview(showBackground = true)
+@Composable
+fun PreviewLanding() {
+    LandingPage(navigationActions = NavigationActions(rememberNavController()))
 }

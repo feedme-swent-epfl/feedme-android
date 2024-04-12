@@ -60,6 +60,15 @@ class LandingTest : TestCase() {
         assertIsDisplayed()
         assertHasClickAction()
       }
+
+      filterClick {
+        assertIsDisplayed()
+        assertHasClickAction()
+      }
+
+      completeScreen {
+        assertIsDisplayed()
+      }
     }
   }
 

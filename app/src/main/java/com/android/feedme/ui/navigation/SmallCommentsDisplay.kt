@@ -38,11 +38,11 @@ import com.android.feedme.ui.theme.BlueUser
  * This function creates a LazyColumn to display a list of comments on below the other. Each comment
  * is displayed using the [CommentCard] composable.
  *
- * @param listComment The list of comments to be displayed.
+ * @param listComment The list of [Comment] to be displayed.
  */
 @Composable
-fun SmallCommentsDisplay(listComment: List<Comment>) {
-  LazyColumn { items(listComment) { item -> CommentCard(comment = item) } }
+fun SmallCommentsDisplay(listComment: List<Comment>, modifier: Modifier = Modifier) {
+  LazyColumn(modifier = modifier) { items(listComment) { item -> CommentCard(comment = item) } }
 }
 
 /**
@@ -52,7 +52,7 @@ fun SmallCommentsDisplay(listComment: List<Comment>) {
  * representing the commenter, along with the author's name, the comment's title, and the comment's
  * content.
  *
- * @param comment The comment object to be displayed.
+ * @param comment The [Comment] object to be displayed.
  */
 @Composable
 fun CommentCard(comment: Comment) {

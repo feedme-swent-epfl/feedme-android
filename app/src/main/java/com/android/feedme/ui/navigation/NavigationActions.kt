@@ -24,7 +24,7 @@ class NavigationActions(private val navController: NavHostController) {
   /**
    * Navigates to the specified [TopLevelDestination] destination.
    *
-   * @param destination The destination to navigate to.
+   * @param destination The top level destination to navigate to.
    */
   fun navigateTo(destination: TopLevelDestination) {
     navController.navigate(destination.route) {
@@ -38,6 +38,16 @@ class NavigationActions(private val navController: NavHostController) {
       // Restore state when reselecting a previously selected item
       restoreState = true
     }
+  }
+
+  /**
+   * Navigates to the specified route.
+   *
+   * @param route The route to navigate to.
+   */
+  fun navigateTo(route: String) {
+    // When calling this method, the back bottom would be available to go back using goBack()
+    navController.navigate(route)
   }
 
   /** Navigates back to the previous destination in the navigation stack. */
@@ -58,11 +68,13 @@ class NavigationActions(private val navController: NavHostController) {
 
 /** Contains route constants used for navigating within the app. */
 object Route {
+  const val AUTHENTICATION = "Authentication"
   const val HOME = "Home"
   const val EXPLORE = "Explore"
   const val CREATE = "Create"
   const val PROFILE = "Profile"
   const val SETTINGS = "Settings"
+  const val CAMERA = "Camera"
 }
 
 /**

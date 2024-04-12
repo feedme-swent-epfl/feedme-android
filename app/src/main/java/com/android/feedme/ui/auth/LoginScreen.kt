@@ -39,6 +39,8 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.android.feedme.R
+import com.android.feedme.ui.navigation.NavigationActions
+import com.android.feedme.ui.navigation.TOP_LEVEL_DESTINATIONS
 import com.google.android.gms.auth.api.signin.GoogleSignIn
 import com.google.android.gms.auth.api.signin.GoogleSignInOptions
 import com.google.android.gms.common.api.ApiException
@@ -54,11 +56,11 @@ import kotlinx.coroutines.tasks.await
  *
  * This function provides a UI for users to sign in with Google authentication. It includes a Google
  * sign-in button and handles authentication flow using Firebase authentication.
+ *
+ * @param navigationActions : the nav actions given in the MainActivity
  */
 @Composable
-fun LoginScreen() { // TODO : Add an argument for the navigation as in bootcamp : navAction:
-  // NavigationActions
-
+fun LoginScreen(navigationActions: NavigationActions) {
   // TODO Make sure that there are no sign-in user
   // Firebase.auth.signOut() this line doesn't work.
 
@@ -70,6 +72,14 @@ fun LoginScreen() { // TODO : Add an argument for the navigation as in bootcamp 
           .requestEmail()
           .build()
   val googleSignInClient = GoogleSignIn.getClient(context, gso)
+  /*val googleSignInClient =
+     if (BuildConfig.DEBUG) {
+       MockServiceLocator.getService("GoogleSignInClient")
+     } else {
+       GoogleSignIn.getClient(context, gso)
+     }
+     TODO: Fix navigated testing
+  */
 
   /**
    * Remember Firebase authentication launcher.
@@ -110,7 +120,8 @@ fun LoginScreen() { // TODO : Add an argument for the navigation as in bootcamp 
       rememberFirebaseAuthLauncher(
           onAuthComplete = { _ ->
             Log.d("LOGIN", "Login was successful")
-            // TODO ADD NAVIGATION HERE
+            // Navigate to the first tab,
+            navigationActions.navigateTo(TOP_LEVEL_DESTINATIONS[0])
           },
           onAuthError = { e -> Log.d("LOGIN", "Login failed", e) })
   Column(

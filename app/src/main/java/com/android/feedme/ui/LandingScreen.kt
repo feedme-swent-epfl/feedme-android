@@ -8,9 +8,10 @@ import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.CircleShape
-import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Close
 import androidx.compose.material.icons.filled.FilterList
+import androidx.compose.material.icons.filled.Menu
 import androidx.compose.material.icons.filled.Search
 import androidx.compose.material.icons.outlined.FilterList
 import androidx.compose.material.icons.outlined.Save
@@ -24,12 +25,10 @@ import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.OutlinedButton
-import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.SearchBar
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -58,7 +57,6 @@ import com.android.feedme.ui.navigation.TOP_LEVEL_DESTINATIONS
 import com.android.feedme.ui.navigation.TopBarNavigation
 import com.android.feedme.ui.theme.TemplateColor
 import com.android.feedme.ui.theme.TextBarColor
-import java.nio.file.WatchEvent
 
 /**
  * Composable function that generates the landing page
@@ -69,9 +67,7 @@ import java.nio.file.WatchEvent
 @Composable
 fun LandingPage(navigationActions: NavigationActions, recipeList: List<Recipe>) {
   Scaffold(
-      modifier = Modifier
-          .fillMaxSize()
-          .testTag("LandingScreen"),
+      modifier = Modifier.fillMaxSize().testTag("LandingScreen"),
       topBar = { TopBarNavigation(title = "FeedMe") },
       bottomBar = {
         BottomNavigationMenu(Route.HOME, navigationActions::navigateTo, TOP_LEVEL_DESTINATIONS)
@@ -87,201 +83,186 @@ fun LandingPage(navigationActions: NavigationActions, recipeList: List<Recipe>) 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun RecipeList(recipes: List<Recipe>) {
-    var query by remember { mutableStateOf("Default Text") }
+  var query by remember { mutableStateOf("") }
+  var active by remember { mutableStateOf(false) }
 
-    Column(modifier = Modifier
-      .testTag("RecipeList")
-      .padding(top = 60.dp)
-      .background(Color.White)) {
-      // Search bar + filters icon
-      Row (
-          modifier = Modifier
-              .background(Color.White),
-          verticalAlignment = Alignment.CenterVertically) {
+  Column(modifier = Modifier.testTag("RecipeList").padding(top = 60.dp).background(Color.White)) {
+    // Search bar + filters icon
+    Row(
+        modifier = Modifier.background(Color.White),
+        verticalAlignment = Alignment.CenterVertically) {
           SearchBar(
               query = query,
-              active = true,
-              onActiveChange = {},
+              active = active,
+              onActiveChange = { active = it },
               onQueryChange = { query = it },
-              onSearch = {},
-              modifier = Modifier.padding(end = 10.dp).height(50.dp)
-          ) {}
+              onSearch = {
+                active = false
+                // add filtering logic here
+              },
+              leadingIcon = { Icon(Icons.Default.Menu, "Menu Icon") },
+              trailingIcon = {
+                if (active) {
+                  Icon(
+                      modifier =
+                          Modifier.clickable {
+                            query = ""
+                            active = false
+                            // add filtering logic here
+                          },
+                      imageVector = Icons.Default.Close,
+                      contentDescription = "Close Icon")
+                } else {
+                  Icon(Icons.Default.Search, contentDescription = "Search Icon")
+                }
+              },
+              placeholder = { Text("Search Recipe") },
+              modifier = Modifier.fillMaxWidth().padding(10.dp).height(50.dp)) {}
           // The filters' icon
           Icon(
               imageVector = Icons.Outlined.FilterList,
               contentDescription = "Filter",
               modifier =
-              Modifier
-                  .size(50.dp)
-                  .clickable(onClick = { })
-                  .padding(end = 8.dp)
-                  .testTag("FilterClick"))
-      }
+                  Modifier.size(50.dp)
+                      .clickable(onClick = {})
+                      .padding(end = 8.dp)
+                      .testTag("FilterClick"))
+        }
 
-      // Scrollable list of recipes
-      LazyColumn(
-          modifier = Modifier
-              .testTag("RecipeList")
-              .padding(top = 10.dp)
-              .background(TextBarColor)
-      ) {
+    // Scrollable list of recipes
+    LazyColumn(
+        modifier = Modifier.testTag("RecipeList").padding(top = 10.dp).background(TextBarColor)) {
           items(recipes) { recipe ->
-              // Recipe card
-              Card(
-                  modifier = Modifier
-                      .padding(16.dp)
-                      .clickable(onClick = { /* TODO() */ }),
-                  elevation = CardDefaults.elevatedCardElevation()
-              ) {
+            // Recipe card
+            Card(
+                modifier = Modifier.padding(16.dp).clickable(onClick = { /* TODO() */}),
+                elevation = CardDefaults.elevatedCardElevation()) {
                   Column(
-                      modifier = Modifier
-                          .fillMaxWidth()
-                          .background(Color.White)
-                          .padding(16.dp)
-                  ) {
-                      // Top layer of the card
-                      Row(
-                          verticalAlignment = Alignment.CenterVertically,
-                          horizontalArrangement = Arrangement.SpaceBetween,
-                          modifier = Modifier.fillMaxWidth()
-                      ) {
-                          Text(text = recipe.title, fontWeight = FontWeight.Bold, fontSize = 24.sp)
-                          IconButton(
-                              onClick = { /* Handle save icon click TODO() */ },
-                              modifier = Modifier.testTag("SaveIcon")
-                          ) {
-                              Icon(
-                                  imageVector = Icons.Outlined.Save,
-                                  contentDescription = "Save Recipe"
-                              )
-                          }
-                      }
+                      modifier = Modifier.fillMaxWidth().background(Color.White).padding(16.dp)) {
+                        // Top layer of the card
+                        Row(
+                            verticalAlignment = Alignment.CenterVertically,
+                            horizontalArrangement = Arrangement.SpaceBetween,
+                            modifier = Modifier.fillMaxWidth()) {
+                              Text(
+                                  text = recipe.title,
+                                  fontWeight = FontWeight.Bold,
+                                  fontSize = 24.sp)
+                              IconButton(
+                                  onClick = { /* Handle save icon click TODO() */},
+                                  modifier = Modifier.testTag("SaveIcon")) {
+                                    Icon(
+                                        imageVector = Icons.Outlined.Save,
+                                        contentDescription = "Save Recipe")
+                                  }
+                            }
 
-                      // Middle layer of the card
-                      Row(
-                          modifier = Modifier
-                              .height(100.dp)
-                              .fillMaxWidth()
-                      ) {
+                        // Middle layer of the card
+                        Row(modifier = Modifier.height(100.dp).fillMaxWidth()) {
                           // Recipe image extracted from the URL
                           AsyncImage(
                               model = recipe.imageUrl,
                               contentDescription = "Recipe Image",
                               contentScale = ContentScale.Fit,
-                              modifier = Modifier
-                                  .size(width = 100.dp, height = 100.dp)
-                                  .clip(CircleShape)
-                          )
-                          Column(
-                              modifier = Modifier
-                                  .height(100.dp)
-                                  .fillMaxWidth()
-                          ) {
-                              Text(
-                                  text = recipe.description,
-                                  modifier = Modifier.fillMaxWidth(),
-                                  color = TemplateColor
-                              )
-                              Text(
-                                  "@${recipe.userid}",
-                                  color = TemplateColor,
-                                  modifier =
-                                  Modifier
-                                      .padding(top = 8.dp)
-                                      .clickable(
-                                          onClick = { /* TODO : implement the clicking on username */ })
-                                      .testTag("UserName")
-                              )
-                          }
-                      }
-                      Spacer(
-                          modifier = Modifier
-                              .height(8.dp)
-                              .width(10.dp)
-                      )
-                      // Bottom layer of the card
-                      Row(
-                          modifier = Modifier.fillMaxWidth(),
-                          horizontalArrangement = Arrangement.SpaceBetween
-                      ) {
-                          // Time
-                          Column {
-                              Icon(
-                                  imageVector = Icons.Outlined.Timer,
-                                  contentDescription = null,
-                                  modifier = Modifier
-                                      .size(24.dp)
-                                      .padding(end = 4.dp)
-                              )
-                              Text(
-                                  text = "${recipe.time.toInt()} min",
-                                  modifier = Modifier.padding(end = 8.dp)
-                              )
-                          }
-                          OutlinedButton(
-                              onClick = { /* TODO() - I don't think we want this to be clickable (not a button ?) */ },
-                              border = BorderStroke(1.dp, Color.Black),
-                              colors = ButtonDefaults.outlinedButtonColors(contentColor = TemplateColor),
-                              modifier = Modifier.weight(1f) // TODO() : fix button size
-                          ) {
-                              Text(recipe.difficulty)
-                          }
-                          OutlinedButton(
-                              onClick = { /* TODO() implement the click on the rating that leads to comment section */ },
-                              border = BorderStroke(1.dp, Color.Transparent),
-                              colors = ButtonDefaults.outlinedButtonColors(contentColor = TemplateColor),
                               modifier =
-                              Modifier
-                                  .weight(1f)
-                                  .padding(start = 8.dp)
-                                  .width(4.dp) // TODO() : fix button size and align to the left of
-                                  // the card
-                                  .testTag("Rating")
-                          ) {
-                              // Rating icon and text
-                              Row(verticalAlignment = Alignment.CenterVertically) {
-                                  Text(
-                                      text = String.format("%.1f", recipe.rating),
-                                      fontWeight = FontWeight.Medium,
-                                      modifier = Modifier.padding(end = 4.dp)
-                                  )
-                                  Icon(
-                                      imageVector = Icons.Outlined.Star,
-                                      contentDescription = "Rating",
-                                      modifier = Modifier.size(24.dp)
-                                  )
-                              }
+                                  Modifier.size(width = 100.dp, height = 100.dp).clip(CircleShape))
+                          Column(modifier = Modifier.height(100.dp).fillMaxWidth()) {
+                            Text(
+                                text = recipe.description,
+                                modifier = Modifier.fillMaxWidth(),
+                                color = TemplateColor)
+                            Text(
+                                "@${recipe.userid}",
+                                color = TemplateColor,
+                                modifier =
+                                    Modifier.padding(top = 8.dp)
+                                        .clickable(
+                                            onClick = { /* TODO : implement the clicking on username */})
+                                        .testTag("UserName"))
                           }
+                        }
+                        Spacer(modifier = Modifier.height(8.dp).width(10.dp))
+                        // Bottom layer of the card
+                        Row(
+                            modifier = Modifier.fillMaxWidth(),
+                            horizontalArrangement = Arrangement.SpaceBetween) {
+                              // Time
+                              Column {
+                                Icon(
+                                    imageVector = Icons.Outlined.Timer,
+                                    contentDescription = null,
+                                    modifier = Modifier.size(24.dp).padding(end = 4.dp))
+                                Text(
+                                    text = "${recipe.time.toInt()} min",
+                                    modifier = Modifier.padding(end = 8.dp))
+                              }
+                              OutlinedButton(
+                                  onClick = { /* TODO() - I don't think we want this to be clickable (not a button ?) */},
+                                  border = BorderStroke(1.dp, Color.Black),
+                                  colors =
+                                      ButtonDefaults.outlinedButtonColors(
+                                          contentColor = TemplateColor),
+                                  modifier = Modifier.weight(1f) // TODO() : fix button size
+                                  ) {
+                                    Text(recipe.difficulty)
+                                  }
+                              OutlinedButton(
+                                  onClick = { /* TODO() implement the click on the rating that leads to comment section */},
+                                  border = BorderStroke(1.dp, Color.Transparent),
+                                  colors =
+                                      ButtonDefaults.outlinedButtonColors(
+                                          contentColor = TemplateColor),
+                                  modifier =
+                                      Modifier.weight(1f)
+                                          .padding(start = 8.dp)
+                                          .width(
+                                              4
+                                                  .dp) // TODO() : fix button size and align to the
+                                                       // left of
+                                          // the card
+                                          .testTag("Rating")) {
+                                    // Rating icon and text
+                                    Row(verticalAlignment = Alignment.CenterVertically) {
+                                      Text(
+                                          text = String.format("%.1f", recipe.rating),
+                                          fontWeight = FontWeight.Medium,
+                                          modifier = Modifier.padding(end = 4.dp))
+                                      Icon(
+                                          imageVector = Icons.Outlined.Star,
+                                          contentDescription = "Rating",
+                                          modifier = Modifier.size(24.dp))
+                                    }
+                                  }
+                            }
                       }
-                  }
-              }
+                }
           }
-      }
+        }
   }
 }
 
 @Preview(showBackground = true)
 @Composable
 fun PreviewLanding() {
-    val testRecipes: List<Recipe> =
-        listOf(
-            Recipe(
-                recipeId = "lasagna1",
-                title = "Tasty Lasagna",
-                description = "Description of the recipe",
-                ingredients =
-                listOf(
-                    IngredientMetaData(
-                        quantity = 2.0,
-                        measure = MeasureUnit.ML,
-                        ingredient = Ingredient("Tomato", "Vegetables", "tomatoID"))),
-                steps = listOf(Step(1, "a", "Step1")),
-                tags = listOf("Meat"),
-                time = 1.15,
-                rating = 4.5,
-                userid = "username",
-                difficulty = "Intermediate",
-                "https://external-content.duckduckgo.com/iu/?u=https%3A%2F%2Fwww.mamablip.com%2Fstorage%2FLasagna%2520with%2520Meat%2520and%2520Tomato%2520Sauce_3481612355355.jpg&f=1&nofb=1&ipt=8e887ba99ce20a85fb867dabbe0206c1146ebf2f13548b5653a2778e3ea18c54&ipo=images"),
-        )
-    LandingPage(navigationActions = NavigationActions(rememberNavController()), testRecipes)
+  val testRecipes: List<Recipe> =
+      listOf(
+          Recipe(
+              recipeId = "lasagna1",
+              title = "Tasty Lasagna",
+              description = "Description of the recipe",
+              ingredients =
+                  listOf(
+                      IngredientMetaData(
+                          quantity = 2.0,
+                          measure = MeasureUnit.ML,
+                          ingredient = Ingredient("Tomato", "Vegetables", "tomatoID"))),
+              steps = listOf(Step(1, "a", "Step1")),
+              tags = listOf("Meat"),
+              time = 1.15,
+              rating = 4.5,
+              userid = "username",
+              difficulty = "Intermediate",
+              "https://external-content.duckduckgo.com/iu/?u=https%3A%2F%2Fwww.mamablip.com%2Fstorage%2FLasagna%2520with%2520Meat%2520and%2520Tomato%2520Sauce_3481612355355.jpg&f=1&nofb=1&ipt=8e887ba99ce20a85fb867dabbe0206c1146ebf2f13548b5653a2778e3ea18c54&ipo=images"),
+      )
+  LandingPage(navigationActions = NavigationActions(rememberNavController()), testRecipes)
 }

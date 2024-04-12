@@ -19,8 +19,6 @@ import com.android.feedme.ui.navigation.NavigationActions
 import com.android.feedme.ui.navigation.Route
 import com.kaspersky.kaspresso.testcases.api.testcase.TestCase
 import io.github.kakaocup.compose.node.element.ComposeScreen
-import io.mockk.impl.annotations.RelaxedMockK
-import io.mockk.junit4.MockKRule
 import org.junit.Rule
 import org.junit.Test
 import org.junit.runner.RunWith

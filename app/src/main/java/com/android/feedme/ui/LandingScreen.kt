@@ -30,8 +30,10 @@ import androidx.compose.material3.SearchBar
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.MutableState
+import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -56,6 +58,7 @@ import com.android.feedme.ui.navigation.TOP_LEVEL_DESTINATIONS
 import com.android.feedme.ui.navigation.TopBarNavigation
 import com.android.feedme.ui.theme.TemplateColor
 import com.android.feedme.ui.theme.TextBarColor
+import java.nio.file.WatchEvent
 
 /**
  * Composable function that generates the landing page
@@ -84,36 +87,37 @@ fun LandingPage(navigationActions: NavigationActions, recipeList: List<Recipe>) 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun RecipeList(recipes: List<Recipe>) {
-  Column(modifier = Modifier
+    var query by remember { mutableStateOf("Default Text") }
+
+    Column(modifier = Modifier
       .testTag("RecipeList")
       .padding(top = 60.dp)
-      .background(TextBarColor)) {
+      .background(Color.White)) {
       // Search bar + filters icon
       Row (
           modifier = Modifier
               .background(Color.White),
           verticalAlignment = Alignment.CenterVertically) {
           SearchBar(
-              query = "",
+              query = query,
               active = true,
               onActiveChange = {},
-              onQueryChange = {},
+              onQueryChange = { query = it },
               onSearch = {},
-              modifier = Modifier.width(300.dp).padding(end = 10.dp).height(50.dp)
-          ) {
-              //Text("Search recipe or friend")
-          }
+              modifier = Modifier.padding(end = 10.dp).height(50.dp)
+          ) {}
           // The filters' icon
           Icon(
               imageVector = Icons.Outlined.FilterList,
               contentDescription = "Filter",
               modifier =
               Modifier
-                  .size(48.dp)
+                  .size(50.dp)
                   .clickable(onClick = { })
-                  .padding(8.dp)
+                  .padding(end = 8.dp)
                   .testTag("FilterClick"))
       }
+
       // Scrollable list of recipes
       LazyColumn(
           modifier = Modifier

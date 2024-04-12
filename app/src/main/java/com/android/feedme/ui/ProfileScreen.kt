@@ -1,4 +1,4 @@
-package com.android.feedme.ui.profile
+package com.android.feedme.ui
 
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.Arrangement
@@ -41,6 +41,8 @@ import com.android.feedme.ui.theme.DarkGrey
  *
  * This function provides the UI interface of the profile page, which includes the profile box,
  * recipe page of the user and the comments of the user.
+ *
+ * @param navigationActions The navigation actions instance for handling back navigation.
  */
 @Composable
 fun ProfileScreen(navigationActions: NavigationActions) {

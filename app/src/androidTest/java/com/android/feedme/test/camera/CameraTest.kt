@@ -2,42 +2,38 @@ package com.android.feedme.test.camera
 
 import android.Manifest
 import androidx.compose.ui.test.assertIsDisplayed
-import androidx.compose.ui.test.junit4.createAndroidComposeRule
+import androidx.compose.ui.test.junit4.createComposeRule
 import androidx.compose.ui.test.onNodeWithContentDescription
 import androidx.compose.ui.test.onNodeWithText
-import androidx.test.core.app.ActivityScenario
-import androidx.test.espresso.intent.rule.IntentsTestRule
 import androidx.test.ext.junit.runners.AndroidJUnit4
 import androidx.test.rule.GrantPermissionRule
-import com.android.feedme.CurrentScreen
-import com.android.feedme.MainActivity
 import com.android.feedme.screen.CameraScreen
+import com.android.feedme.ui.camera.CameraScreen
+import com.android.feedme.ui.navigation.NavigationActions
 import com.kaspersky.kaspresso.testcases.api.testcase.TestCase
 import io.github.kakaocup.compose.node.element.ComposeScreen
-import org.junit.Before
+import io.mockk.every
+import io.mockk.mockk
 import org.junit.Rule
 import org.junit.Test
 import org.junit.runner.RunWith
 
 @RunWith(AndroidJUnit4::class)
 class CameraTest : TestCase() {
-  @get:Rule val composeTestRule = createAndroidComposeRule<MainActivity>()
-  @get:Rule val intentsTestRule = IntentsTestRule(MainActivity::class.java)
+  // @get:Rule val composeTestRule = createAndroidComposeRule<MainActivity>()
+  @get:Rule val composeTestRule = createComposeRule()
+
+  // @get:Rule val intentsTestRule = IntentsTestRule(MainActivity::class.java) TODO: Fix testing
+  // with navigation
 
   // Grant camera permission for tests
   @get:Rule
   val permissionRule: GrantPermissionRule = GrantPermissionRule.grant(Manifest.permission.CAMERA)
 
-  @Before
-  fun setup() {
-    val scenario = ActivityScenario.launch(MainActivity::class.java)
-    scenario.onActivity { activity ->
-      activity.setScreen(CurrentScreen.CAMERA) // For CameraTest
-    }
-  }
-
   @Test
   fun buttonsAndCameraCorrectlyDisplayed() {
+    goToCameraScreen()
+
     ComposeScreen.onComposeScreen<CameraScreen>(composeTestRule) {
       cameraPreview { assertIsDisplayed() }
 
@@ -54,6 +50,8 @@ class CameraTest : TestCase() {
 
   @Test
   fun galleryButtonDisplayGalleryWhenEmpty() {
+    goToCameraScreen()
+
     ComposeScreen.onComposeScreen<CameraScreen>(composeTestRule) {
       cameraPreview { assertIsDisplayed() }
 
@@ -76,6 +74,8 @@ class CameraTest : TestCase() {
 
   @Test
   fun galleryButtonDisplayGalleryAfterTakingPhoto() {
+    goToCameraScreen()
+
     ComposeScreen.onComposeScreen<CameraScreen>(composeTestRule) {
       cameraPreview { assertIsDisplayed() }
 
@@ -107,5 +107,12 @@ class CameraTest : TestCase() {
           .onNodeWithContentDescription("Photo", useUnmergedTree = true)
           .assertIsDisplayed()
     }
+  }
+
+  private fun goToCameraScreen() {
+    val navActions = mockk<NavigationActions>()
+    every { navActions.canGoBack() } returns true
+    composeTestRule.setContent { CameraScreen(navActions) }
+    composeTestRule.waitForIdle()
   }
 }

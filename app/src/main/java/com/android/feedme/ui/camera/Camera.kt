@@ -54,6 +54,8 @@ import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.android.feedme.model.CameraViewModel
+import com.android.feedme.ui.navigation.NavigationActions
+import com.android.feedme.ui.navigation.TopBarNavigation
 import kotlinx.coroutines.launch
 
 /**
@@ -66,7 +68,7 @@ import kotlinx.coroutines.launch
  */
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun CameraScreen() {
+fun CameraScreen(navigationActions: NavigationActions) {
   val applicationContext = LocalContext.current
 
   // Request camera permission if not already granted
@@ -89,6 +91,7 @@ fun CameraScreen() {
 
   BottomSheetScaffold(
       modifier = Modifier.testTag("CameraScreen"),
+      topBar = { TopBarNavigation(title = "Camera", navigationActions, null) },
       scaffoldState = scaffoldState,
       sheetPeekHeight = 0.dp,
       sheetContent = {

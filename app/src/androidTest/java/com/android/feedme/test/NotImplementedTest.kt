@@ -2,9 +2,10 @@ package com.android.feedme.test
 
 import androidx.compose.ui.test.junit4.createComposeRule
 import androidx.test.ext.junit.runners.AndroidJUnit4
-import com.android.feedme.screen.LandingScreen
-import com.android.feedme.ui.LandingPage
+import com.android.feedme.screen.NotImplementedScreen
+import com.android.feedme.ui.NotImplementedScreen
 import com.android.feedme.ui.navigation.NavigationActions
+import com.android.feedme.ui.navigation.Route
 import com.kaspersky.kaspresso.testcases.api.testcase.TestCase
 import io.github.kakaocup.compose.node.element.ComposeScreen
 import io.mockk.mockk
@@ -13,7 +14,7 @@ import org.junit.Test
 import org.junit.runner.RunWith
 
 @RunWith(AndroidJUnit4::class)
-class LandingTest : TestCase() {
+class NotImplementedTest : TestCase() {
   // @get:Rule val composeTestRule = createAndroidComposeRule<MainActivity>()
   @get:Rule val composeTestRule = createComposeRule()
 
@@ -37,34 +38,19 @@ class LandingTest : TestCase() {
 
   @Test
   fun mainComponentsAreDisplayed() {
-    goToLandingScreen()
+    goToCreateScreen()
 
-    ComposeScreen.onComposeScreen<LandingScreen>(composeTestRule) {
+    ComposeScreen.onComposeScreen<NotImplementedScreen>(composeTestRule) {
       topBarLanding { assertIsDisplayed() }
 
       bottomBarLanding { assertIsDisplayed() }
 
-      recipeList { assertIsDisplayed() }
-
-      saveIcon {
-        assertIsDisplayed()
-        assertHasClickAction()
-      }
-
-      userName {
-        assertIsDisplayed()
-        assertHasClickAction()
-      }
-
-      ratingButton {
-        assertIsDisplayed()
-        assertHasClickAction()
-      }
+      middleText { assertIsDisplayed() }
     }
   }
 
-  private fun goToLandingScreen() {
-    composeTestRule.setContent { LandingPage(mockk<NavigationActions>()) }
+  private fun goToCreateScreen() {
+    composeTestRule.setContent { NotImplementedScreen(mockk<NavigationActions>(), Route.SETTINGS) }
     composeTestRule.waitForIdle()
 
     // TODO: Fix testing with navigation

@@ -46,7 +46,7 @@ import com.android.feedme.ui.theme.TextBarColor
 /**
  * Composable function that generates the landing page
  *
- * @param navigationActions : the nav actions given in the MainActivity
+ * @param navigationActions The navigation actions instance for handling back navigation.
  */
 @Composable
 fun LandingPage(navigationActions: NavigationActions) {

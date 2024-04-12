@@ -1,4 +1,4 @@
-package com.android.feedme
+package com.android.feedme.ui.component
 
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row

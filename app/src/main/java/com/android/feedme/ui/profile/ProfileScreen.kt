@@ -67,9 +67,8 @@ fun ProfileScreen(
  * This function provides the UI interface of the profile box of the user, which includes the name,
  * username, biography, followers and following of the user.
  *
- * It uses the parameter padding in order to pad around the profile box depending on the format of
- * the phone It uses the parameter profile in order to extract the needed information from the
- * user's profile in the database
+ * @param padding: pad around the profile box depending on the format of the phone
+ * @param profile: extract the needed information from the user's profile in the database
  */
 @Composable
 fun ProfileBox(padding: PaddingValues, profile: Profile) { // TODO add font
@@ -99,8 +98,7 @@ fun ProfileBox(padding: PaddingValues, profile: Profile) { // TODO add font
 /**
  * A composable function that generates the user's profile picture
  *
- * It uses the parameter profile in order to extract the needed information from the user's profile
- * in the database
+ * @param profile: extract the needed information from the user's profile in the database
  */
 @Composable
 fun UserProfilePicture() {
@@ -114,8 +112,7 @@ fun UserProfilePicture() {
 /**
  * A composable function that generates the user's name and username
  *
- * It uses the parameter profile in order to extract the needed information from the user's profile
- * in the database
+ * @param profile: extract the needed information from the user's profile in the database
  */
 @Composable
 fun UserNameBox(profile: Profile) {
@@ -135,8 +132,7 @@ fun UserNameBox(profile: Profile) {
 /**
  * A composable function that generates the user's followers
  *
- * It uses the parameter profile in order to extract the needed information from the user's profile
- * in the database
+ * @param profile: extract the needed information from the user's profile in the database
  */
 @Composable
 fun FollowersButton(profile: Profile) {
@@ -160,8 +156,7 @@ fun FollowersButton(profile: Profile) {
 /**
  * A composable function that generates the user's following
  *
- * It uses the parameter profile in order to extract the needed information from the user's profile
- * in the database
+ * @param profile: extract the needed information from the user's profile in the database
  */
 @Composable
 fun FollowingButton(profile: Profile) {
@@ -185,8 +180,7 @@ fun FollowingButton(profile: Profile) {
 /**
  * A composable function that generates the user's biography
  *
- * It uses the parameter profile in order to extract the needed information from the user's profile
- * in the database
+ * @param profile: extract the needed information from the user's profile in the database
  */
 @Composable
 fun UserBio(profile: Profile) {

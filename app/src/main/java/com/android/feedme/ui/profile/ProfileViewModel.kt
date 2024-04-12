@@ -10,9 +10,9 @@ import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.launch
 
 /**
- * A function that generates the profile view model
+ * A class that generates the profile view model
  *
- * This function provides the link between the Profile database and the rest of the code. It can be
+ * This class provides the link between the Profile database and the rest of the code. It can be
  * used in order to extract the profile information of the connected user
  */
 class ProfileViewModel : ViewModel() {
@@ -25,13 +25,19 @@ class ProfileViewModel : ViewModel() {
     if (googleId != null) fetchProfile(googleId)
   }
 
+  /**
+   * A function that fetches the profile during Login
+   *
+   * @param id: the unique ID of the profile we want to fetch
+   */
   fun fetchProfile(id: String) {
     viewModelScope.launch {
       repository.getProfile(
           id,
           onSuccess = { profile -> _profile.value = profile },
           onFailure = {
-            // Handle failure, e.g., by setting _profile.value to null or showing an error message
+            // Handle failure
+            throw error("Profile was not fetched during Login")
           })
     }
   }

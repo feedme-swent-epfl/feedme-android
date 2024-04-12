@@ -9,42 +9,60 @@ import com.google.firebase.auth.GoogleAuthProvider
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.tasks.await
 
-class AuthViewModel() : ViewModel() {
+/**
+ * ViewModel for handling authentication processes, specifically Google authentication in this
+ * context.
+ */
+class AuthViewModel : ViewModel() {
 
-  // Public function to handle Google sign-in using an ID token.
+  /**
+   * Authenticates a user with Google using an ID token.
+   *
+   * @param idToken The Google ID Token used to authenticate the user with Firebase Authentication.
+   * @param onSuccess Callback to be invoked when authentication is successful.
+   * @param onFailure Callback to be invoked when authentication fails with an exception.
+   */
   fun authenticateWithGoogle(
       idToken: String,
       onSuccess: () -> Unit,
       onFailure: (Exception) -> Unit
   ) {
-    // Get Google credentials from the provided ID token.
+    // Create a Google sign-in credential using the provided Google ID token.
     val credential = GoogleAuthProvider.getCredential(idToken, null)
 
-    // Launching a new coroutine in the ViewModel's scope
+    // Start a coroutine in the ViewModel's scope.
     viewModelScope.launch {
       try {
-        // Asynchronously sign in with the Google credentials and await the result.
+        // Attempt to sign in with the Google credential and wait for the result.
         val authResult = FirebaseAuth.getInstance().signInWithCredential(credential).await()
-        // Assuming successful authentication, proceed to link or create a profile
+        // Process the sign-in result.
         authResult.user?.let { firebaseUser ->
-          // If sign-in was successful, get user details from FirebaseUser
           val googleId = firebaseUser.uid
           val name = firebaseUser.displayName.orEmpty()
           val email = firebaseUser.email.orEmpty()
           val photoUrl = firebaseUser.photoUrl.toString()
 
-          // Attempt to link existing profile or create a new one.
+          // Try to link or create a profile based on the Firebase User details.
           linkOrCreateProfile(googleId, name, email, photoUrl, onSuccess, onFailure)
-        } ?: onFailure(Exception("Firebase User is null"))
+        } ?: onFailure(Exception("Firebase User is null")) // Handle null user case.
       } catch (e: Exception) {
-        // Handle any exceptions that occurred during the sign-in process.
+        // Handle exceptions during the sign-in process.
         onFailure(e)
       }
     }
   }
 
-  // Private function to either link to an existing profile or create a new one.
-  fun linkOrCreateProfile(
+  /**
+   * Links to an existing profile or creates a new one based on Google user data.
+   *
+   * @param googleId The unique identifier for the Google user.
+   * @param name The display name of the Google user.
+   * @param email The email address of the Google user.
+   * @param photoUrl The URL of the Google user's profile photo.
+   * @param onSuccess Callback to be invoked when linking or creation is successful.
+   * @param onFailure Callback to be invoked when linking or creation fails with an exception.
+   */
+  private fun linkOrCreateProfile(
       googleId: String,
       name: String?,
       email: String?,
@@ -52,17 +70,13 @@ class AuthViewModel() : ViewModel() {
       onSuccess: () -> Unit,
       onFailure: (Exception) -> Unit
   ) {
-    // Launching a new coroutine for database interaction.
     viewModelScope.launch {
       ProfileRepository.instance.getProfile(
           googleId,
           onSuccess = { existingProfile ->
-            // Check if a profile already exists.
             if (existingProfile != null) {
-              // If profile exists, call success callback.
               onSuccess()
             } else {
-              // If no profile exists, create a new one.
               makeNewProfile(googleId, name, email, photoUrl, onSuccess, onFailure)
             }
           },
@@ -70,7 +84,16 @@ class AuthViewModel() : ViewModel() {
     }
   }
 
-  // Private helper function to create a new profile in the Firestore database.
+  /**
+   * Creates a new profile and adds it to Firestore.
+   *
+   * @param googleId The unique identifier for the Google user.
+   * @param name The display name of the user (nullable).
+   * @param email The email address of the user (nullable).
+   * @param photoUrl The URL of the user's profile photo (nullable).
+   * @param onSuccess Callback to be invoked when the profile is successfully added.
+   * @param onFailure Callback to be invoked when adding the profile fails with an exception.
+   */
   private fun makeNewProfile(
       googleId: String,
       name: String?,
@@ -79,7 +102,6 @@ class AuthViewModel() : ViewModel() {
       onSuccess: () -> Unit,
       onFailure: (Exception) -> Unit
   ) {
-    // Create a new Profile data object with default and provided values.
     val newProfile =
         Profile(
             id = googleId,
@@ -94,7 +116,7 @@ class AuthViewModel() : ViewModel() {
             recipeList = listOf(),
             commentList = listOf())
 
-    // Add the new profile to the Firestore database.
+    // Add the newly created profile to the Firestore database.
     ProfileRepository.instance.addProfile(newProfile, onSuccess, onFailure)
   }
 }

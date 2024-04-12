@@ -1,12 +1,12 @@
 package com.android.feedme.model.data
 
 data class Profile(
-    val id: String = "DEFAULT_ID",
-    val name: String = "John Doe",
-    val username: String = "defaultusername",
-    val email: String = "johndoe@gmail.com",
-    val description: String = "No Bio Yet",
-    val imageUrl: String = "jajaj",
+    val id: String = "ID_DEFAULT",
+    val name: String = "NAME_DEFAULT",
+    val username: String = "USERNAME_DEFAULT",
+    val email: String = "EMAIL_DEFAULT",
+    val description: String = "BIO_DEFAULT",
+    val imageUrl: String = "URL_DEFAULT",
     val followers: List<String> = listOf(),
     val following: List<String> = listOf(),
     val filter: List<String> = listOf(), // Setting of alergie / setting

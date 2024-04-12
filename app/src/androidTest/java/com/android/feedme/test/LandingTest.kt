@@ -46,6 +46,11 @@ class LandingTest : TestCase() {
 
       recipeList { assertIsDisplayed() }
 
+      recipeCard {
+        assertIsDisplayed()
+        assertHasClickAction()
+      }
+
       saveIcon {
         assertIsDisplayed()
         assertHasClickAction()
@@ -60,6 +65,15 @@ class LandingTest : TestCase() {
         assertIsDisplayed()
         assertHasClickAction()
       }
+
+      filterClick {
+        assertIsDisplayed()
+        assertHasClickAction()
+      }
+
+      searchBar { assertIsDisplayed() }
+
+      completeScreen { assertIsDisplayed() }
     }
   }
 

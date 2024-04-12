@@ -29,19 +29,13 @@ import org.junit.runner.RunWith
 class UserFlowTest : TestCase() {
   @get:Rule val composeTestRule = createComposeRule()
 
-  // This rule automatic initializes lateinit properties with @MockK, @RelaxedMockK, etc.
-  @get:Rule val mockkRule = MockKRule(this)
-
-  // Relaxed mocks methods have a default implementation returning values
-  @RelaxedMockK lateinit var mockNavActions: NavigationActions
-
   // Grant camera permission for tests
   @get:Rule
   val permissionRule: GrantPermissionRule =
       GrantPermissionRule.grant(android.Manifest.permission.CAMERA)
 
   @Test
-  fun userFlowFromHomePageNavigatToCameraAndTakePhoto() {
+  fun userFlowFromHomePageNavigateToCameraAndTakePhoto() {
     // Set Navigation
     composeTestRule.setContent {
       val navController = rememberNavController()

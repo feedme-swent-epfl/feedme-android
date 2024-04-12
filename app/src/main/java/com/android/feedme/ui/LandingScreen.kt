@@ -1,5 +1,6 @@
 package com.android.feedme.ui
 
+import android.annotation.SuppressLint
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
@@ -11,6 +12,7 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.FilterList
 import androidx.compose.material.icons.filled.Search
+import androidx.compose.material.icons.outlined.FilterList
 import androidx.compose.material.icons.outlined.Save
 import androidx.compose.material.icons.outlined.Search
 import androidx.compose.material.icons.outlined.Star
@@ -18,11 +20,13 @@ import androidx.compose.material.icons.outlined.Timer
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
+import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.OutlinedButton
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Scaffold
+import androidx.compose.material3.SearchBar
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.MutableState
@@ -35,8 +39,10 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.navigation.compose.rememberNavController
 import coil.compose.AsyncImage
 import com.android.feedme.model.data.Ingredient
 import com.android.feedme.model.data.IngredientMetaData
@@ -56,36 +62,18 @@ import com.android.feedme.ui.theme.TextBarColor
  *
  * @param navigationActions The navigation actions instance for handling back navigation.
  */
+@SuppressLint("UnusedMaterial3ScaffoldPaddingParameter")
 @Composable
-fun LandingPage(navigationActions: NavigationActions) {
-  /** For testing purposes, keeping arguments static for now TODO ViewModel for the recipe lists */
-  val testRecipes: List<Recipe> =
-      listOf(
-          Recipe(
-              recipeId = "lasagna1",
-              title = "Not So Tasty Lasagna",
-              description = "I am gatekeeping this recipe",
-              ingredients =
-                  listOf(
-                      IngredientMetaData(
-                          quantity = 2.0,
-                          measure = MeasureUnit.ML,
-                          ingredient = Ingredient("Tomato", "Vegetables", "tomatoID"))),
-              steps = listOf(Step(1, "a", "Step1")),
-              tags = listOf("Meat"),
-              time = 1.15,
-              rating = 4.5,
-              userid = "EtienneBoisson",
-              difficulty = "Intermediate",
-              "https://external-content.duckduckgo.com/iu/?u=https%3A%2F%2Fwww.mamablip.com%2Fstorage%2FLasagna%2520with%2520Meat%2520and%2520Tomato%2520Sauce_3481612355355.jpg&f=1&nofb=1&ipt=8e887ba99ce20a85fb867dabbe0206c1146ebf2f13548b5653a2778e3ea18c54&ipo=images"),
-      )
+fun LandingPage(navigationActions: NavigationActions, recipeList: List<Recipe>) {
   Scaffold(
-      modifier = Modifier.fillMaxSize().testTag("LandingScreen"),
+      modifier = Modifier
+          .fillMaxSize()
+          .testTag("LandingScreen"),
       topBar = { TopBarNavigation(title = "FeedMe") },
       bottomBar = {
         BottomNavigationMenu(Route.HOME, navigationActions::navigateTo, TOP_LEVEL_DESTINATIONS)
       },
-      content = { padding -> LandingScreenComplete(padding, testRecipes) })
+      content = { RecipeList(recipeList) })
 }
 
 /**
@@ -93,164 +81,203 @@ fun LandingPage(navigationActions: NavigationActions) {
  *
  * @param recipes : the list of recipes to be displayed
  */
+@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun RecipeList(recipes: List<Recipe>) {
-  // Scrollable list of recipes
-  LazyColumn(modifier = Modifier.testTag("RecipeList").background(TextBarColor)) {
-    items(recipes) { recipe ->
-      // Recipe card
-      Card(
-          modifier = Modifier.padding(16.dp).clickable(onClick = { /* TODO() */}),
-          elevation = CardDefaults.elevatedCardElevation()) {
-            Column(modifier = Modifier.fillMaxWidth().background(Color.White).padding(16.dp)) {
-              // Top layer of the card
-              Row(
-                  verticalAlignment = Alignment.CenterVertically,
-                  horizontalArrangement = Arrangement.SpaceBetween,
-                  modifier = Modifier.fillMaxWidth()) {
-                    Text(text = recipe.title, fontWeight = FontWeight.Bold, fontSize = 24.sp)
-                    IconButton(
-                        onClick = { /* Handle save icon click TODO() */},
-                        modifier = Modifier.testTag("SaveIcon")) {
-                          Icon(
-                              imageVector = Icons.Outlined.Save, contentDescription = "Save Recipe")
-                        }
-                  }
-
-              // Middle layer of the card
-              Row(modifier = Modifier.height(100.dp).fillMaxWidth()) {
-                // Recipe image extracted from the URL
-                AsyncImage(
-                    model = recipe.imageUrl,
-                    contentDescription = "Recipe Image",
-                    contentScale = ContentScale.Fit,
-                    modifier = Modifier.size(width = 100.dp, height = 100.dp).clip(CircleShape))
-                Column(modifier = Modifier.height(100.dp).fillMaxWidth()) {
-                  Text(
-                      text = recipe.description,
-                      modifier = Modifier.fillMaxWidth(),
-                      color = TemplateColor)
-                  Text(
-                      "@${recipe.userid}",
-                      color = TemplateColor,
-                      modifier =
-                          Modifier.padding(top = 8.dp)
-                              .clickable(
-                                  onClick = { /* TODO : implement the clicking on username */})
-                              .testTag("UserName"))
-                }
-              }
-              Spacer(modifier = Modifier.height(8.dp).width(10.dp))
-              // Bottom layer of the card
-              Row(
-                  modifier = Modifier.fillMaxWidth(),
-                  horizontalArrangement = Arrangement.SpaceBetween) {
-                    // Time
-                    Column {
-                      Icon(
-                          imageVector = Icons.Outlined.Timer,
-                          contentDescription = null,
-                          modifier = Modifier.size(24.dp).padding(end = 4.dp))
-                      Text(
-                          text = "${recipe.time.toInt()} min",
-                          modifier = Modifier.padding(end = 8.dp))
-                    }
-                    OutlinedButton(
-                        onClick = { /* TODO() - I don't think we want this to be clickable (not a button ?) */},
-                        border = BorderStroke(1.dp, Color.Black),
-                        colors = ButtonDefaults.outlinedButtonColors(contentColor = TemplateColor),
-                        modifier = Modifier.weight(1f) // TODO() : fix button size
-                        ) {
-                          Text(recipe.difficulty)
-                        }
-                    OutlinedButton(
-                        onClick = { /* TODO() implement the click on the rating that leads to comment section */},
-                        border = BorderStroke(1.dp, Color.Transparent),
-                        colors = ButtonDefaults.outlinedButtonColors(contentColor = TemplateColor),
-                        modifier =
-                            Modifier.weight(1f)
-                                .padding(start = 8.dp)
-                                .width(4.dp) // TODO() : fix button size and align to the left of
-                                // the card
-                                .testTag("Rating")) {
-                          // Rating icon and text
-                          Row(verticalAlignment = Alignment.CenterVertically) {
-                            Text(
-                                text = String.format("%.1f", recipe.rating),
-                                fontWeight = FontWeight.Medium,
-                                modifier = Modifier.padding(end = 4.dp))
-                            Icon(
-                                imageVector = Icons.Outlined.Star,
-                                contentDescription = "Rating",
-                                modifier = Modifier.size(24.dp))
-                          }
-                        }
-                  }
-            }
+  Column(modifier = Modifier
+      .testTag("RecipeList")
+      .padding(top = 60.dp)
+      .background(TextBarColor)) {
+      // Search bar + filters icon
+      Row (
+          modifier = Modifier
+              .background(Color.White),
+          verticalAlignment = Alignment.CenterVertically) {
+          SearchBar(
+              query = "",
+              active = true,
+              onActiveChange = {},
+              onQueryChange = {},
+              onSearch = {},
+              modifier = Modifier.width(300.dp).padding(end = 10.dp).height(50.dp)
+          ) {
+              //Text("Search recipe or friend")
           }
-    }
-  }
-}
-
-/**
- * Function that displays our search bar as well as the filters icon
- *
- * @param searchText : the default text displayed in the search bar
- * @param onSearchTextChanged : if we want to apply any changes to the text we type in the search
- *   bar
- * @param onFilterClicked : the function that will allow us to go through filters by clicking on the
- *   icon
- */
-@Composable
-fun SearchBar(
-    searchText: MutableState<String>,
-    onSearchTextChanged: (String) -> Unit,
-    onFilterClicked: () -> Unit
-) {
-  Row(
-      modifier = Modifier.fillMaxWidth().background(Color.White).padding(16.dp),
-      verticalAlignment = Alignment.CenterVertically) {
-        OutlinedTextField(
-            value = searchText.value,
-            onValueChange = {
-              searchText.value = it
-              onSearchTextChanged(it)
-            },
-            placeholder = { Text(text = "Find a friend or recipe", fontSize = 18.sp) },
-            leadingIcon = {
-              Icon(imageVector = Icons.Default.Search, contentDescription = "Search")
-            },
-            modifier = Modifier.weight(1f).background(Color.Transparent).testTag("SearchBar"),
-            shape = RoundedCornerShape(50) // Set a large rounded shape to create a pill effect
-            )
-        Spacer(modifier = Modifier.width(16.dp))
-        // The filters' icon
-        Icon(
-            imageVector = Icons.Default.FilterList,
-            contentDescription = "Filter",
-            modifier =
-                Modifier.size(48.dp)
-                    .clickable(onClick = onFilterClicked)
-                    .padding(8.dp)
-                    .testTag("FilterClick"))
+          // The filters' icon
+          Icon(
+              imageVector = Icons.Outlined.FilterList,
+              contentDescription = "Filter",
+              modifier =
+              Modifier
+                  .size(48.dp)
+                  .clickable(onClick = { })
+                  .padding(8.dp)
+                  .testTag("FilterClick"))
       }
+      // Scrollable list of recipes
+      LazyColumn(
+          modifier = Modifier
+              .testTag("RecipeList")
+              .padding(top = 10.dp)
+              .background(TextBarColor)
+      ) {
+          items(recipes) { recipe ->
+              // Recipe card
+              Card(
+                  modifier = Modifier
+                      .padding(16.dp)
+                      .clickable(onClick = { /* TODO() */ }),
+                  elevation = CardDefaults.elevatedCardElevation()
+              ) {
+                  Column(
+                      modifier = Modifier
+                          .fillMaxWidth()
+                          .background(Color.White)
+                          .padding(16.dp)
+                  ) {
+                      // Top layer of the card
+                      Row(
+                          verticalAlignment = Alignment.CenterVertically,
+                          horizontalArrangement = Arrangement.SpaceBetween,
+                          modifier = Modifier.fillMaxWidth()
+                      ) {
+                          Text(text = recipe.title, fontWeight = FontWeight.Bold, fontSize = 24.sp)
+                          IconButton(
+                              onClick = { /* Handle save icon click TODO() */ },
+                              modifier = Modifier.testTag("SaveIcon")
+                          ) {
+                              Icon(
+                                  imageVector = Icons.Outlined.Save,
+                                  contentDescription = "Save Recipe"
+                              )
+                          }
+                      }
+
+                      // Middle layer of the card
+                      Row(
+                          modifier = Modifier
+                              .height(100.dp)
+                              .fillMaxWidth()
+                      ) {
+                          // Recipe image extracted from the URL
+                          AsyncImage(
+                              model = recipe.imageUrl,
+                              contentDescription = "Recipe Image",
+                              contentScale = ContentScale.Fit,
+                              modifier = Modifier
+                                  .size(width = 100.dp, height = 100.dp)
+                                  .clip(CircleShape)
+                          )
+                          Column(
+                              modifier = Modifier
+                                  .height(100.dp)
+                                  .fillMaxWidth()
+                          ) {
+                              Text(
+                                  text = recipe.description,
+                                  modifier = Modifier.fillMaxWidth(),
+                                  color = TemplateColor
+                              )
+                              Text(
+                                  "@${recipe.userid}",
+                                  color = TemplateColor,
+                                  modifier =
+                                  Modifier
+                                      .padding(top = 8.dp)
+                                      .clickable(
+                                          onClick = { /* TODO : implement the clicking on username */ })
+                                      .testTag("UserName")
+                              )
+                          }
+                      }
+                      Spacer(
+                          modifier = Modifier
+                              .height(8.dp)
+                              .width(10.dp)
+                      )
+                      // Bottom layer of the card
+                      Row(
+                          modifier = Modifier.fillMaxWidth(),
+                          horizontalArrangement = Arrangement.SpaceBetween
+                      ) {
+                          // Time
+                          Column {
+                              Icon(
+                                  imageVector = Icons.Outlined.Timer,
+                                  contentDescription = null,
+                                  modifier = Modifier
+                                      .size(24.dp)
+                                      .padding(end = 4.dp)
+                              )
+                              Text(
+                                  text = "${recipe.time.toInt()} min",
+                                  modifier = Modifier.padding(end = 8.dp)
+                              )
+                          }
+                          OutlinedButton(
+                              onClick = { /* TODO() - I don't think we want this to be clickable (not a button ?) */ },
+                              border = BorderStroke(1.dp, Color.Black),
+                              colors = ButtonDefaults.outlinedButtonColors(contentColor = TemplateColor),
+                              modifier = Modifier.weight(1f) // TODO() : fix button size
+                          ) {
+                              Text(recipe.difficulty)
+                          }
+                          OutlinedButton(
+                              onClick = { /* TODO() implement the click on the rating that leads to comment section */ },
+                              border = BorderStroke(1.dp, Color.Transparent),
+                              colors = ButtonDefaults.outlinedButtonColors(contentColor = TemplateColor),
+                              modifier =
+                              Modifier
+                                  .weight(1f)
+                                  .padding(start = 8.dp)
+                                  .width(4.dp) // TODO() : fix button size and align to the left of
+                                  // the card
+                                  .testTag("Rating")
+                          ) {
+                              // Rating icon and text
+                              Row(verticalAlignment = Alignment.CenterVertically) {
+                                  Text(
+                                      text = String.format("%.1f", recipe.rating),
+                                      fontWeight = FontWeight.Medium,
+                                      modifier = Modifier.padding(end = 4.dp)
+                                  )
+                                  Icon(
+                                      imageVector = Icons.Outlined.Star,
+                                      contentDescription = "Rating",
+                                      modifier = Modifier.size(24.dp)
+                                  )
+                              }
+                          }
+                      }
+                  }
+              }
+          }
+      }
+  }
 }
 
-/**
- * Function responsible for the general landing page Contains namely the Search Bar and the Recipes
- * List
- *
- * @param padding : the padding because this will be our main component
- * @param recipes : the argument to our RecipeList() function
- */
+@Preview(showBackground = true)
 @Composable
-fun LandingScreenComplete(padding: PaddingValues, recipes: List<Recipe>) {
-  Column(modifier = Modifier.padding(padding).testTag("CompleteScreen").background(TextBarColor)) {
-    val searchText = remember { mutableStateOf("") }
-    SearchBar(
-        searchText = searchText,
-        onSearchTextChanged = { /*TODO() we still need to implement the search */},
-        onFilterClicked = { /*TODO() we still need to implement the filters */})
-    RecipeList(recipes = recipes)
-  }
+fun PreviewLanding() {
+    val testRecipes: List<Recipe> =
+        listOf(
+            Recipe(
+                recipeId = "lasagna1",
+                title = "Tasty Lasagna",
+                description = "Description of the recipe",
+                ingredients =
+                listOf(
+                    IngredientMetaData(
+                        quantity = 2.0,
+                        measure = MeasureUnit.ML,
+                        ingredient = Ingredient("Tomato", "Vegetables", "tomatoID"))),
+                steps = listOf(Step(1, "a", "Step1")),
+                tags = listOf("Meat"),
+                time = 1.15,
+                rating = 4.5,
+                userid = "username",
+                difficulty = "Intermediate",
+                "https://external-content.duckduckgo.com/iu/?u=https%3A%2F%2Fwww.mamablip.com%2Fstorage%2FLasagna%2520with%2520Meat%2520and%2520Tomato%2520Sauce_3481612355355.jpg&f=1&nofb=1&ipt=8e887ba99ce20a85fb867dabbe0206c1146ebf2f13548b5653a2778e3ea18c54&ipo=images"),
+        )
+    LandingPage(navigationActions = NavigationActions(rememberNavController()), testRecipes)
 }

@@ -9,6 +9,7 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.unit.dp
 import com.android.feedme.ui.navigation.BottomNavigationMenu
 import com.android.feedme.ui.navigation.NavigationActions
@@ -18,9 +19,10 @@ import com.android.feedme.ui.navigation.TopBarNavigation
 
 /** Composable function that */
 @Composable
-fun CreateSceen(navigationActions: NavigationActions) {
+fun CreateScreen(navigationActions: NavigationActions) {
 
   Scaffold(
+      modifier = Modifier.testTag("CreateScreen"),
       topBar = { TopBarNavigation(title = "Create", navAction = null) },
       bottomBar = {
         BottomNavigationMenu(
@@ -33,7 +35,7 @@ fun CreateSceen(navigationActions: NavigationActions) {
             contentAlignment = Alignment.Center,
             modifier = Modifier.fillMaxSize().padding(paddingValues)) {
               OutlinedButton(
-                  modifier = Modifier.padding(20.dp),
+                  modifier = Modifier.padding(20.dp).testTag("CameraButton"),
                   onClick = { navigationActions.navigateTo(Route.CAMERA) }) {
                     Text(text = "Camera")
                   }

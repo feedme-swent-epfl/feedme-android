@@ -17,7 +17,7 @@ import androidx.navigation.compose.rememberNavController
 import com.android.feedme.model.data.ProfileRepository
 import com.android.feedme.model.data.RecipeRepository
 import com.android.feedme.resources.C
-import com.android.feedme.ui.CreateSceen
+import com.android.feedme.ui.CreateScreen
 import com.android.feedme.ui.LandingPage
 import com.android.feedme.ui.NotImplementedScreen
 import com.android.feedme.ui.ProfileScreen
@@ -51,7 +51,7 @@ class MainActivity : ComponentActivity() {
                 composable(Route.AUTHENTICATION) { LoginScreen(navigationActions) }
                 composable(Route.HOME) { LandingPage(navigationActions) }
                 composable(Route.EXPLORE) { NotImplementedScreen(navigationActions, Route.EXPLORE) }
-                composable(Route.CREATE) { CreateSceen(navigationActions) }
+                composable(Route.CREATE) { CreateScreen(navigationActions) }
                 composable(Route.PROFILE) { ProfileScreen(navigationActions) }
                 composable(Route.SETTINGS) {
                   NotImplementedScreen(navigationActions, Route.SETTINGS)

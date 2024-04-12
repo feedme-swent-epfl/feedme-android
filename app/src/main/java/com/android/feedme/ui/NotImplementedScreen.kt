@@ -8,6 +8,7 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.unit.dp
 import com.android.feedme.ui.navigation.BottomNavigationMenu
 import com.android.feedme.ui.navigation.NavigationActions
@@ -23,6 +24,7 @@ import com.android.feedme.ui.navigation.TopBarNavigation
 fun NotImplementedScreen(navigationActions: NavigationActions, selectedItem: String) {
 
   Scaffold(
+      modifier = Modifier.testTag("NotImplementedScreen"),
       topBar = { TopBarNavigation(title = "Not Implemented", navAction = null) },
       bottomBar = {
         BottomNavigationMenu(
@@ -36,7 +38,7 @@ fun NotImplementedScreen(navigationActions: NavigationActions, selectedItem: Str
             modifier = Modifier.fillMaxSize().padding(paddingValues)) {
               Text(
                   text = "This feature is not implemented yet. Please check back later.",
-                  modifier = Modifier.padding(20.dp))
+                  modifier = Modifier.padding(20.dp).testTag("Text"))
             }
       })
 }

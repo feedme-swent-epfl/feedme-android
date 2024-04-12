@@ -12,6 +12,7 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.FilterList
 import androidx.compose.material.icons.filled.Search
 import androidx.compose.material.icons.outlined.Save
+import androidx.compose.material.icons.outlined.Search
 import androidx.compose.material.icons.outlined.Star
 import androidx.compose.material.icons.outlined.Timer
 import androidx.compose.material3.ButtonDefaults
@@ -34,10 +35,8 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.text.font.FontWeight
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import androidx.navigation.compose.rememberNavController
 import coil.compose.AsyncImage
 import com.android.feedme.model.data.Ingredient
 import com.android.feedme.model.data.IngredientMetaData
@@ -193,6 +192,15 @@ fun RecipeList(recipes: List<Recipe>) {
   }
 }
 
+/**
+ * Function that displays our search bar as well as the filters icon
+ *
+ * @param searchText : the default text displayed in the search bar
+ * @param onSearchTextChanged : if we want to apply any changes to the text we type in the search
+ *   bar
+ * @param onFilterClicked : the function that will allow us to go through filters by clicking on the
+ *   icon
+ */
 @Composable
 fun SearchBar(
     searchText: MutableState<String>,
@@ -212,10 +220,11 @@ fun SearchBar(
             leadingIcon = {
               Icon(imageVector = Icons.Default.Search, contentDescription = "Search")
             },
-            modifier = Modifier.weight(1f).background(Color.Transparent),
+            modifier = Modifier.weight(1f).background(Color.Transparent).testTag("SearchBar"),
             shape = RoundedCornerShape(50) // Set a large rounded shape to create a pill effect
             )
         Spacer(modifier = Modifier.width(16.dp))
+        // The filters' icon
         Icon(
             imageVector = Icons.Default.FilterList,
             contentDescription = "Filter",
@@ -227,29 +236,21 @@ fun SearchBar(
       }
 }
 
+/**
+ * Function responsible for the general landing page Contains namely the Search Bar and the Recipes
+ * List
+ *
+ * @param padding : the padding because this will be our main component
+ * @param recipes : the argument to our RecipeList() function
+ */
 @Composable
 fun LandingScreenComplete(padding: PaddingValues, recipes: List<Recipe>) {
   Column(modifier = Modifier.padding(padding).testTag("CompleteScreen").background(TextBarColor)) {
     val searchText = remember { mutableStateOf("") }
     SearchBar(
         searchText = searchText,
-        onSearchTextChanged = { /*TODO()*/},
-        onFilterClicked = { /*TODO()*/})
+        onSearchTextChanged = { /*TODO() we still need to implement the search */},
+        onFilterClicked = { /*TODO() we still need to implement the filters */})
     RecipeList(recipes = recipes)
   }
-}
-/*@Composable
-fun SearchBarPreview() {
-    val searchText = remember { mutableStateOf("") }
-    SearchBar(
-        searchText = searchText,
-        onSearchTextChanged = {},
-        onFilterClicked = { /* TODO: Implement filter click action */ }
-    )
-}*/
-
-@Preview(showBackground = true)
-@Composable
-fun PreviewLanding() {
-  LandingPage(navigationActions = NavigationActions(rememberNavController()))
 }

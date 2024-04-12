@@ -66,6 +66,11 @@ class LandingTest : TestCase() {
         assertHasClickAction()
       }
 
+      searchBar {
+        assertIsDisplayed()
+        assertTextContains("Find a friend or recipe")
+      }
+
       completeScreen { assertIsDisplayed() }
     }
   }

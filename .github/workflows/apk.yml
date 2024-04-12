@@ -29,23 +29,32 @@ jobs:
       - name: Load Google Service file
         env:
             DATA: ${{ secrets.GOOGLE_SERVICES_JSON }}
-        run: echo $DATA | base64 -di > app/google-services.json
-  
+            ENCODED_KEYSTORE: ${{ secrets.KEYSTORE_FILE }}
+            ENCODED_PASSWORDS: ${{ secrets.KEYSTORE_PASSWORDS }}
+            
+        run: |
+          echo $GOOGLE_SERVICES_JSON | base64 -di > ./app/google-services.json
+          echo $ENCODED_KEYSTORE | base64 -di > keystore.jks
+          echo $ENCODED_PASSWORDS | base64 -di > keystore.properties
   
       - name: Grant execute permission for gradlew
         run: chmod +x ./gradlew
   
-      - name: Build APK
-        run: ./gradlew build
+      - name: Setup Android SDK
+        uses: android-actions/setup-android@v2.0.10
 
-      - name: Rename APK
-        run: mv app/build/outputs/apk/debug/app-debug.apk app/build/outputs/apk/debug/feedme-android-v1.x.x.apk
+      - name: Build APK
+        run: ./gradlew assembleRelease
+
+      - name: Get release path
+        id: feedmePath
+        run: echo "apkfile=$(find app/build/outputs/apk/release/*.apk)" >> $GITHUB_OUTPUT
 
       - name: Upload APK in artifacts
         uses: actions/upload-artifact@v4
         with:
           name: feedme-apk
-          path: app/build/outputs/apk/debug/feedme-android-v1.x.x.apk
+          path: ${{ steps.feedmePath.outputs.apkfile }}
           if-no-files-found: error
           retention-days: 90
           
@@ -53,7 +62,7 @@ jobs:
         uses: softprops/action-gh-release@v2
         with:
           name: FeedMe v1.x.x
-          files: app/build/outputs/apk/debug/feedme-android-v1.x.x.apk
+          files: ${{ steps.feedmePath.outputs.apkfile }}
           draft: true
           token: ${{ secrets.GITHUB_TOKEN }}
         

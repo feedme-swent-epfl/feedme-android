@@ -59,7 +59,7 @@ import com.android.feedme.ui.theme.TextBarColor
 /**
  * Composable function that generates the landing page
  *
- * @param navigationActions The navigation actions instance for handling back navigation.
+ * @param navigationActions The [NavigationActions] instance for handling back navigation.
  */
 @SuppressLint("UnusedMaterial3ScaffoldPaddingParameter")
 @Composable
@@ -157,7 +157,8 @@ fun RecipeList(recipes: List<Recipe>) {
                     modifier =
                         Modifier.padding(16.dp)
                             .clickable(
-                                onClick = { /* TODO() when the card is clicked, you will be able to see the full display of the recipe */}),
+                                onClick = { /* TODO() when the card is clicked, you will be able to see the full display of the recipe */})
+                            .testTag("RecipeCard"),
                     elevation = CardDefaults.elevatedCardElevation()) {
                       Column(
                           modifier =
@@ -172,7 +173,7 @@ fun RecipeList(recipes: List<Recipe>) {
                                       fontWeight = FontWeight.Bold,
                                       fontSize = 24.sp)
                                   IconButton(
-                                      onClick = { /* Handle save icon click TODO() */},
+                                      onClick = { /* TODO() Handle save icon click  */},
                                       modifier = Modifier.testTag("SaveIcon")) {
                                         Icon(
                                             imageVector = Icons.Outlined.Save,
@@ -262,8 +263,3 @@ fun RecipeList(recipes: List<Recipe>) {
       }
 }
 
-@Preview(showBackground = true)
-@Composable
-fun PreviewLanding() {
-  LandingPage(navigationActions = NavigationActions(rememberNavController()))
-}

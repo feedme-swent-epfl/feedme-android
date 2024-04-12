@@ -46,6 +46,11 @@ class LandingTest : TestCase() {
 
       recipeList { assertIsDisplayed() }
 
+      recipeCard {
+        assertIsDisplayed()
+        assertHasClickAction()
+      }
+
       saveIcon {
         assertIsDisplayed()
         assertHasClickAction()

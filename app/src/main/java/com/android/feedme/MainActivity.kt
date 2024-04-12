@@ -6,8 +6,6 @@ import androidx.activity.compose.setContent
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.semantics.testTag
@@ -20,7 +18,7 @@ import com.android.feedme.resources.C
 import com.android.feedme.ui.CreateScreen
 import com.android.feedme.ui.LandingPage
 import com.android.feedme.ui.NotImplementedScreen
-import com.android.feedme.ui.ProfileScreen
+import com.android.feedme.ui.profile.ProfileScreen
 import com.android.feedme.ui.auth.LoginScreen
 import com.android.feedme.ui.camera.CameraScreen
 import com.android.feedme.ui.navigation.NavigationActions
@@ -48,7 +46,7 @@ class MainActivity : ComponentActivity() {
 
               // Set up the navigation graph
               NavHost(navController = navController, startDestination = Route.AUTHENTICATION) {
-                composable(Route.AUTHENTICATION) { LoginScreen(navigationActions) }
+                composable(Route.AUTHENTICATION) { LoginScreen(navigationActions  =  navigationActions) }
                 composable(Route.HOME) { LandingPage(navigationActions) }
                 composable(Route.EXPLORE) { NotImplementedScreen(navigationActions, Route.EXPLORE) }
                 composable(Route.CREATE) { CreateScreen(navigationActions) }

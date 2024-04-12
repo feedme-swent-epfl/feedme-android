@@ -3,7 +3,7 @@ package com.android.feedme.test
 import androidx.compose.ui.test.junit4.createComposeRule
 import androidx.test.ext.junit.runners.AndroidJUnit4
 import com.android.feedme.screen.ProfileScreen
-import com.android.feedme.ui.ProfileScreen
+import com.android.feedme.ui.profile.ProfileScreen
 import com.android.feedme.ui.navigation.NavigationActions
 import io.github.kakaocup.compose.node.element.ComposeScreen
 import io.mockk.mockk

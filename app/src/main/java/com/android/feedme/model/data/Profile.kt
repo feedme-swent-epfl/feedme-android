@@ -9,7 +9,8 @@ data class Profile(
     val imageUrl: String = "",
     val followers: List<String> = listOf(),
     val following: List<String> = listOf(),
-    val filter: List<String> = listOf(),
+    val filter: List<String> = listOf(), // Setting of alergie / setting
     val recipeList: List<String> = listOf(), // Assuming this is a list of recipe IDs
+    // TODO ADD recipeSave / RecipeCreated
     val commentList: List<String> = listOf()
 )

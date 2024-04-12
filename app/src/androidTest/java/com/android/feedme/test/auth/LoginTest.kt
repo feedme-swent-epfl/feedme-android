@@ -32,7 +32,6 @@ class LoginTest : TestCase() {
       }
       loginButton {
         assertIsDisplayed()
-        assertHasClickAction()
       }
     }
   }

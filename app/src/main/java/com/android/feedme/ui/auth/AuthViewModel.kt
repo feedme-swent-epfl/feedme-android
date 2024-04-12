@@ -56,7 +56,7 @@ class AuthViewModel() : ViewModel() {
     }
   }
 
-  fun makeNewProfile(
+  private fun makeNewProfile(
       googleId: String,
       name: String?,
       email: String?,

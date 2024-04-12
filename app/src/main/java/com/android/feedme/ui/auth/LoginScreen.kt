@@ -36,13 +36,15 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.android.feedme.R
+import com.android.feedme.ui.navigation.NavigationActions
+import com.android.feedme.ui.navigation.Route
 import com.google.android.gms.auth.api.signin.GoogleSignIn
 import com.google.android.gms.auth.api.signin.GoogleSignInOptions
 import com.google.android.gms.common.api.ApiException
 import kotlinx.coroutines.launch
 
 @Composable
-fun LoginScreen(authViewModel: AuthViewModel = viewModel()) {
+fun LoginScreen(navigationActions: NavigationActions, authViewModel: AuthViewModel = viewModel()) {
   val context = LocalContext.current
   val coroutineScope = rememberCoroutineScope()
 
@@ -67,6 +69,7 @@ fun LoginScreen(authViewModel: AuthViewModel = viewModel()) {
                   authViewModel.authenticateWithGoogle(
                       idToken = idToken,
                       onSuccess = {
+                        navigationActions.navigateTo(Route.HOME)
                         // Navigate to next screen or show success message
                       },
                       onFailure = { exception ->

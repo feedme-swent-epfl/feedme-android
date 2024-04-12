@@ -18,11 +18,11 @@ import com.android.feedme.resources.C
 import com.android.feedme.ui.CreateScreen
 import com.android.feedme.ui.LandingPage
 import com.android.feedme.ui.NotImplementedScreen
-import com.android.feedme.ui.profile.ProfileScreen
 import com.android.feedme.ui.auth.LoginScreen
 import com.android.feedme.ui.camera.CameraScreen
 import com.android.feedme.ui.navigation.NavigationActions
 import com.android.feedme.ui.navigation.Route
+import com.android.feedme.ui.profile.ProfileScreen
 import com.android.feedme.ui.theme.feedmeAppTheme
 import com.google.firebase.firestore.FirebaseFirestore
 
@@ -46,7 +46,9 @@ class MainActivity : ComponentActivity() {
 
               // Set up the navigation graph
               NavHost(navController = navController, startDestination = Route.AUTHENTICATION) {
-                composable(Route.AUTHENTICATION) { LoginScreen(navigationActions  =  navigationActions) }
+                composable(Route.AUTHENTICATION) {
+                  LoginScreen(navigationActions = navigationActions)
+                }
                 composable(Route.HOME) { LandingPage(navigationActions) }
                 composable(Route.EXPLORE) { NotImplementedScreen(navigationActions, Route.EXPLORE) }
                 composable(Route.CREATE) { CreateScreen(navigationActions) }

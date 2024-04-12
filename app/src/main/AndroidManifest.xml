@@ -8,6 +8,8 @@
         android:name="android.hardware.camera"
         android:required="false" />
     <uses-permission android:name="android.permission.CAMERA" />
+    <!-- Internet Permission -->
+    <uses-permission android:name="android.permission.INTERNET" />
 
     <application
         android:usesCleartextTraffic="false"

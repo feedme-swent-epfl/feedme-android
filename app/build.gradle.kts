@@ -141,6 +141,8 @@ dependencies {
     globalTestImplementation(libs.androidx.espresso.core)
     // Android Navigation
     implementation(libs.androidx.navigation.runtime.ktx)
+    // Import image from url
+    implementation("io.coil-kt:coil-compose:2.4.0")
 
     // ------------- Jetpack Compose ------------------
     val composeBom = platform(libs.compose.bom)

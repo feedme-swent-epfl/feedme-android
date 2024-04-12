@@ -4,6 +4,7 @@ on:
   push:
     branches:
       - main
+      - 71-self-sign-apk-to-fix-new-bug
 
 permissions:
     contents: write

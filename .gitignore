@@ -28,6 +28,8 @@ replay_pid*
 .vscode/
 **/build
 local.properties
+keystore.properties
+app/upload-keystore.jks
 .gradle
 /app/google-services.json
 

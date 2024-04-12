@@ -81,15 +81,12 @@ fun LandingPage(navigationActions: NavigationActions) {
               "https://external-content.duckduckgo.com/iu/?u=https%3A%2F%2Fwww.mamablip.com%2Fstorage%2FLasagna%2520with%2520Meat%2520and%2520Tomato%2520Sauce_3481612355355.jpg&f=1&nofb=1&ipt=8e887ba99ce20a85fb867dabbe0206c1146ebf2f13548b5653a2778e3ea18c54&ipo=images"),
       )
   Scaffold(
-      modifier = Modifier
-          .fillMaxSize()
-          .testTag("LandingScreen"),
+      modifier = Modifier.fillMaxSize().testTag("LandingScreen"),
       topBar = { TopBarNavigation(title = "FeedMe") },
       bottomBar = {
         BottomNavigationMenu(Route.HOME, navigationActions::navigateTo, TOP_LEVEL_DESTINATIONS)
       },
-      content = { padding -> LandingScreenComplete(padding, testRecipes) }
-  )
+      content = { padding -> LandingScreenComplete(padding, testRecipes) })
 }
 
 /**
@@ -100,20 +97,13 @@ fun LandingPage(navigationActions: NavigationActions) {
 @Composable
 fun RecipeList(recipes: List<Recipe>) {
   // Scrollable list of recipes
-  LazyColumn(modifier = Modifier
-      .testTag("RecipeList")
-      .background(TextBarColor)) {
+  LazyColumn(modifier = Modifier.testTag("RecipeList").background(TextBarColor)) {
     items(recipes) { recipe ->
       // Recipe card
       Card(
-          modifier = Modifier
-              .padding(16.dp)
-              .clickable(onClick = { /* TODO() */ }),
+          modifier = Modifier.padding(16.dp).clickable(onClick = { /* TODO() */}),
           elevation = CardDefaults.elevatedCardElevation()) {
-            Column(modifier = Modifier
-                .fillMaxWidth()
-                .background(Color.White)
-                .padding(16.dp)) {
+            Column(modifier = Modifier.fillMaxWidth().background(Color.White).padding(16.dp)) {
               // Top layer of the card
               Row(
                   verticalAlignment = Alignment.CenterVertically,
@@ -129,20 +119,14 @@ fun RecipeList(recipes: List<Recipe>) {
                   }
 
               // Middle layer of the card
-              Row(modifier = Modifier
-                  .height(100.dp)
-                  .fillMaxWidth()) {
+              Row(modifier = Modifier.height(100.dp).fillMaxWidth()) {
                 // Recipe image extracted from the URL
                 AsyncImage(
                     model = recipe.imageUrl,
                     contentDescription = "Recipe Image",
                     contentScale = ContentScale.Fit,
-                    modifier = Modifier
-                        .size(width = 100.dp, height = 100.dp)
-                        .clip(CircleShape))
-                Column(modifier = Modifier
-                    .height(100.dp)
-                    .fillMaxWidth()) {
+                    modifier = Modifier.size(width = 100.dp, height = 100.dp).clip(CircleShape))
+                Column(modifier = Modifier.height(100.dp).fillMaxWidth()) {
                   Text(
                       text = recipe.description,
                       modifier = Modifier.fillMaxWidth(),
@@ -151,16 +135,13 @@ fun RecipeList(recipes: List<Recipe>) {
                       "@${recipe.userid}",
                       color = TemplateColor,
                       modifier =
-                      Modifier
-                          .padding(top = 8.dp)
-                          .clickable(
-                              onClick = { /* TODO : implement the clicking on username */ })
-                          .testTag("UserName"))
+                          Modifier.padding(top = 8.dp)
+                              .clickable(
+                                  onClick = { /* TODO : implement the clicking on username */})
+                              .testTag("UserName"))
                 }
               }
-              Spacer(modifier = Modifier
-                  .height(8.dp)
-                  .width(10.dp))
+              Spacer(modifier = Modifier.height(8.dp).width(10.dp))
               // Bottom layer of the card
               Row(
                   modifier = Modifier.fillMaxWidth(),
@@ -170,9 +151,7 @@ fun RecipeList(recipes: List<Recipe>) {
                       Icon(
                           imageVector = Icons.Outlined.Timer,
                           contentDescription = null,
-                          modifier = Modifier
-                              .size(24.dp)
-                              .padding(end = 4.dp))
+                          modifier = Modifier.size(24.dp).padding(end = 4.dp))
                       Text(
                           text = "${recipe.time.toInt()} min",
                           modifier = Modifier.padding(end = 8.dp))
@@ -190,12 +169,11 @@ fun RecipeList(recipes: List<Recipe>) {
                         border = BorderStroke(1.dp, Color.Transparent),
                         colors = ButtonDefaults.outlinedButtonColors(contentColor = TemplateColor),
                         modifier =
-                        Modifier
-                            .weight(1f)
-                            .padding(start = 8.dp)
-                            .width(4.dp) // TODO() : fix button size and align to the left of
-                            // the card
-                            .testTag("Rating")) {
+                            Modifier.weight(1f)
+                                .padding(start = 8.dp)
+                                .width(4.dp) // TODO() : fix button size and align to the left of
+                                // the card
+                                .testTag("Rating")) {
                           // Rating icon and text
                           Row(verticalAlignment = Alignment.CenterVertically) {
                             Text(
@@ -221,55 +199,44 @@ fun SearchBar(
     onSearchTextChanged: (String) -> Unit,
     onFilterClicked: () -> Unit
 ) {
-    Row(
-        modifier = Modifier
-            .fillMaxWidth()
-            .background(Color.White)
-            .padding(16.dp),
-        verticalAlignment = Alignment.CenterVertically
-    ) {
+  Row(
+      modifier = Modifier.fillMaxWidth().background(Color.White).padding(16.dp),
+      verticalAlignment = Alignment.CenterVertically) {
         OutlinedTextField(
             value = searchText.value,
             onValueChange = {
-                searchText.value = it
-                onSearchTextChanged(it)
+              searchText.value = it
+              onSearchTextChanged(it)
             },
-            placeholder = {
-                Text(text = "Find a friend or recipe", fontSize = 18.sp)
-            },
+            placeholder = { Text(text = "Find a friend or recipe", fontSize = 18.sp) },
             leadingIcon = {
-                Icon(imageVector = Icons.Default.Search, contentDescription = "Search")
+              Icon(imageVector = Icons.Default.Search, contentDescription = "Search")
             },
-            modifier = Modifier
-                .weight(1f)
-                .background(Color.Transparent),
+            modifier = Modifier.weight(1f).background(Color.Transparent),
             shape = RoundedCornerShape(50) // Set a large rounded shape to create a pill effect
-        )
+            )
         Spacer(modifier = Modifier.width(16.dp))
         Icon(
             imageVector = Icons.Default.FilterList,
             contentDescription = "Filter",
-            modifier = Modifier
-                .size(48.dp)
-                .clickable(onClick = onFilterClicked)
-                .padding(8.dp)
-                .testTag("FilterClick")
-        )
-    }
+            modifier =
+                Modifier.size(48.dp)
+                    .clickable(onClick = onFilterClicked)
+                    .padding(8.dp)
+                    .testTag("FilterClick"))
+      }
 }
 
 @Composable
 fun LandingScreenComplete(padding: PaddingValues, recipes: List<Recipe>) {
-    Column(
-        modifier = Modifier
-            .padding(padding)
-            .testTag("CompleteScreen")
-            .background(TextBarColor)
-    ) {
-        val searchText = remember { mutableStateOf("") }
-        SearchBar(searchText = searchText, onSearchTextChanged = { /*TODO()*/ }, onFilterClicked = { /*TODO()*/ } )
-        RecipeList(recipes = recipes)
-    }
+  Column(modifier = Modifier.padding(padding).testTag("CompleteScreen").background(TextBarColor)) {
+    val searchText = remember { mutableStateOf("") }
+    SearchBar(
+        searchText = searchText,
+        onSearchTextChanged = { /*TODO()*/},
+        onFilterClicked = { /*TODO()*/})
+    RecipeList(recipes = recipes)
+  }
 }
 /*@Composable
 fun SearchBarPreview() {
@@ -284,5 +251,5 @@ fun SearchBarPreview() {
 @Preview(showBackground = true)
 @Composable
 fun PreviewLanding() {
-    LandingPage(navigationActions = NavigationActions(rememberNavController()))
+  LandingPage(navigationActions = NavigationActions(rememberNavController()))
 }

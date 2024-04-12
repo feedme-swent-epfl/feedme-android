@@ -62,7 +62,7 @@ class AuthViewModel : ViewModel() {
    * @param onSuccess Callback to be invoked when linking or creation is successful.
    * @param onFailure Callback to be invoked when linking or creation fails with an exception.
    */
-  private fun linkOrCreateProfile(
+  fun linkOrCreateProfile(
       googleId: String,
       name: String?,
       email: String?,

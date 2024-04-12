@@ -47,18 +47,17 @@ import com.android.feedme.ui.theme.DarkGrey
  * recipe page of the user and the comments of the user.
  */
 @Composable
-fun ProfileScreen(
-    navigationActions: NavigationActions,
-    profileViewModel: ProfileViewModel = viewModel()
-) {
-    val profile = profileViewModel.profile.collectAsState().value
-    Scaffold(
-        modifier = Modifier.fillMaxSize().testTag("ProfileScreen"),
-        topBar = { TopBarNavigation(title = "Profile") },
-        bottomBar = {
-            BottomNavigationMenu(Route.PROFILE, navigationActions::navigateTo, TOP_LEVEL_DESTINATIONS)
-        },
-        content = { padding -> ProfileBox(padding, if (profile != null) profile else Profile()) })
+fun ProfileScreen(navigationActions: NavigationActions, profileViewModel: ProfileViewModel = viewModel()) {
+  val profile = profileViewModel.profile.collectAsState().value
+  Scaffold(
+      modifier = Modifier
+          .fillMaxSize()
+          .testTag("ProfileScreen"),
+      topBar = { TopBarNavigation(title = "Profile") },
+      bottomBar = {
+        BottomNavigationMenu(Route.PROFILE, navigationActions::navigateTo, TOP_LEVEL_DESTINATIONS)
+      },
+      content = { padding -> ProfileBox(padding, if (profile != null) profile else Profile()) })
 }
 
 /**
@@ -69,140 +68,146 @@ fun ProfileScreen(
  */
 @Composable
 fun ProfileBox(padding: PaddingValues, profile: Profile) { // TODO add font
-    Column(
-        modifier = Modifier.padding(padding).testTag("ProfileBox"),
-        verticalArrangement = Arrangement.Top) {
+  Column(
+      modifier = Modifier
+          .padding(padding)
+          .testTag("ProfileBox"),
+      verticalArrangement = Arrangement.Top) {
         Row(
-            modifier = Modifier.fillMaxWidth().padding(vertical = 20.dp),
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(vertical = 20.dp),
             horizontalArrangement = Arrangement.Center,
             verticalAlignment = Alignment.CenterVertically) {
-            UserProfilePicture()
-            Spacer(modifier = Modifier.width(20.dp))
-            UserNameBox(profile)
-            Spacer(modifier = Modifier.width(5.dp))
-            Row(
-                horizontalArrangement = Arrangement.Center,
-                verticalAlignment = Alignment.CenterVertically) {
-                FollowersButton(profile)
-                FollowingButton(profile)
+              UserProfilePicture()
+              Spacer(modifier = Modifier.width(20.dp))
+              UserNameBox(profile)
+              Spacer(modifier = Modifier.width(5.dp))
+              Row(
+                  horizontalArrangement = Arrangement.Center,
+                  verticalAlignment = Alignment.CenterVertically) {
+                    FollowersButton(profile)
+                    FollowingButton(profile)
+                  }
             }
-        }
         UserBio(profile)
         ProfileButtons()
-    }
+      }
 }
 
 /** A composable function that generates the user's profile picture */
 @Composable
 fun UserProfilePicture() {
-    Image(
-        modifier = Modifier.width(100.dp).height(100.dp).clip(CircleShape).testTag("ProfileIcon"),
-        painter = painterResource(id = R.drawable.user_logo),
-        contentDescription = "User Profile Image",
-        contentScale = ContentScale.FillBounds)
+  Image(
+      modifier = Modifier
+          .width(100.dp)
+          .height(100.dp)
+          .clip(CircleShape)
+          .testTag("ProfileIcon"),
+      painter = painterResource(id = R.drawable.user_logo),
+      contentDescription = "User Profile Image",
+      contentScale = ContentScale.FillBounds)
 }
 
 /** A composable function that generates the user's name and username */
 @Composable
 fun UserNameBox(profile: Profile) {
-    Column(modifier = Modifier.width(100.dp).testTag("ProfileName")) {
-        Text(
-            text = profile.name,
-            style = textStyle(17, 15, 700, TextAlign.Center),
-            overflow = TextOverflow.Ellipsis)
-        Spacer(modifier = Modifier.height(10.dp))
-        Text(
-            text = "@" + profile.username,
-            style = textStyle(14, 15, 700, TextAlign.Center),
-            overflow = TextOverflow.Ellipsis)
-    }
+  Column(modifier = Modifier
+      .width(100.dp)
+      .testTag("ProfileName")) {
+    Text(text = profile.name, style = textStyle(17, 15, 700, TextAlign.Center), overflow = TextOverflow.Ellipsis)
+    Spacer(modifier = Modifier.height(10.dp))
+    Text(text = "@"+profile.username, style = textStyle(14, 15, 700, TextAlign.Center), overflow = TextOverflow.Ellipsis)
+  }
 }
 
 /** A composable function that generates the user's followers */
 @Composable
 fun FollowersButton(profile: Profile) {
-    TextButton(
-        modifier = Modifier.testTag("FollowerButton"),
-        onClick = {
-            /*TODO*/
-        }) {
+  TextButton(
+      modifier = Modifier.testTag("FollowerButton"),
+      onClick = {
+        /*TODO*/
+      }) {
         Column(
             horizontalAlignment = Alignment.CenterHorizontally,
             verticalArrangement = Arrangement.Center) {
-            Text(text = "Followers", style = textStyle(10, 20, 600, TextAlign.Center))
-            Spacer(modifier = Modifier.height(5.dp))
-            Text(
-                text = profile.followers.size.toString(),
-                style = textStyle(10, 30, 600, TextAlign.Center))
-        }
-    }
+              Text(text = "Followers", style = textStyle(10, 20, 600, TextAlign.Center))
+              Spacer(modifier = Modifier.height(5.dp))
+              Text(text = profile.followers.size.toString(), style = textStyle(10, 30, 600, TextAlign.Center))
+            }
+      }
 }
 
 /** A composable function that generates the user's following */
 @Composable
 fun FollowingButton(profile: Profile) {
-    TextButton(
-        modifier = Modifier.testTag("FollowingButton"),
-        onClick = {
-            /*TODO*/
-        }) {
+  TextButton(
+      modifier = Modifier.testTag("FollowingButton"),
+      onClick = {
+        /*TODO*/
+      }) {
         Column(
             horizontalAlignment = Alignment.CenterHorizontally,
             verticalArrangement = Arrangement.Center) {
-            Text(text = "Following", style = textStyle(10, 20, 600, TextAlign.Center))
-            Spacer(modifier = Modifier.height(5.dp))
-            Text(
-                text = profile.following.size.toString(),
-                style = textStyle(10, 30, 600, TextAlign.Center))
-        }
-    }
+              Text(text = "Following", style = textStyle(10, 20, 600, TextAlign.Center))
+              Spacer(modifier = Modifier.height(5.dp))
+              Text(text = profile.following.size.toString(), style = textStyle(10, 30, 600, TextAlign.Center))
+            }
+      }
 }
 
 /** A composable function that generates the user's biography */
 @Composable
 fun UserBio(profile: Profile) {
-    Text(
-        modifier = Modifier.padding(horizontal = 18.dp).testTag("ProfileBio"),
-        text = profile.description,
-        style = textStyle(13, 15, 400, TextAlign.Justify))
+  Text(
+      modifier = Modifier
+          .padding(horizontal = 18.dp)
+          .testTag("ProfileBio"),
+      text = profile.description,
+      style = textStyle(13, 15, 400, TextAlign.Justify))
 }
 
 /** A composable function that generates the Edit profile and Share profile buttons */
 @Composable
 fun ProfileButtons() {
-    Row(
-        modifier = Modifier.fillMaxWidth().padding(vertical = 20.dp),
-        horizontalArrangement = Arrangement.SpaceEvenly,
-        verticalAlignment = Alignment.CenterVertically) {
+  Row(
+      modifier = Modifier
+          .fillMaxWidth()
+          .padding(vertical = 20.dp),
+      horizontalArrangement = Arrangement.SpaceEvenly,
+      verticalAlignment = Alignment.CenterVertically) {
         OutlinedButton(
             modifier = Modifier.testTag("EditButton"),
             onClick = {
-                /*TODO*/
+              /*TODO*/
             }) {
-            Text(
-                modifier = Modifier.width(110.dp).height(13.dp),
-                text = "Edit Profile",
-                style = textStyle(13, 0, 400, TextAlign.Center))
-        }
+              Text(
+                  modifier = Modifier
+                      .width(110.dp)
+                      .height(13.dp),
+                  text = "Edit Profile",
+                  style = textStyle(13, 0, 400, TextAlign.Center))
+            }
         OutlinedButton(
             modifier = Modifier.testTag("ShareButton"),
             onClick = {
-                /*TODO*/
+              /*TODO*/
             }) {
-            Text(
-                modifier = Modifier.width(110.dp),
-                text = "Share Profile",
-                style = textStyle(13, 0, 400, TextAlign.Center))
-        }
-    }
+              Text(
+                  modifier = Modifier.width(110.dp),
+                  text = "Share Profile",
+                  style = textStyle(13, 0, 400, TextAlign.Center))
+            }
+      }
 }
 
 @Composable
 fun textStyle(fontSize: Int, height: Int, weight: Int, align: TextAlign): TextStyle {
-    return TextStyle(
-        fontSize = fontSize.sp,
-        lineHeight = height.sp,
-        fontWeight = FontWeight(weight),
-        color = DarkGrey,
-        textAlign = align)
+  return TextStyle(
+      fontSize = fontSize.sp,
+      lineHeight = height.sp,
+      fontWeight = FontWeight(weight),
+      color = DarkGrey,
+      textAlign = align)
 }

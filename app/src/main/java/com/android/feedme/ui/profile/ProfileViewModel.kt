@@ -16,7 +16,8 @@ class ProfileViewModel : ViewModel() {
     val googleId = FirebaseAuth.getInstance().uid
 
     init {
-        if (googleId != null) fetchProfile(googleId)
+        if (googleId != null)
+            fetchProfile(googleId)
     }
 
     fun fetchProfile(id: String) {

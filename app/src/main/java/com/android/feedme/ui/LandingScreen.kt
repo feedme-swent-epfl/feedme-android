@@ -132,11 +132,10 @@ fun RecipeList(recipes: List<Recipe>) {
                       Icon(
                           modifier =
                               Modifier.clickable {
-                                    query = ""
-                                    active = false
-                                    // add filtering logic here
-                                  }
-                                  .testTag("SearchBar"),
+                                query = ""
+                                active = false
+                                // add filtering logic here
+                              },
                           imageVector = Icons.Default.Close,
                           contentDescription = "Close Icon")
                     } else {
@@ -144,7 +143,8 @@ fun RecipeList(recipes: List<Recipe>) {
                     }
                   },
                   placeholder = { Text("Search Recipe") },
-                  modifier = Modifier.fillMaxWidth().padding(10.dp).height(50.dp)) {}
+                  modifier =
+                      Modifier.fillMaxWidth().padding(10.dp).height(50.dp).testTag("SearchBar")) {}
             }
 
         // Scrollable list of recipes

@@ -1,0 +1,227 @@
+package com.android.feedme.ui.profile
+
+import androidx.compose.foundation.Image
+import androidx.compose.foundation.background
+import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.items
+import androidx.compose.foundation.shape.CircleShape
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.MoreVert
+import androidx.compose.material3.Button
+import androidx.compose.material3.Card
+import androidx.compose.material3.Icon
+import androidx.compose.material3.IconButton
+import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.Scaffold
+import androidx.compose.material3.Tab
+import androidx.compose.material3.TabRow
+import androidx.compose.material3.Text
+import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableIntStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
+import androidx.compose.ui.Alignment
+import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
+import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
+import com.android.feedme.R
+import com.android.feedme.model.data.Profile
+import com.android.feedme.ui.navigation.BottomNavigationMenu
+import com.android.feedme.ui.navigation.NavigationActions
+import com.android.feedme.ui.navigation.Route
+import com.android.feedme.ui.navigation.TOP_LEVEL_DESTINATIONS
+import com.android.feedme.ui.navigation.TopBarNavigation
+
+val demoProfiles =
+    listOf(
+        Profile(
+            id = "1",
+            name = "John Doe",
+            username = "john_doe",
+            imageUrl = "https://example.com/image1.jpg"),
+        Profile(
+            id = "2",
+            name = "Jane Smith",
+            username = "jane_smith",
+            imageUrl = "https://example.com/image2.jpg"),
+        // Generate more profile
+        Profile(
+            id = "1",
+            name = "John Doe",
+            username = "john_doe",
+            imageUrl = "https://example.com/image1.jpg"),
+        Profile(
+            id = "2",
+            name = "Jane Smith",
+            username = "jane_smith",
+            imageUrl = "https://example.com/image2.jpg"),
+        Profile(
+            id = "1",
+            name = "John Doe",
+            username = "john_doe",
+            imageUrl = "https://example.com/image1.jpg"),
+        Profile(
+            id = "2",
+            name = "Jane Smith",
+            username = "jane_smith",
+            imageUrl = "https://example.com/image2.jpg"),
+        Profile(
+            id = "1",
+            name = "John Doe",
+            username = "john_doe",
+            imageUrl = "https://example.com/image1.jpg"),
+        Profile(
+            id = "2",
+            name = "Jane Smith",
+            username = "jane_smith",
+            imageUrl = "https://example.com/image2.jpg"),
+        Profile(
+            id = "1",
+            name = "John Doe",
+            username = "john_doe",
+            imageUrl = "https://example.com/image1.jpg"),
+        Profile(
+            id = "2",
+            name = "Jane Smith",
+            username = "jane_smith",
+            imageUrl = "https://example.com/image2.jpg"))
+val demoProfiles2 =
+    listOf(
+        Profile(
+            id = "1",
+            name = "Michel Doe",
+            username = "john_doe",
+            imageUrl = "https://example.com/image1.jpg"),
+        Profile(
+            id = "2",
+            name = "Michel Smith",
+            username = "jane_smith",
+            imageUrl = "https://example.com/image2.jpg"),
+        // Generate more profile
+        Profile(
+            id = "1",
+            name = "Michel Doe",
+            username = "john_doe",
+            imageUrl = "https://example.com/image1.jpg"),
+        Profile(
+            id = "2",
+            name = "Michel Smith",
+            username = "jane_smith",
+            imageUrl = "https://example.com/image2.jpg"),
+        Profile(
+            id = "1",
+            name = "John Doe",
+            username = "john_doe",
+            imageUrl = "https://example.com/image1.jpg"),
+        Profile(
+            id = "2",
+            name = "Jane Smith",
+            username = "jane_smith",
+            imageUrl = "https://example.com/image2.jpg"),
+        Profile(
+            id = "1",
+            name = "John Doe",
+            username = "john_doe",
+            imageUrl = "https://example.com/image1.jpg"),
+        Profile(
+            id = "2",
+            name = "Jane Smith",
+            username = "jane_smith",
+            imageUrl = "https://example.com/image2.jpg"),
+        Profile(
+            id = "1",
+            name = "John Doe",
+            username = "john_doe",
+            imageUrl = "https://example.com/image1.jpg"),
+        Profile(
+            id = "2",
+            name = "Jane Smith",
+            username = "jane_smith",
+            imageUrl = "https://example.com/image2.jpg"))
+
+@Composable
+fun FollowersScreen(navigationActions: NavigationActions, followers: List<Profile> = demoProfiles) {
+  var selectedTabIndex by remember { mutableIntStateOf(0) }
+  val tabTitles = listOf("Followers", "Following")
+
+  Scaffold(
+      modifier = Modifier.fillMaxSize(),
+      topBar = { TopBarNavigation(title = "Friends") },
+      bottomBar = {
+        BottomNavigationMenu(Route.PROFILE, navigationActions::navigateTo, TOP_LEVEL_DESTINATIONS)
+      },
+      content = { innerPadding ->
+        Column(modifier = Modifier.padding(innerPadding)) {
+          TabRow(
+              selectedTabIndex = selectedTabIndex,
+              containerColor = MaterialTheme.colorScheme.surface,
+              contentColor = MaterialTheme.colorScheme.onSurface) {
+                tabTitles.forEachIndexed { index, title ->
+                  Tab(
+                      text = { Text(title) },
+                      selected = selectedTabIndex == index,
+                      onClick = { selectedTabIndex = index })
+                }
+              }
+          when (selectedTabIndex) {
+            0 -> FollowersList(followers)
+            1 -> FollowersList(demoProfiles2)
+          }
+        }
+      })
+}
+
+@Composable
+fun FollowersList(profiles: List<Profile>) {
+  LazyColumn(modifier = Modifier.fillMaxSize()) {
+    items(profiles) { profile -> FollowerCard(profile = profile) }
+  }
+}
+
+@Composable
+fun FollowerCard(profile: Profile) {
+  Card(
+      modifier =
+          Modifier.padding(4.dp)
+              .fillMaxWidth()
+              .background(
+                  MaterialTheme.colorScheme.surface.copy(
+                      alpha = 0.5f)) // Applying a semi-transparent background
+      ) {
+        Row(verticalAlignment = Alignment.CenterVertically, modifier = Modifier.fillMaxWidth()) {
+          Image(
+              painter =
+                  painterResource(
+                      id =
+                          R.drawable
+                              .user_logo), // Assuming google_logo is your default profile icon
+              contentDescription = "Profile Image",
+              modifier = Modifier.padding(horizontal = 10.dp).size(50.dp).clip(CircleShape),
+          )
+          Column(modifier = Modifier.padding(10.dp).weight(1f)) {
+            Text(text = profile.name, fontSize = 14.sp)
+            Text(
+                text = "@" + profile.username,
+                fontSize = 10.sp,
+                color = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.5f))
+          }
+          Spacer(modifier = Modifier.weight(0.1f))
+          Box(modifier = Modifier.align(Alignment.CenterVertically)) {
+            Row {
+              Button(
+                  onClick = { /* TODO: Implement action */},
+                  Modifier.padding(top = 4.dp, bottom = 4.dp, end = 0.dp)) {
+                    Text(text = "Remove")
+                  }
+              IconButton(onClick = { /* TODO: Implement action */}) {
+                Icon(imageVector = Icons.Filled.MoreVert, contentDescription = "Options")
+              }
+            }
+          }
+        }
+      }
+}

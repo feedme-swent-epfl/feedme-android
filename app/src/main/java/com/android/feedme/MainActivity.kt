@@ -22,6 +22,7 @@ import com.android.feedme.ui.auth.LoginScreen
 import com.android.feedme.ui.camera.CameraScreen
 import com.android.feedme.ui.navigation.NavigationActions
 import com.android.feedme.ui.navigation.Route
+import com.android.feedme.ui.profile.FollowersScreen
 import com.android.feedme.ui.profile.ProfileScreen
 import com.android.feedme.ui.theme.feedmeAppTheme
 import com.google.firebase.firestore.FirebaseFirestore
@@ -45,17 +46,15 @@ class MainActivity : ComponentActivity() {
               val navigationActions = NavigationActions(navController)
 
               // Set up the navigation graph
-              NavHost(navController = navController, startDestination = Route.AUTHENTICATION) {
+              NavHost(navController = navController, startDestination = Route.PROFILE) {
                 composable(Route.AUTHENTICATION) {
                   LoginScreen(navigationActions = navigationActions)
                 }
                 composable(Route.HOME) { LandingPage(navigationActions) }
                 composable(Route.EXPLORE) { NotImplementedScreen(navigationActions, Route.EXPLORE) }
                 composable(Route.CREATE) { CreateScreen(navigationActions) }
-                composable(Route.PROFILE) { ProfileScreen(navigationActions) }
-                composable(Route.SETTINGS) {
-                  NotImplementedScreen(navigationActions, Route.SETTINGS)
-                }
+                composable(Route.PROFILE) { FollowersScreen(navigationActions) }
+                composable(Route.SETTINGS) { ProfileScreen(navigationActions = navigationActions) }
                 composable(Route.CAMERA) { CameraScreen(navigationActions) }
               }
             }

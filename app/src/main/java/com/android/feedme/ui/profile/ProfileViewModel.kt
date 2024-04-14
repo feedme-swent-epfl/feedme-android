@@ -16,29 +16,41 @@ import kotlinx.coroutines.launch
  * used in order to extract the profile information of the connected user
  */
 class ProfileViewModel : ViewModel() {
-  private val repository = ProfileRepository.instance
-  private val _profile = MutableStateFlow<Profile?>(null)
-  val profile: StateFlow<Profile?> = _profile
-  val googleId = FirebaseAuth.getInstance().uid
+    private val repository = ProfileRepository.instance
+    private val _profile = MutableStateFlow<Profile?>(null)
+    val profile: StateFlow<Profile?> = _profile
+    val googleId = FirebaseAuth.getInstance().uid
 
-  init {
-    if (googleId != null) fetchProfile(googleId)
-  }
-
-  /**
-   * A function that fetches the profile during Login
-   *
-   * @param id: the unique ID of the profile we want to fetch
-   */
-  fun fetchProfile(id: String) {
-    viewModelScope.launch {
-      repository.getProfile(
-          id,
-          onSuccess = { profile -> _profile.value = profile },
-          onFailure = {
-            // Handle failure
-            throw error("Profile was not fetched during Login")
-          })
+    init {
+        if (googleId != null) fetchProfile(googleId)
     }
-  }
+
+    /**
+     * A function that fetches the profile during Login
+     *
+     * @param id: the unique ID of the profile we want to fetch
+     */
+    fun fetchProfile(id: String) {
+        viewModelScope.launch {
+            repository.getProfile(
+                id,
+                onSuccess = { profile -> _profile.value = profile },
+                onFailure = {
+                    // Handle failure
+                    throw error("Profile was not fetched during Login")
+                })
+        }
+    }
+    fun setProfile(profile: Profile){
+        viewModelScope.launch {
+            repository.addProfile(
+                profile,
+                onSuccess = {_profile.value=profile},
+                onFailure = {
+                    // Handle failure
+                    throw error("Profile could not get updated")
+                }
+            )
+        }
+    }
 }

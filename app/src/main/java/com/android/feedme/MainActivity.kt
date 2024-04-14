@@ -22,7 +22,9 @@ import com.android.feedme.ui.auth.LoginScreen
 import com.android.feedme.ui.camera.CameraScreen
 import com.android.feedme.ui.navigation.NavigationActions
 import com.android.feedme.ui.navigation.Route
+import com.android.feedme.ui.profile.EditProfileScreen
 import com.android.feedme.ui.profile.ProfileScreen
+import com.android.feedme.ui.profile.ProfileViewModel
 import com.android.feedme.ui.theme.feedmeAppTheme
 import com.google.firebase.firestore.FirebaseFirestore
 
@@ -38,27 +40,30 @@ class MainActivity : ComponentActivity() {
       feedmeAppTheme {
         // A surface container using the 'background' color from the theme
         Surface(
-            modifier = Modifier.fillMaxSize().semantics { testTag = C.Tag.main_screen_container },
-            color = MaterialTheme.colorScheme.background) {
-              // Navigation host for the app
-              val navController = rememberNavController()
-              val navigationActions = NavigationActions(navController)
+          modifier = Modifier.fillMaxSize().semantics { testTag = C.Tag.main_screen_container },
+          color = MaterialTheme.colorScheme.background) {
+          // Navigation host for the app
+          val navController = rememberNavController()
+          val navigationActions = NavigationActions(navController)
+          val profileViewModel = ProfileViewModel()
 
-              // Set up the navigation graph
-              NavHost(navController = navController, startDestination = Route.AUTHENTICATION) {
-                composable(Route.AUTHENTICATION) {
-                  LoginScreen(navigationActions = navigationActions)
-                }
-                composable(Route.HOME) { LandingPage(navigationActions) }
-                composable(Route.EXPLORE) { NotImplementedScreen(navigationActions, Route.EXPLORE) }
-                composable(Route.CREATE) { CreateScreen(navigationActions) }
-                composable(Route.PROFILE) { ProfileScreen(navigationActions) }
-                composable(Route.SETTINGS) {
-                  NotImplementedScreen(navigationActions, Route.SETTINGS)
-                }
-                composable(Route.CAMERA) { CameraScreen(navigationActions) }
-              }
+          // Set up the navigation graph
+          NavHost(navController = navController, startDestination = Route.AUTHENTICATION) {
+            composable(Route.AUTHENTICATION) {
+              LoginScreen(navigationActions = navigationActions)
             }
+            composable(Route.HOME) { LandingPage(navigationActions) }
+            composable(Route.EXPLORE) { NotImplementedScreen(navigationActions, Route.EXPLORE) }
+            composable(Route.CREATE) { CreateScreen(navigationActions) }
+            composable(Route.PROFILE) { ProfileScreen(navigationActions = navigationActions,profileViewModel) }
+            composable(Route.SETTINGS) {
+              EditProfileScreen(navigationActions,profileViewModel)
+            }
+            composable(Route.CAMERA) { CameraScreen(navigationActions) }
+
+
+          }
+        }
       }
     }
   }

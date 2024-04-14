@@ -64,6 +64,16 @@ val demoProfiles2 =
         // Generate more profile
     )
 
+/**
+ * Composable that displays either a list of followers or following based on the selected tab. It
+ * includes a tabbed interface to switch between the "Followers" and "Following" lists.
+ *
+ * @param navigationActions Provides navigation actions for handling user interactions with the
+ *   navigation bar.
+ * @param followers The list of profiles considered as followers. Defaults to demoProfiles if none
+ *   provided.
+ * @param mode Determines the initial tab selection: 0 for Followers, 1 for Following.
+ */
 @Composable
 fun FriendsScreen(
     navigationActions: NavigationActions,
@@ -102,6 +112,12 @@ fun FriendsScreen(
       })
 }
 
+/**
+ * Displays a lazy scrolling list of user profiles.
+ *
+ * @param profiles The list of profiles to be displayed.
+ * @param tag A testing tag used for UI tests to identify the list view.
+ */
 @Composable
 fun FollowersList(profiles: List<Profile>, tag: String) {
   LazyColumn(modifier = Modifier.fillMaxSize().testTag(tag)) {
@@ -109,6 +125,12 @@ fun FollowersList(profiles: List<Profile>, tag: String) {
   }
 }
 
+/**
+ * A card representation for a user profile, displaying the user's picture, name, and username. It
+ * also provides a 'Remove' button and an options menu for further actions.
+ *
+ * @param profile The profile data of the user.
+ */
 @Composable
 fun FollowerCard(profile: Profile) {
   Card(

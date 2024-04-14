@@ -25,6 +25,7 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
@@ -153,7 +154,7 @@ fun FriendsScreen(
   val tabTitles = listOf("Followers", "Following")
 
   Scaffold(
-      modifier = Modifier.fillMaxSize(),
+      modifier = Modifier.fillMaxSize().testTag("FriendsScreen"),
       topBar = { TopBarNavigation(title = "Friends", navigationActions, null) },
       bottomBar = {
         BottomNavigationMenu(Route.PROFILE, navigationActions::navigateTo, TOP_LEVEL_DESTINATIONS)
@@ -168,20 +169,22 @@ fun FriendsScreen(
                   Tab(
                       text = { Text(title) },
                       selected = selectedTabIndex == index,
-                      onClick = { selectedTabIndex = index })
+                      onClick = { selectedTabIndex = index },
+                      modifier =
+                          Modifier.testTag(if (index == 0) "TabFollowers" else "TabFollowing"))
                 }
               }
           when (selectedTabIndex) {
-            0 -> FollowersList(followers)
-            1 -> FollowersList(demoProfiles2)
+            0 -> FollowersList(followers, "FollowersList")
+            1 -> FollowersList(demoProfiles2, "FollowingList")
           }
         }
       })
 }
 
 @Composable
-fun FollowersList(profiles: List<Profile>) {
-  LazyColumn(modifier = Modifier.fillMaxSize()) {
+fun FollowersList(profiles: List<Profile>, tag: String) {
+  LazyColumn(modifier = Modifier.fillMaxSize().testTag(tag)) {
     items(profiles) { profile -> FollowerCard(profile = profile) }
   }
 }
@@ -192,9 +195,8 @@ fun FollowerCard(profile: Profile) {
       modifier =
           Modifier.padding(4.dp)
               .fillMaxWidth()
-              .background(
-                  MaterialTheme.colorScheme.surface.copy(
-                      alpha = 0.5f)) // Applying a semi-transparent background
+              .background(MaterialTheme.colorScheme.surface.copy(alpha = 0.5f))
+              .testTag("FollowerCard") // Applying a semi-transparent background
       ) {
         Row(verticalAlignment = Alignment.CenterVertically, modifier = Modifier.fillMaxWidth()) {
           Image(

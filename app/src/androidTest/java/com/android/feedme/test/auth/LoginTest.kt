@@ -2,8 +2,6 @@ package com.android.feedme.test.auth
 
 import androidx.compose.ui.test.junit4.createComposeRule
 import androidx.test.core.app.ApplicationProvider
-import androidx.test.espresso.intent.Intents.intended
-import androidx.test.espresso.intent.matcher.IntentMatchers.toPackage
 import androidx.test.espresso.intent.rule.IntentsTestRule
 import androidx.test.ext.junit.runners.AndroidJUnit4
 import com.android.feedme.MainActivity
@@ -53,20 +51,20 @@ class LoginTest : TestCase() {
   }
 
   /* This Test make the CI fail, as no response of the Intent is received
-  @Test
-  fun googleSignInReturnsValidActivityResult() {
-    goToLoginScreen()
-    ComposeScreen.onComposeScreen<LoginScreen>(composeTestRule) {
-      loginButton {
-        assertIsDisplayed()
-        performClick()
-      }
+    @Test
+    fun googleSignInReturnsValidActivityResult() {
+      goToLoginScreen()
+      ComposeScreen.onComposeScreen<LoginScreen>(composeTestRule) {
+        loginButton {
+          assertIsDisplayed()
+          performClick()
+        }
 
-      // assert that an Intent resolving to Google Mobile Services has been sent (for sign-in)
-      intended(toPackage("com.google.android.gms"))
+        // assert that an Intent resolving to Google Mobile Services has been sent (for sign-in)
+        intended(toPackage("com.google.android.gms"))
+      }
     }
-  }
-*/
+  */
   private fun goToLoginScreen() {
     val mockNavActions = mockk<NavigationActions>(relaxed = true) // Make the mock relaxed
     composeTestRule.setContent {

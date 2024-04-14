@@ -144,13 +144,17 @@ val demoProfiles2 =
             imageUrl = "https://example.com/image2.jpg"))
 
 @Composable
-fun FollowersScreen(navigationActions: NavigationActions, followers: List<Profile> = demoProfiles) {
-  var selectedTabIndex by remember { mutableIntStateOf(0) }
+fun FriendsScreen(
+    navigationActions: NavigationActions,
+    followers: List<Profile> = demoProfiles,
+    mode: Int = 0
+) {
+  var selectedTabIndex by remember { mutableIntStateOf(mode) }
   val tabTitles = listOf("Followers", "Following")
 
   Scaffold(
       modifier = Modifier.fillMaxSize(),
-      topBar = { TopBarNavigation(title = "Friends") },
+      topBar = { TopBarNavigation(title = "Friends", navigationActions, null) },
       bottomBar = {
         BottomNavigationMenu(Route.PROFILE, navigationActions::navigateTo, TOP_LEVEL_DESTINATIONS)
       },

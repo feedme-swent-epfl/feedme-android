@@ -48,47 +48,6 @@ val demoProfiles =
             id = "2",
             name = "Jane Smith",
             username = "jane_smith",
-            imageUrl = "https://example.com/image2.jpg"),
-        // Generate more profile
-        Profile(
-            id = "1",
-            name = "John Doe",
-            username = "john_doe",
-            imageUrl = "https://example.com/image1.jpg"),
-        Profile(
-            id = "2",
-            name = "Jane Smith",
-            username = "jane_smith",
-            imageUrl = "https://example.com/image2.jpg"),
-        Profile(
-            id = "1",
-            name = "John Doe",
-            username = "john_doe",
-            imageUrl = "https://example.com/image1.jpg"),
-        Profile(
-            id = "2",
-            name = "Jane Smith",
-            username = "jane_smith",
-            imageUrl = "https://example.com/image2.jpg"),
-        Profile(
-            id = "1",
-            name = "John Doe",
-            username = "john_doe",
-            imageUrl = "https://example.com/image1.jpg"),
-        Profile(
-            id = "2",
-            name = "Jane Smith",
-            username = "jane_smith",
-            imageUrl = "https://example.com/image2.jpg"),
-        Profile(
-            id = "1",
-            name = "John Doe",
-            username = "john_doe",
-            imageUrl = "https://example.com/image1.jpg"),
-        Profile(
-            id = "2",
-            name = "Jane Smith",
-            username = "jane_smith",
             imageUrl = "https://example.com/image2.jpg"))
 val demoProfiles2 =
     listOf(
@@ -96,53 +55,14 @@ val demoProfiles2 =
             id = "1",
             name = "Michel Doe",
             username = "john_doe",
-            imageUrl = "https://example.com/image1.jpg"),
+            imageUrl = "https://example.com/image3.jpg"),
         Profile(
             id = "2",
             name = "Michel Smith",
             username = "jane_smith",
-            imageUrl = "https://example.com/image2.jpg"),
+            imageUrl = "https://example.com/image4.jpg"),
         // Generate more profile
-        Profile(
-            id = "1",
-            name = "Michel Doe",
-            username = "john_doe",
-            imageUrl = "https://example.com/image1.jpg"),
-        Profile(
-            id = "2",
-            name = "Michel Smith",
-            username = "jane_smith",
-            imageUrl = "https://example.com/image2.jpg"),
-        Profile(
-            id = "1",
-            name = "John Doe",
-            username = "john_doe",
-            imageUrl = "https://example.com/image1.jpg"),
-        Profile(
-            id = "2",
-            name = "Jane Smith",
-            username = "jane_smith",
-            imageUrl = "https://example.com/image2.jpg"),
-        Profile(
-            id = "1",
-            name = "John Doe",
-            username = "john_doe",
-            imageUrl = "https://example.com/image1.jpg"),
-        Profile(
-            id = "2",
-            name = "Jane Smith",
-            username = "jane_smith",
-            imageUrl = "https://example.com/image2.jpg"),
-        Profile(
-            id = "1",
-            name = "John Doe",
-            username = "john_doe",
-            imageUrl = "https://example.com/image1.jpg"),
-        Profile(
-            id = "2",
-            name = "Jane Smith",
-            username = "jane_smith",
-            imageUrl = "https://example.com/image2.jpg"))
+    )
 
 @Composable
 fun FriendsScreen(

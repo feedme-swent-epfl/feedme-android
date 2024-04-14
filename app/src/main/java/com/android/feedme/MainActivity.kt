@@ -46,7 +46,7 @@ class MainActivity : ComponentActivity() {
               val navigationActions = NavigationActions(navController)
 
               // Set up the navigation graph
-              NavHost(navController = navController, startDestination = Route.PROFILE) {
+              NavHost(navController = navController, startDestination = Route.AUTHENTICATION) {
                 composable(Route.AUTHENTICATION) {
                   LoginScreen(navigationActions = navigationActions)
                 }

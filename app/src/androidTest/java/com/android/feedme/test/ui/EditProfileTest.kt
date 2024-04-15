@@ -100,6 +100,7 @@ class EditProfileTest {
   fun testSaveButton() {
     goToEditProfileScreen()
     ComposeScreen.onComposeScreen<EditProfileTestScreen>(composeTestRule) {
+      saveButton.assertIsDisplayed()
       saveButton.assertIsEnabled()
       saveButton.assertHasClickAction()
       composeTestRule.mainClock.autoAdvance = false
@@ -110,6 +111,16 @@ class EditProfileTest {
       composeTestRule.mainClock.advanceTimeByFrame()
       composeTestRule.mainClock.autoAdvance = true
       composeTestRule.waitForIdle()
+    }
+  }
+
+  @Test
+  fun testProfilePicture() {
+    goToEditProfileScreen()
+    ComposeScreen.onComposeScreen<EditProfileTestScreen>(composeTestRule) {
+      editPicture.assertIsDisplayed()
+      editPicture.assertHasClickAction()
+      editPicture.performClick()
     }
   }
 

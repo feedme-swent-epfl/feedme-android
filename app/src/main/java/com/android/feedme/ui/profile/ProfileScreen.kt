@@ -58,7 +58,7 @@ fun ProfileScreen(
       bottomBar = {
         BottomNavigationMenu(Route.PROFILE, navigationActions::navigateTo, TOP_LEVEL_DESTINATIONS)
       },
-      content = { padding -> ProfileBox(padding, if (profile != null) profile else Profile()) })
+      content = { padding -> ProfileBox(padding, if (profile != null) profile else Profile(), navigationActions) })
 }
 
 /**
@@ -71,7 +71,7 @@ fun ProfileScreen(
  * @param profile: extract the needed information from the user's profile in the database
  */
 @Composable
-fun ProfileBox(padding: PaddingValues, profile: Profile) { // TODO add font
+fun ProfileBox(padding: PaddingValues, profile: Profile, navigationActions: NavigationActions) { // TODO add font
   Column(
       modifier = Modifier.padding(padding).testTag("ProfileBox"),
       verticalArrangement = Arrangement.Top) {
@@ -91,7 +91,7 @@ fun ProfileBox(padding: PaddingValues, profile: Profile) { // TODO add font
                   }
             }
         UserBio(profile)
-        ProfileButtons()
+        ProfileButtons(navigationActions)
       }
 }
 
@@ -192,7 +192,7 @@ fun UserBio(profile: Profile) {
 
 /** A composable function that generates the Edit profile and Share profile buttons */
 @Composable
-fun ProfileButtons() {
+fun ProfileButtons(navigationActions: NavigationActions) {
   Row(
       modifier = Modifier.fillMaxWidth().padding(vertical = 20.dp),
       horizontalArrangement = Arrangement.SpaceEvenly,
@@ -200,7 +200,7 @@ fun ProfileButtons() {
         OutlinedButton(
             modifier = Modifier.testTag("EditButton"),
             onClick = {
-              /*TODO*/
+              navigationActions.navigateTo(Route.EDITPROFILE)
             }) {
               Text(
                   modifier = Modifier.width(110.dp).height(13.dp),

@@ -40,7 +40,9 @@ class MainActivity : ComponentActivity() {
       feedmeAppTheme {
         // A surface container using the 'background' color from the theme
         Surface(
-          modifier = Modifier.fillMaxSize().semantics { testTag = C.Tag.main_screen_container },
+          modifier = Modifier
+            .fillMaxSize()
+            .semantics { testTag = C.Tag.main_screen_container },
           color = MaterialTheme.colorScheme.background) {
           // Navigation host for the app
           val navController = rememberNavController()
@@ -57,10 +59,12 @@ class MainActivity : ComponentActivity() {
             composable(Route.CREATE) { CreateScreen(navigationActions) }
             composable(Route.PROFILE) { ProfileScreen(navigationActions = navigationActions,profileViewModel) }
             composable(Route.SETTINGS) {
-              EditProfileScreen(navigationActions,profileViewModel)
-            }
+              NotImplementedScreen(navigationActions, Route.SETTINGS)             }
             composable(Route.CAMERA) { CameraScreen(navigationActions) }
 
+            composable(Route.EDITPROFILE){
+                EditProfileScreen(navigationActions,profileViewModel)
+            }
 
           }
         }

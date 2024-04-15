@@ -62,6 +62,10 @@ class EditProfileTest {
 
       // Validate visibility and perform text clearance
       editPicture.assertIsDisplayed()
+      nameInput.assertIsDisplayed()
+      usernameInput.assertIsDisplayed()
+      bioInput.assertIsDisplayed()
+
       nameInput.performTextClearance()
       nameInput.performTextInput("Jn")
       usernameInput.performTextClearance()
@@ -71,10 +75,13 @@ class EditProfileTest {
       bioInput.performTextInput("This is a sample bio repeated several times for testing")
 
       // Check error messages
+      nameError.assertIsDisplayed()
       nameError.assertTextEquals("Name must be at least 3 characters")
+      usernameError.assertIsDisplayed()
       usernameError.assertTextEquals("Username must be alphanumeric or underscores")
+      bioError.assertIsDisplayed()
       bioError.assertTextEquals("Bio must be no more than 100 characters")
-      saveButton.assertIsDisplayed()
+      saveButton.assertIsNotEnabled()
 
       // Clear inputs again to re-enter new values
       nameInput.performTextClearance()
@@ -92,6 +99,7 @@ class EditProfileTest {
       composeTestRule.waitForIdle()
 
       // Ensuring Save button functionality
+      saveButton.assertIsDisplayed()
       saveButton.assertTextEquals("Save")
       saveButton.assertHasClickAction()
       saveButton.assertIsEnabled()
@@ -112,14 +120,11 @@ class EditProfileTest {
       bioInput.performTextInput("This is a sample bio.")
       composeTestRule.waitForIdle()
 
+      saveButton.assertIsDisplayed()
       saveButton.assertIsEnabled()
-      composeTestRule.mainClock.autoAdvance = false
 
       saveButton.performClick()
 
-      composeTestRule.mainClock.advanceTimeByFrame()
-      composeTestRule.mainClock.advanceTimeByFrame()
-      composeTestRule.mainClock.autoAdvance = true
       composeTestRule.waitForIdle()
     }
   }

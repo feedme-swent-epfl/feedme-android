@@ -175,6 +175,7 @@ fun EditProfileContent(
                 modifier = Modifier.testTag("BioError"))
 
         Button(
+            modifier = Modifier.fillMaxWidth().padding(top = 16.dp).testTag("EditSave"),
             onClick = {
               if (nameError == null &&
                   usernameError == null &&
@@ -200,8 +201,7 @@ fun EditProfileContent(
                 name.isNotEmpty() &&
                     username.isNotEmpty() &&
                     nameError == null &&
-                    usernameError == null,
-            modifier = Modifier.fillMaxWidth().padding(top = 16.dp).testTag("Save")) {
+                    usernameError == null) {
               Text("Save")
             }
       }

@@ -21,5 +21,5 @@ class EditProfileTestScreen(semanticsProvider: SemanticsNodeInteractionsProvider
   val nameError: KNode = child { hasTestTag("NameError") }
   val usernameError: KNode = child { hasTestTag("UsernameError") }
   val bioError: KNode = child { hasTestTag("BioError") }
-  val saveButton: KNode = child { hasTestTag("Save") }
+  val saveButton: KNode = child { hasTestTag("EditSave") }
 }

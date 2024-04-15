@@ -58,7 +58,9 @@ fun ProfileScreen(
       bottomBar = {
         BottomNavigationMenu(Route.PROFILE, navigationActions::navigateTo, TOP_LEVEL_DESTINATIONS)
       },
-      content = { padding -> ProfileBox(padding, if (profile != null) profile else Profile(), navigationActions) })
+      content = { padding ->
+        ProfileBox(padding, if (profile != null) profile else Profile(), navigationActions)
+      })
 }
 
 /**
@@ -71,7 +73,11 @@ fun ProfileScreen(
  * @param profile: extract the needed information from the user's profile in the database
  */
 @Composable
-fun ProfileBox(padding: PaddingValues, profile: Profile, navigationActions: NavigationActions) { // TODO add font
+fun ProfileBox(
+    padding: PaddingValues,
+    profile: Profile,
+    navigationActions: NavigationActions
+) { // TODO add font
   Column(
       modifier = Modifier.padding(padding).testTag("ProfileBox"),
       verticalArrangement = Arrangement.Top) {
@@ -199,9 +205,7 @@ fun ProfileButtons(navigationActions: NavigationActions) {
       verticalAlignment = Alignment.CenterVertically) {
         OutlinedButton(
             modifier = Modifier.testTag("EditButton"),
-            onClick = {
-              navigationActions.navigateTo(Route.EDITPROFILE)
-            }) {
+            onClick = { navigationActions.navigateTo(Route.EDITPROFILE) }) {
               Text(
                   modifier = Modifier.width(110.dp).height(13.dp),
                   text = "Edit Profile",

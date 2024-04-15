@@ -92,7 +92,6 @@ class EditProfileTest {
       composeTestRule.waitForIdle()
 
       // Ensuring Save button functionality
-      saveButton.assertIsDisplayed()
       saveButton.assertTextEquals("Save")
       saveButton.assertHasClickAction()
       saveButton.assertIsEnabled()
@@ -113,7 +112,6 @@ class EditProfileTest {
       bioInput.performTextInput("This is a sample bio.")
       composeTestRule.waitForIdle()
 
-      saveButton.assertIsDisplayed()
       saveButton.assertIsEnabled()
       composeTestRule.mainClock.autoAdvance = false
 

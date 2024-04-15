@@ -59,6 +59,11 @@ class EditProfileTest {
   fun testEditProfileInputsAndButtons() {
     goToEditProfileScreen()
     ComposeScreen.onComposeScreen<EditProfileTestScreen>(composeTestRule) {
+      // Ensuring Save button functionality
+      saveButton.assertIsDisplayed()
+      saveButton.assertTextEquals("Save")
+      saveButton.assertHasClickAction()
+      saveButton.assertIsEnabled()
 
       // Validate visibility and perform text clearance
       editPicture.assertIsDisplayed()
@@ -74,6 +79,7 @@ class EditProfileTest {
       nameError.assertTextEquals("Name must be at least 3 characters")
       usernameError.assertTextEquals("Username must be alphanumeric or underscores")
       bioError.assertTextEquals("Bio must be no more than 100 characters")
+      saveButton.assertIsDisplayed()
 
       // Clear inputs again to re-enter new values
       nameInput.performTextClearance()
@@ -89,9 +95,6 @@ class EditProfileTest {
       usernameInput.performTextInput("john")
       bioInput.performTextInput("This is a sample bio.")
 
-      // Ensuring Save button functionality
-
-      saveButton.assertTextEquals("Save")
       composeTestRule.waitForIdle()
     }
   }
@@ -102,7 +105,6 @@ class EditProfileTest {
     ComposeScreen.onComposeScreen<EditProfileTestScreen>(composeTestRule) {
       saveButton.assertIsDisplayed()
       saveButton.assertIsEnabled()
-      saveButton.assertHasClickAction()
       composeTestRule.mainClock.autoAdvance = false
 
       saveButton.performClick()

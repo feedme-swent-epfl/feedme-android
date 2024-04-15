@@ -59,6 +59,9 @@ class EditProfileTest {
   fun testEditProfileInputsAndButtons() {
     goToEditProfileScreen()
     ComposeScreen.onComposeScreen<EditProfileTestScreen>(composeTestRule) {
+      saveButton.assertIsEnabled()
+      saveButton.assertHasClickAction()
+      saveButton.performClick()
 
       // Validate visibility and perform text clearance
       editPicture.assertIsDisplayed()
@@ -80,15 +83,18 @@ class EditProfileTest {
       usernameInput.performTextClearance()
       bioInput.performTextClearance()
 
+      usernameInput.performTextInput("johnjohnjohnjohnjohn")
+      usernameError.assertTextEquals("Username must be no more than 15 characters")
+      usernameInput.performTextClearance()
+
       // Re-entering text to test updated values
       nameInput.performTextInput("John")
       usernameInput.performTextInput("john")
       bioInput.performTextInput("This is a sample bio.")
 
       // Ensuring Save button functionality
-      saveButton.assertIsEnabled()
-      saveButton.assertHasClickAction()
-      saveButton.performClick()
+
+      saveButton.assertTextEquals("Save")
       composeTestRule.waitForIdle()
     }
   }

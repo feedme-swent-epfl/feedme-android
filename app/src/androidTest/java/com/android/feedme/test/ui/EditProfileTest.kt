@@ -93,13 +93,22 @@ class EditProfileTest {
 
       saveButton.assertTextEquals("Save")
       composeTestRule.waitForIdle()
+    }
+  }
 
-      composeTestRule.mainClock.autoAdvance = false
+  @Test
+  fun testSaveButton() {
+    goToEditProfileScreen()
+    ComposeScreen.onComposeScreen<EditProfileTestScreen>(composeTestRule) {
       saveButton.assertIsEnabled()
       saveButton.assertHasClickAction()
+      composeTestRule.mainClock.autoAdvance = false
+
       saveButton.performClick()
 
       composeTestRule.mainClock.advanceTimeByFrame()
+      composeTestRule.mainClock.advanceTimeByFrame()
+      composeTestRule.mainClock.autoAdvance = true
       composeTestRule.waitForIdle()
     }
   }

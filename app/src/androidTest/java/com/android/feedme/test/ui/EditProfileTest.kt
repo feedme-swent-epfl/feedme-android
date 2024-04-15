@@ -6,6 +6,7 @@ import androidx.test.core.app.ApplicationProvider
 import androidx.test.ext.junit.runners.AndroidJUnit4
 import com.android.feedme.model.data.Profile
 import com.android.feedme.model.data.ProfileRepository
+import com.android.feedme.screen.EditProfileTestScreen
 import com.android.feedme.ui.navigation.NavigationActions
 import com.android.feedme.ui.profile.EditProfileScreen
 import com.google.android.gms.tasks.Tasks
@@ -14,6 +15,7 @@ import com.google.firebase.firestore.CollectionReference
 import com.google.firebase.firestore.DocumentReference
 import com.google.firebase.firestore.DocumentSnapshot
 import com.google.firebase.firestore.FirebaseFirestore
+import io.github.kakaocup.compose.node.element.ComposeScreen
 import io.mockk.every
 import io.mockk.mockk
 import org.junit.Before
@@ -55,46 +57,44 @@ class EditProfileTest {
 
   @Test
   fun testEditProfileInputsAndButtons() {
+    goToEditProfileScreen()
+    ComposeScreen.onComposeScreen<EditProfileTestScreen>(composeTestRule) {
+
+      // Validate visibility and perform text clearance
+      editPicture.assertIsDisplayed()
+      nameInput.performTextClearance()
+      nameInput.performTextInput("Jn")
+      usernameInput.performTextClearance()
+      usernameInput.performTextInput("J#123")
+      bioInput.performTextClearance()
+      bioInput.performTextInput("This is a sample bio repeated several times for testing")
+      bioInput.performTextInput("This is a sample bio repeated several times for testing")
+
+      // Check error messages
+      nameError.assertTextEquals("Name must be at least 3 characters")
+      usernameError.assertTextEquals("Username must be alphanumeric or underscores")
+      bioError.assertTextEquals("Bio must be no more than 100 characters")
+
+      // Clear inputs again to re-enter new values
+      nameInput.performTextClearance()
+      usernameInput.performTextClearance()
+      bioInput.performTextClearance()
+
+      // Re-entering text to test updated values
+      nameInput.performTextInput("John")
+      usernameInput.performTextInput("john")
+      bioInput.performTextInput("This is a sample bio.")
+
+      // Ensuring Save button functionality
+      saveButton.assertIsEnabled()
+      saveButton.assertHasClickAction()
+      saveButton.performClick()
+      composeTestRule.waitForIdle()
+    }
+  }
+
+  private fun goToEditProfileScreen() {
     composeTestRule.setContent { EditProfileScreen(mockNavActions) }
     composeTestRule.waitForIdle()
-
-    // Assuming that initial values are set for simplicity; adjust as per your setup.
-    composeTestRule.onNodeWithText("Edit Picture").assertIsDisplayed()
-    composeTestRule.onNodeWithTag("NameInput").performTextClearance()
-    composeTestRule.onNodeWithTag("NameInput").assertIsDisplayed().performTextInput("Jn")
-    composeTestRule.onNodeWithTag("UsernameInput").performTextClearance()
-    composeTestRule.onNodeWithTag("UsernameInput").assertIsDisplayed().performTextInput("J#123")
-    composeTestRule.onNodeWithTag("BioInput").performTextClearance()
-    composeTestRule
-        .onNodeWithTag("BioInput")
-        .assertIsDisplayed()
-        .performTextInput("This is a sample bio.")
-
-    // Check if error messages appear for each field when needed
-    composeTestRule
-        .onNodeWithTag("NameError")
-        .assertTextEquals("Name must be at least 3 characters")
-    composeTestRule
-        .onNodeWithTag("UsernameError")
-        .assertTextEquals("Username must be alphanumeric or underscores")
-
-    composeTestRule
-        .onNodeWithTag("BioError")
-        .assertDoesNotExist() // No error expected with correct input
-
-    composeTestRule.onNodeWithTag("NameInput").performTextClearance()
-    composeTestRule.onNodeWithTag("UsernameInput").performTextClearance()
-    composeTestRule.onNodeWithTag("BioInput").performTextClearance()
-
-    composeTestRule.onNodeWithTag("NameInput").assertIsDisplayed().performTextInput("John")
-    composeTestRule.onNodeWithTag("UsernameInput").assertIsDisplayed().performTextInput("john")
-    composeTestRule
-        .onNodeWithTag("BioInput")
-        .assertIsDisplayed()
-        .performTextInput("This is a sample bio.")
-
-    // Ensure Save button is clickable and performs the expected action
-    composeTestRule.onNodeWithText("Save").assertIsEnabled().assertHasClickAction()
-    composeTestRule.onNodeWithText("Save").performClick()
   }
 }

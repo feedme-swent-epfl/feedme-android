@@ -47,7 +47,7 @@ fun EditProfileScreen(
 ) {
 
   Scaffold(
-      modifier = Modifier.fillMaxSize().testTag("ProfileScreen"),
+      modifier = Modifier.fillMaxSize().testTag("EditProfileScreen"),
       topBar = { TopBarNavigation(title = "Edit Profile", navigationActions) },
       bottomBar = {
         BottomNavigationMenu(Route.PROFILE, navigationActions::navigateTo, TOP_LEVEL_DESTINATIONS)

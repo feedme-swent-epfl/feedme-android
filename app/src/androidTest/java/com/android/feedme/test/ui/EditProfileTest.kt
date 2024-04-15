@@ -59,11 +59,6 @@ class EditProfileTest {
   fun testEditProfileInputsAndButtons() {
     goToEditProfileScreen()
     ComposeScreen.onComposeScreen<EditProfileTestScreen>(composeTestRule) {
-      // Ensuring Save button functionality
-      saveButton.assertIsDisplayed()
-      saveButton.assertTextEquals("Save")
-      saveButton.assertHasClickAction()
-      saveButton.assertIsEnabled()
 
       // Validate visibility and perform text clearance
       editPicture.assertIsDisplayed()
@@ -94,7 +89,13 @@ class EditProfileTest {
       nameInput.performTextInput("John")
       usernameInput.performTextInput("john")
       bioInput.performTextInput("This is a sample bio.")
+      composeTestRule.waitForIdle()
 
+      // Ensuring Save button functionality
+      saveButton.assertIsDisplayed()
+      saveButton.assertTextEquals("Save")
+      saveButton.assertHasClickAction()
+      saveButton.assertIsEnabled()
       composeTestRule.waitForIdle()
     }
   }
@@ -103,6 +104,15 @@ class EditProfileTest {
   fun testSaveButton() {
     goToEditProfileScreen()
     ComposeScreen.onComposeScreen<EditProfileTestScreen>(composeTestRule) {
+      nameInput.performTextClearance()
+      usernameInput.performTextClearance()
+      bioInput.performTextClearance()
+
+      nameInput.performTextInput("John")
+      usernameInput.performTextInput("john")
+      bioInput.performTextInput("This is a sample bio.")
+      composeTestRule.waitForIdle()
+
       saveButton.assertIsDisplayed()
       saveButton.assertIsEnabled()
       composeTestRule.mainClock.autoAdvance = false

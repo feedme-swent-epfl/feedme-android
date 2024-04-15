@@ -59,9 +59,6 @@ class EditProfileTest {
   fun testEditProfileInputsAndButtons() {
     goToEditProfileScreen()
     ComposeScreen.onComposeScreen<EditProfileTestScreen>(composeTestRule) {
-      saveButton.assertIsEnabled()
-      saveButton.assertHasClickAction()
-      saveButton.performClick()
 
       // Validate visibility and perform text clearance
       editPicture.assertIsDisplayed()
@@ -95,6 +92,14 @@ class EditProfileTest {
       // Ensuring Save button functionality
 
       saveButton.assertTextEquals("Save")
+      composeTestRule.waitForIdle()
+
+      composeTestRule.mainClock.autoAdvance = false
+      saveButton.assertIsEnabled()
+      saveButton.assertHasClickAction()
+      saveButton.performClick()
+
+      composeTestRule.mainClock.advanceTimeByFrame()
       composeTestRule.waitForIdle()
     }
   }

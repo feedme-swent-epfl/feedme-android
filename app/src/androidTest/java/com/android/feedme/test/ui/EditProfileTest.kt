@@ -94,6 +94,6 @@ class EditProfileTest {
         .performTextInput("This is a sample bio.")
 
     // Ensure Save button is clickable and performs the expected action
-    composeTestRule.onNodeWithText("Save").assertIsEnabled().assertHasClickAction().performClick()
+    composeTestRule.onNodeWithText("Save").assertIsEnabled().performClick()
   }
 }

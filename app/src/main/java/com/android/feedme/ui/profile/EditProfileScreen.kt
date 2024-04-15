@@ -31,6 +31,15 @@ import com.android.feedme.ui.navigation.Route
 import com.android.feedme.ui.navigation.TOP_LEVEL_DESTINATIONS
 import com.android.feedme.ui.navigation.TopBarNavigation
 
+/**
+ * Composable function that provides the main screen layout for editing a user's profile.
+ *
+ * This function sets up the Scaffold layout which includes a top bar, bottom navigation, and the
+ * content for editing the profile, handled by [EditProfileContent].
+ *
+ * @param navigationActions A set of actions to handle navigation events.
+ * @param profileViewModel The ViewModel that handles fetching and updating the user's profile data.
+ */
 @Composable
 fun EditProfileScreen(
     navigationActions: NavigationActions,
@@ -47,6 +56,19 @@ fun EditProfileScreen(
   )
 }
 
+/**
+ * Composable function that displays and manages the profile editing form.
+ *
+ * This function creates a form where users can edit their profile details such as name, username,
+ * and bio. The form validates inputs and shows errors when necessary. It allows the user to save
+ * the changes which updates the profile information in the backend via the [profileViewModel].
+ *
+ * @param padding The padding to apply around the content area defined by the Scaffold in
+ *   [EditProfileScreen].
+ * @param profileViewModel ViewModel that contains the logic for loading and saving the user's
+ *   profile.
+ * @param navigationActions Actions to handle navigation based on user interaction.
+ */
 @Composable
 fun EditProfileContent(
     padding: PaddingValues,

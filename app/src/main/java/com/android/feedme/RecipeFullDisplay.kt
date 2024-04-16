@@ -5,6 +5,7 @@ import android.text.style.BulletSpan
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.Column
 
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
@@ -24,6 +25,7 @@ import androidx.compose.material.icons.rounded.Star
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
 import androidx.compose.material3.ListItem
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -75,6 +77,10 @@ fun RecipeFullDisplay(recipe: Recipe, modifier: Modifier = Modifier) {
             item{ IngredientTitleDisplay(modifier = modifier)}
             items(recipe.ingredients) {
                 ingredient -> IngredientDisplay(ingredient = ingredient, modifier)
+            }
+            item { StepsTitleDisplay() }
+            items(recipe.steps) {
+                step -> StepDisplay(step = step)
             }
         }
       }
@@ -149,6 +155,28 @@ fun IngredientDisplay(ingredient: IngredientMetaData, modifier: Modifier){
         style = TextStyle(fontWeight = FontWeight.Normal, fontSize = 14.sp),
         modifier = Modifier.padding(top = 10.dp, start = 16.dp)
     )
+}
+
+@Composable
+fun StepsTitleDisplay(){
+    HorizontalDivider(thickness = 2.dp, modifier = Modifier.padding(top = 8.dp, bottom = 8.dp))
+    Text(text = "Steps",
+        style = TextStyle(fontWeight = FontWeight.SemiBold,
+            fontSize =  24.sp),
+        modifier = Modifier.padding(start = 16.dp))
+}
+
+@Composable
+fun StepDisplay(step: Step){
+    Text("Step ${step.stepNumber}: ${step.title}",
+        style = TextStyle(fontWeight = FontWeight.SemiBold,
+            fontSize =  20.sp))
+    Column() {
+        Text(
+            text = step.description,
+            style = MaterialTheme.typography.bodyMedium
+        )
+    }
 }
 
 @Preview

@@ -60,6 +60,8 @@ class EditProfileTest {
   fun testIsDisplayed() {
     goToEditProfileScreen()
     ComposeScreen.onComposeScreen<EditProfileTestScreen>(composeTestRule) {
+      composeTestRule.waitForIdle()
+      editProfileContent.assertIsDisplayed()
       editPicture.assertIsDisplayed()
       nameInput.assertIsDisplayed()
       usernameInput.assertIsDisplayed()
@@ -72,6 +74,8 @@ class EditProfileTest {
   fun testIllegalModification() {
     goToEditProfileScreen()
     ComposeScreen.onComposeScreen<EditProfileTestScreen>(composeTestRule) {
+      composeTestRule.waitForIdle()
+
       nameInput.performTextClearance()
       nameInput.performTextInput("Jn")
       usernameInput.performTextClearance()
@@ -79,6 +83,7 @@ class EditProfileTest {
       bioInput.performTextClearance()
       bioInput.performTextInput("This is a sample bio repeated several times for testing")
       bioInput.performTextInput("This is a sample bio repeated several times for testing")
+      composeTestRule.waitForIdle()
 
       // Check error messages
       nameError.assertIsDisplayed()
@@ -117,6 +122,7 @@ class EditProfileTest {
   fun testSaveButton() {
     goToEditProfileScreen()
     ComposeScreen.onComposeScreen<EditProfileTestScreen>(composeTestRule) {
+      composeTestRule.waitForIdle()
       nameInput.performTextClearance()
       usernameInput.performTextClearance()
       bioInput.performTextClearance()

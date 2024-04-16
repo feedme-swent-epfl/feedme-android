@@ -90,7 +90,8 @@ fun EditProfileContent(
 
   Column(
       horizontalAlignment = Alignment.CenterHorizontally,
-      modifier = Modifier.padding(24.dp).padding(padding).fillMaxWidth()) {
+      modifier =
+          Modifier.padding(24.dp).padding(padding).fillMaxSize().testTag("EditProfileContent")) {
         Column(
             modifier =
                 Modifier.padding(bottom = 20.dp, top = 20.dp).testTag("Edit_Picture").clickable {

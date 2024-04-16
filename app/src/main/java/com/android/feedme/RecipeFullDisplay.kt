@@ -33,6 +33,7 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.SpanStyle
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.buildAnnotatedString
+import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.BaselineShift
 import androidx.compose.ui.text.style.TextAlign
@@ -68,12 +69,12 @@ fun RecipeFullDisplay(recipe: Recipe, modifier: Modifier = Modifier) {
       bottomBar = {
         BottomNavigationMenu(selectedItem = "", onTabSelect = {}, tabList = TOP_LEVEL_DESTINATIONS)
       }) {
-        LazyColumn(verticalArrangement = Arrangement.spacedBy(8.dp)) {
+        LazyColumn(contentPadding = PaddingValues(0.dp)) {
             item{ ImageDisplay(recipe = recipe, modifier = modifier)}
             item{ GeneralInfosDisplay(recipe = recipe, modifier = modifier)}
             item{ IngredientTitleDisplay(modifier = modifier)}
             items(recipe.ingredients) {
-                ingredient -> IngredientDisplay(ingredient = ingredient, modifier = modifier)
+                ingredient -> IngredientDisplay(ingredient = ingredient, modifier)
             }
         }
       }
@@ -91,24 +92,24 @@ fun GeneralInfosDisplay(recipe: Recipe, modifier: Modifier){
         verticalAlignment = Alignment.CenterVertically,
         modifier = Modifier
             .fillMaxWidth()
-            .height(50.dp)){
+            .height(45.dp)){
 
         // Recipe time
         Spacer(modifier = Modifier.weight(1f))
         Icon(imageVector = Icons.Rounded.AccessTime, contentDescription = null)
         Text(text = recipe.time.toString(),
             modifier = Modifier.padding(start = 4.dp),
-            style = TextStyle(fontSize = 16.sp, fontWeight = FontWeight.SemiBold))
+            style = TextStyle(fontSize = 16.sp, fontWeight = FontWeight.Medium))
 
         // Recipe user name
         Spacer(modifier = Modifier.weight(1f))
         Text(text = "By user ",
             textAlign = TextAlign.Center,
-            style = TextStyle(fontSize = 16.sp, fontWeight = FontWeight.SemiBold))
+            style = TextStyle(fontSize = 16.sp, fontWeight = FontWeight.Medium))
         Text(text = recipe.userid,
             textAlign = TextAlign.Center,
             color = BlueUser,
-            style = TextStyle(fontSize = 16.sp, fontWeight = FontWeight.SemiBold))
+            style = TextStyle(fontSize = 16.sp, fontWeight = FontWeight.Medium))
         Spacer(modifier = Modifier.weight(1f))
 
         // Recipe rating
@@ -117,7 +118,7 @@ fun GeneralInfosDisplay(recipe: Recipe, modifier: Modifier){
             tint = YellowStar)
         Text(text = recipe.rating.toString(),
             modifier = Modifier.padding(start = 4.dp),
-            style = TextStyle(fontSize = 16.sp, fontWeight = FontWeight.SemiBold))
+            style = TextStyle(fontSize = 16.sp, fontWeight = FontWeight.Medium))
         Spacer(modifier = Modifier.weight(1f))
 
     }
@@ -127,30 +128,27 @@ fun GeneralInfosDisplay(recipe: Recipe, modifier: Modifier){
 @Composable
 fun IngredientTitleDisplay(modifier: Modifier){
     Text(text = "Ingredients",
-        style = TextStyle(fontWeight = FontWeight.ExtraBold,
+        style = TextStyle(fontWeight = FontWeight.SemiBold,
             fontSize =  24.sp),
-        modifier = modifier.padding(start = 18.dp, top = 10.dp))
+        modifier = Modifier.padding(start = 16.dp, top = 8.dp))
 }
 @Composable
 fun IngredientDisplay(ingredient: IngredientMetaData, modifier: Modifier){
     val bullet = "\u2022"
     val ingredientText = "${ingredient.quantity} ${ingredient.measure} ${ingredient.ingredient.name}"
-    ListItem(
-        headlineContent =  {
-            Text(text = buildAnnotatedString {
-                pushStyle(SpanStyle(
-                    fontWeight = FontWeight(1000),
-                    // Adjust the font size as needed
-                    // You can also specify other styles like color or font weight here
-                ))
-                append(bullet)
-                append(" ")
-                pop()
-                append(ingredientText) })
-
-        }
+    Text(text = buildAnnotatedString {
+        pushStyle(SpanStyle(
+            fontWeight = FontWeight(1000),
+            // Adjust the font size as needed
+            // You can also specify other styles like color or font weight here
+        ))
+        append(bullet)
+        append(" ")
+        pop()
+        append(ingredientText) },
+        style = TextStyle(fontWeight = FontWeight.Normal, fontSize = 14.sp),
+        modifier = Modifier.padding(top = 10.dp, start = 16.dp)
     )
-
 }
 
 @Preview

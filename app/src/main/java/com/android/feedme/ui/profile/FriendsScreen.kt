@@ -1,6 +1,5 @@
 package com.android.feedme.ui.profile
 
-import android.util.Log
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
@@ -86,6 +85,10 @@ fun FriendsScreen(
   var selectedTabIndex by remember { mutableIntStateOf(mode) }
   val tabTitles = listOf("Followers", "Following")
 
+  // Now, collect followers and following as state to display them
+  val followers = profileViewModel.followers.collectAsState()
+  val following = profileViewModel.following.collectAsState()
+
   Scaffold(
       modifier = Modifier.fillMaxSize().testTag("FriendsScreen"),
       topBar = { TopBarNavigation(title = "Friends", navigationActions, null) },
@@ -108,8 +111,8 @@ fun FriendsScreen(
                 }
               }
           when (selectedTabIndex) {
-            0 -> FollowersList(profileViewModel.followers.collectAsState().value, "FollowersList")
-            1 -> FollowersList(profileViewModel.following.collectAsState().value, "FollowingList")
+            0 -> FollowersList(followers.value, "FollowersList")
+            1 -> FollowersList(following.value, "FollowingList")
           }
         }
       })
@@ -123,7 +126,6 @@ fun FriendsScreen(
  */
 @Composable
 fun FollowersList(profiles: List<Profile>, tag: String) {
-  Log.d("FollowersList", "FollowersList: $profiles")
   LazyColumn(modifier = Modifier.fillMaxSize().testTag(tag)) {
     items(profiles) { profile -> FollowerCard(profile = profile) }
   }

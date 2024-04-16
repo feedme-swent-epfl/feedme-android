@@ -1,5 +1,6 @@
 package com.android.feedme.ui.profile
 
+import android.util.Log
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
@@ -18,6 +19,7 @@ import androidx.compose.material3.Tab
 import androidx.compose.material3.TabRow
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.remember
@@ -77,9 +79,10 @@ val demoProfiles2 =
 @Composable
 fun FriendsScreen(
     navigationActions: NavigationActions,
-    followers: List<Profile> = demoProfiles,
-    mode: Int = 0
+    profileViewModel: ProfileViewModel = ProfileViewModel(),
+    mode: Int = 0,
 ) {
+
   var selectedTabIndex by remember { mutableIntStateOf(mode) }
   val tabTitles = listOf("Followers", "Following")
 
@@ -105,8 +108,8 @@ fun FriendsScreen(
                 }
               }
           when (selectedTabIndex) {
-            0 -> FollowersList(followers, "FollowersList")
-            1 -> FollowersList(demoProfiles2, "FollowingList")
+            0 -> FollowersList(profileViewModel.followers.collectAsState().value, "FollowersList")
+            1 -> FollowersList(profileViewModel.following.collectAsState().value, "FollowingList")
           }
         }
       })
@@ -120,6 +123,7 @@ fun FriendsScreen(
  */
 @Composable
 fun FollowersList(profiles: List<Profile>, tag: String) {
+  Log.d("FollowersList", "FollowersList: $profiles")
   LazyColumn(modifier = Modifier.fillMaxSize().testTag(tag)) {
     items(profiles) { profile -> FollowerCard(profile = profile) }
   }

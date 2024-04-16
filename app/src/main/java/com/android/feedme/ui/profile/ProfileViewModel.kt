@@ -1,5 +1,6 @@
 package com.android.feedme.ui.profile
 
+import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.android.feedme.model.data.Profile
@@ -19,10 +20,12 @@ class ProfileViewModel : ViewModel() {
   private val repository = ProfileRepository.instance
   private val _profile = MutableStateFlow<Profile?>(null)
   val profile: StateFlow<Profile?> = _profile
+  val followers = MutableStateFlow<List<Profile>>(listOf())
+  val following = MutableStateFlow<List<Profile>>(listOf())
   val googleId = FirebaseAuth.getInstance().uid
 
   init {
-    if (googleId != null) fetchProfile(googleId)
+    googleId?.let { fetchProfile(it) }
   }
 
   /**
@@ -34,11 +37,44 @@ class ProfileViewModel : ViewModel() {
     viewModelScope.launch {
       repository.getProfile(
           id,
-          onSuccess = { profile -> _profile.value = profile },
+          onSuccess = { profile ->
+            _profile.value = profile
+            if (profile != null) {
+              fetchProfiles(profile.followers, followers)
+              fetchProfiles(profile.following, following)
+            }
+          },
           onFailure = {
             // Handle failure
             throw error("Profile was not fetched during Login")
           })
     }
+  }
+
+  /**
+   * A function that fetches the profiles of the given Ids
+   *
+   * @param ids: the unique IDs of the profiles we want to fetch
+   * @param fetchProfile: the MutableStateFlow that will store the fetched profiles
+   */
+  private fun fetchProfiles(ids: List<String>, fetchProfile: MutableStateFlow<List<Profile>>) {
+    Log.d("ProfileViewModel", "Fetching profiles: $ids")
+    viewModelScope.launch {
+      repository.getProfiles(
+          ids,
+          onSuccess = { profiles -> fetchProfile.value = profiles },
+          onFailure = {
+            // Handle failure
+            throw error("Profiles were not fetched")
+          })
+    }
+  }
+
+  fun fetchFollowers(ids: List<String>) {
+    fetchProfiles(ids, followers)
+  }
+
+  fun fetchFollowing(ids: List<String>) {
+    fetchProfiles(ids, following)
   }
 }

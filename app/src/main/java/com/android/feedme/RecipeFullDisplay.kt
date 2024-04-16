@@ -1,14 +1,21 @@
 package com.android.feedme
 
 import android.annotation.SuppressLint
+import android.text.style.BulletSpan
+import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
+
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
+
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.items
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.outlined.AccessTime
 import androidx.compose.material.icons.outlined.Star
@@ -16,14 +23,20 @@ import androidx.compose.material.icons.rounded.AccessTime
 import androidx.compose.material.icons.rounded.Star
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
+import androidx.compose.material3.ListItem
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.text.SpanStyle
 import androidx.compose.ui.text.TextStyle
+import androidx.compose.ui.text.buildAnnotatedString
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.style.BaselineShift
 import androidx.compose.ui.text.style.TextAlign
+import androidx.compose.ui.text.style.TextDecoration
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
@@ -38,6 +51,7 @@ import com.android.feedme.ui.navigation.TOP_LEVEL_DESTINATIONS
 import com.android.feedme.ui.navigation.TopBarNavigation
 import com.android.feedme.ui.theme.BlueUser
 import com.android.feedme.ui.theme.YellowStar
+//import androidx.compose.ui.Alignment
 
 
 @SuppressLint("UnusedMaterial3ScaffoldPaddingParameter")
@@ -54,9 +68,13 @@ fun RecipeFullDisplay(recipe: Recipe, modifier: Modifier = Modifier) {
       bottomBar = {
         BottomNavigationMenu(selectedItem = "", onTabSelect = {}, tabList = TOP_LEVEL_DESTINATIONS)
       }) {
-        LazyColumn(contentPadding = PaddingValues(all = 0.dp)) {
+        LazyColumn(verticalArrangement = Arrangement.spacedBy(8.dp)) {
             item{ ImageDisplay(recipe = recipe, modifier = modifier)}
             item{ GeneralInfosDisplay(recipe = recipe, modifier = modifier)}
+            item{ IngredientTitleDisplay(modifier = modifier)}
+            items(recipe.ingredients) {
+                ingredient -> IngredientDisplay(ingredient = ingredient, modifier = modifier)
+            }
         }
       }
 }
@@ -71,13 +89,17 @@ fun ImageDisplay(recipe: Recipe, modifier: Modifier){
 fun GeneralInfosDisplay(recipe: Recipe, modifier: Modifier){
     Row(horizontalArrangement = Arrangement.SpaceAround,
         verticalAlignment = Alignment.CenterVertically,
-        modifier = Modifier.fillMaxWidth().height(50.dp)){
+        modifier = Modifier
+            .fillMaxWidth()
+            .height(50.dp)){
+
         // Recipe time
         Spacer(modifier = Modifier.weight(1f))
         Icon(imageVector = Icons.Rounded.AccessTime, contentDescription = null)
         Text(text = recipe.time.toString(),
             modifier = Modifier.padding(start = 4.dp),
             style = TextStyle(fontSize = 16.sp, fontWeight = FontWeight.SemiBold))
+
         // Recipe user name
         Spacer(modifier = Modifier.weight(1f))
         Text(text = "By user ",
@@ -88,6 +110,7 @@ fun GeneralInfosDisplay(recipe: Recipe, modifier: Modifier){
             color = BlueUser,
             style = TextStyle(fontSize = 16.sp, fontWeight = FontWeight.SemiBold))
         Spacer(modifier = Modifier.weight(1f))
+
         // Recipe rating
         Icon(imageVector = Icons.Rounded.Star,
             contentDescription = null,
@@ -96,12 +119,37 @@ fun GeneralInfosDisplay(recipe: Recipe, modifier: Modifier){
             modifier = Modifier.padding(start = 4.dp),
             style = TextStyle(fontSize = 16.sp, fontWeight = FontWeight.SemiBold))
         Spacer(modifier = Modifier.weight(1f))
+
     }
     HorizontalDivider(thickness = 2.dp)
 }
 
 @Composable
-fun UstentilsDisplay(){
+fun IngredientTitleDisplay(modifier: Modifier){
+    Text(text = "Ingredients",
+        style = TextStyle(fontWeight = FontWeight.ExtraBold,
+            fontSize =  24.sp),
+        modifier = modifier.padding(start = 18.dp, top = 10.dp))
+}
+@Composable
+fun IngredientDisplay(ingredient: IngredientMetaData, modifier: Modifier){
+    val bullet = "\u2022"
+    val ingredientText = "${ingredient.quantity} ${ingredient.measure} ${ingredient.ingredient.name}"
+    ListItem(
+        headlineContent =  {
+            Text(text = buildAnnotatedString {
+                pushStyle(SpanStyle(
+                    fontWeight = FontWeight(1000),
+                    // Adjust the font size as needed
+                    // You can also specify other styles like color or font weight here
+                ))
+                append(bullet)
+                append(" ")
+                pop()
+                append(ingredientText) })
+
+        }
+    )
 
 }
 
@@ -119,6 +167,11 @@ fun Preview(){
                     quantity = 2.0,
                     measure = MeasureUnit.ML,
                     ingredient = Ingredient("Tomato", "Vegetables", "tomatoID")
+                ),
+                IngredientMetaData(
+                    quantity = 2.0,
+                    measure = MeasureUnit.KG,
+                    ingredient = Ingredient("Beef Meet", "Meat", "meatId")
                 )
             ),
             steps = listOf(Step(1, "a", "Step1")),

@@ -2,7 +2,6 @@ package com.android.feedme.test.ui
 
 import androidx.compose.ui.test.*
 import androidx.compose.ui.test.junit4.createComposeRule
-import androidx.test.core.app.ApplicationProvider
 import androidx.test.ext.junit.runners.AndroidJUnit4
 import com.android.feedme.model.data.Profile
 import com.android.feedme.model.data.ProfileRepository
@@ -10,7 +9,6 @@ import com.android.feedme.screen.EditProfileTestScreen
 import com.android.feedme.ui.navigation.NavigationActions
 import com.android.feedme.ui.profile.EditProfileScreen
 import com.google.android.gms.tasks.Tasks
-import com.google.firebase.FirebaseApp
 import com.google.firebase.firestore.CollectionReference
 import com.google.firebase.firestore.DocumentReference
 import com.google.firebase.firestore.DocumentSnapshot
@@ -37,10 +35,8 @@ class EditProfileTest {
   private var mockDocumentSnapshot = mockk<DocumentSnapshot>(relaxed = true)
 
   @Before
-  fun setupMocks() {
-    if (FirebaseApp.getApps(ApplicationProvider.getApplicationContext()).isEmpty()) {
-      FirebaseApp.initializeApp(ApplicationProvider.getApplicationContext())
-    }
+  fun setUpMocks() {
+
     ProfileRepository.initialize(mockFirestore)
 
     profileRepository = ProfileRepository.instance
@@ -55,6 +51,7 @@ class EditProfileTest {
     every { mockDocumentReference.set(any()) } returns Tasks.forResult(null)
   }
 
+  @Test
   fun testIsDisplayed() {
     goToEditProfileScreen()
     ComposeScreen.onComposeScreen<EditProfileTestScreen>(composeTestRule) {

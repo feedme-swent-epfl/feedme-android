@@ -14,7 +14,7 @@ class EditProfileTestScreen(semanticsProvider: SemanticsNodeInteractionsProvider
         viewBuilderAction = { hasTestTag("EditProfileScreen") }) {
 
   // Structural elements of the UI for EditProfileScreen
-  val editPicture: KNode = child { hasTestTag("Edit Picture") }
+  val editPicture: KNode = child { hasTestTag("Edit_Picture") }
   val nameInput: KNode = child { hasTestTag("NameInput") }
   val usernameInput: KNode = child { hasTestTag("UsernameInput") }
   val bioInput: KNode = child { hasTestTag("BioInput") }

@@ -93,7 +93,7 @@ fun EditProfileContent(
       modifier = Modifier.padding(24.dp).padding(padding).fillMaxWidth()) {
         Column(
             modifier =
-                Modifier.padding(bottom = 20.dp, top = 20.dp).testTag("Edit Picture").clickable {
+                Modifier.padding(bottom = 20.dp, top = 20.dp).testTag("Edit_Picture").clickable {
                   // TODO: Implement image picker
                 },
         ) {

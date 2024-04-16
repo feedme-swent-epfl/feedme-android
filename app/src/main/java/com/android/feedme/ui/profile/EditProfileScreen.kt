@@ -119,12 +119,13 @@ fun EditProfileContent(
             label = { Text("Name") },
             isError = nameError != null,
             modifier = Modifier.fillMaxWidth().padding(top = 4.dp).testTag("NameInput"))
-        if (nameError != null)
-            Text(
-                nameError!!,
-                color = MaterialTheme.colorScheme.error,
-                style = TextStyle(fontSize = 12.sp),
-                modifier = Modifier.testTag("NameError"))
+        if (nameError != null) {
+          Text(
+              nameError!!,
+              color = MaterialTheme.colorScheme.error,
+              style = TextStyle(fontSize = 12.sp),
+              modifier = Modifier.testTag("NameError"))
+        }
 
         OutlinedTextField(
             value = username,
@@ -146,13 +147,13 @@ fun EditProfileContent(
             isError = usernameError != null,
             modifier = Modifier.fillMaxWidth().padding(top = 4.dp).testTag("UsernameInput"))
 
-        if (usernameError != null)
-            Text(
-                usernameError!!,
-                color = MaterialTheme.colorScheme.error,
-                style = TextStyle(fontSize = 12.sp),
-                modifier = Modifier.testTag("UsernameError"))
-
+        if (usernameError != null) {
+          Text(
+              usernameError!!,
+              color = MaterialTheme.colorScheme.error,
+              style = TextStyle(fontSize = 12.sp),
+              modifier = Modifier.testTag("UsernameError"))
+        }
         OutlinedTextField(
             value = bio,
             onValueChange = {
@@ -167,12 +168,13 @@ fun EditProfileContent(
             modifier =
                 Modifier.fillMaxWidth().height(125.dp).padding(top = 4.dp).testTag("BioInput"))
 
-        if (bioError != null)
-            Text(
-                bioError!!,
-                color = MaterialTheme.colorScheme.error,
-                style = TextStyle(fontSize = 12.sp),
-                modifier = Modifier.testTag("BioError"))
+        if (bioError != null) {
+          Text(
+              bioError!!,
+              color = MaterialTheme.colorScheme.error,
+              style = TextStyle(fontSize = 12.sp),
+              modifier = Modifier.testTag("BioError"))
+        }
 
         Button(
             modifier = Modifier.fillMaxWidth().padding(top = 16.dp).testTag("EditSave"),

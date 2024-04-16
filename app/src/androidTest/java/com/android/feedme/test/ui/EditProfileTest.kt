@@ -55,17 +55,21 @@ class EditProfileTest {
     every { mockDocumentReference.set(any()) } returns Tasks.forResult(null)
   }
 
-  @Test
-  fun testEditProfileInputsAndButtons() {
+  fun testIsDisplayed() {
     goToEditProfileScreen()
     ComposeScreen.onComposeScreen<EditProfileTestScreen>(composeTestRule) {
-
-      // Validate visibility and perform text clearance
       editPicture.assertIsDisplayed()
       nameInput.assertIsDisplayed()
       usernameInput.assertIsDisplayed()
       bioInput.assertIsDisplayed()
+      saveButton.assertIsDisplayed()
+    }
+  }
 
+  @Test
+  fun testIllegalModification() {
+    goToEditProfileScreen()
+    ComposeScreen.onComposeScreen<EditProfileTestScreen>(composeTestRule) {
       nameInput.performTextClearance()
       nameInput.performTextInput("Jn")
       usernameInput.performTextClearance()
@@ -120,11 +124,11 @@ class EditProfileTest {
       bioInput.performTextInput("This is a sample bio.")
       composeTestRule.waitForIdle()
 
-      saveButton.assertIsDisplayed()
-      saveButton.assertIsEnabled()
-
-      saveButton.performClick()
-
+      saveButton {
+        assertIsEnabled()
+        assertTextEquals("Save")
+        performClick()
+      }
       composeTestRule.waitForIdle()
     }
   }

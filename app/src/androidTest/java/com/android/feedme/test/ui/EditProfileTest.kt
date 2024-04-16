@@ -8,6 +8,7 @@ import com.android.feedme.model.data.ProfileRepository
 import com.android.feedme.screen.EditProfileTestScreen
 import com.android.feedme.ui.navigation.NavigationActions
 import com.android.feedme.ui.profile.EditProfileScreen
+import com.android.feedme.ui.profile.ProfileViewModel
 import com.google.android.gms.tasks.Tasks
 import com.google.firebase.firestore.CollectionReference
 import com.google.firebase.firestore.DocumentReference
@@ -31,14 +32,16 @@ class EditProfileTest {
   private val mockFirestore = mockk<FirebaseFirestore>(relaxed = true)
   private val mockDocumentReference = mockk<DocumentReference>(relaxed = true)
   private val mockCollectionReference = mockk<CollectionReference>(relaxed = true)
-  private var profileRepository: ProfileRepository? = null
   private var mockDocumentSnapshot = mockk<DocumentSnapshot>(relaxed = true)
+
+  private lateinit var profileRepository: ProfileRepository
+  private lateinit var profileViewModel:
+      ProfileViewModel // Avoid re-creating a viewModel for every test
 
   @Before
   fun setUpMocks() {
 
     ProfileRepository.initialize(mockFirestore)
-
     profileRepository = ProfileRepository.instance
 
     every { mockFirestore.collection("profiles") } returns mockCollectionReference
@@ -49,6 +52,8 @@ class EditProfileTest {
     every { mockDocumentSnapshot.toObject(Profile::class.java) } returns profile
 
     every { mockDocumentReference.set(any()) } returns Tasks.forResult(null)
+
+    profileViewModel = ProfileViewModel()
   }
 
   @Test
@@ -141,7 +146,7 @@ class EditProfileTest {
   }
 
   private fun goToEditProfileScreen() {
-    composeTestRule.setContent { EditProfileScreen(mockNavActions) }
+    composeTestRule.setContent { EditProfileScreen(mockNavActions, profileViewModel) }
     composeTestRule.waitForIdle()
   }
 }

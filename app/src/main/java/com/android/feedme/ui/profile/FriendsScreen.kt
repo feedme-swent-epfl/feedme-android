@@ -18,6 +18,7 @@ import androidx.compose.material3.Tab
 import androidx.compose.material3.TabRow
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.remember
@@ -77,11 +78,16 @@ val demoProfiles2 =
 @Composable
 fun FriendsScreen(
     navigationActions: NavigationActions,
-    followers: List<Profile> = demoProfiles,
-    mode: Int = 0
+    profileViewModel: ProfileViewModel = ProfileViewModel(),
+    mode: Int = 0,
 ) {
+
   var selectedTabIndex by remember { mutableIntStateOf(mode) }
   val tabTitles = listOf("Followers", "Following")
+
+  // Now, collect followers and following as state to display them
+  val followers = profileViewModel.followers.collectAsState()
+  val following = profileViewModel.following.collectAsState()
 
   Scaffold(
       modifier = Modifier.fillMaxSize().testTag("FriendsScreen"),
@@ -105,8 +111,8 @@ fun FriendsScreen(
                 }
               }
           when (selectedTabIndex) {
-            0 -> FollowersList(followers, "FollowersList")
-            1 -> FollowersList(demoProfiles2, "FollowingList")
+            0 -> FollowersList(followers.value, "FollowersList")
+            1 -> FollowersList(following.value, "FollowingList")
           }
         }
       })

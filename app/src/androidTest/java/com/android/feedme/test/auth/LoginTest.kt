@@ -1,19 +1,14 @@
 package com.android.feedme.test.auth
 
 import androidx.compose.ui.test.junit4.createComposeRule
-import androidx.test.core.app.ApplicationProvider
 import androidx.test.espresso.intent.rule.IntentsTestRule
 import androidx.test.ext.junit.runners.AndroidJUnit4
 import com.android.feedme.MainActivity
-import com.android.feedme.model.data.ProfileRepository
 import com.android.feedme.screen.LoginScreen
 import com.android.feedme.ui.navigation.NavigationActions
-import com.google.firebase.FirebaseApp
-import com.google.firebase.firestore.FirebaseFirestore
 import com.kaspersky.kaspresso.testcases.api.testcase.TestCase
 import io.github.kakaocup.compose.node.element.ComposeScreen
 import io.mockk.mockk
-import org.junit.Before
 import org.junit.Rule
 import org.junit.Test
 import org.junit.runner.RunWith
@@ -25,14 +20,6 @@ class LoginTest : TestCase() {
   // and Intents.release() after the @Test block is completed. IntentsTestRule
   // is deprecated, but it was MUCH faster than using IntentsRule in our tests
   @get:Rule val intentsTestRule = IntentsTestRule(MainActivity::class.java)
-
-  @Before
-  fun setup() {
-    if (FirebaseApp.getApps(ApplicationProvider.getApplicationContext()).isEmpty()) {
-      FirebaseApp.initializeApp(ApplicationProvider.getApplicationContext())
-    }
-    ProfileRepository.initialize(FirebaseFirestore.getInstance())
-  }
 
   @Test
   fun titleAndButtonAreCorrectlyDisplayed() {

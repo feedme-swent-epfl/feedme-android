@@ -5,6 +5,7 @@ import androidx.test.espresso.intent.rule.IntentsTestRule
 import androidx.test.ext.junit.runners.AndroidJUnit4
 import com.android.feedme.MainActivity
 import com.android.feedme.screen.LoginScreen
+import com.android.feedme.ui.auth.LoginScreen
 import com.android.feedme.ui.navigation.NavigationActions
 import com.kaspersky.kaspresso.testcases.api.testcase.TestCase
 import io.github.kakaocup.compose.node.element.ComposeScreen
@@ -53,11 +54,7 @@ class LoginTest : TestCase() {
     }
   */
   private fun goToLoginScreen() {
-    val mockNavActions = mockk<NavigationActions>(relaxed = true) // Make the mock relaxed
-    composeTestRule.setContent {
-      // Assuming there's a mocked navigation action and a default state for the lists
-      com.android.feedme.ui.auth.LoginScreen(mockNavActions)
-    }
+    composeTestRule.setContent { LoginScreen(mockk<NavigationActions>()) }
     composeTestRule.waitForIdle()
   }
 }

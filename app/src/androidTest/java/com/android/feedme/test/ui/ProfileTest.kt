@@ -17,7 +17,6 @@ import org.junit.runner.RunWith
 
 @RunWith(AndroidJUnit4::class)
 class ProfileTest {
-  // @get:Rule val composeTestRule = createAndroidComposeRule<MainActivity>()
   @get:Rule val composeTestRule = createComposeRule()
   private val mockFirestore = mockk<FirebaseFirestore>(relaxed = true)
 
@@ -25,9 +24,6 @@ class ProfileTest {
   fun init() {
     ProfileRepository.initialize(mockFirestore)
   }
-
-  // @get:Rule val intentsTestRule = IntentsTestRule(MainActivity::class.java) TODO: Fix testing
-  // with navigation
 
   @Test
   fun profileBoxAndComponentsCorrectlyDisplayed() {
@@ -68,9 +64,7 @@ class ProfileTest {
   }
 
   private fun goToProfileScreen() {
-    composeTestRule.setContent {
-      com.android.feedme.ui.profile.ProfileScreen((mockk<NavigationActions>()), ProfileViewModel())
-    }
+    composeTestRule.setContent { ProfileScreen(mockk<NavigationActions>(), ProfileViewModel()) }
     composeTestRule.waitForIdle()
   }
 }

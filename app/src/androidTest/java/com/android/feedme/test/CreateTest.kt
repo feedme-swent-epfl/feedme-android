@@ -30,6 +30,11 @@ class CreateTest : TestCase() {
         assertIsDisplayed()
         assertHasClickAction()
       }
+
+      galleryButton {
+        assertIsDisplayed()
+        assertHasClickAction()
+      }
     }
   }
 

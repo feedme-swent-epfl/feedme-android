@@ -25,18 +25,16 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.text.SpanStyle
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.buildAnnotatedString
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import coil.compose.AsyncImage
-import com.android.feedme.model.data.Ingredient
 import com.android.feedme.model.data.IngredientMetaData
-import com.android.feedme.model.data.MeasureUnit
 import com.android.feedme.model.data.Recipe
 import com.android.feedme.model.data.Step
 import com.android.feedme.ui.navigation.BottomNavigationMenu
@@ -58,7 +56,7 @@ import com.android.feedme.ui.theme.YellowStar
 @Composable
 fun RecipeFullDisplay(recipe: Recipe, modifier: Modifier = Modifier) {
   Scaffold(
-      modifier = modifier,
+      modifier = modifier.testTag("Scaffold"),
       topBar = {
         TopBarNavigation(
             title = recipe.title,
@@ -69,14 +67,15 @@ fun RecipeFullDisplay(recipe: Recipe, modifier: Modifier = Modifier) {
       bottomBar = {
         BottomNavigationMenu(selectedItem = "", onTabSelect = {}, tabList = TOP_LEVEL_DESTINATIONS)
       }) {
-        LazyColumn(contentPadding = PaddingValues(0.dp)) {
-          item { ImageDisplay(recipe = recipe) }
-          item { GeneralInfosDisplay(recipe = recipe) }
-          item { IngredientTitleDisplay() }
-          items(recipe.ingredients) { ingredient -> IngredientDisplay(ingredient = ingredient) }
-          item { IngredientStepsDividerDisplay() }
-          items(recipe.steps) { step -> StepDisplay(step = step) }
-        }
+        LazyColumn(
+            contentPadding = PaddingValues(0.dp), modifier = Modifier.testTag("LazyColumn")) {
+              item { ImageDisplay(recipe = recipe) }
+              item { GeneralInfosDisplay(recipe = recipe) }
+              item { IngredientTitleDisplay() }
+              items(recipe.ingredients) { ingredient -> IngredientDisplay(ingredient = ingredient) }
+              item { IngredientStepsDividerDisplay() }
+              items(recipe.steps) { step -> StepDisplay(step = step) }
+            }
       }
 }
 /**
@@ -90,7 +89,7 @@ fun ImageDisplay(recipe: Recipe, modifier: Modifier = Modifier) {
   AsyncImage(
       model = recipe.imageUrl,
       contentDescription = "Recipe Image",
-      modifier = modifier.fillMaxWidth())
+      modifier = modifier.fillMaxWidth().testTag("Recipe Image"))
 }
 
 /**
@@ -108,7 +107,10 @@ fun GeneralInfosDisplay(recipe: Recipe, modifier: Modifier = Modifier) {
 
         // Recipe time
         Spacer(modifier = Modifier.weight(1f))
-        Icon(imageVector = Icons.Rounded.AccessTime, contentDescription = "Time Icon")
+        Icon(
+            imageVector = Icons.Rounded.AccessTime,
+            contentDescription = "Time Icon",
+            modifier = Modifier.testTag("Time Icon"))
         Text(
             text = recipe.time.toString(),
             modifier = Modifier.padding(start = 4.dp),
@@ -129,14 +131,17 @@ fun GeneralInfosDisplay(recipe: Recipe, modifier: Modifier = Modifier) {
 
         // Recipe rating
         Icon(
-            imageVector = Icons.Rounded.Star, contentDescription = "Rating Icon", tint = YellowStar)
+            imageVector = Icons.Rounded.Star,
+            contentDescription = "Rating Icon",
+            tint = YellowStar,
+            modifier = Modifier.testTag("Rating Icon"))
         Text(
             text = recipe.rating.toString(),
             modifier = Modifier.padding(start = 4.dp),
             style = TextStyle(fontSize = 16.sp, fontWeight = FontWeight.Medium))
         Spacer(modifier = Modifier.weight(1f))
       }
-  HorizontalDivider(thickness = 2.dp)
+  HorizontalDivider(thickness = 2.dp, modifier = Modifier.testTag("Horizontal Divider 1"))
 }
 
 /**
@@ -149,7 +154,7 @@ fun IngredientTitleDisplay(modifier: Modifier = Modifier) {
   Text(
       text = "Ingredients",
       style = TextStyle(fontWeight = FontWeight.SemiBold, fontSize = 20.sp),
-      modifier = modifier.padding(start = 16.dp, top = 8.dp))
+      modifier = modifier.padding(start = 16.dp, top = 8.dp).testTag("Ingredient Title"))
 }
 
 /**
@@ -173,7 +178,7 @@ fun IngredientDisplay(ingredient: IngredientMetaData, modifier: Modifier = Modif
             append(ingredientText)
           },
       style = TextStyle(fontWeight = FontWeight.Normal, fontSize = 14.sp),
-      modifier = modifier.padding(top = 10.dp, start = 16.dp))
+      modifier = modifier.padding(top = 10.dp, start = 16.dp).testTag("Ingredient Description"))
 }
 
 /**
@@ -183,7 +188,9 @@ fun IngredientDisplay(ingredient: IngredientMetaData, modifier: Modifier = Modif
  */
 @Composable
 fun IngredientStepsDividerDisplay(modifier: Modifier = Modifier) {
-  HorizontalDivider(thickness = 2.dp, modifier = modifier.padding(top = 8.dp, bottom = 8.dp))
+  HorizontalDivider(
+      thickness = 2.dp,
+      modifier = modifier.padding(top = 8.dp, bottom = 8.dp).testTag("Horizontal Divider 2"))
 }
 
 /**
@@ -198,53 +205,13 @@ fun StepDisplay(step: Step, modifier: Modifier = Modifier) {
   Text(
       "Step ${step.stepNumber}: ${step.title}",
       style = TextStyle(fontWeight = FontWeight.SemiBold, fontSize = 20.sp),
-      modifier = Modifier.padding(start = 16.dp, bottom = 8.dp))
+      modifier = Modifier.padding(start = 16.dp, bottom = 8.dp).testTag("Step Title"))
   Column(modifier = modifier) {
     Text(
         text = step.description,
         style = MaterialTheme.typography.bodyMedium,
-        modifier = modifier.padding(start = 16.dp, end = 16.dp, bottom = 8.dp),
+        modifier =
+            modifier.padding(start = 16.dp, end = 16.dp, bottom = 8.dp).testTag("Step Description"),
         textAlign = TextAlign.Justify)
   }
-}
-
-@Preview
-@Composable
-fun Preview() {
-  val recipe1 =
-      Recipe(
-          recipeId = "lasagna1",
-          title = "Tasty Lasagna",
-          description = "a",
-          ingredients =
-              listOf(
-                  IngredientMetaData(
-                      quantity = 2.0,
-                      measure = MeasureUnit.ML,
-                      ingredient = Ingredient("Tomato", "Vegetables", "tomatoID")),
-                  IngredientMetaData(
-                      quantity = 2.0,
-                      measure = MeasureUnit.KG,
-                      ingredient = Ingredient("Beef Meet", "Meat", "meatId"))),
-          steps =
-              listOf(
-                  Step(
-                      1,
-                      "In a large, heavy pot, put the olive oil, garlic and parsley over medium high heat. When the garlic begins to brown, increase the heat and add the ground beef. Break up the beef, but keep it rather chunky. Sprinkle with about 1/2 tsp of salt. \n" +
-                          "\n" +
-                          "When the beef is beginning to dry up, add the tomatoes and stir well. Add more salt, then lower the heat and allow to simmer for about an hour, stirring from time to time. Taste for salt and add pepper.",
-                      "Make the Meat Sauce"),
-                  Step(
-                      2,
-                      "Melt the butter in a medium pot then add the flour. Keep stirring to cook the flour for at least 5 minutes, but don’t let it brown. Pour in a little of the milk, and stir quickly to incorporate. \n" +
-                          "\n" +
-                          "Continue stirring and adding milk a little at a time. Once all the milk is mixed into the flour and butter mixture, add more.",
-                      "Make the Bechamel Sauce (while the sauce is simmering)")),
-          tags = listOf("Meat"),
-          time = 1.15,
-          rating = 4.5,
-          userid = "@PasDavid",
-          difficulty = "Intermediate",
-          "https://external-content.duckduckgo.com/iu/?u=https%3A%2F%2Fwww.mamablip.com%2Fstorage%2FLasagna%2520with%2520Meat%2520and%2520Tomato%2520Sauce_3481612355355.jpg&f=1&nofb=1&ipt=8e887ba99ce20a85fb867dabbe0206c1146ebf2f13548b5653a2778e3ea18c54&ipo=images")
-  RecipeFullDisplay(recipe = recipe1, modifier = Modifier)
 }

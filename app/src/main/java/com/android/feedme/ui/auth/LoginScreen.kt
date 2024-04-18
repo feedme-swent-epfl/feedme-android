@@ -119,7 +119,13 @@ fun LoginScreen(navigationActions: NavigationActions, authViewModel: AuthViewMod
 
         Spacer(modifier = Modifier.height(176.dp))
         Button(
-            onClick = { googleSignInLauncher.launch(googleSignInClient.signInIntent) },
+            onClick = {
+              if (AppConfig.isTestMode) {
+                mockGoogleSignInAccount()
+              } else {
+                googleSignInLauncher.launch(googleSignInClient.signInIntent)
+              }
+            },
             modifier =
                 Modifier.width(250.dp)
                     .height(40.dp)

@@ -1,8 +1,13 @@
 package com.android.feedme.test
 
+import androidx.compose.ui.test.junit4.createAndroidComposeRule
 import androidx.compose.ui.test.junit4.createComposeRule
+import androidx.compose.ui.test.onNodeWithTag
+import androidx.compose.ui.test.performClick
 import androidx.test.ext.junit.runners.AndroidJUnit4
+import com.android.feedme.MainActivity
 import com.android.feedme.screen.LandingScreen
+import com.android.feedme.screen.LoginScreen
 import com.android.feedme.ui.LandingPage
 import com.android.feedme.ui.navigation.NavigationActions
 import com.kaspersky.kaspresso.testcases.api.testcase.TestCase
@@ -14,8 +19,8 @@ import org.junit.runner.RunWith
 
 @RunWith(AndroidJUnit4::class)
 class LandingTest : TestCase() {
-  // @get:Rule val composeTestRule = createAndroidComposeRule<MainActivity>()
-  @get:Rule val composeTestRule = createComposeRule()
+  @get:Rule val composeTestRule = createAndroidComposeRule<MainActivity>()
+  //@get:Rule val composeTestRule = createComposeRule()
 
   // The IntentsTestRule simply calls Intents.init() before the @Test block
   // and Intents.release() after the @Test block is completed. IntentsTestRule
@@ -78,21 +83,17 @@ class LandingTest : TestCase() {
   }
 
   private fun goToLandingScreen() {
-    composeTestRule.setContent { LandingPage(mockk<NavigationActions>()) }
+    /*composeTestRule.setContent { LandingPage(mockk<NavigationActions>()) }
     composeTestRule.waitForIdle()
 
+     */
+
     // TODO: Fix testing with navigation
-    /*// This function is used to navigate from LoginScreen to LandingScreen
-    ComposeScreen.onComposeScreen<LoginScreen>(composeTestRule) {
-      loginButton {
-        performClick()
-      }
-      composeTestRule.waitForIdle()
+    // This function is used to navigate from LoginScreen to LandingScreen
 
-      // Assert that the Google SignIn Client was called
-      //verify { mockGoogleSignInClient.silentSignIn() }
+      composeTestRule.onNodeWithTag("LoginButton").performClick()
 
       composeTestRule.waitForIdle()
-    }*/
+
   }
 }

@@ -13,11 +13,7 @@ import org.junit.runner.RunWith
 
 @RunWith(AndroidJUnit4::class)
 class ProfileTest {
-  // @get:Rule val composeTestRule = createAndroidComposeRule<MainActivity>()
   @get:Rule val composeTestRule = createComposeRule()
-
-  // @get:Rule val intentsTestRule = IntentsTestRule(MainActivity::class.java) TODO: Fix testing
-  // with navigation
 
   @Test
   fun profileBoxAndComponentsCorrectlyDisplayed() {
@@ -58,9 +54,7 @@ class ProfileTest {
   }
 
   private fun goToProfileScreen() {
-    composeTestRule.setContent {
-      com.android.feedme.ui.profile.ProfileScreen((mockk<NavigationActions>()))
-    }
+    composeTestRule.setContent { ProfileScreen((mockk<NavigationActions>())) }
     composeTestRule.waitForIdle()
   }
 }

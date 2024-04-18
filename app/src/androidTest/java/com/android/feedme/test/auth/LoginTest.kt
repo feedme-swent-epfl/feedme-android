@@ -7,6 +7,7 @@ import androidx.test.espresso.intent.rule.IntentsTestRule
 import androidx.test.ext.junit.runners.AndroidJUnit4
 import com.android.feedme.MainActivity
 import com.android.feedme.screen.LoginScreen
+import com.android.feedme.ui.auth.LoginScreen
 import com.kaspersky.kaspresso.testcases.api.testcase.TestCase
 import io.github.kakaocup.compose.node.element.ComposeScreen
 import org.junit.Rule
@@ -16,6 +17,7 @@ import org.junit.runner.RunWith
 @RunWith(AndroidJUnit4::class)
 class LoginTest : TestCase() {
   @get:Rule val composeTestRule = createAndroidComposeRule<MainActivity>()
+  // @get:Rule val composeTestRule = createComposeRule()
 
   // The IntentsTestRule simply calls Intents.init() before the @Test block
   // and Intents.release() after the @Test block is completed. IntentsTestRule
@@ -24,6 +26,7 @@ class LoginTest : TestCase() {
 
   @Test
   fun titleAndButtonAreCorrectlyDisplayed() {
+    // composeTestRule.setContent { LoginScreen(mockk<NavigationActions>())  }
     ComposeScreen.onComposeScreen<LoginScreen>(composeTestRule) {
       // Test the UI elements
       loginTitle {
@@ -39,6 +42,8 @@ class LoginTest : TestCase() {
 
   @Test
   fun googleSignInReturnsValidActivityResult() {
+    // composeTestRule.setContent { LoginScreen(mockk<NavigationActions>())  }
+
     ComposeScreen.onComposeScreen<LoginScreen>(composeTestRule) {
       loginButton {
         assertIsDisplayed()

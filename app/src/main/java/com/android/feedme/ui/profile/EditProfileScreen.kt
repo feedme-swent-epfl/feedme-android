@@ -41,10 +41,7 @@ import com.android.feedme.ui.navigation.TopBarNavigation
  * @param profileViewModel The ViewModel that handles fetching and updating the user's profile data.
  */
 @Composable
-fun EditProfileScreen(
-    navigationActions: NavigationActions,
-    profileViewModel: ProfileViewModel = ProfileViewModel()
-) {
+fun EditProfileScreen(navigationActions: NavigationActions, profileViewModel: ProfileViewModel) {
 
   Scaffold(
       modifier = Modifier.fillMaxSize().testTag("EditProfileScreen"),

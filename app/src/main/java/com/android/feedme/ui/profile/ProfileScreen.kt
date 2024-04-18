@@ -30,7 +30,6 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import androidx.lifecycle.viewmodel.compose.viewModel
 import com.android.feedme.R
 import com.android.feedme.model.data.Profile
 import com.android.feedme.ui.navigation.BottomNavigationMenu
@@ -47,10 +46,7 @@ import com.android.feedme.ui.theme.DarkGrey
  * recipe page of the user and the comments of the user.
  */
 @Composable
-fun ProfileScreen(
-    navigationActions: NavigationActions,
-    profileViewModel: ProfileViewModel = viewModel()
-) {
+fun ProfileScreen(navigationActions: NavigationActions, profileViewModel: ProfileViewModel) {
   val profile = profileViewModel.profile.collectAsState().value
   Scaffold(
       modifier = Modifier.fillMaxSize().testTag("ProfileScreen"),

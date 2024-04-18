@@ -51,14 +51,18 @@ fun ProfileScreen(
     navigationActions: NavigationActions,
     profileViewModel: ProfileViewModel = viewModel()
 ) {
-  val profile = profileViewModel.profile.collectAsState().value
   Scaffold(
       modifier = Modifier.fillMaxSize().testTag("ProfileScreen"),
       topBar = { TopBarNavigation(title = "Profile") },
       bottomBar = {
         BottomNavigationMenu(Route.PROFILE, navigationActions::navigateTo, TOP_LEVEL_DESTINATIONS)
       },
-      content = { padding -> ProfileBox(padding, if (profile != null) profile else Profile()) })
+      content = { padding ->
+        ProfileBox(
+            padding,
+            profileViewModel.profile.collectAsState().value ?: Profile(),
+            navigationActions)
+      })
 }
 
 /**
@@ -71,7 +75,11 @@ fun ProfileScreen(
  * @param profile: extract the needed information from the user's profile in the database
  */
 @Composable
-fun ProfileBox(padding: PaddingValues, profile: Profile) { // TODO add font
+fun ProfileBox(
+    padding: PaddingValues,
+    profile: Profile,
+    navigationActions: NavigationActions
+) { // TODO add font
   Column(
       modifier = Modifier.padding(padding).testTag("ProfileBox"),
       verticalArrangement = Arrangement.Top) {
@@ -86,8 +94,8 @@ fun ProfileBox(padding: PaddingValues, profile: Profile) { // TODO add font
               Row(
                   horizontalArrangement = Arrangement.Center,
                   verticalAlignment = Alignment.CenterVertically) {
-                    FollowersButton(profile)
-                    FollowingButton(profile)
+                    FollowersButton(profile, navigationActions)
+                    FollowingButton(profile, navigationActions)
                   }
             }
         UserBio(profile)
@@ -135,12 +143,10 @@ fun UserNameBox(profile: Profile) {
  * @param profile: extract the needed information from the user's profile in the database
  */
 @Composable
-fun FollowersButton(profile: Profile) {
+fun FollowersButton(profile: Profile, navigationActions: NavigationActions) {
   TextButton(
       modifier = Modifier.testTag("FollowerButton"),
-      onClick = {
-        /*TODO Implement the onclick for the followers button */
-      }) {
+      onClick = { navigationActions.navigateTo("friends/0") }) {
         Column(
             horizontalAlignment = Alignment.CenterHorizontally,
             verticalArrangement = Arrangement.Center) {
@@ -159,12 +165,10 @@ fun FollowersButton(profile: Profile) {
  * @param profile: extract the needed information from the user's profile in the database
  */
 @Composable
-fun FollowingButton(profile: Profile) {
+fun FollowingButton(profile: Profile, navigationActions: NavigationActions) {
   TextButton(
       modifier = Modifier.testTag("FollowingButton"),
-      onClick = {
-        /*TODO Implement the onclick for the following button */
-      }) {
+      onClick = { navigationActions.navigateTo("friends/1") }) {
         Column(
             horizontalAlignment = Alignment.CenterHorizontally,
             verticalArrangement = Arrangement.Center) {

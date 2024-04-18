@@ -46,9 +46,10 @@ import com.android.feedme.ui.theme.BlueUser
 import com.android.feedme.ui.theme.YellowStar
 
 /**
- * Displays a full recipe view. The screen contains the [TopBarNavigation], the [BottomNavigationMenu] and the recipes display.
- * The recipe display includes : an image, general information's (time, userId of the
- * creator and rating), list of ingredients and list of steps to prepare the recipe.
+ * Displays a full recipe view. The screen contains the [TopBarNavigation], the
+ * [BottomNavigationMenu] and the recipes display. The recipe display includes : an image, general
+ * information's (time, userId of the creator and rating), list of ingredients and list of steps to
+ * prepare the recipe.
  *
  * @param recipe The [Recipe] to display.
  * @param modifier The modifier for the scaffold layout.
@@ -127,7 +128,8 @@ fun GeneralInfosDisplay(recipe: Recipe, modifier: Modifier = Modifier) {
         Spacer(modifier = Modifier.weight(1f))
 
         // Recipe rating
-        Icon(imageVector = Icons.Rounded.Star, contentDescription = "Rating Icon", tint = YellowStar)
+        Icon(
+            imageVector = Icons.Rounded.Star, contentDescription = "Rating Icon", tint = YellowStar)
         Text(
             text = recipe.rating.toString(),
             modifier = Modifier.padding(start = 4.dp),
@@ -137,6 +139,11 @@ fun GeneralInfosDisplay(recipe: Recipe, modifier: Modifier = Modifier) {
   HorizontalDivider(thickness = 2.dp)
 }
 
+/**
+ * Displays the title for the ingredients section.
+ *
+ * @param modifier The [Modifier] for the text layout.
+ */
 @Composable
 fun IngredientTitleDisplay(modifier: Modifier = Modifier) {
   Text(
@@ -145,6 +152,13 @@ fun IngredientTitleDisplay(modifier: Modifier = Modifier) {
       modifier = modifier.padding(start = 16.dp, top = 8.dp))
 }
 
+/**
+ * Displays an ingredient with its quantity, measure, and name. Each ingredient is displayed as a
+ * text with a bullet point at the beginning.
+ *
+ * @param ingredient The [IngredientMetaData] to display.
+ * @param modifier The [Modifier] for the text layout.
+ */
 @Composable
 fun IngredientDisplay(ingredient: IngredientMetaData, modifier: Modifier = Modifier) {
   val bullet = "\u2022" // Bullet point unicode character
@@ -162,23 +176,30 @@ fun IngredientDisplay(ingredient: IngredientMetaData, modifier: Modifier = Modif
       modifier = modifier.padding(top = 10.dp, start = 16.dp))
 }
 
+/**
+ * Displays a horizontal divider to separate ingredient and step sections.
+ *
+ * @param modifier The [Modifier] for the divider layout.
+ */
 @Composable
 fun IngredientStepsDividerDisplay(modifier: Modifier = Modifier) {
   HorizontalDivider(thickness = 2.dp, modifier = modifier.padding(top = 8.dp, bottom = 8.dp))
-  /*Text(text = "Steps",
-  style = TextStyle(fontWeight = FontWeight.SemiBold,
-      fontSize =  24.sp),
-  modifier = Modifier.padding(start = 16.dp))*/
 }
 
+/**
+ * Displays a [Step] of a [Recipe], including its number, title, and description.
+ *
+ * @param step The [Step] to display.
+ * @param modifier The [Modifier] for the column (containing description) layout.
+ */
 @Composable
 fun StepDisplay(step: Step, modifier: Modifier = Modifier) {
-
+  // Step title
   Text(
       "Step ${step.stepNumber}: ${step.title}",
       style = TextStyle(fontWeight = FontWeight.SemiBold, fontSize = 20.sp),
       modifier = Modifier.padding(start = 16.dp, bottom = 8.dp))
-  Column() {
+  Column(modifier = modifier) {
     Text(
         text = step.description,
         style = MaterialTheme.typography.bodyMedium,

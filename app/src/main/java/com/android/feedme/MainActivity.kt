@@ -67,6 +67,7 @@ class MainActivity : ComponentActivity() {
 
                 composable(Route.EDITPROFILE) {
                   EditProfileScreen(navigationActions, profileViewModel)
+                }
 
                 composable(Route.FRIENDS) { backStackEntry ->
                   backStackEntry.arguments?.getString("showFollowers")?.let {

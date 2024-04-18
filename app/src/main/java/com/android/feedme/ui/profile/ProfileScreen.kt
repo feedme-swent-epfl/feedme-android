@@ -46,7 +46,6 @@ import com.android.feedme.ui.theme.DarkGrey
  * recipe page of the user and the comments of the user.
  */
 @Composable
-
 fun ProfileScreen(navigationActions: NavigationActions, profileViewModel: ProfileViewModel) {
   val profile = profileViewModel.profile.collectAsState().value
 

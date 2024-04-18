@@ -67,6 +67,8 @@ class ProfileViewModel : ViewModel() {
             // Handle failure
             throw error("Profile could not get updated")
           })
+    }
+  }
 
   /**
    * A function that fetches the profiles of the given Ids
@@ -95,7 +97,6 @@ class ProfileViewModel : ViewModel() {
               throw error("Profiles were not fetched")
             })
       }
-
     }
   }
 }

@@ -12,6 +12,6 @@ class CreateScreen(semanticsProvider: SemanticsNodeInteractionsProvider) :
   // Structural elements of the UI
   val topBarLanding: KNode = child { hasTestTag("TopBarNavigation") }
   val bottomBarLanding: KNode = child { hasTestTag("BottomNavigationMenu") }
-    val cameraButton: KNode = child { hasTestTag("CameraButton") }
-    val galleryButton: KNode = child { hasTestTag("GalleryButton") }
+  val cameraButton: KNode = child { hasTestTag("CameraButton") }
+  val galleryButton: KNode = child { hasTestTag("GalleryButton") }
 }

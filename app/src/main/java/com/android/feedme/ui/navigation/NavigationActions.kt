@@ -75,6 +75,7 @@ object Route {
   const val PROFILE = "Profile"
   const val SETTINGS = "Settings"
   const val CAMERA = "Camera"
+  const val GALLERY = "Gallery"
   const val FRIENDS = "friends/{showFollowers}"
 }
 

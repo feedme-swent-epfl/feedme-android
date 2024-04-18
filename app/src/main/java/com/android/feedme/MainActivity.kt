@@ -20,6 +20,7 @@ import com.android.feedme.ui.LandingPage
 import com.android.feedme.ui.NotImplementedScreen
 import com.android.feedme.ui.auth.LoginScreen
 import com.android.feedme.ui.camera.CameraScreen
+import com.android.feedme.ui.camera.GalleryScreen
 import com.android.feedme.ui.navigation.NavigationActions
 import com.android.feedme.ui.navigation.Route
 import com.android.feedme.ui.profile.FriendsScreen
@@ -48,7 +49,7 @@ class MainActivity : ComponentActivity() {
               val profileViewModel = ProfileViewModel()
 
               // Set up the navigation graph
-              NavHost(navController = navController, startDestination = Route.AUTHENTICATION) {
+              NavHost(navController = navController, startDestination = Route.GALLERY) {
                 composable(Route.AUTHENTICATION) {
                   LoginScreen(navigationActions = navigationActions)
                 }
@@ -62,6 +63,7 @@ class MainActivity : ComponentActivity() {
                   NotImplementedScreen(navigationActions, Route.SETTINGS)
                 }
                 composable(Route.CAMERA) { CameraScreen(navigationActions) }
+                composable(Route.GALLERY) { GalleryScreen(navigationActions) }
                 composable(Route.FRIENDS) { backStackEntry ->
                   backStackEntry.arguments?.getString("showFollowers")?.let {
                     FriendsScreen(navigationActions, profileViewModel, mode = it.toInt())

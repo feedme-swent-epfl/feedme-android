@@ -3,7 +3,6 @@ package com.android.feedme.ui.camera
 import android.Manifest
 import android.app.Activity
 import android.content.Context
-import android.content.Intent
 import android.content.pm.PackageManager
 import android.graphics.Bitmap
 import android.graphics.Matrix
@@ -174,18 +173,6 @@ fun takePhoto(
           Log.e("Camera", "Couldn't take photo: ", exception)
         }
       })
-}
-
-/** This function allows users to upload a picture from their gallery */
-fun fromGallery(applicationContext: Context) {
-  // Request access to media image permission if not already granted
-  if (!hasRequiredPermission(applicationContext, Manifest.permission.READ_MEDIA_IMAGES)) {
-    requestPermission(applicationContext, Manifest.permission.CAMERA)
-  }
-  val imageUri = 100
-  val gallery =
-      Intent(Intent.ACTION_PICK, android.provider.MediaStore.Images.Media.EXTERNAL_CONTENT_URI)
-  ActivityCompat.startActivityForResult(applicationContext as Activity, gallery, imageUri, null)
 }
 
 /** Check if the app has a certain required permission. */

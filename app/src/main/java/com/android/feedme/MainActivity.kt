@@ -46,7 +46,7 @@ class MainActivity : ComponentActivity() {
               // Navigation host for the app
               val navController = rememberNavController()
               val navigationActions = NavigationActions(navController)
-              val profileViewModel:ProfileViewModel = viewModel()
+              val profileViewModel: ProfileViewModel = viewModel<ProfileViewModel>()
 
               // Set up the navigation graph
               NavHost(navController = navController, startDestination = Route.AUTHENTICATION) {

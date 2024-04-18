@@ -9,6 +9,7 @@ import androidx.compose.material3.Surface
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.semantics.testTag
+import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
@@ -45,7 +46,7 @@ class MainActivity : ComponentActivity() {
               // Navigation host for the app
               val navController = rememberNavController()
               val navigationActions = NavigationActions(navController)
-              val profileViewModel = ProfileViewModel()
+              val profileViewModel:ProfileViewModel = viewModel()
 
               // Set up the navigation graph
               NavHost(navController = navController, startDestination = Route.AUTHENTICATION) {

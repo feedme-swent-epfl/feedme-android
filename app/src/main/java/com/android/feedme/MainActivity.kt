@@ -49,7 +49,7 @@ class MainActivity : ComponentActivity() {
               val profileViewModel = ProfileViewModel()
 
               // Set up the navigation graph
-              NavHost(navController = navController, startDestination = Route.GALLERY) {
+              NavHost(navController = navController, startDestination = Route.AUTHENTICATION) {
                 composable(Route.AUTHENTICATION) {
                   LoginScreen(navigationActions = navigationActions)
                 }
@@ -63,7 +63,7 @@ class MainActivity : ComponentActivity() {
                   NotImplementedScreen(navigationActions, Route.SETTINGS)
                 }
                 composable(Route.CAMERA) { CameraScreen(navigationActions) }
-                composable(Route.GALLERY) { GalleryScreen(navigationActions) }
+                composable(Route.GALLERY) { GalleryScreen() }
                 composable(Route.FRIENDS) { backStackEntry ->
                   backStackEntry.arguments?.getString("showFollowers")?.let {
                     FriendsScreen(navigationActions, profileViewModel, mode = it.toInt())

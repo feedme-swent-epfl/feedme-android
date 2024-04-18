@@ -3,6 +3,7 @@ package com.android.feedme.ui.camera
 import android.Manifest
 import android.app.Activity
 import android.content.Context
+import android.content.Intent
 import android.content.pm.PackageManager
 import android.graphics.Bitmap
 import android.graphics.Matrix
@@ -72,9 +73,8 @@ fun CameraScreen(navigationActions: NavigationActions) {
   val applicationContext = LocalContext.current
 
   // Request camera permission if not already granted
-  if (!hasRequiredPermissions(applicationContext)) {
-    ActivityCompat.requestPermissions(
-        applicationContext as Activity, arrayOf(Manifest.permission.CAMERA), 0)
+  if (!hasRequiredPermission(applicationContext, Manifest.permission.CAMERA)) {
+    requestPermission(applicationContext, Manifest.permission.CAMERA)
   }
 
   // Set up the camera controller, view model, and coroutine scope
@@ -176,10 +176,27 @@ fun takePhoto(
       })
 }
 
-/** Check if the app has the required permissions to use the camera. */
-fun hasRequiredPermissions(context: Context): Boolean {
-  return ContextCompat.checkSelfPermission(context, Manifest.permission.CAMERA) ==
-      PackageManager.PERMISSION_GRANTED
+/** This function allows users to upload a picture from their gallery */
+fun fromGallery(applicationContext: Context) {
+  // Request access to media image permission if not already granted
+  if (!hasRequiredPermission(applicationContext, Manifest.permission.READ_MEDIA_IMAGES)) {
+    requestPermission(applicationContext, Manifest.permission.CAMERA)
+  }
+  val imageUri = 100
+  val gallery =
+      Intent(Intent.ACTION_PICK, android.provider.MediaStore.Images.Media.EXTERNAL_CONTENT_URI)
+  ActivityCompat.startActivityForResult(applicationContext as Activity, gallery, imageUri, null)
+}
+
+/** Check if the app has a certain required permission. */
+fun hasRequiredPermission(context: Context, perm: String): Boolean {
+  return ContextCompat.checkSelfPermission(context, perm) == PackageManager.PERMISSION_GRANTED
+}
+
+/** Request a certain permission. */
+fun requestPermission(applicationContext: Context, perm: String): Unit {
+  ActivityCompat.requestPermissions(
+      applicationContext as Activity, arrayOf(Manifest.permission.CAMERA), 0)
 }
 
 /** Composable that displays the camera preview. */

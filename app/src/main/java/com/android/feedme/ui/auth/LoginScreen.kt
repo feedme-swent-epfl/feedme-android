@@ -119,7 +119,14 @@ fun LoginScreen(navigationActions: NavigationActions, authViewModel: AuthViewMod
 
         Spacer(modifier = Modifier.height(176.dp))
         Button(
-            onClick = { googleSignInLauncher.launch(googleSignInClient.signInIntent) },
+            onClick = {
+              if (Testing.isTestMode) {
+                Testing.mockSuccessfulLogin()
+                navigationActions.navigateTo(Route.HOME)
+              } else {
+                googleSignInLauncher.launch(googleSignInClient.signInIntent)
+              }
+            },
             modifier =
                 Modifier.width(250.dp)
                     .height(40.dp)
@@ -153,4 +160,24 @@ fun LoginScreen(navigationActions: NavigationActions, authViewModel: AuthViewMod
                   }
             }
       }
+}
+
+/** A function to set the test mode for the app. */
+fun setTestMode(bool: Boolean) {
+  Testing.isTestMode = bool
+}
+
+/**
+ * A function to set the mocking for successful login.
+ *
+ * @param mockingSuccessfulLogin : a lambda function to mock successful login
+ */
+fun setLoginMockingForTests(mockingSuccessfulLogin: () -> Unit) {
+  Testing.mockSuccessfulLogin = mockingSuccessfulLogin
+}
+
+/** A testing object to set the test mode and mock successful login. */
+object Testing {
+  var isTestMode = false
+  var mockSuccessfulLogin = {}
 }

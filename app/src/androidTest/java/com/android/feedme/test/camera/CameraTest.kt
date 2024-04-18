@@ -2,6 +2,7 @@ package com.android.feedme.test.camera
 
 import android.Manifest
 import androidx.compose.ui.test.assertIsDisplayed
+import androidx.compose.ui.test.isDisplayed
 import androidx.compose.ui.test.junit4.createComposeRule
 import androidx.compose.ui.test.onNodeWithContentDescription
 import androidx.compose.ui.test.onNodeWithText
@@ -20,11 +21,7 @@ import org.junit.runner.RunWith
 
 @RunWith(AndroidJUnit4::class)
 class CameraTest : TestCase() {
-  // @get:Rule val composeTestRule = createAndroidComposeRule<MainActivity>()
   @get:Rule val composeTestRule = createComposeRule()
-
-  // @get:Rule val intentsTestRule = IntentsTestRule(MainActivity::class.java) TODO: Fix testing
-  // with navigation
 
   // Grant camera permission for tests
   @get:Rule
@@ -86,12 +83,7 @@ class CameraTest : TestCase() {
 
       // Wait until the "Photo saved" text appears on the UI.
       composeTestRule.waitUntil(timeoutMillis = 5000) {
-        try {
-          composeTestRule.onNodeWithText("Photo saved", useUnmergedTree = true).assertExists()
-          true // If assertExists() succeeds, return true to end waitUntil.
-        } catch (e: AssertionError) {
-          false // If the node isn't found, return false so waitUntil keeps trying.
-        }
+        composeTestRule.onNodeWithText("Photo saved", useUnmergedTree = true).isDisplayed()
       }
 
       galleryButton {

@@ -25,11 +25,12 @@ class ProfileViewModel : ViewModel() {
   val googleId = FirebaseAuth.getInstance().uid
 
   init {
-    if (_profile.value == null) {
-      googleId?.let { fetchProfile(it) }
+    // Listen to FirebaseAuth state changes
+    FirebaseAuth.getInstance().addAuthStateListener { firebaseAuth ->
+      val user = firebaseAuth.currentUser
+      user?.uid?.let { fetchProfile(it) }
     }
   }
-
   /**
    * A function that fetches the profile during Login
    *
@@ -49,6 +50,23 @@ class ProfileViewModel : ViewModel() {
           onFailure = {
             // Handle failure
             throw error("Profile was not fetched during Login")
+          })
+    }
+  }
+
+  /**
+   * A function that set local profile in the database
+   *
+   * @param profile: the profile to set in the database
+   */
+  fun setProfile(profile: Profile) {
+    viewModelScope.launch {
+      repository.addProfile(
+          profile,
+          onSuccess = { _profile.value = profile },
+          onFailure = {
+            // Handle failure
+            throw error("Profile could not get updated")
           })
     }
   }

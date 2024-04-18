@@ -2,22 +2,28 @@ package com.android.feedme.test.ui
 
 import androidx.compose.ui.test.junit4.createComposeRule
 import androidx.test.ext.junit.runners.AndroidJUnit4
+import com.android.feedme.model.data.ProfileRepository
 import com.android.feedme.screen.ProfileScreen
 import com.android.feedme.ui.navigation.NavigationActions
 import com.android.feedme.ui.profile.ProfileScreen
+import com.android.feedme.ui.profile.ProfileViewModel
+import com.google.firebase.firestore.FirebaseFirestore
 import io.github.kakaocup.compose.node.element.ComposeScreen
 import io.mockk.mockk
+import org.junit.Before
 import org.junit.Rule
 import org.junit.Test
 import org.junit.runner.RunWith
 
 @RunWith(AndroidJUnit4::class)
 class ProfileTest {
-  // @get:Rule val composeTestRule = createAndroidComposeRule<MainActivity>()
   @get:Rule val composeTestRule = createComposeRule()
+  private val mockFirestore = mockk<FirebaseFirestore>(relaxed = true)
 
-  // @get:Rule val intentsTestRule = IntentsTestRule(MainActivity::class.java) TODO: Fix testing
-  // with navigation
+  @Before
+  fun init() {
+    ProfileRepository.initialize(mockFirestore)
+  }
 
   @Test
   fun profileBoxAndComponentsCorrectlyDisplayed() {
@@ -58,9 +64,7 @@ class ProfileTest {
   }
 
   private fun goToProfileScreen() {
-    composeTestRule.setContent {
-      com.android.feedme.ui.profile.ProfileScreen((mockk<NavigationActions>()))
-    }
+    composeTestRule.setContent { ProfileScreen(mockk<NavigationActions>(), ProfileViewModel()) }
     composeTestRule.waitForIdle()
   }
 }

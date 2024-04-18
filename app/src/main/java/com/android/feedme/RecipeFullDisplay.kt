@@ -23,6 +23,8 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.testTag
@@ -86,10 +88,17 @@ fun RecipeFullDisplay(recipe: Recipe, modifier: Modifier = Modifier) {
  */
 @Composable
 fun ImageDisplay(recipe: Recipe, modifier: Modifier = Modifier) {
+  var ImageSuccessfulDownload = remember { mutableStateOf(false) }
   AsyncImage(
       model = recipe.imageUrl,
       contentDescription = "Recipe Image",
-      modifier = modifier.fillMaxWidth().testTag("Recipe Image"))
+      modifier = modifier.fillMaxWidth().testTag("Recipe Image"),
+      onSuccess = { ImageSuccessfulDownload.value = true })
+
+  // Display a warning message if image couldn't be downloaded from internets
+  if (!ImageSuccessfulDownload.value) {
+    Text("Failed to download image", modifier = Modifier.testTag("Fail Image Download"))
+  }
 }
 
 /**
@@ -103,7 +112,7 @@ fun GeneralInfosDisplay(recipe: Recipe, modifier: Modifier = Modifier) {
   Row(
       horizontalArrangement = Arrangement.SpaceAround,
       verticalAlignment = Alignment.CenterVertically,
-      modifier = modifier.fillMaxWidth().height(45.dp)) {
+      modifier = modifier.fillMaxWidth().height(45.dp).testTag("General Infos Row")) {
 
         // Recipe time
         Spacer(modifier = Modifier.weight(1f))
@@ -113,7 +122,7 @@ fun GeneralInfosDisplay(recipe: Recipe, modifier: Modifier = Modifier) {
             modifier = Modifier.testTag("Time Icon"))
         Text(
             text = recipe.time.toString(),
-            modifier = Modifier.padding(start = 4.dp),
+            modifier = Modifier.padding(start = 4.dp).testTag("Text Time"),
             style = TextStyle(fontSize = 16.sp, fontWeight = FontWeight.Medium))
 
         // Recipe creator's userId
@@ -137,7 +146,7 @@ fun GeneralInfosDisplay(recipe: Recipe, modifier: Modifier = Modifier) {
             modifier = Modifier.testTag("Rating Icon"))
         Text(
             text = recipe.rating.toString(),
-            modifier = Modifier.padding(start = 4.dp),
+            modifier = Modifier.padding(start = 4.dp).testTag("Text Rating"),
             style = TextStyle(fontSize = 16.sp, fontWeight = FontWeight.Medium))
         Spacer(modifier = Modifier.weight(1f))
       }

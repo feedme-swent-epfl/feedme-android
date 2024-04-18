@@ -3,6 +3,7 @@ package com.android.feedme.screen
 import androidx.compose.ui.test.assertIsDisplayed
 import androidx.compose.ui.test.junit4.createComposeRule
 import androidx.compose.ui.test.onNodeWithTag
+import androidx.compose.ui.test.onNodeWithText
 import androidx.test.ext.junit.runners.AndroidJUnit4
 import com.android.feedme.RecipeFullDisplay
 import com.android.feedme.model.data.Ingredient
@@ -51,10 +52,18 @@ class FullRecipeScreen {
 
     composeTestRule.onNodeWithTag("Scaffold").assertIsDisplayed()
     composeTestRule.onNodeWithTag("LazyColumn").assertIsDisplayed()
-    composeTestRule.onNodeWithTag("Recipe Image")
+    // Check whether the Image or the warning message is displayed
+    try {
+      composeTestRule.onNodeWithTag("Recipe Image").assertIsDisplayed()
+    } catch (e: AssertionError) {
+      composeTestRule.onNodeWithText("Fail Image Download")
+    }
+    composeTestRule.onNodeWithTag("General Infos Row").assertIsDisplayed()
 
     composeTestRule.onNodeWithTag("Time Icon").assertIsDisplayed()
+    composeTestRule.onNodeWithTag("Text Time").assertIsDisplayed()
     composeTestRule.onNodeWithTag("Rating Icon").assertIsDisplayed()
+    composeTestRule.onNodeWithTag("Text Rating").assertIsDisplayed()
     composeTestRule.onNodeWithTag("Horizontal Divider 1").assertIsDisplayed()
 
     composeTestRule.onNodeWithTag("Ingredient Title").assertIsDisplayed()

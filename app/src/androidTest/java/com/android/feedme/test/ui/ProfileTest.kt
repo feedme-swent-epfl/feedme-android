@@ -64,8 +64,7 @@ class ProfileTest {
   }
 
   private fun goToProfileScreen() {
-
-    composeTestRule.setContent { ProfileScreen((mockk<NavigationActions>())) }
+    composeTestRule.setContent { ProfileScreen(mockk<NavigationActions>(), ProfileViewModel()) }
     composeTestRule.waitForIdle()
   }
 }

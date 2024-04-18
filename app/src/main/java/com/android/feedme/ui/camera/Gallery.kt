@@ -15,10 +15,11 @@ import androidx.compose.ui.input.pointer.PointerIcon.Companion.Text
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.testTag
 import androidx.core.app.ActivityCompat
+import com.android.feedme.ui.navigation.NavigationActions
 import com.android.feedme.ui.navigation.TopBarNavigation
 
 @Composable
-fun GalleryScreen() {
+fun GalleryScreen(navigationActions: NavigationActions) {
   val applicationContext = LocalContext.current
 
   // Request access to media images permission if not already granted
@@ -32,7 +33,7 @@ fun GalleryScreen() {
   ActivityCompat.startActivityForResult(applicationContext as Activity, gallery, imageUri, null)
   Scaffold(
       modifier = Modifier.fillMaxSize().testTag("Gallery"),
-      topBar = { TopBarNavigation(title = "Gallery") },
+      topBar = { TopBarNavigation(title = "Gallery", navAction = navigationActions, null) },
       content = { paddingValues ->
         Box(
             modifier = Modifier.fillMaxSize().padding(paddingValues),

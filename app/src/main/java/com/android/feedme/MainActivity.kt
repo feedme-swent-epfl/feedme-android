@@ -24,6 +24,7 @@ import com.android.feedme.ui.camera.CameraScreen
 import com.android.feedme.ui.navigation.NavigationActions
 import com.android.feedme.ui.navigation.Route
 import com.android.feedme.ui.profile.EditProfileScreen
+import com.android.feedme.ui.profile.FriendsScreen
 import com.android.feedme.ui.profile.ProfileScreen
 import com.android.feedme.ui.profile.ProfileViewModel
 import com.android.feedme.ui.theme.feedmeAppTheme
@@ -66,6 +67,11 @@ class MainActivity : ComponentActivity() {
 
                 composable(Route.EDITPROFILE) {
                   EditProfileScreen(navigationActions, profileViewModel)
+
+                composable(Route.FRIENDS) { backStackEntry ->
+                  backStackEntry.arguments?.getString("showFollowers")?.let {
+                    FriendsScreen(navigationActions, profileViewModel, mode = it.toInt())
+                  }
                 }
               }
             }

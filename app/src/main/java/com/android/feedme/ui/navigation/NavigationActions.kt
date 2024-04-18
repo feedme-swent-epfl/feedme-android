@@ -77,6 +77,7 @@ object Route {
   const val CAMERA = "Camera"
   const val EDITPROFILE =
       "EditProfile" // TODO Use Inner navigation for profile, will be done in issue #68
+  const val FRIENDS = "friends/{showFollowers}"
 }
 
 /**

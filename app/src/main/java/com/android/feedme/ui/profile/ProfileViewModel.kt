@@ -80,7 +80,7 @@ class ProfileViewModel : ViewModel() {
   private fun fetchProfiles(ids: List<String>, fetchProfile: MutableStateFlow<List<Profile>>) {
     // Check if we actually need to fetch the profiles
     val currentIds = fetchProfile.value.map { it.id }.toSet()
-    if (currentIds != ids.toSet()) {
+    if (currentIds != ids.toSet() && ids.isNotEmpty()) {
       Log.d("ProfileViewModel", "Fetching profiles: $ids")
       viewModelScope.launch {
         repository.getProfiles(

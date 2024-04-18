@@ -25,11 +25,12 @@ class ProfileViewModel : ViewModel() {
   val googleId = FirebaseAuth.getInstance().uid
 
   init {
-    if (_profile.value == null) {
-      googleId?.let { fetchProfile(it) }
+    // Listen to FirebaseAuth state changes
+    FirebaseAuth.getInstance().addAuthStateListener { firebaseAuth ->
+      val user = firebaseAuth.currentUser
+      user?.uid?.let { fetchProfile(it) }
     }
   }
-
   /**
    * A function that fetches the profile during Login
    *

@@ -54,6 +54,23 @@ class ProfileViewModel : ViewModel() {
   }
 
   /**
+   * A function that set local profile in the database
+   *
+   * @param profile: the profile to set in the database
+   */
+  fun setProfile(profile: Profile) {
+    viewModelScope.launch {
+      repository.addProfile(
+          profile,
+          onSuccess = { _profile.value = profile },
+          onFailure = {
+            // Handle failure
+            throw error("Profile could not get updated")
+          })
+    }
+  }
+
+  /**
    * A function that fetches the profiles of the given Ids
    *
    * @param ids: the unique IDs of the profiles we want to fetch

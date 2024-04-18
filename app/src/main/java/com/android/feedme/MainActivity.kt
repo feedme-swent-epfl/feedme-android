@@ -9,6 +9,7 @@ import androidx.compose.material3.Surface
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.semantics.testTag
+import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
@@ -22,6 +23,7 @@ import com.android.feedme.ui.auth.LoginScreen
 import com.android.feedme.ui.camera.CameraScreen
 import com.android.feedme.ui.navigation.NavigationActions
 import com.android.feedme.ui.navigation.Route
+import com.android.feedme.ui.profile.EditProfileScreen
 import com.android.feedme.ui.profile.FriendsScreen
 import com.android.feedme.ui.profile.ProfileScreen
 import com.android.feedme.ui.profile.ProfileViewModel
@@ -45,7 +47,7 @@ class MainActivity : ComponentActivity() {
               // Navigation host for the app
               val navController = rememberNavController()
               val navigationActions = NavigationActions(navController)
-              val profileViewModel = ProfileViewModel()
+              val profileViewModel: ProfileViewModel = viewModel<ProfileViewModel>()
 
               // Set up the navigation graph
               NavHost(navController = navController, startDestination = Route.AUTHENTICATION) {
@@ -62,6 +64,11 @@ class MainActivity : ComponentActivity() {
                   NotImplementedScreen(navigationActions, Route.SETTINGS)
                 }
                 composable(Route.CAMERA) { CameraScreen(navigationActions) }
+
+                composable(Route.EDITPROFILE) {
+                  EditProfileScreen(navigationActions, profileViewModel)
+                }
+
                 composable(Route.FRIENDS) { backStackEntry ->
                   backStackEntry.arguments?.getString("showFollowers")?.let {
                     FriendsScreen(navigationActions, profileViewModel, mode = it.toInt())

@@ -17,10 +17,11 @@ import com.android.feedme.model.data.ProfileRepository
 import com.android.feedme.model.data.RecipeRepository
 import com.android.feedme.resources.C
 import com.android.feedme.ui.CreateScreen
-import com.android.feedme.ui.LandingPage
 import com.android.feedme.ui.NotImplementedScreen
 import com.android.feedme.ui.auth.LoginScreen
 import com.android.feedme.ui.camera.CameraScreen
+import com.android.feedme.ui.home.LandingPage
+import com.android.feedme.ui.home.RecipeFullDisplay
 import com.android.feedme.ui.navigation.NavigationActions
 import com.android.feedme.ui.navigation.Route
 import com.android.feedme.ui.profile.EditProfileScreen
@@ -72,6 +73,11 @@ class MainActivity : ComponentActivity() {
                 composable(Route.FRIENDS) { backStackEntry ->
                   backStackEntry.arguments?.getString("showFollowers")?.let {
                     FriendsScreen(navigationActions, profileViewModel, mode = it.toInt())
+                  }
+                }
+                composable(Route.RECIPE) { backStackEntry ->
+                  backStackEntry.arguments?.getString("recipeId")?.let {
+                    RecipeFullDisplay(navigationActions)
                   }
                 }
               }

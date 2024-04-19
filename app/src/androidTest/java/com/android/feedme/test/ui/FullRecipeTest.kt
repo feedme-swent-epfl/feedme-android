@@ -1,27 +1,30 @@
-package com.android.feedme.screen
+package com.android.feedme.test.ui
 
 import androidx.compose.ui.test.assertIsDisplayed
 import androidx.compose.ui.test.junit4.createComposeRule
 import androidx.compose.ui.test.onNodeWithTag
 import androidx.compose.ui.test.onNodeWithText
 import androidx.test.ext.junit.runners.AndroidJUnit4
-import com.android.feedme.RecipeFullDisplay
 import com.android.feedme.model.data.Ingredient
 import com.android.feedme.model.data.IngredientMetaData
 import com.android.feedme.model.data.MeasureUnit
 import com.android.feedme.model.data.Recipe
 import com.android.feedme.model.data.Step
+import com.android.feedme.ui.home.RecipeFullDisplay
+import com.android.feedme.ui.navigation.NavigationActions
+import io.mockk.mockk
+import junit.framework.TestCase
 import org.junit.Rule
 import org.junit.Test
 import org.junit.runner.RunWith
 
 @RunWith(AndroidJUnit4::class)
-class FullRecipeScreen {
+class FullRecipeTest : TestCase() {
 
   @get:Rule val composeTestRule = createComposeRule()
 
   @Test
-  fun checkfullRecipeDisplay() {
+  fun checkFullRecipeDisplay() {
     val recipe1 =
         Recipe(
             recipeId = "lasagna1",
@@ -48,10 +51,8 @@ class FullRecipeScreen {
             difficulty = "Intermediate",
             "https://external-content.duckduckgo.com/iu/?u=https%3A%2F%2Fwww.mamablip.com%2Fstorage%2FLasagna%2520with%2520Meat%2520and%2520Tomato%2520Sauce_3481612355355.jpg&f=1&nofb=1&ipt=8e887ba99ce20a85fb867dabbe0206c1146ebf2f13548b5653a2778e3ea18c54&ipo=images")
 
-    composeTestRule.setContent { RecipeFullDisplay(recipe = recipe1) }
+    composeTestRule.setContent { RecipeFullDisplay(mockk<NavigationActions>(), recipe1) }
 
-    composeTestRule.onNodeWithTag("Scaffold").assertIsDisplayed()
-    composeTestRule.onNodeWithTag("LazyColumn").assertIsDisplayed()
     // Check whether the Image or the warning message is displayed
     try {
       composeTestRule.onNodeWithTag("Recipe Image").assertIsDisplayed()

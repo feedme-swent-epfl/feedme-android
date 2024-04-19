@@ -12,6 +12,7 @@ import com.android.feedme.model.data.Recipe
 import com.android.feedme.model.data.Step
 import com.android.feedme.ui.home.RecipeFullDisplay
 import com.android.feedme.ui.navigation.NavigationActions
+import io.mockk.every
 import io.mockk.mockk
 import junit.framework.TestCase
 import org.junit.Rule
@@ -51,7 +52,9 @@ class FullRecipeTest : TestCase() {
             difficulty = "Intermediate",
             "https://external-content.duckduckgo.com/iu/?u=https%3A%2F%2Fwww.mamablip.com%2Fstorage%2FLasagna%2520with%2520Meat%2520and%2520Tomato%2520Sauce_3481612355355.jpg&f=1&nofb=1&ipt=8e887ba99ce20a85fb867dabbe0206c1146ebf2f13548b5653a2778e3ea18c54&ipo=images")
 
-    composeTestRule.setContent { RecipeFullDisplay(mockk<NavigationActions>(), recipe1) }
+    val navActions = mockk<NavigationActions>()
+    every { navActions.canGoBack() } returns true
+    composeTestRule.setContent { RecipeFullDisplay(navActions, recipe1) }
 
     // Check whether the Image or the warning message is displayed
     try {

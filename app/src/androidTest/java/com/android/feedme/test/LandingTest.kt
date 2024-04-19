@@ -51,6 +51,8 @@ class LandingTest : TestCase() {
         assertHasClickAction()
       }
 
+      shareIcon { assertIsDisplayed() }
+
       saveIcon {
         assertIsDisplayed()
         assertHasClickAction()

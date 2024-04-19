@@ -71,6 +71,19 @@ class ProfileRepository(private val db: FirebaseFirestore) {
         }
         .addOnFailureListener { exception -> onFailure(exception) }
   }
-
-  // Note: Additional methods for updating and deleting profiles can be similarly implemented.
+  /** Fetch all the profiles of the given List of Ids */
+  fun getProfiles(
+      ids: List<String>,
+      onSuccess: (List<Profile>) -> Unit,
+      onFailure: (Exception) -> Unit
+  ) {
+    db.collection(collectionPath)
+        .whereIn("id", ids)
+        .get()
+        .addOnSuccessListener { querySnapshot ->
+          val profiles = querySnapshot.toObjects(Profile::class.java)
+          onSuccess(profiles)
+        }
+        .addOnFailureListener { exception -> onFailure(exception) }
+  }
 }

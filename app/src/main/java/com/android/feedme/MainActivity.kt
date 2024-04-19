@@ -9,6 +9,7 @@ import androidx.compose.material3.Surface
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.semantics.testTag
+import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
@@ -16,13 +17,17 @@ import com.android.feedme.model.data.ProfileRepository
 import com.android.feedme.model.data.RecipeRepository
 import com.android.feedme.resources.C
 import com.android.feedme.ui.CreateScreen
-import com.android.feedme.ui.LandingPage
 import com.android.feedme.ui.NotImplementedScreen
 import com.android.feedme.ui.auth.LoginScreen
 import com.android.feedme.ui.camera.CameraScreen
+import com.android.feedme.ui.home.LandingPage
+import com.android.feedme.ui.home.RecipeFullDisplay
 import com.android.feedme.ui.navigation.NavigationActions
 import com.android.feedme.ui.navigation.Route
+import com.android.feedme.ui.profile.EditProfileScreen
+import com.android.feedme.ui.profile.FriendsScreen
 import com.android.feedme.ui.profile.ProfileScreen
+import com.android.feedme.ui.profile.ProfileViewModel
 import com.android.feedme.ui.theme.feedmeAppTheme
 import com.google.firebase.firestore.FirebaseFirestore
 
@@ -43,6 +48,7 @@ class MainActivity : ComponentActivity() {
               // Navigation host for the app
               val navController = rememberNavController()
               val navigationActions = NavigationActions(navController)
+              val profileViewModel: ProfileViewModel = viewModel<ProfileViewModel>()
 
               // Set up the navigation graph
               NavHost(navController = navController, startDestination = Route.AUTHENTICATION) {
@@ -52,11 +58,28 @@ class MainActivity : ComponentActivity() {
                 composable(Route.HOME) { LandingPage(navigationActions) }
                 composable(Route.EXPLORE) { NotImplementedScreen(navigationActions, Route.EXPLORE) }
                 composable(Route.CREATE) { CreateScreen(navigationActions) }
-                composable(Route.PROFILE) { ProfileScreen(navigationActions) }
+                composable(Route.PROFILE) {
+                  ProfileScreen(navigationActions = navigationActions, profileViewModel)
+                }
                 composable(Route.SETTINGS) {
                   NotImplementedScreen(navigationActions, Route.SETTINGS)
                 }
                 composable(Route.CAMERA) { CameraScreen(navigationActions) }
+
+                composable(Route.EDITPROFILE) {
+                  EditProfileScreen(navigationActions, profileViewModel)
+                }
+
+                composable(Route.FRIENDS) { backStackEntry ->
+                  backStackEntry.arguments?.getString("showFollowers")?.let {
+                    FriendsScreen(navigationActions, profileViewModel, mode = it.toInt())
+                  }
+                }
+                composable(Route.RECIPE) { backStackEntry ->
+                  backStackEntry.arguments?.getString("recipeId")?.let {
+                    RecipeFullDisplay(navigationActions)
+                  }
+                }
               }
             }
       }

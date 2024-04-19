@@ -1,4 +1,4 @@
-package com.android.feedme.ui
+package com.android.feedme.ui.home
 
 import android.annotation.SuppressLint
 import androidx.compose.foundation.BorderStroke
@@ -13,7 +13,6 @@ import androidx.compose.material.icons.filled.Close
 import androidx.compose.material.icons.filled.Menu
 import androidx.compose.material.icons.filled.Search
 import androidx.compose.material.icons.outlined.Save
-import androidx.compose.material.icons.outlined.Search
 import androidx.compose.material.icons.outlined.Star
 import androidx.compose.material.icons.outlined.Timer
 import androidx.compose.material3.ButtonDefaults
@@ -90,7 +89,7 @@ fun LandingPage(navigationActions: NavigationActions) {
       bottomBar = {
         BottomNavigationMenu(Route.HOME, navigationActions::navigateTo, TOP_LEVEL_DESTINATIONS)
       },
-      content = { RecipeList(testRecipes) })
+      content = { RecipeList(navigationActions, testRecipes) })
 }
 
 /**
@@ -100,7 +99,7 @@ fun LandingPage(navigationActions: NavigationActions) {
  */
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun RecipeList(recipes: List<Recipe>) {
+fun RecipeList(navigationActions: NavigationActions, recipes: List<Recipe>) {
   var query by remember { mutableStateOf("") }
   var active by remember { mutableStateOf(false) }
 
@@ -154,8 +153,7 @@ fun RecipeList(recipes: List<Recipe>) {
                 Card(
                     modifier =
                         Modifier.padding(16.dp)
-                            .clickable(
-                                onClick = { /* TODO() when the card is clicked, you will be able to see the full display of the recipe */})
+                            .clickable(onClick = { navigationActions.navigateTo(Route.RECIPE) })
                             .testTag("RecipeCard"),
                     elevation = CardDefaults.elevatedCardElevation()) {
                       Column(

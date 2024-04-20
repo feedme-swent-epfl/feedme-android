@@ -38,10 +38,8 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.text.font.FontWeight
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import androidx.navigation.compose.rememberNavController
 import coil.compose.AsyncImage
 import com.android.feedme.model.data.Ingredient
 import com.android.feedme.model.data.IngredientMetaData
@@ -188,8 +186,7 @@ fun RecipeDisplay(navigationActions: NavigationActions, recipes: List<Recipe>) {
                                         imageVector = Icons.Outlined.Star,
                                         contentDescription = "Rating",
                                         modifier = Modifier.size(30.dp).padding(end = 6.dp))
-                                    Text(
-                                        text = String.format("%.1f", recipe.rating))
+                                    Text(text = String.format("%.1f", recipe.rating))
                                   }
                               // Cooking time
                               Row(verticalAlignment = Alignment.CenterVertically) {
@@ -259,12 +256,4 @@ fun RecipeDisplay(navigationActions: NavigationActions, recipes: List<Recipe>) {
               }
             }
       }
-}
-
-
-
-@Preview(showBackground = true)
-@Composable
-fun PreviewLanding() {
-    LandingPage(navigationActions = NavigationActions(rememberNavController()))
 }

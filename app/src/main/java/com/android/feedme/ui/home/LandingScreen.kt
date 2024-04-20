@@ -48,6 +48,7 @@ import com.android.feedme.model.data.Step
 import com.android.feedme.ui.navigation.BottomNavigationMenu
 import com.android.feedme.ui.navigation.NavigationActions
 import com.android.feedme.ui.navigation.Route
+import com.android.feedme.ui.navigation.Screen
 import com.android.feedme.ui.navigation.TOP_LEVEL_DESTINATIONS
 import com.android.feedme.ui.navigation.TopBarNavigation
 import com.android.feedme.ui.theme.TemplateColor
@@ -153,7 +154,7 @@ fun RecipeList(navigationActions: NavigationActions, recipes: List<Recipe>) {
                 Card(
                     modifier =
                         Modifier.padding(16.dp)
-                            .clickable(onClick = { navigationActions.navigateTo(Route.RECIPE) })
+                            .clickable(onClick = { navigationActions.navigateTo(Screen.RECIPE) })
                             .testTag("RecipeCard"),
                     elevation = CardDefaults.elevatedCardElevation()) {
                       Column(

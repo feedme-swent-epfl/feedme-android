@@ -41,6 +41,7 @@ import com.android.feedme.model.data.Recipe
 import com.android.feedme.model.data.Step
 import com.android.feedme.ui.navigation.BottomNavigationMenu
 import com.android.feedme.ui.navigation.NavigationActions
+import com.android.feedme.ui.navigation.Route
 import com.android.feedme.ui.navigation.TOP_LEVEL_DESTINATIONS
 import com.android.feedme.ui.navigation.TopBarNavigation
 import com.android.feedme.ui.theme.BlueUser
@@ -95,7 +96,7 @@ fun RecipeFullDisplay(navigationActions: NavigationActions, recipe: Recipe = rec
             rightIconOnClickAction = { null /* TODO() Save recipe offline*/ })
       },
       bottomBar = {
-        BottomNavigationMenu(selectedItem = "", onTabSelect = {}, tabList = TOP_LEVEL_DESTINATIONS)
+        BottomNavigationMenu(Route.HOME, navigationActions::navigateTo, TOP_LEVEL_DESTINATIONS)
       },
       content = { padding ->
         LazyColumn(modifier = Modifier.padding(padding)) {

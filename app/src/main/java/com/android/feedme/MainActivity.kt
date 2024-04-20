@@ -12,6 +12,7 @@ import androidx.compose.ui.semantics.testTag
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
+import androidx.navigation.compose.navigation
 import androidx.navigation.compose.rememberNavController
 import com.android.feedme.model.data.ProfileRepository
 import com.android.feedme.model.data.RecipeRepository
@@ -24,6 +25,7 @@ import com.android.feedme.ui.home.LandingPage
 import com.android.feedme.ui.home.RecipeFullDisplay
 import com.android.feedme.ui.navigation.NavigationActions
 import com.android.feedme.ui.navigation.Route
+import com.android.feedme.ui.navigation.Screen
 import com.android.feedme.ui.profile.EditProfileScreen
 import com.android.feedme.ui.profile.FriendsScreen
 import com.android.feedme.ui.profile.ProfileScreen
@@ -50,34 +52,46 @@ class MainActivity : ComponentActivity() {
               val navigationActions = NavigationActions(navController)
               val profileViewModel: ProfileViewModel = viewModel<ProfileViewModel>()
 
-              // Set up the navigation graph
+              // Set up the nested navigation graph
               NavHost(navController = navController, startDestination = Route.AUTHENTICATION) {
-                composable(Route.AUTHENTICATION) {
-                  LoginScreen(navigationActions = navigationActions)
-                }
-                composable(Route.HOME) { LandingPage(navigationActions) }
-                composable(Route.EXPLORE) { NotImplementedScreen(navigationActions, Route.EXPLORE) }
-                composable(Route.CREATE) { CreateScreen(navigationActions) }
-                composable(Route.PROFILE) {
-                  ProfileScreen(navigationActions = navigationActions, profileViewModel)
-                }
-                composable(Route.SETTINGS) {
-                  NotImplementedScreen(navigationActions, Route.SETTINGS)
-                }
-                composable(Route.CAMERA) { CameraScreen(navigationActions) }
-
-                composable(Route.EDITPROFILE) {
-                  EditProfileScreen(navigationActions, profileViewModel)
+                navigation(startDestination = Screen.AUTHENTICATION, route = Route.AUTHENTICATION) {
+                  composable(Screen.AUTHENTICATION) { LoginScreen(navigationActions) }
                 }
 
-                composable(Route.FRIENDS) { backStackEntry ->
-                  backStackEntry.arguments?.getString("showFollowers")?.let {
-                    FriendsScreen(navigationActions, profileViewModel, mode = it.toInt())
+                navigation(startDestination = Screen.HOME, route = Route.HOME) {
+                  composable(Screen.HOME) { LandingPage(navigationActions) }
+                  composable(Screen.RECIPE) { backStackEntry ->
+                    backStackEntry.arguments?.getString("recipeId")?.let {
+                      RecipeFullDisplay(navigationActions)
+                    }
                   }
                 }
-                composable(Route.RECIPE) { backStackEntry ->
-                  backStackEntry.arguments?.getString("recipeId")?.let {
-                    RecipeFullDisplay(navigationActions)
+
+                navigation(startDestination = Screen.EXPLORE, route = Route.EXPLORE) {
+                  composable(Screen.EXPLORE) {
+                    NotImplementedScreen(navigationActions, Route.EXPLORE)
+                  }
+                }
+
+                navigation(startDestination = Screen.CREATE, route = Route.CREATE) {
+                  composable(Screen.CREATE) { CreateScreen(navigationActions) }
+                  composable(Screen.CAMERA) { CameraScreen(navigationActions) }
+                }
+
+                navigation(startDestination = Screen.PROFILE, route = Route.PROFILE) {
+                  composable(Screen.PROFILE) { ProfileScreen(navigationActions, profileViewModel) }
+                  composable(Screen.EDIT_PROFILE) {
+                    EditProfileScreen(navigationActions, profileViewModel)
+                  }
+                  composable(Screen.FRIENDS) { backStackEntry ->
+                    backStackEntry.arguments?.getString("showFollowers")?.let {
+                      FriendsScreen(navigationActions, profileViewModel, mode = it.toInt())
+                    }
+                  }
+                }
+                navigation(startDestination = Screen.SETTINGS, route = Route.SETTINGS) {
+                  composable(Screen.SETTINGS) {
+                    NotImplementedScreen(navigationActions, Route.SETTINGS)
                   }
                 }
               }

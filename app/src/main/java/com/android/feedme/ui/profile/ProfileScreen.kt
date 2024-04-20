@@ -35,6 +35,7 @@ import com.android.feedme.model.data.Profile
 import com.android.feedme.ui.navigation.BottomNavigationMenu
 import com.android.feedme.ui.navigation.NavigationActions
 import com.android.feedme.ui.navigation.Route
+import com.android.feedme.ui.navigation.Screen
 import com.android.feedme.ui.navigation.TOP_LEVEL_DESTINATIONS
 import com.android.feedme.ui.navigation.TopBarNavigation
 import com.android.feedme.ui.theme.DarkGrey
@@ -201,7 +202,7 @@ fun ProfileButtons(navigationActions: NavigationActions) {
       verticalAlignment = Alignment.CenterVertically) {
         OutlinedButton(
             modifier = Modifier.testTag("EditButton"),
-            onClick = { navigationActions.navigateTo(Route.EDITPROFILE) }) {
+            onClick = { navigationActions.navigateTo(Screen.EDIT_PROFILE) }) {
               Text(
                   modifier = Modifier.width(110.dp).height(13.dp),
                   text = "Edit Profile",

@@ -58,8 +58,6 @@ class LandingTest : TestCase() {
         assertHasClickAction()
       }
 
-      searchBar { assertIsDisplayed() }
-
       completeScreen { assertIsDisplayed() }
     }
   }

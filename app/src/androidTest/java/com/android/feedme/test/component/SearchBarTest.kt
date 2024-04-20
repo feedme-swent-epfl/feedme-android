@@ -1,10 +1,11 @@
 package com.android.feedme.test.component
 
+import androidx.compose.ui.test.assertIsDisplayed
 import androidx.compose.ui.test.junit4.createComposeRule
+import androidx.compose.ui.test.onNodeWithTag
 import androidx.test.ext.junit.runners.AndroidJUnit4
-import com.android.feedme.screen.LandingScreen
+import com.android.feedme.ui.component.SearchBarFun
 import com.kaspersky.kaspresso.testcases.api.testcase.TestCase
-import io.github.kakaocup.compose.node.element.ComposeScreen
 import org.junit.Rule
 import org.junit.Test
 import org.junit.runner.RunWith
@@ -16,8 +17,9 @@ class SearchBarTest : TestCase() {
   @Test
   fun checkSearchBarDisplayed() {
 
-    ComposeScreen.onComposeScreen<LandingScreen>(composeTestRule) {
-      searchBar { assertIsDisplayed() }
-    }
+    composeTestRule.setContent { SearchBarFun() }
+    composeTestRule.waitForIdle()
+
+    composeTestRule.onNodeWithTag("SearchBar").assertIsDisplayed()
   }
 }

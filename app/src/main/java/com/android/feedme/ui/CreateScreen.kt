@@ -14,6 +14,7 @@ import androidx.compose.ui.unit.dp
 import com.android.feedme.ui.navigation.BottomNavigationMenu
 import com.android.feedme.ui.navigation.NavigationActions
 import com.android.feedme.ui.navigation.Route
+import com.android.feedme.ui.navigation.Screen
 import com.android.feedme.ui.navigation.TOP_LEVEL_DESTINATIONS
 import com.android.feedme.ui.navigation.TopBarNavigation
 
@@ -36,7 +37,7 @@ fun CreateScreen(navigationActions: NavigationActions) {
             modifier = Modifier.fillMaxSize().padding(paddingValues)) {
               OutlinedButton(
                   modifier = Modifier.padding(20.dp).testTag("CameraButton"),
-                  onClick = { navigationActions.navigateTo(Route.CAMERA) }) {
+                  onClick = { navigationActions.navigateTo(Screen.CAMERA) }) {
                     Text(text = "Camera")
                   }
             }

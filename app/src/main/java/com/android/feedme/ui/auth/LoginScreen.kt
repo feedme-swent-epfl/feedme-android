@@ -38,6 +38,7 @@ import androidx.lifecycle.viewmodel.compose.viewModel
 import com.android.feedme.R
 import com.android.feedme.ui.navigation.NavigationActions
 import com.android.feedme.ui.navigation.Route
+import com.android.feedme.ui.navigation.TOP_LEVEL_DESTINATIONS
 import com.google.android.gms.auth.api.signin.GoogleSignIn
 import com.google.android.gms.auth.api.signin.GoogleSignInOptions
 import com.google.android.gms.common.api.ApiException
@@ -77,7 +78,7 @@ fun LoginScreen(navigationActions: NavigationActions, authViewModel: AuthViewMod
                   authViewModel.authenticateWithGoogle(
                       idToken = idToken,
                       onSuccess = {
-                        navigationActions.navigateTo(Route.HOME)
+                        navigationActions.navigateTo(TOP_LEVEL_DESTINATIONS[0])
                         // Navigate to next screen or show success message
                       },
                       onFailure = { exception ->

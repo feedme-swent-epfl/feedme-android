@@ -21,6 +21,7 @@ import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
+import androidx.compose.material3.IconButton
 import androidx.compose.material3.OutlinedButton
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.SearchBar
@@ -201,20 +202,22 @@ fun RecipeDisplay(navigationActions: NavigationActions, recipes: List<Recipe>) {
                                 )
                               }
                               // Share icon
-                              Icon(
-                                  imageVector = Icons.Default.Share,
-                                  contentDescription = null,
-                                  modifier =
-                                      Modifier.size(24.dp).padding(4.dp).testTag("ShareIcon"))
+                              IconButton(
+                                  onClick = { /*TODO*/}, modifier = Modifier.testTag("ShareIcon")) {
+                                    Icon(
+                                        imageVector = Icons.Default.Share,
+                                        contentDescription = null,
+                                        modifier = Modifier.size(24.dp).padding(4.dp))
+                                  }
                               Spacer(modifier = Modifier.weight(1f))
                               // Save icon
-                              Icon(
-                                  imageVector = Icons.Outlined.Save,
-                                  contentDescription = null,
-                                  modifier =
-                                      Modifier.size(24.dp)
-                                          .padding(start = 4.dp)
-                                          .testTag("SaveIcon"))
+                              IconButton(
+                                  onClick = { /*TODO*/}, modifier = Modifier.testTag("SaveIcon")) {
+                                    Icon(
+                                        imageVector = Icons.Outlined.Save,
+                                        contentDescription = null,
+                                        modifier = Modifier.size(24.dp).padding(start = 4.dp))
+                                  }
                             }
                             Row(verticalAlignment = Alignment.CenterVertically) {
                               // Title of the Recipe

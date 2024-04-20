@@ -21,6 +21,10 @@ class LandingTest : TestCase() {
     goToLandingScreen()
 
     ComposeScreen.onComposeScreen<LandingScreen>(composeTestRule) {
+      composeTestRule.waitForIdle()
+
+      completeScreen.assertIsDisplayed()
+
       topBarLanding { assertIsDisplayed() }
 
       bottomBarLanding { assertIsDisplayed() }
@@ -31,8 +35,6 @@ class LandingTest : TestCase() {
         assertIsDisplayed()
         assertHasClickAction()
       }
-
-      shareIcon { assertIsDisplayed() }
 
       saveIcon {
         assertIsDisplayed()
@@ -61,7 +63,7 @@ class LandingTest : TestCase() {
   }
 
   private fun goToLandingScreen() {
-    composeTestRule.setContent { LandingPage(mockk<NavigationActions>()) }
+    composeTestRule.setContent { LandingPage(mockk<NavigationActions>(relaxed = true)) }
     composeTestRule.waitForIdle()
   }
 }

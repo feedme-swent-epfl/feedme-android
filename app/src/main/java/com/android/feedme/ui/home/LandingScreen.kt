@@ -38,8 +38,10 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.navigation.compose.rememberNavController
 import coil.compose.AsyncImage
 import com.android.feedme.model.data.Ingredient
 import com.android.feedme.model.data.IngredientMetaData
@@ -171,7 +173,7 @@ fun RecipeDisplay(navigationActions: NavigationActions, recipes: List<Recipe>) {
                                   .padding(top = 16.dp, start = 16.dp, end = 16.dp)) {
                             // Time, rating, share and saving icon
                             Row(
-                                modifier = Modifier.padding(8.dp).fillMaxWidth(),
+                                modifier = Modifier.padding(4.dp).fillMaxWidth(),
                                 horizontalArrangement = Arrangement.Absolute.Left,
                                 verticalAlignment = Alignment.CenterVertically,
                             ) {
@@ -179,7 +181,7 @@ fun RecipeDisplay(navigationActions: NavigationActions, recipes: List<Recipe>) {
                               Row(
                                   verticalAlignment = Alignment.CenterVertically,
                                   modifier =
-                                      Modifier.padding(end = 8.dp)
+                                      Modifier.padding(end = 20.dp)
                                           .clickable { /* TODO () : access the comments */}
                                           .testTag("Rating")) {
                                     Icon(
@@ -187,8 +189,7 @@ fun RecipeDisplay(navigationActions: NavigationActions, recipes: List<Recipe>) {
                                         contentDescription = "Rating",
                                         modifier = Modifier.size(30.dp).padding(end = 6.dp))
                                     Text(
-                                        text = String.format("%.1f", recipe.rating),
-                                        modifier = Modifier.padding(end = 4.dp))
+                                        text = String.format("%.1f", recipe.rating))
                                   }
                               // Cooking time
                               Row(verticalAlignment = Alignment.CenterVertically) {
@@ -258,4 +259,12 @@ fun RecipeDisplay(navigationActions: NavigationActions, recipes: List<Recipe>) {
               }
             }
       }
+}
+
+
+
+@Preview(showBackground = true)
+@Composable
+fun PreviewLanding() {
+    LandingPage(navigationActions = NavigationActions(rememberNavController()))
 }

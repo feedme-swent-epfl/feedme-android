@@ -7,11 +7,7 @@ import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
-import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.Close
-import androidx.compose.material.icons.filled.Menu
-import androidx.compose.material.icons.filled.Search
 import androidx.compose.material.icons.filled.Share
 import androidx.compose.material.icons.outlined.Save
 import androidx.compose.material.icons.outlined.Star
@@ -19,21 +15,16 @@ import androidx.compose.material.icons.outlined.Timer
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
-import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.OutlinedButton
 import androidx.compose.material3.Scaffold
-import androidx.compose.material3.SearchBar
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.testTag
@@ -46,6 +37,7 @@ import com.android.feedme.model.data.IngredientMetaData
 import com.android.feedme.model.data.MeasureUnit
 import com.android.feedme.model.data.Recipe
 import com.android.feedme.model.data.Step
+import com.android.feedme.ui.component.SearchBarFun
 import com.android.feedme.ui.navigation.BottomNavigationMenu
 import com.android.feedme.ui.navigation.NavigationActions
 import com.android.feedme.ui.navigation.Route
@@ -99,53 +91,14 @@ fun LandingPage(navigationActions: NavigationActions) {
  *
  * @param recipes : the list of [Recipe] to be displayed
  */
-@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun RecipeDisplay(navigationActions: NavigationActions, recipes: List<Recipe>) {
 
-  var query by remember { mutableStateOf("") }
-  var active by remember { mutableStateOf(false) }
-
   Column(
       modifier = Modifier.testTag("CompleteScreen").padding(top = 60.dp).background(Color.White)) {
+
         // Search bar + filters icon
-        Row(
-            modifier = Modifier.background(Color.White),
-            verticalAlignment = Alignment.CenterVertically) {
-              SearchBar(
-                  query = query,
-                  active = active,
-                  onActiveChange = { active = it },
-                  onQueryChange = { query = it },
-                  onSearch = {
-                    active = false
-                    // add filtering logic here
-                  },
-                  leadingIcon = {
-                    Icon(
-                        Icons.Default.Menu,
-                        "Menu Icon",
-                        modifier = Modifier.testTag("FilterClick").clickable {})
-                  },
-                  trailingIcon = {
-                    if (active) {
-                      Icon(
-                          modifier =
-                              Modifier.clickable {
-                                query = ""
-                                active = false
-                                // add filtering logic here
-                              },
-                          imageVector = Icons.Default.Close,
-                          contentDescription = "Close Icon")
-                    } else {
-                      Icon(Icons.Default.Search, contentDescription = "Search Icon")
-                    }
-                  },
-                  placeholder = { Text("Search Recipe") },
-                  modifier =
-                      Modifier.fillMaxWidth().padding(10.dp).height(50.dp).testTag("SearchBar")) {}
-            }
+        SearchBarFun()
 
         // Scrollable list of recipes
         LazyColumn(
@@ -163,7 +116,7 @@ fun RecipeDisplay(navigationActions: NavigationActions, recipes: List<Recipe>) {
                           model = recipe.imageUrl,
                           contentDescription = "Recipe Image",
                           contentScale = ContentScale.Fit,
-                          modifier = Modifier.height(200.dp).fillMaxWidth().clip(CircleShape))
+                          modifier = Modifier.height(200.dp).fillMaxWidth())
                       Column(
                           modifier =
                               Modifier.fillMaxWidth()
@@ -201,7 +154,8 @@ fun RecipeDisplay(navigationActions: NavigationActions, recipes: List<Recipe>) {
                               }
                               // Share icon
                               IconButton(
-                                  onClick = { /*TODO*/}, modifier = Modifier.testTag("ShareIcon")) {
+                                  onClick = { /* TODO() adding the options to share */},
+                                  modifier = Modifier.testTag("ShareIcon")) {
                                     Icon(
                                         imageVector = Icons.Default.Share,
                                         contentDescription = null,
@@ -210,7 +164,8 @@ fun RecipeDisplay(navigationActions: NavigationActions, recipes: List<Recipe>) {
                               Spacer(modifier = Modifier.weight(1f))
                               // Save icon
                               IconButton(
-                                  onClick = { /*TODO*/}, modifier = Modifier.testTag("SaveIcon")) {
+                                  onClick = { /* TODO() add saving logic here */},
+                                  modifier = Modifier.testTag("SaveIcon")) {
                                     Icon(
                                         imageVector = Icons.Outlined.Save,
                                         contentDescription = null,

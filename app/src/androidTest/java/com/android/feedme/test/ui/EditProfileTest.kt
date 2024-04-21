@@ -4,10 +4,10 @@ import androidx.compose.ui.test.junit4.createComposeRule
 import androidx.test.ext.junit.runners.AndroidJUnit4
 import com.android.feedme.model.data.Profile
 import com.android.feedme.model.data.ProfileRepository
+import com.android.feedme.model.viewmodel.ProfileViewModel
 import com.android.feedme.screen.EditProfileTestScreen
 import com.android.feedme.ui.navigation.NavigationActions
 import com.android.feedme.ui.profile.EditProfileScreen
-import com.android.feedme.model.viewmodel.ProfileViewModel
 import com.google.android.gms.tasks.Tasks
 import com.google.firebase.firestore.CollectionReference
 import com.google.firebase.firestore.DocumentReference
@@ -35,7 +35,7 @@ class EditProfileTest {
 
   private lateinit var profileRepository: ProfileRepository
   private lateinit var profileViewModel:
-          ProfileViewModel // Avoid re-creating a viewModel for every test
+      ProfileViewModel // Avoid re-creating a viewModel for every test
 
   @Before
   fun setUpMocks() {

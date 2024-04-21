@@ -85,6 +85,7 @@ class FullRecipeTest : TestCase() {
     every { mockDocumentReference.set(any()) } returns Tasks.forResult(null)
 
     recipeViewModel = RecipeViewModel()
+    recipeViewModel.setRecipe(recipe)
     recipeViewModel.selectRecipe(recipe)
   }
 

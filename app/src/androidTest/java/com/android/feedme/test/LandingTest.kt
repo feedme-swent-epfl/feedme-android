@@ -21,6 +21,10 @@ class LandingTest : TestCase() {
     goToLandingScreen()
 
     ComposeScreen.onComposeScreen<LandingScreen>(composeTestRule) {
+      composeTestRule.waitForIdle()
+
+      completeScreen.assertIsDisplayed()
+
       topBarLanding { assertIsDisplayed() }
 
       bottomBarLanding { assertIsDisplayed() }
@@ -42,6 +46,8 @@ class LandingTest : TestCase() {
         assertHasClickAction()
       }
 
+      shareIcon { assertIsDisplayed() }
+
       ratingButton {
         assertIsDisplayed()
         assertHasClickAction()
@@ -52,14 +58,12 @@ class LandingTest : TestCase() {
         assertHasClickAction()
       }
 
-      searchBar { assertIsDisplayed() }
-
       completeScreen { assertIsDisplayed() }
     }
   }
 
   private fun goToLandingScreen() {
-    composeTestRule.setContent { LandingPage(mockk<NavigationActions>()) }
+    composeTestRule.setContent { LandingPage(mockk<NavigationActions>(relaxed = true)) }
     composeTestRule.waitForIdle()
   }
 }

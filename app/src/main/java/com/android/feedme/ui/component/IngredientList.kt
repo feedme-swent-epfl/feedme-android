@@ -10,8 +10,6 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.itemsIndexed
-import androidx.compose.foundation.rememberScrollState
-import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.DeleteForever
 import androidx.compose.material3.DropdownMenu
@@ -84,9 +82,8 @@ fun IngredientInput(
     var dose by remember { mutableStateOf(ingredient?.measure ?: MeasureUnit.EMPTY) }
     var state by remember { mutableStateOf(if(ingredient != null) IngredientInputState.SEMI_COMPLETE else IngredientInputState.EMPTY) }
 
-
     var isDropdownVisible by remember { mutableStateOf(false) }
-    val items = listOf("Item 1", "Item 2", "Item 3", "Item 4", "Item 5") // Your list of items
+    val suggestionIngredients = listOf("Item 1", "Item 2", "Item 3", "Item 4", "Item 5") // Your list of items
 
     Row(
         modifier = Modifier
@@ -94,8 +91,10 @@ fun IngredientInput(
             .padding(horizontal = 20.dp, vertical = 8.dp)
             .height(70.dp),
         verticalAlignment = Alignment.CenterVertically) {
+
+
+        // Ingredients
         Box(modifier = Modifier.weight(1.5f).height(55.dp)) {
-            // Ingredients
             OutlinedTextField(
                 colors = ExposedDropdownMenuDefaults.textFieldColors(),
                 value = name,
@@ -110,7 +109,6 @@ fun IngredientInput(
 
             DropdownMenu(
                 modifier = Modifier
-                    .verticalScroll(rememberScrollState())
                     .height(120.dp),
                 expanded = isDropdownVisible && name.isNotEmpty(),
                 onDismissRequest = { isDropdownVisible = false },
@@ -118,27 +116,30 @@ fun IngredientInput(
                 PopupProperties(
                     focusable = false, dismissOnClickOutside = false, dismissOnBackPress = false),
             ) {
-                items.forEach { item ->
-                    DropdownMenuItem(
-                        text = { Text(text = item) },
-                        onClick = {
-                            name = item
-                            isDropdownVisible = false
-                            val beforeState = state
-                            if (name != "") {
-                                state = IngredientInputState.SEMI_COMPLETE
-                                action(
-                                    beforeState,
-                                    state,
-                                    IngredientMetaData(quantity, dose, Ingredient(name, "", ""))
-                                )
-                            }
-                        })
-                }
+                   suggestionIngredients.forEach { item ->
+                       DropdownMenuItem(
+                           text = { Text(text = item) },
+                           onClick = {
+                               name = item
+                               isDropdownVisible = false
+                               val beforeState = state
+                               if (name != "") {
+                                   state = IngredientInputState.SEMI_COMPLETE
+                                   action(
+                                       beforeState,
+                                       state,
+                                       IngredientMetaData(quantity, dose, Ingredient(name, "", ""))
+                                   )
+                               }
+                           })
+               }
             }
         }
 
+
         Spacer(modifier = Modifier.width(8.dp))
+
+
 
         // Dose
         OutlinedTextField(
@@ -147,28 +148,23 @@ fun IngredientInput(
             onValueChange = { // Check if the input is a valid number
                 if (it.isEmpty() || it.toDoubleOrNull() != null) {
                     quantity = it.toDouble()
-                    if (quantity != 0.0) {
-                        val beforeState = state
-                        state = IngredientInputState.SEMI_COMPLETE
-                        action(
-                            beforeState,
-                            state,
-                            IngredientMetaData(quantity, dose, Ingredient(name, "", ""))
-                        )
-                    }
                 }
-
-
             },
             singleLine = true,
             modifier = Modifier.weight(1f).height(55.dp),
-            placeholder = { Text(text = "Dose") })
+            placeholder = { Text(text = "Dose")
+            })
+
+
 
         Spacer(modifier = Modifier.width(8.dp))
 
-        var expanded by remember { mutableStateOf(false) }
+
+
 
         // Dropdown for dose measurement type
+        var expanded by remember { mutableStateOf(false) }
+
         ExposedDropdownMenuBox(
             modifier = Modifier.weight(1f).height(50.dp),
             expanded = expanded,
@@ -181,14 +177,12 @@ fun IngredientInput(
                 value = dose.toString(),
                 onValueChange = {
                     expanded = expanded
-
                 },
                 label = { Text("Dose") },
-
-                colors = ExposedDropdownMenuDefaults.textFieldColors(),
                 modifier = Modifier.menuAnchor()
             )
             ExposedDropdownMenu(
+                modifier = Modifier.height(120.dp),
                 expanded = expanded,
                 onDismissRequest = {
                     expanded = false
@@ -218,7 +212,6 @@ fun IngredientInput(
         }
 
 
-
         if (state == IngredientInputState.SEMI_COMPLETE || state == IngredientInputState.COMPLETE) {
             IconButton(onClick = { action(state, IngredientInputState.EMPTY, IngredientMetaData(quantity, dose, Ingredient(name, "", ""))) }) {
                 Icon(
@@ -228,7 +221,6 @@ fun IngredientInput(
             }
         }
     }
-
 }
 
 enum class IngredientInputState {

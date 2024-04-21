@@ -37,6 +37,7 @@ import com.android.feedme.model.data.IngredientMetaData
 import com.android.feedme.model.data.MeasureUnit
 import com.android.feedme.model.data.Recipe
 import com.android.feedme.model.data.Step
+import com.android.feedme.model.viewmodel.RecipeViewModel
 import com.android.feedme.ui.component.SearchBarFun
 import com.android.feedme.ui.navigation.BottomNavigationMenu
 import com.android.feedme.ui.navigation.NavigationActions
@@ -54,7 +55,7 @@ import com.android.feedme.ui.theme.TextBarColor
  */
 @SuppressLint("UnusedMaterial3ScaffoldPaddingParameter")
 @Composable
-fun LandingPage(navigationActions: NavigationActions) {
+fun LandingPage(navigationActions: NavigationActions, recipeViewModel: RecipeViewModel) {
   /* Note that this val is temporary for this sprint, we're awaiting the implementation of the
    * ViewModels to properly do this part. */
   val testRecipes: List<Recipe> =
@@ -84,7 +85,7 @@ fun LandingPage(navigationActions: NavigationActions) {
       bottomBar = {
         BottomNavigationMenu(Route.HOME, navigationActions::navigateTo, TOP_LEVEL_DESTINATIONS)
       },
-      content = { RecipeDisplay(navigationActions, testRecipes) })
+      content = { RecipeDisplay(navigationActions, testRecipes, recipeViewModel) })
 }
 
 /**
@@ -93,7 +94,11 @@ fun LandingPage(navigationActions: NavigationActions) {
  * @param recipes : the list of [Recipe] to be displayed
  */
 @Composable
-fun RecipeDisplay(navigationActions: NavigationActions, recipes: List<Recipe>) {
+fun RecipeDisplay(
+    navigationActions: NavigationActions,
+    recipes: List<Recipe>,
+    recipeViewModel: RecipeViewModel
+) {
 
   Column(
       modifier = Modifier.testTag("CompleteScreen").padding(top = 60.dp).background(Color.White)) {
@@ -110,7 +115,11 @@ fun RecipeDisplay(navigationActions: NavigationActions, recipes: List<Recipe>) {
                 Card(
                     modifier =
                         Modifier.padding(16.dp)
-                            .clickable(onClick = { navigationActions.navigateTo(Screen.RECIPE) })
+                            .clickable(
+                                onClick = {
+                                  recipeViewModel.selectRecipe(recipe)
+                                  navigationActions.navigateTo(Screen.RECIPE)
+                                })
                             .testTag("RecipeCard"),
                     elevation = CardDefaults.elevatedCardElevation()) {
                       AsyncImage(

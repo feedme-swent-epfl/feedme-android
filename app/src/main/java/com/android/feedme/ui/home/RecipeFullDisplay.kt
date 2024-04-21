@@ -21,6 +21,7 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
@@ -39,6 +40,7 @@ import com.android.feedme.model.data.IngredientMetaData
 import com.android.feedme.model.data.MeasureUnit
 import com.android.feedme.model.data.Recipe
 import com.android.feedme.model.data.Step
+import com.android.feedme.model.viewmodel.RecipeViewModel
 import com.android.feedme.ui.navigation.BottomNavigationMenu
 import com.android.feedme.ui.navigation.NavigationActions
 import com.android.feedme.ui.navigation.Route
@@ -80,17 +82,21 @@ val recipe1 =
  * information's (time, userId of the creator and rating), list of ingredients and list of steps to
  * prepare the recipe.
  *
- * @param recipe The [Recipe] to display.
- * @param modifier The modifier for the scaffold layout.
+ * @param navigationActions Gives access to the navigation actions.
+ * @param recipeViewModel The [RecipeViewModel] to get the recipe from.
  */
 @SuppressLint("UnusedMaterial3ScaffoldPaddingParameter")
 @Composable
-fun RecipeFullDisplay(navigationActions: NavigationActions, recipe: Recipe = recipe1) {
+fun RecipeFullDisplay(
+    navigationActions: NavigationActions,
+    recipeViewModel: RecipeViewModel /*recipe: Recipe = recipe1*/
+) {
+  val recipe = recipeViewModel.recipe.collectAsState().value
   Scaffold(
       modifier = Modifier.fillMaxSize(),
       topBar = {
         TopBarNavigation(
-            title = recipe.title,
+            title = recipe?.title ?: "Not Found",
             navAction = navigationActions,
             rightIcon = Icons.TwoTone.Bookmark,
             rightIconOnClickAction = { null /* TODO() Save recipe offline*/ })
@@ -99,13 +105,15 @@ fun RecipeFullDisplay(navigationActions: NavigationActions, recipe: Recipe = rec
         BottomNavigationMenu(Route.HOME, navigationActions::navigateTo, TOP_LEVEL_DESTINATIONS)
       },
       content = { padding ->
-        LazyColumn(modifier = Modifier.padding(padding)) {
-          item { ImageDisplay(recipe = recipe) }
-          item { GeneralInfosDisplay(recipe = recipe) }
-          item { IngredientTitleDisplay() }
-          items(recipe.ingredients) { ingredient -> IngredientDisplay(ingredient = ingredient) }
-          item { IngredientStepsDividerDisplay() }
-          items(recipe.steps) { step -> StepDisplay(step = step) }
+        if (recipe != null) {
+          LazyColumn(modifier = Modifier.padding(padding)) {
+            item { ImageDisplay(recipe = recipe) }
+            item { GeneralInfosDisplay(recipe = recipe) }
+            item { IngredientTitleDisplay() }
+            items(recipe.ingredients) { ingredient -> IngredientDisplay(ingredient = ingredient) }
+            item { IngredientStepsDividerDisplay() }
+            items(recipe.steps) { step -> StepDisplay(step = step) }
+          }
         }
       })
 }

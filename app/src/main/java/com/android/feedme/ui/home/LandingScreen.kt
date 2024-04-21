@@ -71,7 +71,14 @@ fun LandingPage(navigationActions: NavigationActions, recipeViewModel: RecipeVie
                           quantity = 2.0,
                           measure = MeasureUnit.ML,
                           ingredient = Ingredient("Tomato", "Vegetables", "tomatoID"))),
-              steps = listOf(Step(1, "a", "Step1")),
+              steps = listOf(
+                  Step(
+                      1,
+                      "In a large, heavy pot, put the olive oil, garlic and parsley over medium high heat. When the garlic begins to brown, increase the heat and add the ground beef. Break up the beef, but keep it rather chunky. Sprinkle with about 1/2 tsp of salt. \n" +
+                              "\n" +
+                              "When the beef is beginning to dry up, add the tomatoes and stir well. Add more salt, then lower the heat and allow to simmer for about an hour, stirring from time to time. Taste for salt and add pepper.",
+                      "Make the Meat Sauce")
+              ),
               tags = listOf("Meat"),
               time = 45.0,
               rating = 4.5,
@@ -117,8 +124,9 @@ fun RecipeDisplay(
                         Modifier.padding(16.dp)
                             .clickable(
                                 onClick = {
+                                    // Set the selected recipe in the view model and navigate to the recipe screen
                                   recipeViewModel.selectRecipe(recipe)
-                                  navigationActions.navigateTo(Screen.RECIPE)
+                                    navigationActions.navigateTo(Screen.RECIPE)
                                 })
                             .testTag("RecipeCard"),
                     elevation = CardDefaults.elevatedCardElevation()) {

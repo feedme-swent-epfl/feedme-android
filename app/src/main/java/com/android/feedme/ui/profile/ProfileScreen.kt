@@ -18,6 +18,8 @@ import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -39,7 +41,7 @@ import com.android.feedme.ui.navigation.Route
 import com.android.feedme.ui.navigation.Screen
 import com.android.feedme.ui.navigation.TOP_LEVEL_DESTINATIONS
 import com.android.feedme.ui.navigation.TopBarNavigation
-import com.android.feedme.ui.theme.BlueUser
+import com.android.feedme.ui.theme.BlueFollowButton
 import com.android.feedme.ui.theme.DarkGrey
 import com.android.feedme.ui.theme.TextBarColor
 import com.google.firebase.auth.FirebaseAuth
@@ -61,8 +63,8 @@ fun ProfileScreen(
   if (profileID != null &&
       FirebaseAuth.getInstance().uid != null &&
       FirebaseAuth.getInstance().uid != profileID) {
-    profileViewModel.fetchProfile(profileID)
-    isViewingProfile = true
+      profileViewModel.fetchProfile(profileID)
+       isViewingProfile = true
   } else if (FirebaseAuth.getInstance().uid != null) {
     profileViewModel.fetchProfile(FirebaseAuth.getInstance().uid!!)
   } else {
@@ -150,7 +152,7 @@ fun UserNameBox(profile: Profile) {
     Spacer(modifier = Modifier.height(10.dp))
     Text(
         text = "@" + profile.username,
-        style = textStyle(14, 15, 700),
+        style = textStyle(14, 15, 700, TextAlign.Left),
         overflow = TextOverflow.Ellipsis)
   }
 }
@@ -219,7 +221,7 @@ fun ProfileButtons(
       modifier = Modifier.fillMaxWidth().padding(vertical = 20.dp),
       horizontalArrangement = Arrangement.SpaceEvenly,
       verticalAlignment = Alignment.CenterVertically) {
-        if (isViewingProfile) {
+        if (!isViewingProfile) {
           OutlinedButton(
               modifier = Modifier.testTag("EditButton"),
               onClick = { navigationActions.navigateTo(Screen.EDIT_PROFILE) }) {
@@ -229,15 +231,16 @@ fun ProfileButtons(
                     style = textStyle())
               }
         } else {
-          var isFollowing = profile.followers.contains(FirebaseAuth.getInstance().uid!!)
-          if (isFollowing) {
+          var isFollowing = remember { mutableStateOf(profile.followers.contains(FirebaseAuth.getInstance().uid!!)) }
+          if (isFollowing.value) {
             OutlinedButton(
-                modifier = Modifier.testTag("FollowingButton").background(BlueUser),
+                modifier = Modifier.testTag("FollowingButton").background(BlueFollowButton) ,
                 onClick = {
-                  isFollowing = false
+                  isFollowing.value = false
                   /*TODO REMOVE follower*/
                 }) {
                   Text(
+                      color = DarkGrey,
                       modifier = Modifier.width(110.dp).height(13.dp),
                       text = "Following",
                       style = textStyle(color = TextBarColor))
@@ -246,8 +249,7 @@ fun ProfileButtons(
             OutlinedButton(
                 modifier = Modifier.testTag("FollowButton").background(TextBarColor),
                 onClick = {
-                  isFollowing = true
-
+                    isFollowing.value = true
                   /*TODO ADD follower*/
                 }) {
                   Text(

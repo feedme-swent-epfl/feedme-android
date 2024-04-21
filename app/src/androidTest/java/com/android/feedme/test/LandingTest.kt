@@ -1,7 +1,9 @@
 package com.android.feedme.test
 
 import androidx.compose.ui.test.junit4.createComposeRule
+import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.test.ext.junit.runners.AndroidJUnit4
+import com.android.feedme.model.viewmodel.RecipeViewModel
 import com.android.feedme.screen.LandingScreen
 import com.android.feedme.ui.home.LandingPage
 import com.android.feedme.ui.navigation.NavigationActions
@@ -63,7 +65,9 @@ class LandingTest : TestCase() {
   }
 
   private fun goToLandingScreen() {
-    composeTestRule.setContent { LandingPage(mockk<NavigationActions>(relaxed = true)) }
+    composeTestRule.setContent {
+      LandingPage(mockk<NavigationActions>(relaxed = true), viewModel<RecipeViewModel>())
+    }
     composeTestRule.waitForIdle()
   }
 }

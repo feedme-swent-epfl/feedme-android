@@ -30,7 +30,8 @@ class FullRecipeTest : TestCase() {
         Recipe(
             recipeId = "lasagna1",
             title = "Tasty Lasagna",
-            description = "a",
+            description =
+                "Description of the recipe, writing a longer one to see if it fills up the whole space available. Still writing with no particular aim lol",
             ingredients =
                 listOf(
                     IngredientMetaData(
@@ -54,7 +55,7 @@ class FullRecipeTest : TestCase() {
 
     val navActions = mockk<NavigationActions>()
     every { navActions.canGoBack() } returns true
-    composeTestRule.setContent { RecipeFullDisplay(navActions, recipe1) }
+    composeTestRule.setContent { RecipeFullDisplay(navActions) }
 
     // Check whether the Image or the warning message is displayed
     try {

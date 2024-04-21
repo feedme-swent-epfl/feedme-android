@@ -60,7 +60,7 @@ import com.android.feedme.ui.theme.YellowStar
 @Composable
 fun RecipeFullDisplay(
     navigationActions: NavigationActions,
-    recipeViewModel: RecipeViewModel /*recipe: Recipe = recipe1*/
+    recipeViewModel: RecipeViewModel = RecipeViewModel()
 ) {
   val recipe = recipeViewModel.recipe.collectAsState().value
   Scaffold(

@@ -29,7 +29,7 @@ import com.android.feedme.ui.navigation.Screen
 import com.android.feedme.ui.profile.EditProfileScreen
 import com.android.feedme.ui.profile.FriendsScreen
 import com.android.feedme.ui.profile.ProfileScreen
-import com.android.feedme.ui.profile.ProfileViewModel
+import com.android.feedme.model.viewmodel.ProfileViewModel
 import com.android.feedme.ui.theme.feedmeAppTheme
 import com.google.firebase.firestore.FirebaseFirestore
 

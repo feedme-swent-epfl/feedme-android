@@ -6,7 +6,7 @@ import com.android.feedme.model.data.ProfileRepository
 import com.android.feedme.screen.ProfileScreen
 import com.android.feedme.ui.navigation.NavigationActions
 import com.android.feedme.ui.profile.ProfileScreen
-import com.android.feedme.ui.profile.ProfileViewModel
+import com.android.feedme.model.viewmodel.ProfileViewModel
 import com.google.firebase.firestore.FirebaseFirestore
 import io.github.kakaocup.compose.node.element.ComposeScreen
 import io.mockk.mockk

@@ -72,8 +72,7 @@ val demoProfiles2 =
  *
  * @param navigationActions Provides navigation actions for handling user interactions with the
  *   navigation bar.
- * @param followers The list of profiles considered as followers. Defaults to demoProfiles if none
- *   provided.
+ * @param profileViewModel The view model that provides the profile data.
  * @param mode Determines the initial tab selection: 0 for Followers, 1 for Following.
  */
 @Composable

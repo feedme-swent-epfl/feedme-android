@@ -55,7 +55,10 @@ import com.android.feedme.ui.theme.TextBarColor
  */
 @SuppressLint("UnusedMaterial3ScaffoldPaddingParameter")
 @Composable
-fun LandingPage(navigationActions: NavigationActions, recipeViewModel: RecipeViewModel) {
+fun LandingPage(
+    navigationActions: NavigationActions,
+    recipeViewModel: RecipeViewModel = RecipeViewModel()
+) {
   /* Note that this val is temporary for this sprint, we're awaiting the implementation of the
    * ViewModels to properly do this part. */
   val testRecipes: List<Recipe> =

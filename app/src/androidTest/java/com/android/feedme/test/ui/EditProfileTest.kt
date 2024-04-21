@@ -33,13 +33,12 @@ class EditProfileTest {
   private val mockCollectionReference = mockk<CollectionReference>(relaxed = true)
   private var mockDocumentSnapshot = mockk<DocumentSnapshot>(relaxed = true)
 
+  // Avoid re-creating a viewModel for every test
+  private lateinit var profileViewModel: ProfileViewModel
   private lateinit var profileRepository: ProfileRepository
-  private lateinit var profileViewModel:
-      ProfileViewModel // Avoid re-creating a viewModel for every test
 
   @Before
   fun setUpMocks() {
-
     ProfileRepository.initialize(mockFirestore)
     profileRepository = ProfileRepository.instance
 

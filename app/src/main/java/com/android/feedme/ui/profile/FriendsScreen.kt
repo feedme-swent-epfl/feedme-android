@@ -33,6 +33,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.android.feedme.R
 import com.android.feedme.model.data.Profile
+import com.android.feedme.model.viewmodel.ProfileViewModel
 import com.android.feedme.ui.navigation.BottomNavigationMenu
 import com.android.feedme.ui.navigation.NavigationActions
 import com.android.feedme.ui.navigation.Route
@@ -72,8 +73,7 @@ val demoProfiles2 =
  *
  * @param navigationActions Provides navigation actions for handling user interactions with the
  *   navigation bar.
- * @param followers The list of profiles considered as followers. Defaults to demoProfiles if none
- *   provided.
+ * @param profileViewModel The view model that provides the profile data.
  * @param mode Determines the initial tab selection: 0 for Followers, 1 for Following.
  */
 @Composable

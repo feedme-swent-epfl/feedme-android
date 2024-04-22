@@ -1,5 +1,6 @@
 package com.android.feedme
 
+import android.annotation.SuppressLint
 import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
@@ -16,6 +17,8 @@ import androidx.navigation.compose.navigation
 import androidx.navigation.compose.rememberNavController
 import com.android.feedme.model.data.ProfileRepository
 import com.android.feedme.model.data.RecipeRepository
+import com.android.feedme.model.viewmodel.ProfileViewModel
+import com.android.feedme.model.viewmodel.RecipeViewModel
 import com.android.feedme.resources.C
 import com.android.feedme.ui.CreateScreen
 import com.android.feedme.ui.NotImplementedScreen
@@ -29,11 +32,11 @@ import com.android.feedme.ui.navigation.Screen
 import com.android.feedme.ui.profile.EditProfileScreen
 import com.android.feedme.ui.profile.FriendsScreen
 import com.android.feedme.ui.profile.ProfileScreen
-import com.android.feedme.ui.profile.ProfileViewModel
 import com.android.feedme.ui.theme.feedmeAppTheme
 import com.google.firebase.firestore.FirebaseFirestore
 
 class MainActivity : ComponentActivity() {
+  @SuppressLint("UnrememberedGetBackStackEntry")
   override fun onCreate(savedInstanceState: Bundle?) {
     super.onCreate(savedInstanceState)
 
@@ -59,11 +62,16 @@ class MainActivity : ComponentActivity() {
                 }
 
                 navigation(startDestination = Screen.HOME, route = Route.HOME) {
-                  composable(Screen.HOME) { LandingPage(navigationActions) }
-                  composable(Screen.RECIPE) { backStackEntry ->
-                    backStackEntry.arguments?.getString("recipeId")?.let {
-                      RecipeFullDisplay(navigationActions)
-                    }
+                  composable(Screen.HOME) {
+                    // Create a shared view model for Recipe
+                    val recipeViewModel = viewModel<RecipeViewModel>()
+                    LandingPage(navigationActions, recipeViewModel)
+                  }
+                  composable(Screen.RECIPE) {
+                    // Link the shared view model to the composable
+                    val navBackStackEntry = navController.getBackStackEntry(Screen.HOME)
+                    val recipeViewModel = viewModel<RecipeViewModel>(navBackStackEntry)
+                    RecipeFullDisplay(navigationActions, recipeViewModel)
                   }
                 }
 
@@ -89,7 +97,7 @@ class MainActivity : ComponentActivity() {
                   }
                   composable(Screen.FRIENDS) { backStackEntry ->
                     backStackEntry.arguments?.getString("showFollowers")?.let {
-                      FriendsScreen(navigationActions, profileViewModel, mode = it.toInt())
+                      FriendsScreen(navigationActions, profileViewModel, it.toInt())
                     }
                   }
                 }

@@ -1,4 +1,4 @@
-package com.android.feedme.ui.profile
+package com.android.feedme.model.viewmodel
 
 import android.util.Log
 import androidx.lifecycle.ViewModel

@@ -89,7 +89,8 @@ fun ProfileScreen(
       content = { padding ->
         ProfileBox(
             padding,
-            profileViewModel.getProfile() ?: throw Exception("No Profile to fetch"),
+            profileViewModel.getProfile()
+                ?: throw Exception("No Profile to fetch : " + profileViewModel.googleId),
             navigationActions,
             profileViewModel,
             isViewingProfile)

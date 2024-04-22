@@ -23,7 +23,7 @@ class ProfileViewModel : ViewModel() {
   val profile: StateFlow<Profile?> = _profile
   val followers = MutableStateFlow<List<Profile>>(listOf(Profile()))
   val following = MutableStateFlow<List<Profile>>(listOf(Profile()))
-  val googleId = FirebaseAuth.getInstance().uid ?: "ID_DEFAULT"
+  val googleId = FirebaseAuth.getInstance().uid
 
   init {
     // Listen to FirebaseAuth state changes

@@ -7,8 +7,9 @@ import io.mockk.mockk
 fun mockGoogleSignInAccount(): GoogleSignInAccount {
   val account = mockk<GoogleSignInAccount>(relaxed = true)
   // Mock necessary methods of GoogleSignInAccount as needed for the test
-  every { account.id } returns "123456789"
-  every { account.displayName } returns "Test User"
-  every { account.email } returns "test@example.com"
+  every { account.id } returns "ID_DEFAULT"
+  every { account.displayName } returns "NAME_DEFAULT"
+  every { account.email } returns "EMAIL_DEFAULT"
+
   return account
 }

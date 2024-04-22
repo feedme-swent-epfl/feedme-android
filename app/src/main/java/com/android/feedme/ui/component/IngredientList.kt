@@ -1,7 +1,6 @@
 package com.android.feedme.ui.component
 
 import androidx.compose.foundation.background
-import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
@@ -11,7 +10,6 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
-import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.DeleteForever
 import androidx.compose.material3.DropdownMenu
@@ -23,7 +21,6 @@ import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Text
-import androidx.compose.material3.TextField
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.movableContentOf
@@ -40,6 +37,9 @@ import androidx.compose.ui.window.PopupProperties
 import com.android.feedme.model.data.Ingredient
 import com.android.feedme.model.data.IngredientMetaData
 import com.android.feedme.model.data.MeasureUnit
+import com.android.feedme.ui.theme.InValidInput
+import com.android.feedme.ui.theme.NoInput
+import com.android.feedme.ui.theme.ValidInput
 
 @Composable
 fun IngredientList(
@@ -103,8 +103,9 @@ fun IngredientInput(
         // Ingredients
         Box(modifier = Modifier.weight(1.5f).height(55.dp)) {
             OutlinedTextField(
-                colors = ExposedDropdownMenuDefaults.textFieldColors(),
+                colors = ExposedDropdownMenuDefaults.textFieldColors(unfocusedContainerColor =  if (state != IngredientInputState.EMPTY) ValidInput else NoInput, focusedContainerColor = if (state != IngredientInputState.EMPTY) ValidInput else NoInput, errorContainerColor = InValidInput ),
                 value = name,
+                isError = name == " " && state != IngredientInputState.EMPTY,
                 onValueChange = {
                     name = it
                     isDropdownVisible = true
@@ -113,8 +114,8 @@ fun IngredientInput(
                 singleLine = true,
                 modifier = Modifier.padding(end = 0.dp),
                 placeholder = { Text(text = "...") },
-                label =  { Text(text = "Ingredient", modifier = Modifier.background(color = Color.Transparent).border(width = 1.dp, color = Color.Black, shape = RoundedCornerShape(8.dp))
-                    ) })
+                label =  { Text(text = "Ingredient", modifier = Modifier.background(color = Color.Transparent))
+                     })
 
             DropdownMenu(
                 modifier = Modifier
@@ -152,8 +153,9 @@ fun IngredientInput(
 
         // Quantity
         OutlinedTextField(
-            colors = ExposedDropdownMenuDefaults.textFieldColors(),
-            value = if (quantity == 0.0) " " else quantity.toString(),
+            colors = ExposedDropdownMenuDefaults.textFieldColors(unfocusedContainerColor =  if (state != IngredientInputState.EMPTY) ValidInput else NoInput, focusedContainerColor = if (state != IngredientInputState.EMPTY) ValidInput else NoInput, errorContainerColor = InValidInput ),
+            isError = quantity == 0.0 && state != IngredientInputState.EMPTY,
+                    value = if (quantity == 0.0) " " else quantity.toString(),
             onValueChange = { // Check if the input is a valid number
                 if ((it.isEmpty() || it.toDoubleOrNull() != null) && it.toDouble() >= 0.0 ) {
                     quantity = it.toDouble()
@@ -183,13 +185,15 @@ fun IngredientInput(
         var expanded by remember { mutableStateOf(false) }
 
         ExposedDropdownMenuBox(
-            modifier = Modifier.weight(1f).height(48.dp).padding(top = 5.dp),
+            modifier = Modifier.weight(1f).height(55.dp),
             expanded = expanded,
             onExpandedChange = {
                 expanded = !expanded
             }
         ) {
-            TextField(
+            OutlinedTextField(
+                colors = ExposedDropdownMenuDefaults.textFieldColors(unfocusedContainerColor =  if (state != IngredientInputState.EMPTY) ValidInput else NoInput, focusedContainerColor = if (state != IngredientInputState.EMPTY) ValidInput else NoInput, errorContainerColor = InValidInput ),
+                isError = dose == MeasureUnit.EMPTY && state != IngredientInputState.EMPTY,
                 readOnly = true,
                 value = if (dose != MeasureUnit.EMPTY) dose.toString() else " ",
                 onValueChange = {

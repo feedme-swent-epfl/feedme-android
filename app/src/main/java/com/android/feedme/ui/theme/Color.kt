@@ -17,3 +17,7 @@ val CardBackground = Color(0xC9C2E1EE)
 val TextBarColor = Color(0xFFFFFFFF)
 
 val BlueUser = Color(0xff0008bf)
+
+val NoInput = Color(0xFFE6DFEB)
+val InValidInput = Color(0xFFFFB3B3)
+val ValidInput = Color(0xFFC1FFC4)

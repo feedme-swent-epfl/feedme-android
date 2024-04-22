@@ -53,7 +53,7 @@ import androidx.compose.ui.viewinterop.AndroidView
 import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
 import androidx.lifecycle.viewmodel.compose.viewModel
-import com.android.feedme.model.CameraViewModel
+import com.android.feedme.model.viewmodel.CameraViewModel
 import com.android.feedme.ui.navigation.NavigationActions
 import com.android.feedme.ui.navigation.TopBarNavigation
 import kotlinx.coroutines.launch

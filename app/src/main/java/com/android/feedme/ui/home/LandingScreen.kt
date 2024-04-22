@@ -37,6 +37,7 @@ import com.android.feedme.model.data.IngredientMetaData
 import com.android.feedme.model.data.MeasureUnit
 import com.android.feedme.model.data.Recipe
 import com.android.feedme.model.data.Step
+import com.android.feedme.model.viewmodel.RecipeViewModel
 import com.android.feedme.ui.component.SearchBarFun
 import com.android.feedme.ui.navigation.BottomNavigationMenu
 import com.android.feedme.ui.navigation.NavigationActions
@@ -54,7 +55,10 @@ import com.android.feedme.ui.theme.TextBarColor
  */
 @SuppressLint("UnusedMaterial3ScaffoldPaddingParameter")
 @Composable
-fun LandingPage(navigationActions: NavigationActions) {
+fun LandingPage(
+    navigationActions: NavigationActions,
+    recipeViewModel: RecipeViewModel = RecipeViewModel()
+) {
   /* Note that this val is temporary for this sprint, we're awaiting the implementation of the
    * ViewModels to properly do this part. */
   val testRecipes: List<Recipe> =
@@ -70,7 +74,14 @@ fun LandingPage(navigationActions: NavigationActions) {
                           quantity = 2.0,
                           measure = MeasureUnit.ML,
                           ingredient = Ingredient("Tomato", "Vegetables", "tomatoID"))),
-              steps = listOf(Step(1, "a", "Step1")),
+              steps =
+                  listOf(
+                      Step(
+                          1,
+                          "In a large, heavy pot, put the olive oil, garlic and parsley over medium high heat. When the garlic begins to brown, increase the heat and add the ground beef. Break up the beef, but keep it rather chunky. Sprinkle with about 1/2 tsp of salt. \n" +
+                              "\n" +
+                              "When the beef is beginning to dry up, add the tomatoes and stir well. Add more salt, then lower the heat and allow to simmer for about an hour, stirring from time to time. Taste for salt and add pepper.",
+                          "Make the Meat Sauce")),
               tags = listOf("Meat"),
               time = 45.0,
               rating = 4.5,
@@ -84,7 +95,7 @@ fun LandingPage(navigationActions: NavigationActions) {
       bottomBar = {
         BottomNavigationMenu(Route.HOME, navigationActions::navigateTo, TOP_LEVEL_DESTINATIONS)
       },
-      content = { RecipeDisplay(navigationActions, testRecipes) })
+      content = { RecipeDisplay(navigationActions, testRecipes, recipeViewModel) })
 }
 
 /**
@@ -93,7 +104,11 @@ fun LandingPage(navigationActions: NavigationActions) {
  * @param recipes : the list of [Recipe] to be displayed
  */
 @Composable
-fun RecipeDisplay(navigationActions: NavigationActions, recipes: List<Recipe>) {
+fun RecipeDisplay(
+    navigationActions: NavigationActions,
+    recipes: List<Recipe>,
+    recipeViewModel: RecipeViewModel
+) {
 
   Column(
       modifier = Modifier.testTag("CompleteScreen").padding(top = 60.dp).background(Color.White)) {
@@ -110,7 +125,13 @@ fun RecipeDisplay(navigationActions: NavigationActions, recipes: List<Recipe>) {
                 Card(
                     modifier =
                         Modifier.padding(16.dp)
-                            .clickable(onClick = { navigationActions.navigateTo(Screen.RECIPE) })
+                            .clickable(
+                                onClick = {
+                                  // Set the selected recipe in the view model and navigate to the
+                                  // recipe screen
+                                  recipeViewModel.selectRecipe(recipe)
+                                  navigationActions.navigateTo(Screen.RECIPE)
+                                })
                             .testTag("RecipeCard"),
                     elevation = CardDefaults.elevatedCardElevation()) {
                       AsyncImage(

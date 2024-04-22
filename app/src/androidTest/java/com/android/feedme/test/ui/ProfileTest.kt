@@ -127,22 +127,20 @@ class ProfileTest {
         assertHasClickAction()
       }
 
-      editButton {
-        assertIsNotDisplayed()
-      }
+      editButton { assertIsNotDisplayed() }
 
       shareButton {
         assertIsDisplayed()
         assertHasClickAction()
       }
 
-      followerButton{
+      followerButton {
         assertIsDisplayed()
         assertHasClickAction()
         performClick()
       }
 
-      followingButton{
+      followingButton {
         assertIsDisplayed()
         assertHasClickAction()
       }

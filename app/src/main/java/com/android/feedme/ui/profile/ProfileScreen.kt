@@ -47,10 +47,14 @@ import com.android.feedme.ui.theme.TextBarColor
 import com.google.firebase.auth.FirebaseAuth
 
 /**
- * A composable function that generates the profile screen
+ * A composable function that generates the profile screen.
  *
  * This function provides the UI interface of the profile page, which includes the profile box,
- * recipe page of the user and the comments of the user.
+ * recipe page of the user, and the comments of the user.
+ *
+ * @param navigationActions: NavigationActions object to handle navigation events
+ * @param profileViewModel: ProfileViewModel object to interact with profile data
+ * @param profileID: Optional profile ID if viewing another user's profile
  */
 @Composable
 fun ProfileScreen(
@@ -61,14 +65,16 @@ fun ProfileScreen(
 
   var isViewingProfile = false
   if (profileID != null &&
-      FirebaseAuth.getInstance().uid != null &&
-      FirebaseAuth.getInstance().uid != profileID) {
-      profileViewModel.fetchProfile(profileID)
-       isViewingProfile = true
-  } else if (FirebaseAuth.getInstance().uid != null) {
-    profileViewModel.fetchProfile(FirebaseAuth.getInstance().uid!!)
+      profileViewModel.googleId != null &&
+      profileViewModel.googleId != profileID) {
+    profileViewModel.fetchProfile(profileID)
+    isViewingProfile = true
+  } else if (profileViewModel.googleId != null) {
+    profileViewModel.fetchProfile(profileViewModel.googleId)
   } else {
-    throw Exception("No Current FirebaseUser is sign-in")
+    // Should never occur
+    throw Exception(
+        "Not Signed-in : No Current FirebaseUser is sign-in. Database isn't accessible if no one is signed-in")
   }
 
   Scaffold(
@@ -87,13 +93,16 @@ fun ProfileScreen(
 }
 
 /**
- * A composable function that represents the profile box
+ * A composable function that represents the profile box.
  *
  * This function provides the UI interface of the profile box of the user, which includes the name,
- * username, biography, followers and following of the user.
+ * username, biography, followers, and following of the user.
  *
- * @param padding: pad around the profile box depending on the format of the phone
- * @param profile: extract the needed information from the user's profile in the database
+ * @param padding: Padding around the profile box depending on the format of the phone
+ * @param profile: Extract the needed information from the user's profile in the database
+ * @param navigationActions: NavigationActions object to handle navigation events
+ * @param isViewingProfile: Flag indicating whether the profile being viewed is the current user's
+ *   or not
  */
 @Composable
 fun ProfileBox(
@@ -126,11 +135,7 @@ fun ProfileBox(
       }
 }
 
-/**
- * A composable function that generates the user's profile picture
- *
- * @param profile: extract the needed information from the user's profile in the database
- */
+/** A composable function that generates the user's profile picture. */
 @Composable
 fun UserProfilePicture() {
   Image(
@@ -158,9 +163,10 @@ fun UserNameBox(profile: Profile) {
 }
 
 /**
- * A composable function that generates the user's followers
+ * A composable function that generates the user's followers.
  *
- * @param profile: extract the needed information from the user's profile in the database
+ * @param profile: Extract the needed information from the user's profile in the database
+ * @param navigationActions: NavigationActions object to handle navigation events
  */
 @Composable
 fun FollowersButton(profile: Profile, navigationActions: NavigationActions) {
@@ -178,9 +184,10 @@ fun FollowersButton(profile: Profile, navigationActions: NavigationActions) {
 }
 
 /**
- * A composable function that generates the user's following
+ * A composable function that generates the user's following.
  *
- * @param profile: extract the needed information from the user's profile in the database
+ * @param profile: Extract the needed information from the user's profile in the database
+ * @param navigationActions: NavigationActions object to handle navigation events
  */
 @Composable
 fun FollowingButton(profile: Profile, navigationActions: NavigationActions) {
@@ -210,7 +217,14 @@ fun UserBio(profile: Profile) {
       style = textStyle(13, 15, 400, TextAlign.Justify))
 }
 
-/** A composable function that generates the Edit profile and Share profile buttons */
+/**
+ * A composable function that generates the (Edit profile or Follower) and (Share profile) buttons.
+ *
+ * @param navigationActions: NavigationActions object to handle navigation events
+ * @param profile: Extract the needed information from the user's profile in the database
+ * @param isViewingProfile: Flag indicating whether the profile being viewed is the current user's
+ *   or not
+ */
 @Composable
 fun ProfileButtons(
     navigationActions: NavigationActions,
@@ -231,10 +245,12 @@ fun ProfileButtons(
                     style = textStyle())
               }
         } else {
-          var isFollowing = remember { mutableStateOf(profile.followers.contains(FirebaseAuth.getInstance().uid!!)) }
+          val isFollowing = remember {
+            mutableStateOf(profile.followers.contains(FirebaseAuth.getInstance().uid!!))
+          }
           if (isFollowing.value) {
             OutlinedButton(
-                modifier = Modifier.testTag("FollowingButton").background(BlueFollowButton) ,
+                modifier = Modifier.testTag("FollowingButton").background(BlueFollowButton),
                 onClick = {
                   isFollowing.value = false
                   /*TODO REMOVE follower*/
@@ -249,7 +265,7 @@ fun ProfileButtons(
             OutlinedButton(
                 modifier = Modifier.testTag("FollowButton").background(TextBarColor),
                 onClick = {
-                    isFollowing.value = true
+                  isFollowing.value = true
                   /*TODO ADD follower*/
                 }) {
                   Text(
@@ -270,7 +286,15 @@ fun ProfileButtons(
       }
 }
 
-/** A composable helper function that generates the font style for the Text */
+/**
+ * A composable helper function that generates the font style for the Text.
+ *
+ * @param fontSize: Font size of the text (default is 13 sp)
+ * @param height: Line height of the text (default is 0 sp, which means automatic line height)
+ * @param weight: Font weight of the text (default is 400)
+ * @param align: Text alignment (default is TextAlign.Center)
+ * @param color: Text color (default is DarkGrey)
+ */
 @Composable
 fun textStyle(
     fontSize: Int = 13,

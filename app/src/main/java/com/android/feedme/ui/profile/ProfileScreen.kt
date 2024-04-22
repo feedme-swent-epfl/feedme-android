@@ -1,7 +1,7 @@
 package com.android.feedme.ui.profile
 
+import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.Image
-import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
@@ -13,6 +13,7 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.shape.CircleShape
+import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.OutlinedButton
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
@@ -31,8 +32,10 @@ import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextOverflow
+import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.navigation.compose.rememberNavController
 import com.android.feedme.R
 import com.android.feedme.model.data.Profile
 import com.android.feedme.ui.navigation.BottomNavigationMenu
@@ -41,8 +44,10 @@ import com.android.feedme.ui.navigation.Route
 import com.android.feedme.ui.navigation.Screen
 import com.android.feedme.ui.navigation.TOP_LEVEL_DESTINATIONS
 import com.android.feedme.ui.navigation.TopBarNavigation
-import com.android.feedme.ui.theme.BlueFollowButton
 import com.android.feedme.ui.theme.DarkGrey
+import com.android.feedme.ui.theme.FollowButton
+import com.android.feedme.ui.theme.FollowButtonBorder
+import com.android.feedme.ui.theme.FollowingButton
 import com.android.feedme.ui.theme.TextBarColor
 import com.google.firebase.auth.FirebaseAuth
 
@@ -86,7 +91,7 @@ fun ProfileScreen(
       content = { padding ->
         ProfileBox(
             padding,
-            profileViewModel.profile.value ?: throw Exception("No Profile to fetch"),
+            profileViewModel.getProfile() ?: throw Exception("No Profile to fetch"),
             navigationActions,
             isViewingProfile)
       })
@@ -238,10 +243,12 @@ fun ProfileButtons(
         if (!isViewingProfile) {
           OutlinedButton(
               modifier = Modifier.testTag("EditButton"),
+              border = BorderStroke(2.dp, FollowButtonBorder),
               onClick = { navigationActions.navigateTo(Screen.EDIT_PROFILE) }) {
                 Text(
                     modifier = Modifier.width(110.dp).height(13.dp),
                     text = "Edit Profile",
+                    fontWeight = FontWeight.Bold,
                     style = textStyle())
               }
         } else {
@@ -250,38 +257,49 @@ fun ProfileButtons(
           }
           if (isFollowing.value) {
             OutlinedButton(
-                modifier = Modifier.testTag("FollowingButton").background(BlueFollowButton),
+                colors = ButtonDefaults.buttonColors(containerColor = FollowingButton),
+                border = BorderStroke(2.dp, FollowButtonBorder),
+                modifier = Modifier.testTag("FollowingButton"),
                 onClick = {
                   isFollowing.value = false
-                  /*TODO REMOVE follower*/
-                }) {
-                  Text(
-                      color = DarkGrey,
-                      modifier = Modifier.width(110.dp).height(13.dp),
-                      text = "Following",
-                      style = textStyle(color = TextBarColor))
-                }
-          } else {
-            OutlinedButton(
-                modifier = Modifier.testTag("FollowButton").background(TextBarColor),
-                onClick = {
-                  isFollowing.value = true
                   /*TODO ADD follower*/
                 }) {
                   Text(
                       modifier = Modifier.width(110.dp).height(13.dp),
                       text = "Following",
+                      fontWeight = FontWeight.Bold,
                       style = textStyle())
+                }
+          } else {
+            OutlinedButton(
+                colors = ButtonDefaults.buttonColors(containerColor = FollowButton),
+                border = BorderStroke(2.dp, FollowButtonBorder),
+                modifier = Modifier.testTag("FollowButton"),
+                onClick = {
+                  isFollowing.value = true
+                  /*TODO REMOVE follower*/
+                }) {
+                  Text(
+                      color = TextBarColor,
+                      modifier = Modifier.width(110.dp).height(13.dp),
+                      text = "Follow",
+                      fontWeight = FontWeight.Bold,
+                      style = textStyle(color = TextBarColor))
                 }
           }
         }
 
         OutlinedButton(
             modifier = Modifier.testTag("ShareButton"),
+            border = BorderStroke(2.dp, FollowButtonBorder),
             onClick = {
               /*TODO*/
             }) {
-              Text(modifier = Modifier.width(110.dp), text = "Share Profile", style = textStyle())
+              Text(
+                  modifier = Modifier.width(110.dp),
+                  text = "Share Profile",
+                  fontWeight = FontWeight.Bold,
+                  style = textStyle())
             }
       }
 }
@@ -309,4 +327,26 @@ fun textStyle(
       fontWeight = FontWeight(weight),
       color = DarkGrey,
       textAlign = align)
+}
+
+@Preview
+@Composable
+fun ProfileButtonsPreview() {
+  val profile =
+      Profile(
+          // Sample profile data
+          name = "John Doe",
+          username = "johndoe",
+          followers = listOf("follower1", "follower2"),
+          following = listOf("following1", "following2"),
+          description = "Lorem ipsum dolor sit amet, consectetur adipiscing elit."
+          // Add any other required fields for Profile
+          )
+  val navigationActions =
+      NavigationActions(rememberNavController()) // Replace with actual navigation actions
+  ProfileButtons(
+      navigationActions = navigationActions,
+      profile = profile,
+      isViewingProfile = true // Adjust as needed for preview
+      )
 }

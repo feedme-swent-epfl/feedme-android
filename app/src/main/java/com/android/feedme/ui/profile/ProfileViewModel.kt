@@ -17,12 +17,13 @@ import kotlinx.coroutines.launch
  * used in order to extract the profile information of the connected user
  */
 class ProfileViewModel : ViewModel() {
+
   private val repository = ProfileRepository.instance
   private val _profile = MutableStateFlow<Profile?>(null)
   val profile: StateFlow<Profile?> = _profile
   val followers = MutableStateFlow<List<Profile>>(listOf(Profile()))
   val following = MutableStateFlow<List<Profile>>(listOf(Profile()))
-  val googleId = FirebaseAuth.getInstance().uid
+  val googleId = FirebaseAuth.getInstance().uid ?: "ID_DEFAULT"
 
   init {
     // Listen to FirebaseAuth state changes
@@ -99,5 +100,14 @@ class ProfileViewModel : ViewModel() {
             })
       }
     }
+  }
+
+  /**
+   * Retrieves the current profile from the [profile] StateFlow.
+   *
+   * @return The current profile if available, or null if no profile is available.
+   */
+  fun getProfile(): Profile? {
+    return profile.value
   }
 }

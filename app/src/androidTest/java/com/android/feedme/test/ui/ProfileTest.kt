@@ -29,7 +29,6 @@ class ProfileTest {
 
   @Test
   fun profileBoxAndComponentsCorrectlyDisplayed() {
-    goToProfileScreen()
     ComposeScreen.onComposeScreen<ProfileScreen>(composeTestRule) {
       val mockProfileViewModel = mockk<ProfileViewModel>()
       val profile =
@@ -61,12 +60,12 @@ class ProfileTest {
 
       profileBio { assertIsDisplayed() }
 
-      followerButton {
+      followerDisplayButton {
         assertIsDisplayed()
         assertHasClickAction()
       }
 
-      followingButton {
+      followingDisplayButton {
         assertIsDisplayed()
         assertHasClickAction()
       }
@@ -83,5 +82,70 @@ class ProfileTest {
     }
   }
 
-  private fun goToProfileScreen() {}
+  @Test
+  fun viewingDisplayedProfileIsCorrectAndFollowButtonWorks() {
+    ComposeScreen.onComposeScreen<ProfileScreen>(composeTestRule) {
+      val mockProfileViewModel = mockk<ProfileViewModel>()
+      val profile =
+          Profile(
+              // Sample profile data
+              name = "John Doe",
+              username = "johndoe",
+              followers = listOf("follower1", "follower2"),
+              following = listOf("following1", "following2"),
+              description = "Lorem ipsum dolor sit amet, consectetur adipiscing elit."
+              // Add any other required fields for Profile
+              )
+
+      every { mockProfileViewModel.googleId } returns "ID_DEFAULT_2"
+      every { mockProfileViewModel.getProfile() } returns profile
+      every { mockProfileViewModel.fetchProfile("ID_DEFAULT") } returns Unit
+
+      composeTestRule.setContent {
+        ProfileScreen(mockk<NavigationActions>(), mockProfileViewModel, "ID_DEFAULT")
+      }
+
+      topBarProfile { assertIsDisplayed() }
+
+      bottomBarProfile { assertIsDisplayed() }
+
+      profileBox { assertIsDisplayed() }
+
+      profileName { assertIsDisplayed() }
+
+      profileIcon { assertIsDisplayed() }
+
+      profileBio { assertIsDisplayed() }
+
+      followerDisplayButton {
+        assertIsDisplayed()
+        assertHasClickAction()
+      }
+
+      followingDisplayButton {
+        assertIsDisplayed()
+        assertHasClickAction()
+      }
+
+      editButton {
+        assertIsNotDisplayed()
+      }
+
+      shareButton {
+        assertIsDisplayed()
+        assertHasClickAction()
+      }
+
+      followerButton{
+        assertIsDisplayed()
+        assertHasClickAction()
+        performClick()
+      }
+
+      followingButton{
+        assertIsDisplayed()
+        assertHasClickAction()
+      }
+    }
+  }
 }

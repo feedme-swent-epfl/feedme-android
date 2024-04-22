@@ -19,10 +19,8 @@ import com.android.feedme.screen.LandingScreen
 import com.android.feedme.screen.LoginScreen
 import com.android.feedme.screen.ProfileScreen
 import com.android.feedme.test.auth.mockGoogleSignInAccount
-import com.android.feedme.ui.CreateScreen
 import com.android.feedme.ui.auth.setLoginMockingForTests
 import com.android.feedme.ui.auth.setTestMode
-import com.android.feedme.ui.camera.CameraScreen
 import com.kaspersky.kaspresso.testcases.api.testcase.TestCase
 import io.github.kakaocup.compose.node.element.ComposeScreen
 import org.junit.After
@@ -179,7 +177,7 @@ class UserFlowTest : TestCase() {
     }
 
     ComposeScreen.onComposeScreen<ProfileScreen>(composeTestRule) {
-      followerButton {
+      followerDisplayButton {
         assertIsDisplayed()
         performClick()
       }

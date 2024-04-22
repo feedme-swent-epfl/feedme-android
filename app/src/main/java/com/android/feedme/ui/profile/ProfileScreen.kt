@@ -32,10 +32,8 @@ import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextOverflow
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import androidx.navigation.compose.rememberNavController
 import com.android.feedme.R
 import com.android.feedme.model.data.Profile
 import com.android.feedme.ui.navigation.BottomNavigationMenu
@@ -49,7 +47,6 @@ import com.android.feedme.ui.theme.FollowButton
 import com.android.feedme.ui.theme.FollowButtonBorder
 import com.android.feedme.ui.theme.FollowingButton
 import com.android.feedme.ui.theme.TextBarColor
-import com.google.firebase.auth.FirebaseAuth
 
 /**
  * A composable function that generates the profile screen.
@@ -93,6 +90,7 @@ fun ProfileScreen(
             padding,
             profileViewModel.getProfile() ?: throw Exception("No Profile to fetch"),
             navigationActions,
+            profileViewModel,
             isViewingProfile)
       })
 }
@@ -114,6 +112,7 @@ fun ProfileBox(
     padding: PaddingValues,
     profile: Profile,
     navigationActions: NavigationActions,
+    profileViewModel: ProfileViewModel,
     isViewingProfile: Boolean
 ) { // TODO add font
 
@@ -136,7 +135,7 @@ fun ProfileBox(
                   }
             }
         UserBio(profile)
-        ProfileButtons(navigationActions, profile, isViewingProfile)
+        ProfileButtons(navigationActions, profile, profileViewModel, isViewingProfile)
       }
 }
 
@@ -176,7 +175,7 @@ fun UserNameBox(profile: Profile) {
 @Composable
 fun FollowersButton(profile: Profile, navigationActions: NavigationActions) {
   TextButton(
-      modifier = Modifier.testTag("FollowerButton"),
+      modifier = Modifier.testTag("FollowerDisplayButton"),
       onClick = { navigationActions.navigateTo("friends/0") }) {
         Column(
             horizontalAlignment = Alignment.CenterHorizontally,
@@ -197,7 +196,7 @@ fun FollowersButton(profile: Profile, navigationActions: NavigationActions) {
 @Composable
 fun FollowingButton(profile: Profile, navigationActions: NavigationActions) {
   TextButton(
-      modifier = Modifier.testTag("FollowingButton"),
+      modifier = Modifier.testTag("FollowingDisplayButton"),
       onClick = { navigationActions.navigateTo("friends/1") }) {
         Column(
             horizontalAlignment = Alignment.CenterHorizontally,
@@ -234,6 +233,7 @@ fun UserBio(profile: Profile) {
 fun ProfileButtons(
     navigationActions: NavigationActions,
     profile: Profile,
+    profileViewModel: ProfileViewModel,
     isViewingProfile: Boolean
 ) {
   Row(
@@ -253,7 +253,7 @@ fun ProfileButtons(
               }
         } else {
           val isFollowing = remember {
-            mutableStateOf(profile.followers.contains(FirebaseAuth.getInstance().uid!!))
+            mutableStateOf(profile.followers.contains(profileViewModel.googleId))
           }
           if (isFollowing.value) {
             OutlinedButton(
@@ -329,24 +329,3 @@ fun textStyle(
       textAlign = align)
 }
 
-@Preview
-@Composable
-fun ProfileButtonsPreview() {
-  val profile =
-      Profile(
-          // Sample profile data
-          name = "John Doe",
-          username = "johndoe",
-          followers = listOf("follower1", "follower2"),
-          following = listOf("following1", "following2"),
-          description = "Lorem ipsum dolor sit amet, consectetur adipiscing elit."
-          // Add any other required fields for Profile
-          )
-  val navigationActions =
-      NavigationActions(rememberNavController()) // Replace with actual navigation actions
-  ProfileButtons(
-      navigationActions = navigationActions,
-      profile = profile,
-      isViewingProfile = true // Adjust as needed for preview
-      )
-}

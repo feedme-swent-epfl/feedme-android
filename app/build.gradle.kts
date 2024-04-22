@@ -169,6 +169,10 @@ dependencies {
     // load Images from URL
     implementation("io.coil-kt:coil-compose:2.4.0")
 
+    //ML kit text recognition
+    implementation("com.google.mlkit:text-recognition:16.0.0")
+
+
 
     // ---------------- CameraX --------------------
     implementation(libs.camera.core)

@@ -37,8 +37,10 @@ class SmallCommentsTest {
 
     // Author name
     composeTestRule.onNodeWithText(comment1.authorId).assertIsDisplayed()
+
     // Title
     composeTestRule.onNodeWithText(comment1.title).assertIsDisplayed()
+
     // Description
     composeTestRule.onNodeWithText(comment1.content).assertIsDisplayed()
   }

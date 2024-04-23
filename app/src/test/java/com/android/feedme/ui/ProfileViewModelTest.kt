@@ -7,13 +7,19 @@ import com.android.feedme.model.data.ProfileRepository
 import com.android.feedme.model.viewmodel.ProfileViewModel
 import com.google.android.gms.tasks.Tasks
 import com.google.firebase.FirebaseApp
-import com.google.firebase.firestore.*
-import junit.framework.TestCase.*
+import com.google.firebase.firestore.CollectionReference
+import com.google.firebase.firestore.DocumentReference
+import com.google.firebase.firestore.DocumentSnapshot
+import com.google.firebase.firestore.FirebaseFirestore
+import junit.framework.TestCase.assertEquals
+import junit.framework.TestCase.assertFalse
+import junit.framework.TestCase.assertTrue
 import org.junit.Before
 import org.junit.Test
 import org.junit.runner.RunWith
 import org.mockito.Mock
-import org.mockito.Mockito.*
+import org.mockito.Mockito.anyString
+import org.mockito.Mockito.`when`
 import org.mockito.MockitoAnnotations
 import org.robolectric.RobolectricTestRunner
 import org.robolectric.Shadows.shadowOf
@@ -72,6 +78,40 @@ class ProfileViewModelTest {
     profileViewModel.fetchProfile("1")
     shadowOf(Looper.getMainLooper()).idle()
 
-    assertTrue(profileViewModel.profile.value!!.email == expectedProfile.email)
+    assertTrue(profileViewModel.viewingUserProfile.value!!.email == expectedProfile.email)
+  }
+
+  @Test
+  fun isViewingProfile_ViewingUserIdNotNull_ReturnsTrue() {
+    profileViewModel.currentUserId = "1"
+    profileViewModel.viewingUserId = "2"
+    assertTrue(profileViewModel.isViewingProfile())
+  }
+
+  @Test
+  fun isViewingProfile_ViewingUserIdNull_ReturnsFalse() {
+    profileViewModel.currentUserId = "1"
+    profileViewModel.viewingUserId = null
+    assertFalse(profileViewModel.isViewingProfile())
+  }
+
+  @Test
+  fun isViewingProfile_ViewingUserIdNotNull_ThenNull_ReturnsFalse() {
+    profileViewModel.currentUserId = "1"
+    profileViewModel.viewingUserId = "2"
+    profileViewModel.removeViewingProfile()
+    assertFalse(profileViewModel.isViewingProfile())
+  }
+
+  @Test
+  fun profileToShow_ViewingProfile_ReturnsViewingProfile() {
+    profileViewModel.currentUserId = "1"
+    profileViewModel.viewingUserId = null
+    profileViewModel.setViewingProfile(Profile("2", "John", "blabla", "john@example.com"))
+    val profile = profileViewModel.profileToShow()
+    assertEquals("2", profile.id)
+    assertEquals("John", profile.name)
+    assertEquals("blabla", profile.username)
+    assertEquals("john@example.com", profile.email)
   }
 }

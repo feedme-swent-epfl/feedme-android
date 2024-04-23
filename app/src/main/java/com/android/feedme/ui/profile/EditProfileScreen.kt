@@ -73,7 +73,7 @@ fun EditProfileContent(
     profileViewModel: ProfileViewModel,
     navigationActions: NavigationActions
 ) {
-  val profile = profileViewModel.profile.collectAsState().value ?: Profile()
+  val profile = profileViewModel.currentUserProfile.collectAsState().value ?: Profile()
 
   var name by remember { mutableStateOf(profile.name) }
   var username by remember { mutableStateOf(profile.username) }

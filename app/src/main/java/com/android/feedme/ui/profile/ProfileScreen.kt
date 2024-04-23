@@ -1,5 +1,6 @@
 package com.android.feedme.ui.profile
 
+import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
@@ -12,15 +13,18 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.shape.CircleShape
+import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.OutlinedButton
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.res.painterResource
@@ -40,46 +44,64 @@ import com.android.feedme.ui.navigation.Screen
 import com.android.feedme.ui.navigation.TOP_LEVEL_DESTINATIONS
 import com.android.feedme.ui.navigation.TopBarNavigation
 import com.android.feedme.ui.theme.DarkGrey
+import com.android.feedme.ui.theme.FollowButton
+import com.android.feedme.ui.theme.FollowButtonBorder
+import com.android.feedme.ui.theme.FollowingButton
+import com.android.feedme.ui.theme.TextBarColor
 
 /**
- * A composable function that generates the profile screen
+ * A composable function that generates the profile screen.
  *
  * This function provides the UI interface of the profile page, which includes the profile box,
- * recipe page of the user and the comments of the user.
+ * recipe page of the user, and the comments of the user.
+ *
+ * @param navigationActions: NavigationActions object to handle navigation events
+ * @param profileViewModel: ProfileViewModel object to interact with profile data
+ * @param profileID: Optional profile ID if viewing another user's profile
  */
 @Composable
-fun ProfileScreen(navigationActions: NavigationActions, profileViewModel: ProfileViewModel) {
-  val profile = profileViewModel.profile.collectAsState().value
+fun ProfileScreen(
+    navigationActions: NavigationActions,
+    profileViewModel: ProfileViewModel,
+) {
 
   Scaffold(
       modifier = Modifier.fillMaxSize().testTag("ProfileScreen"),
       topBar = { TopBarNavigation(title = "Profile") },
       bottomBar = {
-        BottomNavigationMenu(Route.PROFILE, navigationActions::navigateTo, TOP_LEVEL_DESTINATIONS)
+        BottomNavigationMenu(
+            Route.PROFILE,
+            { top ->
+              profileViewModel.removeViewingProfile()
+              navigationActions.navigateTo(top)
+            },
+            TOP_LEVEL_DESTINATIONS)
       },
       content = { padding ->
-        ProfileBox(
-            padding,
-            profileViewModel.profile.collectAsState().value ?: Profile(),
-            navigationActions)
+        ProfileBox(padding, profileViewModel.profileToShow(), navigationActions, profileViewModel)
       })
 }
 
 /**
- * A composable function that represents the profile box
+ * A composable function that represents the profile box.
  *
  * This function provides the UI interface of the profile box of the user, which includes the name,
- * username, biography, followers and following of the user.
+ * username, biography, followers, and following of the user.
  *
- * @param padding: pad around the profile box depending on the format of the phone
- * @param profile: extract the needed information from the user's profile in the database
+ * @param padding: Padding around the profile box depending on the format of the phone
+ * @param profile: Extract the needed information from the user's profile in the database
+ * @param navigationActions: NavigationActions object to handle navigation events
+ * @param isViewingProfile: Flag indicating whether the profile being viewed is the current user's
+ *   or not
  */
 @Composable
 fun ProfileBox(
     padding: PaddingValues,
     profile: Profile,
-    navigationActions: NavigationActions
+    navigationActions: NavigationActions,
+    profileViewModel: ProfileViewModel
 ) { // TODO add font
+
   Column(
       modifier = Modifier.padding(padding).testTag("ProfileBox"),
       verticalArrangement = Arrangement.Top) {
@@ -99,15 +121,11 @@ fun ProfileBox(
                   }
             }
         UserBio(profile)
-        ProfileButtons(navigationActions)
+        ProfileButtons(navigationActions, profile, profileViewModel)
       }
 }
 
-/**
- * A composable function that generates the user's profile picture
- *
- * @param profile: extract the needed information from the user's profile in the database
- */
+/** A composable function that generates the user's profile picture. */
 @Composable
 fun UserProfilePicture() {
   Image(
@@ -125,58 +143,53 @@ fun UserProfilePicture() {
 @Composable
 fun UserNameBox(profile: Profile) {
   Column(modifier = Modifier.width(100.dp).testTag("ProfileName")) {
-    Text(
-        text = profile.name,
-        style = textStyle(17, 15, 700, TextAlign.Center),
-        overflow = TextOverflow.Ellipsis)
+    Text(text = profile.name, style = textStyle(17, 15, 700), overflow = TextOverflow.Ellipsis)
     Spacer(modifier = Modifier.height(10.dp))
     Text(
         text = "@" + profile.username,
-        style = textStyle(14, 15, 700, TextAlign.Center),
+        style = textStyle(14, 15, 700, TextAlign.Left),
         overflow = TextOverflow.Ellipsis)
   }
 }
 
 /**
- * A composable function that generates the user's followers
+ * A composable function that generates the user's followers.
  *
- * @param profile: extract the needed information from the user's profile in the database
+ * @param profile: Extract the needed information from the user's profile in the database
+ * @param navigationActions: NavigationActions object to handle navigation events
  */
 @Composable
 fun FollowersButton(profile: Profile, navigationActions: NavigationActions) {
   TextButton(
-      modifier = Modifier.testTag("FollowerButton"),
+      modifier = Modifier.testTag("FollowerDisplayButton"),
       onClick = { navigationActions.navigateTo("friends/0") }) {
         Column(
             horizontalAlignment = Alignment.CenterHorizontally,
             verticalArrangement = Arrangement.Center) {
-              Text(text = "Followers", style = textStyle(10, 20, 600, TextAlign.Center))
+              Text(text = "Followers", style = textStyle(10, 20, 600))
               Spacer(modifier = Modifier.height(5.dp))
-              Text(
-                  text = profile.followers.size.toString(),
-                  style = textStyle(10, 30, 600, TextAlign.Center))
+              Text(text = profile.followers.size.toString(), style = textStyle(10, 30, 600))
             }
       }
 }
 
 /**
- * A composable function that generates the user's following
+ * A composable function that generates the user's following.
  *
- * @param profile: extract the needed information from the user's profile in the database
+ * @param profile: Extract the needed information from the user's profile in the database
+ * @param navigationActions: NavigationActions object to handle navigation events
  */
 @Composable
 fun FollowingButton(profile: Profile, navigationActions: NavigationActions) {
   TextButton(
-      modifier = Modifier.testTag("FollowingButton"),
+      modifier = Modifier.testTag("FollowingDisplayButton"),
       onClick = { navigationActions.navigateTo("friends/1") }) {
         Column(
             horizontalAlignment = Alignment.CenterHorizontally,
             verticalArrangement = Arrangement.Center) {
-              Text(text = "Following", style = textStyle(10, 20, 600, TextAlign.Center))
+              Text(text = "Following", style = textStyle(10, 20, 600))
               Spacer(modifier = Modifier.height(5.dp))
-              Text(
-                  text = profile.following.size.toString(),
-                  style = textStyle(10, 30, 600, TextAlign.Center))
+              Text(text = profile.following.size.toString(), style = textStyle(10, 30, 600))
             }
       }
 }
@@ -194,37 +207,105 @@ fun UserBio(profile: Profile) {
       style = textStyle(13, 15, 400, TextAlign.Justify))
 }
 
-/** A composable function that generates the Edit profile and Share profile buttons */
+/**
+ * A composable function that generates the (Edit profile or Follower) and (Share profile) buttons.
+ *
+ * @param navigationActions: NavigationActions object to handle navigation events
+ * @param profile: Extract the needed information from the user's profile in the database
+ * @param isViewingProfile: Flag indicating whether the profile being viewed is the current user's
+ *   or not
+ */
 @Composable
-fun ProfileButtons(navigationActions: NavigationActions) {
+fun ProfileButtons(
+    navigationActions: NavigationActions,
+    profile: Profile,
+    profileViewModel: ProfileViewModel
+) {
   Row(
       modifier = Modifier.fillMaxWidth().padding(vertical = 20.dp),
       horizontalArrangement = Arrangement.SpaceEvenly,
       verticalAlignment = Alignment.CenterVertically) {
-        OutlinedButton(
-            modifier = Modifier.testTag("EditButton"),
-            onClick = { navigationActions.navigateTo(Screen.EDIT_PROFILE) }) {
-              Text(
-                  modifier = Modifier.width(110.dp).height(13.dp),
-                  text = "Edit Profile",
-                  style = textStyle(13, 0, 400, TextAlign.Center))
-            }
+        if (!profileViewModel.isViewingProfile()) {
+          OutlinedButton(
+              modifier = Modifier.testTag("EditButton"),
+              border = BorderStroke(2.dp, FollowButtonBorder),
+              onClick = { navigationActions.navigateTo(Screen.EDIT_PROFILE) }) {
+                Text(
+                    modifier = Modifier.width(110.dp).height(13.dp),
+                    text = "Edit Profile",
+                    fontWeight = FontWeight.Bold,
+                    style = textStyle())
+              }
+        } else {
+          val isFollowing = remember {
+            mutableStateOf(profile.followers.contains(profileViewModel.currentUserId))
+          }
+          if (isFollowing.value) {
+            OutlinedButton(
+                colors = ButtonDefaults.buttonColors(containerColor = FollowingButton),
+                border = BorderStroke(2.dp, FollowButtonBorder),
+                modifier = Modifier.testTag("FollowingButton"),
+                onClick = {
+                  isFollowing.value = false
+                  /*TODO ADD follower*/
+                }) {
+                  Text(
+                      modifier = Modifier.width(110.dp).height(13.dp),
+                      text = "Following",
+                      fontWeight = FontWeight.Bold,
+                      style = textStyle())
+                }
+          } else {
+            OutlinedButton(
+                colors = ButtonDefaults.buttonColors(containerColor = FollowButton),
+                border = BorderStroke(2.dp, FollowButtonBorder),
+                modifier = Modifier.testTag("FollowButton"),
+                onClick = {
+                  isFollowing.value = true
+                  /*TODO REMOVE follower*/
+                }) {
+                  Text(
+                      color = TextBarColor,
+                      modifier = Modifier.width(110.dp).height(13.dp),
+                      text = "Follow",
+                      fontWeight = FontWeight.Bold,
+                      style = textStyle(color = TextBarColor))
+                }
+          }
+        }
+
         OutlinedButton(
             modifier = Modifier.testTag("ShareButton"),
+            border = BorderStroke(2.dp, FollowButtonBorder),
             onClick = {
               /*TODO*/
             }) {
               Text(
                   modifier = Modifier.width(110.dp),
                   text = "Share Profile",
-                  style = textStyle(13, 0, 400, TextAlign.Center))
+                  fontWeight = FontWeight.Bold,
+                  style = textStyle())
             }
       }
 }
 
-/** A composable helper function that generates the font style for the Text */
+/**
+ * A composable helper function that generates the font style for the Text.
+ *
+ * @param fontSize: Font size of the text (default is 13 sp)
+ * @param height: Line height of the text (default is 0 sp, which means automatic line height)
+ * @param weight: Font weight of the text (default is 400)
+ * @param align: Text alignment (default is TextAlign.Center)
+ * @param color: Text color (default is DarkGrey)
+ */
 @Composable
-fun textStyle(fontSize: Int, height: Int, weight: Int, align: TextAlign): TextStyle {
+fun textStyle(
+    fontSize: Int = 13,
+    height: Int = 0,
+    weight: Int = 400,
+    align: TextAlign = TextAlign.Center,
+    color: Color = DarkGrey
+): TextStyle {
   return TextStyle(
       fontSize = fontSize.sp,
       lineHeight = height.sp,

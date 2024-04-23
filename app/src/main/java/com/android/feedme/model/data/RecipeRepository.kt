@@ -37,6 +37,7 @@ class RecipeRepository(private val db: FirebaseFirestore) {
         .addOnSuccessListener { onSuccess() }
         .addOnFailureListener { onFailure(it) }
   }
+
   /**
    * Retrieves a recipe from Firestore by its ID.
    *

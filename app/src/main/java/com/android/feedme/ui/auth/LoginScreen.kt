@@ -36,8 +36,10 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.android.feedme.R
+import com.android.feedme.model.viewmodel.AuthViewModel
 import com.android.feedme.ui.navigation.NavigationActions
 import com.android.feedme.ui.navigation.Route
+import com.android.feedme.ui.navigation.TOP_LEVEL_DESTINATIONS
 import com.google.android.gms.auth.api.signin.GoogleSignIn
 import com.google.android.gms.auth.api.signin.GoogleSignInOptions
 import com.google.android.gms.common.api.ApiException
@@ -77,7 +79,7 @@ fun LoginScreen(navigationActions: NavigationActions, authViewModel: AuthViewMod
                   authViewModel.authenticateWithGoogle(
                       idToken = idToken,
                       onSuccess = {
-                        navigationActions.navigateTo(Route.HOME)
+                        navigationActions.navigateTo(TOP_LEVEL_DESTINATIONS[0])
                         // Navigate to next screen or show success message
                       },
                       onFailure = { exception ->
@@ -119,7 +121,14 @@ fun LoginScreen(navigationActions: NavigationActions, authViewModel: AuthViewMod
 
         Spacer(modifier = Modifier.height(176.dp))
         Button(
-            onClick = { googleSignInLauncher.launch(googleSignInClient.signInIntent) },
+            onClick = {
+              if (Testing.isTestMode) {
+                Testing.mockSuccessfulLogin()
+                navigationActions.navigateTo(Route.HOME)
+              } else {
+                googleSignInLauncher.launch(googleSignInClient.signInIntent)
+              }
+            },
             modifier =
                 Modifier.width(250.dp)
                     .height(40.dp)
@@ -153,4 +162,24 @@ fun LoginScreen(navigationActions: NavigationActions, authViewModel: AuthViewMod
                   }
             }
       }
+}
+
+/** A function to set the test mode for the app. */
+fun setTestMode(bool: Boolean) {
+  Testing.isTestMode = bool
+}
+
+/**
+ * A function to set the mocking for successful login.
+ *
+ * @param mockingSuccessfulLogin : a lambda function to mock successful login
+ */
+fun setLoginMockingForTests(mockingSuccessfulLogin: () -> Unit) {
+  Testing.mockSuccessfulLogin = mockingSuccessfulLogin
+}
+
+/** A testing object to set the test mode and mock successful login. */
+object Testing {
+  var isTestMode = false
+  var mockSuccessfulLogin = {}
 }

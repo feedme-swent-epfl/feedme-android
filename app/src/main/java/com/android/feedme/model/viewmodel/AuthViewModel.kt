@@ -1,4 +1,4 @@
-package com.android.feedme.ui.auth
+package com.android.feedme.model.viewmodel
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope

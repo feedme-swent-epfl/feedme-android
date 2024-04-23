@@ -30,12 +30,13 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import androidx.lifecycle.viewmodel.compose.viewModel
 import com.android.feedme.R
 import com.android.feedme.model.data.Profile
+import com.android.feedme.model.viewmodel.ProfileViewModel
 import com.android.feedme.ui.navigation.BottomNavigationMenu
 import com.android.feedme.ui.navigation.NavigationActions
 import com.android.feedme.ui.navigation.Route
+import com.android.feedme.ui.navigation.Screen
 import com.android.feedme.ui.navigation.TOP_LEVEL_DESTINATIONS
 import com.android.feedme.ui.navigation.TopBarNavigation
 import com.android.feedme.ui.theme.DarkGrey
@@ -47,18 +48,21 @@ import com.android.feedme.ui.theme.DarkGrey
  * recipe page of the user and the comments of the user.
  */
 @Composable
-fun ProfileScreen(
-    navigationActions: NavigationActions,
-    profileViewModel: ProfileViewModel = viewModel()
-) {
+fun ProfileScreen(navigationActions: NavigationActions, profileViewModel: ProfileViewModel) {
   val profile = profileViewModel.profile.collectAsState().value
+
   Scaffold(
       modifier = Modifier.fillMaxSize().testTag("ProfileScreen"),
       topBar = { TopBarNavigation(title = "Profile") },
       bottomBar = {
         BottomNavigationMenu(Route.PROFILE, navigationActions::navigateTo, TOP_LEVEL_DESTINATIONS)
       },
-      content = { padding -> ProfileBox(padding, if (profile != null) profile else Profile()) })
+      content = { padding ->
+        ProfileBox(
+            padding,
+            profileViewModel.profile.collectAsState().value ?: Profile(),
+            navigationActions)
+      })
 }
 
 /**
@@ -71,7 +75,11 @@ fun ProfileScreen(
  * @param profile: extract the needed information from the user's profile in the database
  */
 @Composable
-fun ProfileBox(padding: PaddingValues, profile: Profile) { // TODO add font
+fun ProfileBox(
+    padding: PaddingValues,
+    profile: Profile,
+    navigationActions: NavigationActions
+) { // TODO add font
   Column(
       modifier = Modifier.padding(padding).testTag("ProfileBox"),
       verticalArrangement = Arrangement.Top) {
@@ -86,12 +94,12 @@ fun ProfileBox(padding: PaddingValues, profile: Profile) { // TODO add font
               Row(
                   horizontalArrangement = Arrangement.Center,
                   verticalAlignment = Alignment.CenterVertically) {
-                    FollowersButton(profile)
-                    FollowingButton(profile)
+                    FollowersButton(profile, navigationActions)
+                    FollowingButton(profile, navigationActions)
                   }
             }
         UserBio(profile)
-        ProfileButtons()
+        ProfileButtons(navigationActions)
       }
 }
 
@@ -135,12 +143,10 @@ fun UserNameBox(profile: Profile) {
  * @param profile: extract the needed information from the user's profile in the database
  */
 @Composable
-fun FollowersButton(profile: Profile) {
+fun FollowersButton(profile: Profile, navigationActions: NavigationActions) {
   TextButton(
       modifier = Modifier.testTag("FollowerButton"),
-      onClick = {
-        /*TODO Implement the onclick for the followers button */
-      }) {
+      onClick = { navigationActions.navigateTo("friends/0") }) {
         Column(
             horizontalAlignment = Alignment.CenterHorizontally,
             verticalArrangement = Arrangement.Center) {
@@ -159,12 +165,10 @@ fun FollowersButton(profile: Profile) {
  * @param profile: extract the needed information from the user's profile in the database
  */
 @Composable
-fun FollowingButton(profile: Profile) {
+fun FollowingButton(profile: Profile, navigationActions: NavigationActions) {
   TextButton(
       modifier = Modifier.testTag("FollowingButton"),
-      onClick = {
-        /*TODO Implement the onclick for the following button */
-      }) {
+      onClick = { navigationActions.navigateTo("friends/1") }) {
         Column(
             horizontalAlignment = Alignment.CenterHorizontally,
             verticalArrangement = Arrangement.Center) {
@@ -192,16 +196,14 @@ fun UserBio(profile: Profile) {
 
 /** A composable function that generates the Edit profile and Share profile buttons */
 @Composable
-fun ProfileButtons() {
+fun ProfileButtons(navigationActions: NavigationActions) {
   Row(
       modifier = Modifier.fillMaxWidth().padding(vertical = 20.dp),
       horizontalArrangement = Arrangement.SpaceEvenly,
       verticalAlignment = Alignment.CenterVertically) {
         OutlinedButton(
             modifier = Modifier.testTag("EditButton"),
-            onClick = {
-              /*TODO*/
-            }) {
+            onClick = { navigationActions.navigateTo(Screen.EDIT_PROFILE) }) {
               Text(
                   modifier = Modifier.width(110.dp).height(13.dp),
                   text = "Edit Profile",

@@ -30,7 +30,10 @@ class NavigationActions(private val navController: NavHostController) {
     navController.navigate(destination.route) {
       // Pop up to the start destination of the graph to
       // avoid building up a large stack of destinations
-      popUpTo(navController.graph.findStartDestination().id) { saveState = true }
+      popUpTo(navController.graph.findStartDestination().id) {
+        saveState = true
+        inclusive = true
+      }
 
       // Avoid multiple copies of the same destination when reselecting same item
       launchSingleTop = true
@@ -43,11 +46,11 @@ class NavigationActions(private val navController: NavHostController) {
   /**
    * Navigates to the specified route.
    *
-   * @param route The route to navigate to.
+   * @param subRoute The route to navigate to.
    */
-  fun navigateTo(route: String) {
+  fun navigateTo(subRoute: String) {
     // When calling this method, the back bottom would be available to go back using goBack()
-    navController.navigate(route)
+    navController.navigate(subRoute)
   }
 
   /** Navigates back to the previous destination in the navigation stack. */
@@ -66,7 +69,7 @@ class NavigationActions(private val navController: NavHostController) {
   }
 }
 
-/** Contains route constants used for navigating within the app. */
+/** Contains route constants used for navigating within the app's top destinations */
 object Route {
   const val AUTHENTICATION = "Authentication"
   const val HOME = "Home"
@@ -74,7 +77,20 @@ object Route {
   const val CREATE = "Create"
   const val PROFILE = "Profile"
   const val SETTINGS = "Settings"
+}
+
+/** Contains sub-route constants used for navigating within the app's screens */
+object Screen {
+  const val AUTHENTICATION = "Authentication Screen"
+  const val HOME = "Home Screen"
+  const val EXPLORE = "Explore Screen"
+  const val CREATE = "Create Screen"
+  const val PROFILE = "Profile Screen"
+  const val SETTINGS = "Settings Screen"
   const val CAMERA = "Camera"
+  const val EDIT_PROFILE = "Edit Profile"
+  const val FRIENDS = "Friends/{showFollowers}"
+  const val RECIPE = "Recipe/{recipeId}"
 }
 
 /**

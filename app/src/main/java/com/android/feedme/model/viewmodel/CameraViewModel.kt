@@ -1,4 +1,4 @@
-package com.android.feedme.model
+package com.android.feedme.model.viewmodel
 
 import android.graphics.Bitmap
 import androidx.lifecycle.ViewModel

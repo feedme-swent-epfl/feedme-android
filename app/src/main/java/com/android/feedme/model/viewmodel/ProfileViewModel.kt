@@ -24,16 +24,16 @@ class ProfileViewModel : ViewModel() {
   var currentUserId: String? = null
   private val _currentUserProfile = MutableStateFlow<Profile?>(null)
   val currentUserProfile: StateFlow<Profile?> = _currentUserProfile
-  private val _currentUserFollowers = MutableStateFlow<List<Profile>>(listOf(Profile()))
-  private val _currentUserFollowing = MutableStateFlow<List<Profile>>(listOf(Profile()))
+  private val _currentUserFollowers = MutableStateFlow<List<Profile>>(listOf())
+  private val _currentUserFollowing = MutableStateFlow<List<Profile>>(listOf())
   val currentUserFollowers: StateFlow<List<Profile>> = _currentUserFollowers
   val currentUserFollowing: StateFlow<List<Profile>> = _currentUserFollowing
 
   // Viewing User
   var viewingUserId: String? = null
   private val _viewingUserProfile = MutableStateFlow<Profile?>(null)
-  private val _viewingUserFollowing = MutableStateFlow<List<Profile>>(listOf(Profile()))
-  private val _viewingUserFollowers = MutableStateFlow<List<Profile>>(listOf(Profile()))
+  private val _viewingUserFollowing = MutableStateFlow<List<Profile>>(listOf())
+  private val _viewingUserFollowers = MutableStateFlow<List<Profile>>(listOf())
   val viewingUserProfile: StateFlow<Profile?> = _viewingUserProfile
   val viewingUserFollowing: StateFlow<List<Profile>> = _viewingUserFollowing
   val viewingUserFollowers: StateFlow<List<Profile>> = _viewingUserFollowers

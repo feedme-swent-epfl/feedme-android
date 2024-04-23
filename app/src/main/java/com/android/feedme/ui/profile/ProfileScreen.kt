@@ -19,7 +19,6 @@ import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -50,8 +49,6 @@ import com.android.feedme.ui.theme.FollowButton
 import com.android.feedme.ui.theme.FollowButtonBorder
 import com.android.feedme.ui.theme.FollowingButton
 import com.android.feedme.ui.theme.TextBarColor
-import kotlinx.coroutines.flow.MutableStateFlow
-import kotlinx.coroutines.flow.StateFlow
 
 /**
  * A composable function that generates the profile screen.
@@ -68,12 +65,13 @@ fun ProfileScreen(
     profileViewModel: ProfileViewModel,
 ) {
 
- val profile =
-     if ( profileViewModel.isViewingProfile()) profileViewModel.viewingUserProfile.collectAsState()
-    else profileViewModel.currentUserProfile.collectAsState()
+  val profile =
+      if (profileViewModel.isViewingProfile()) profileViewModel.viewingUserProfile.collectAsState()
+      else profileViewModel.currentUserProfile.collectAsState()
 
   Scaffold(
       modifier = Modifier.fillMaxSize().testTag("ProfileScreen"),
+
       topBar = {
         TopBarNavigation(
             title = "Profile",
@@ -83,6 +81,7 @@ fun ProfileScreen(
               navigationActions.goBack()
             })
       },
+
       bottomBar = {
         BottomNavigationMenu(
             Route.PROFILE,
@@ -117,14 +116,10 @@ fun ProfileBox(
 ) { // TODO add font
 
   Column(
-      modifier = Modifier
-          .padding(padding)
-          .testTag("ProfileBox"),
+      modifier = Modifier.padding(padding).testTag("ProfileBox"),
       verticalArrangement = Arrangement.Top) {
         Row(
-            modifier = Modifier
-                .fillMaxWidth()
-                .padding(vertical = 20.dp),
+            modifier = Modifier.fillMaxWidth().padding(vertical = 20.dp),
             horizontalArrangement = Arrangement.Center,
             verticalAlignment = Alignment.CenterVertically) {
               UserProfilePicture()
@@ -134,7 +129,7 @@ fun ProfileBox(
               Row(
                   horizontalArrangement = Arrangement.Center,
                   verticalAlignment = Alignment.CenterVertically) {
-                    FollowersButton(profile , navigationActions)
+                    FollowersButton(profile, navigationActions)
                     FollowingButton(profile, navigationActions)
                   }
             }
@@ -147,11 +142,7 @@ fun ProfileBox(
 @Composable
 fun UserProfilePicture() {
   Image(
-      modifier = Modifier
-          .width(100.dp)
-          .height(100.dp)
-          .clip(CircleShape)
-          .testTag("ProfileIcon"),
+      modifier = Modifier.width(100.dp).height(100.dp).clip(CircleShape).testTag("ProfileIcon"),
       painter = painterResource(id = R.drawable.user_logo),
       contentDescription = "User Profile Image",
       contentScale = ContentScale.FillBounds)
@@ -164,9 +155,7 @@ fun UserProfilePicture() {
  */
 @Composable
 fun UserNameBox(profile: Profile) {
-  Column(modifier = Modifier
-      .width(100.dp)
-      .testTag("ProfileName")) {
+  Column(modifier = Modifier.width(100.dp).testTag("ProfileName")) {
     Text(text = profile.name, style = textStyle(17, 15, 700), overflow = TextOverflow.Ellipsis)
     Spacer(modifier = Modifier.height(10.dp))
     Text(
@@ -226,9 +215,7 @@ fun FollowingButton(profile: Profile, navigationActions: NavigationActions) {
 @Composable
 fun UserBio(profile: Profile) {
   Text(
-      modifier = Modifier
-          .padding(horizontal = 18.dp)
-          .testTag("ProfileBio"),
+      modifier = Modifier.padding(horizontal = 18.dp).testTag("ProfileBio"),
       text = profile.description,
       style = textStyle(13, 15, 400, TextAlign.Justify))
 }
@@ -248,9 +235,7 @@ fun ProfileButtons(
     profileViewModel: ProfileViewModel
 ) {
   Row(
-      modifier = Modifier
-          .fillMaxWidth()
-          .padding(vertical = 20.dp),
+      modifier = Modifier.fillMaxWidth().padding(vertical = 20.dp),
       horizontalArrangement = Arrangement.SpaceEvenly,
       verticalAlignment = Alignment.CenterVertically) {
         if (!profileViewModel.isViewingProfile()) {
@@ -259,9 +244,7 @@ fun ProfileButtons(
               border = BorderStroke(2.dp, FollowButtonBorder),
               onClick = { navigationActions.navigateTo(Screen.EDIT_PROFILE) }) {
                 Text(
-                    modifier = Modifier
-                        .width(110.dp)
-                        .height(13.dp),
+                    modifier = Modifier.width(110.dp).height(13.dp),
                     text = "Edit Profile",
                     fontWeight = FontWeight.Bold,
                     style = textStyle())
@@ -278,19 +261,19 @@ fun ProfileButtons(
                 onClick = {
                   isFollowing.value = false
                   /*TODO ADD follower*/
-                    val prof = profileViewModel.currentUserProfile.value ?: Profile()
-                    val newProf = prof.copy(followers = prof.followers - (profileViewModel.viewingUserId ?: ""))
-                    profileViewModel.setProfile(newProf)
+                  val prof = profileViewModel.currentUserProfile.value ?: Profile()
+                  val newProf =
+                      prof.copy(following = prof.following - (profileViewModel.viewingUserId ?: ""))
+                  profileViewModel.setProfile(newProf)
 
-                    val prof2 = profileViewModel.profileToShow()
-                    val newProf2 = prof2.copy(following = prof2.following - (profileViewModel.currentUserId ?: ""))
-                    profileViewModel.setProfile(newProf2, false)
-
+                  val prof2 = profileViewModel.profileToShow()
+                  val newProf2 =
+                      prof2.copy(
+                          followers = prof2.followers - (profileViewModel.currentUserId ?: ""))
+                  profileViewModel.setProfile(newProf2, false)
                 }) {
                   Text(
-                      modifier = Modifier
-                          .width(110.dp)
-                          .height(13.dp),
+                      modifier = Modifier.width(110.dp).height(13.dp),
                       text = "Following",
                       fontWeight = FontWeight.Bold,
                       style = textStyle())
@@ -301,22 +284,22 @@ fun ProfileButtons(
                 border = BorderStroke(2.dp, FollowButtonBorder),
                 modifier = Modifier.testTag("FollowButton"),
                 onClick = {
-                    isFollowing.value = true
-                    /*TODO ADD follower*/
-                    val prof = profileViewModel.currentUserProfile.value ?: Profile()
-                    val newProf = prof.copy(followers = prof.followers + (profileViewModel.viewingUserId ?: ""))
-                    profileViewModel.setProfile(newProf)
+                  isFollowing.value = true
+                  /*TODO ADD follower*/
+                  val prof = profileViewModel.currentUserProfile.value ?: Profile()
+                  val newProf =
+                      prof.copy(following = prof.following + (profileViewModel.viewingUserId ?: ""))
+                  profileViewModel.setProfile(newProf)
 
-                    val prof2 = profileViewModel.profileToShow()
-                    val newProf2 = prof2.copy(following = prof2.following + (profileViewModel.currentUserId ?: ""))
-                    profileViewModel.setProfile(newProf2, false)
-
+                  val prof2 = profileViewModel.profileToShow()
+                  val newProf2 =
+                      prof2.copy(
+                          followers = prof2.followers + (profileViewModel.currentUserId ?: ""))
+                  profileViewModel.setProfile(newProf2, false)
                 }) {
                   Text(
                       color = TextBarColor,
-                      modifier = Modifier
-                          .width(110.dp)
-                          .height(13.dp),
+                      modifier = Modifier.width(110.dp).height(13.dp),
                       text = "Follow",
                       fontWeight = FontWeight.Bold,
                       style = textStyle(color = TextBarColor))

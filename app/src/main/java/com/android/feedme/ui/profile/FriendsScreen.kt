@@ -3,6 +3,7 @@ package com.android.feedme.ui.profile
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
+import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -30,8 +31,6 @@ import androidx.compose.runtime.DisposableEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableIntStateOf
-import androidx.compose.runtime.mutableStateListOf
-import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.runtime.toMutableStateList
@@ -81,44 +80,37 @@ fun FriendsScreen(
       if (mode == 4242 || profileViewModel.isViewingProfile())
           profileViewModel.viewingUserFollowing.collectAsState()
       else profileViewModel.currentUserFollowing.collectAsState()
-  if (selectedTabIndex == 4242) {selectedTabIndex = 0}
+  if (selectedTabIndex == 4242) {
+    selectedTabIndex = 0
+  }
 
+  // Create mutable state lists for followers and following
 
-    // Create mutable state lists for followers and following
+  val followersM = remember { followers.value.toMutableStateList() }
+  val followingM = remember { following.value.toMutableStateList() }
 
-    val followersM = remember { followers.value.toMutableStateList() }
-    val followingM = remember { following.value.toMutableStateList() }
+  DisposableEffect(navigationActions) {
+    onDispose {
+      // sync profile with db
+      if (!profileViewModel.isViewingProfile()) {
+        val def = profileViewModel.currentUserProfile.value
 
-
-    DisposableEffect(navigationActions) {
-        onDispose {
-            // sync profile with db
-            if (!profileViewModel.isViewingProfile()) {
-                var def = profileViewModel.currentUserProfile.value ?: Profile()
-                var followersId = followersM.toList().map { it.id }
-                var followingId = followingM.toList().map { it.id }
-                var profile = Profile(
-                    def.id,
-                    def.name,
-                    def.username,
-                    def.email,
-                    def.description,
-                    def.imageUrl,
-                    followersId,
-                    followingId,
-                    def.filter,
-                    def.recipeList,
-                    def.commentList
-                )
-                profileViewModel.setProfile(profile)
-            }
+        val followersId = followersM.toList().map { it.id }
+        val followingId = followingM.toList().map { it.id }
+        if (def != null) {
+          val profile = def.copy(followers = followersId, following = followingId)
+          profileViewModel.setProfile(profile)
         }
+      }
     }
+  }
   Scaffold(
+
       modifier = Modifier
           .fillMaxSize()
           .testTag("FriendsScreen"),
       topBar = { TopBarNavigation(title = "Friends", navigationActions) },
+
       bottomBar = {
         BottomNavigationMenu(
             Route.PROFILE,
@@ -144,10 +136,8 @@ fun FriendsScreen(
                 }
               }
           when (selectedTabIndex) {
-            0 ->
-                FollowersList(followersM, "FollowersList", navigationActions, profileViewModel)
-            1 ->
-                FollowersList(followingM, "FollowingList", navigationActions, profileViewModel)
+            0 -> FollowersList(followersM, "FollowersList", navigationActions, profileViewModel)
+            1 -> FollowersList(followingM, "FollowingList", navigationActions, profileViewModel)
           }
         }
       })
@@ -166,11 +156,24 @@ fun FollowersList(
     navigationActions: NavigationActions,
     profileViewModel: ProfileViewModel
 ) {
-  LazyColumn(modifier = Modifier
-      .fillMaxSize()
-      .testTag(tag)) {
-    items(profiles) { profile ->
-      FollowerCard(profile = profile,profiles, navigationActions, profileViewModel)
+  if (profiles.isEmpty()) {
+    Column(
+        modifier = Modifier.fillMaxSize(),
+        horizontalAlignment = Alignment.CenterHorizontally,
+        verticalArrangement = Arrangement.Center) {
+          if (tag == "FollowersList") {
+            Text(text = "No Followers Yet", modifier = Modifier.padding(16.dp))
+            Text(text = "Make a Recipe to gain some Fan!", modifier = Modifier.padding(16.dp))
+          } else {
+            Text(text = "No Fan Yet", modifier = Modifier.padding(16.dp))
+            Text(text = "Follow someone to see them here", modifier = Modifier.padding(16.dp))
+          }
+        }
+  } else {
+    LazyColumn(modifier = Modifier.fillMaxSize().testTag(tag)) {
+      items(profiles) { profile ->
+        FollowerCard(profile = profile, profiles, navigationActions, profileViewModel)
+      }
     }
   }
 }
@@ -190,11 +193,10 @@ fun FollowerCard(
 ) {
   Card(
       modifier =
-      Modifier
-          .padding(4.dp)
-          .fillMaxWidth()
-          .background(MaterialTheme.colorScheme.surface.copy(alpha = 0.5f))
-          .testTag("FollowerCard") // Applying a semi-transparent background
+          Modifier.padding(4.dp)
+              .fillMaxWidth()
+              .background(MaterialTheme.colorScheme.surface.copy(alpha = 0.5f))
+              .testTag("FollowerCard") // Applying a semi-transparent background
       ) {
         Row(
             verticalAlignment = Alignment.CenterVertically,
@@ -203,6 +205,7 @@ fun FollowerCard(
                   /*TODO Navigate to profile view of follower*/
                   profileViewModel.setViewingProfile(profile)
                   navigationActions.navigateTo(Screen.PROFILE)
+
                 }) {
               Image(
                   painter =
@@ -211,14 +214,9 @@ fun FollowerCard(
                               R.drawable
                                   .user_logo), // Assuming google_logo is your default profile icon
                   contentDescription = "Profile Image",
-                  modifier = Modifier
-                      .padding(horizontal = 10.dp)
-                      .size(50.dp)
-                      .clip(CircleShape),
+                  modifier = Modifier.padding(horizontal = 10.dp).size(50.dp).clip(CircleShape),
               )
-              Column(modifier = Modifier
-                  .padding(10.dp)
-                  .weight(1f)) {
+              Column(modifier = Modifier.padding(10.dp).weight(1f)) {
                 Text(text = profile.name, fontSize = 14.sp)
                 Text(
                     text = "@" + profile.username,
@@ -229,7 +227,7 @@ fun FollowerCard(
               Box(modifier = Modifier.align(Alignment.CenterVertically)) {
                 Row {
                   Button(
-                      onClick = { profiles.remove(profile)},
+                      onClick = { profiles.remove(profile) },
                       Modifier.padding(top = 4.dp, bottom = 4.dp, end = 0.dp)) {
                         Text(text = "Remove")
                       }

@@ -7,10 +7,10 @@ import androidx.compose.ui.test.onNodeWithText
 import androidx.test.ext.junit.runners.AndroidJUnit4
 import com.android.feedme.model.data.Comment
 import com.android.feedme.ui.component.SmallCommentsDisplay
+import java.util.Date
 import org.junit.Rule
 import org.junit.Test
 import org.junit.runner.RunWith
-import java.util.Date
 
 @RunWith(AndroidJUnit4::class)
 class SmallCommentsTest {

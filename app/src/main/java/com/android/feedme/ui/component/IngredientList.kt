@@ -34,6 +34,7 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.window.PopupProperties
 import com.android.feedme.model.data.Ingredient
@@ -63,7 +64,7 @@ fun IngredientList(
   list?.let { listOfIngredients.addAll(it) }
   listOfIngredients.add(null)
 
-  LazyColumn(modifier = modifier) {
+  LazyColumn(modifier = modifier.testTag("LazyList")) {
     this.items(totalIngredients.intValue) { index ->
       val movableContent = movableContentOf {
         IngredientInput(listOfIngredients[index]) { before, now, newIngredient ->
@@ -131,7 +132,7 @@ fun IngredientInput(
       verticalAlignment = Alignment.CenterVertically) {
 
         // Ingredients Box
-        Box(modifier = Modifier.weight(1.5f).height(60.dp)) {
+        Box(modifier = Modifier.weight(1.5f).height(60.dp).testTag("IngredientsBox")) {
           OutlinedTextField(
               colors = colorOfInputBoxes(state),
               value = name,
@@ -141,7 +142,7 @@ fun IngredientInput(
                 isDropdownVisible = true
               },
               singleLine = true,
-              modifier = Modifier.padding(end = 0.dp),
+              modifier = Modifier.padding(end = 0.dp).testTag("IngredientsInput"),
               placeholder = { Text(text = "...") },
               label = {
                 Text(text = "Ingredient", modifier = Modifier.background(color = Color.Transparent))
@@ -157,6 +158,7 @@ fun IngredientInput(
           ) {
             suggestionIngredients.forEach { item ->
               DropdownMenuItem(
+                  modifier = Modifier.testTag("IngredientOption"),
                   text = { Text(text = item) },
                   onClick = {
                     name = item
@@ -192,7 +194,7 @@ fun IngredientInput(
               }
             },
             singleLine = true,
-            modifier = Modifier.weight(1f).height(60.dp),
+            modifier = Modifier.weight(1f).height(60.dp).testTag("QuantityInput"),
             placeholder = { Text(text = "...") },
             label = {
               Text(text = "Quantity", modifier = Modifier.background(color = Color.Transparent))
@@ -204,7 +206,7 @@ fun IngredientInput(
         var expanded by remember { mutableStateOf(false) }
 
         ExposedDropdownMenuBox(
-            modifier = Modifier.weight(1f).height(60.dp),
+            modifier = Modifier.weight(1f).height(60.dp).testTag("DoseBox"),
             expanded = expanded,
             onExpandedChange = { expanded = !expanded }) {
               OutlinedTextField(
@@ -214,7 +216,7 @@ fun IngredientInput(
                   value = if (dose != MeasureUnit.EMPTY) dose.toString() else " ",
                   onValueChange = { expanded = expanded },
                   label = { Text("Dose") },
-                  modifier = Modifier.menuAnchor())
+                  modifier = Modifier.menuAnchor().testTag("DoseInput"))
               ExposedDropdownMenu(
                   modifier = Modifier.height(120.dp),
                   expanded = expanded,
@@ -243,6 +245,7 @@ fun IngredientInput(
         // Delete button for removing the ingredient
         if (state == IngredientInputState.SEMI_COMPLETE || state == IngredientInputState.COMPLETE) {
           IconButton(
+              modifier = Modifier.testTag("DeleteIconButton"),
               onClick = {
                 action(
                     state,

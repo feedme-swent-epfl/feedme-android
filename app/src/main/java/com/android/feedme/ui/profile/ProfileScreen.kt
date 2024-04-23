@@ -63,37 +63,23 @@ import com.android.feedme.ui.theme.TextBarColor
 fun ProfileScreen(
     navigationActions: NavigationActions,
     profileViewModel: ProfileViewModel,
-    profileID: String? = null
 ) {
-
-  var isViewingProfile = false
-  if (profileID != null &&
-      profileViewModel.googleId != null &&
-      profileViewModel.googleId != profileID) {
-    profileViewModel.fetchProfile(profileID)
-    isViewingProfile = true
-  } else if (profileViewModel.googleId != null) {
-    profileViewModel.fetchProfile(profileViewModel.googleId)
-  } else {
-    // Should never occur
-    throw Exception(
-        "Not Signed-in : No Current FirebaseUser is sign-in. Database isn't accessible if no one is signed-in")
-  }
 
   Scaffold(
       modifier = Modifier.fillMaxSize().testTag("ProfileScreen"),
       topBar = { TopBarNavigation(title = "Profile") },
       bottomBar = {
-        BottomNavigationMenu(Route.PROFILE, navigationActions::navigateTo, TOP_LEVEL_DESTINATIONS)
+          BottomNavigationMenu(Route.PROFILE,
+              {top ->
+                  profileViewModel.removeViewingProfile()
+                  navigationActions.navigateTo(top)}, TOP_LEVEL_DESTINATIONS)
       },
       content = { padding ->
         ProfileBox(
             padding,
-            profileViewModel.getProfile()
-                ?: throw Exception("No Profile to fetch : " + profileViewModel.googleId),
+            profileViewModel.profileToShow(),
             navigationActions,
-            profileViewModel,
-            isViewingProfile)
+            profileViewModel)
       })
 }
 
@@ -114,8 +100,7 @@ fun ProfileBox(
     padding: PaddingValues,
     profile: Profile,
     navigationActions: NavigationActions,
-    profileViewModel: ProfileViewModel,
-    isViewingProfile: Boolean
+    profileViewModel: ProfileViewModel
 ) { // TODO add font
 
   Column(
@@ -137,7 +122,7 @@ fun ProfileBox(
                   }
             }
         UserBio(profile)
-        ProfileButtons(navigationActions, profile, profileViewModel, isViewingProfile)
+        ProfileButtons(navigationActions, profile, profileViewModel)
       }
 }
 
@@ -235,14 +220,13 @@ fun UserBio(profile: Profile) {
 fun ProfileButtons(
     navigationActions: NavigationActions,
     profile: Profile,
-    profileViewModel: ProfileViewModel,
-    isViewingProfile: Boolean
+    profileViewModel: ProfileViewModel
 ) {
   Row(
       modifier = Modifier.fillMaxWidth().padding(vertical = 20.dp),
       horizontalArrangement = Arrangement.SpaceEvenly,
       verticalAlignment = Alignment.CenterVertically) {
-        if (!isViewingProfile) {
+        if (!profileViewModel.isViewingProfile()) {
           OutlinedButton(
               modifier = Modifier.testTag("EditButton"),
               border = BorderStroke(2.dp, FollowButtonBorder),
@@ -255,7 +239,7 @@ fun ProfileButtons(
               }
         } else {
           val isFollowing = remember {
-            mutableStateOf(profile.followers.contains(profileViewModel.googleId))
+            mutableStateOf(profile.followers.contains(profileViewModel.currentUserId))
           }
           if (isFollowing.value) {
             OutlinedButton(

@@ -87,10 +87,8 @@ class MainActivity : ComponentActivity() {
                 }
 
                 navigation(startDestination = Screen.PROFILE, route = Route.PROFILE) {
-                  composable(Screen.PROFILE) { backStackEntry ->
-                    backStackEntry.arguments?.getString("profileId")?.let {
-                      ProfileScreen(navigationActions, profileViewModel, it)
-                    } ?: run { ProfileScreen(navigationActions, profileViewModel) }
+                  composable(Screen.PROFILE) {
+                    ProfileScreen(navigationActions, profileViewModel)
                   }
                   composable(Screen.EDIT_PROFILE) {
                     EditProfileScreen(navigationActions, profileViewModel)

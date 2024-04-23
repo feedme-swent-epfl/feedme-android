@@ -19,19 +19,35 @@ import kotlinx.coroutines.launch
 class ProfileViewModel : ViewModel() {
 
   private val repository = ProfileRepository.instance
-  private val _profile = MutableStateFlow<Profile?>(null)
-  val profile: StateFlow<Profile?> = _profile
-  val followers = MutableStateFlow<List<Profile>>(listOf(Profile()))
-  val following = MutableStateFlow<List<Profile>>(listOf(Profile()))
-  val googleId = FirebaseAuth.getInstance().uid
+
+    //Current User
+    var currentUserId: String? = null
+    private val _currentUserProfile = MutableStateFlow<Profile?>(null)
+    val currentUserProfile: StateFlow<Profile?> = _currentUserProfile
+    val currentUserFollowers = MutableStateFlow(listOf(Profile()))
+    val currentUserFollowing = MutableStateFlow(listOf(Profile()))
+
+    //Viewing User
+    var viewingUserId: String? = null
+    private val _viewingUserProfile = MutableStateFlow<Profile?>(null)
+  val viewingUserProfile: StateFlow<Profile?> = _viewingUserProfile
+  val viewingUserFollowers = MutableStateFlow(listOf(Profile()))
+  val viewingUserFollowing = MutableStateFlow(listOf(Profile()))
+
+
 
   init {
     // Listen to FirebaseAuth state changes
     FirebaseAuth.getInstance().addAuthStateListener { firebaseAuth ->
       val user = firebaseAuth.currentUser
-      user?.uid?.let { fetchProfile(it) }
+      user?.uid?.let {
+          currentUserId = it
+          fetchCurrentUserProfile()
+      }
     }
   }
+
+
   /**
    * A function that fetches the profile during Login
    *
@@ -42,10 +58,11 @@ class ProfileViewModel : ViewModel() {
       repository.getProfile(
           id,
           onSuccess = { profile ->
-            _profile.value = profile
+              _viewingUserProfile.value = profile
+              viewingUserId = id
             if (profile != null) {
-              fetchProfiles(profile.followers, followers)
-              fetchProfiles(profile.following, following)
+              fetchProfiles(profile.followers, viewingUserFollowers)
+              fetchProfiles(profile.following, viewingUserFollowing)
             }
           },
           onFailure = {
@@ -54,6 +71,24 @@ class ProfileViewModel : ViewModel() {
           })
     }
   }
+
+    private fun fetchCurrentUserProfile() {
+        viewModelScope.launch {
+            repository.getProfile(
+                currentUserId!!,
+                onSuccess = { profile ->
+                    _currentUserProfile.value = profile
+                    if (profile != null) {
+                        fetchProfiles(profile.followers, currentUserFollowers)
+                        fetchProfiles(profile.following, currentUserFollowing)
+                    }
+                },
+                onFailure = {
+                    // Handle failure
+                    throw error("Profile was not fetched during Login")
+                })
+        }
+    }
 
   /**
    * A function that set local profile in the database
@@ -64,7 +99,7 @@ class ProfileViewModel : ViewModel() {
     viewModelScope.launch {
       repository.addProfile(
           profile,
-          onSuccess = { _profile.value = profile },
+          onSuccess = { _currentUserProfile.value = profile },
           onFailure = {
             // Handle failure
             throw error("Profile could not get updated")
@@ -102,12 +137,56 @@ class ProfileViewModel : ViewModel() {
     }
   }
 
-  /**
-   * Retrieves the current profile from the [profile] StateFlow.
-   *
-   * @return The current profile if available, or null if no profile is available.
-   */
-  fun getProfile(): Profile? {
-    return profile.value
-  }
+
+    /**
+     * Returns the profile to show based on if there is viewingUserId is null or not. If null it will show currentUser (the one logged in)
+     *
+     * @return The profile to show.
+     * @throws Exception If no profile is available.
+     */
+    fun profileToShow(): Profile {
+        return (if (isViewingProfile()) viewingUserProfile.value else currentUserProfile.value)?: throw Exception("No Profile to fetch, the current user ID is : $currentUserId, The issue comes from the fact that Firebase has no Profile with that ID")
+    }
+
+
+    /**
+     * Checks if the current user is viewing another user's profile. Will only be true if viewingUserId is not null
+     *
+     * @return True if the current user is viewing another user's profile, false otherwise.
+     * @throws Exception If no current user ID is available. Should never happen.
+     */
+     fun isViewingProfile(): Boolean {
+         var isViewingProfile = false
+         if (viewingUserId != null &&
+             currentUserId != null &&
+             currentUserId != viewingUserId ) {
+             isViewingProfile = true
+         } else if (currentUserId == null) {
+             // Should never occur
+             throw Exception(
+                 "Not Signed-in : No Current FirebaseUser is sign-in. Database isn't accessible if no one is signed-in")
+         }
+      return isViewingProfile
+    }
+
+    /**
+     * Removes the viewing profile.
+     */
+    fun removeViewingProfile(){
+        viewingUserId = null
+    }
+
+
+    /**
+     * Sets the viewing profile.
+     *
+     * @param profile The profile to set as the viewing profile.
+     */
+    fun setViewingProfile(profile: Profile) {
+        _viewingUserProfile.value = profile
+        viewingUserId = profile.id
+        fetchProfiles(profile.followers, viewingUserFollowers)
+        fetchProfiles(profile.following, currentUserFollowing)
+    }
+
 }

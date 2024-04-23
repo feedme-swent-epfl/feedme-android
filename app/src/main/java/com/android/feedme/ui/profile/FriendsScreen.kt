@@ -3,7 +3,14 @@ package com.android.feedme.ui.profile
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
-import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.CircleShape
@@ -87,14 +94,17 @@ fun FriendsScreen(
   val tabTitles = listOf("Followers", "Following")
 
   // Now, collect followers and following as state to display them
-  val followers = profileViewModel.followers.collectAsState()
-  val following = profileViewModel.following.collectAsState()
+  val followers = if(profileViewModel.isViewingProfile()) profileViewModel.viewingUserFollowers.collectAsState() else  profileViewModel.currentUserFollowers.collectAsState()
+  val following = if(profileViewModel.isViewingProfile()) profileViewModel.viewingUserFollowing.collectAsState() else  profileViewModel.currentUserFollowing.collectAsState()
 
   Scaffold(
       modifier = Modifier.fillMaxSize().testTag("FriendsScreen"),
       topBar = { TopBarNavigation(title = "Friends", navigationActions, null) },
       bottomBar = {
-        BottomNavigationMenu(Route.PROFILE, navigationActions::navigateTo, TOP_LEVEL_DESTINATIONS)
+        BottomNavigationMenu(Route.PROFILE,
+            {top ->
+                profileViewModel.removeViewingProfile()
+                navigationActions.navigateTo(top)}, TOP_LEVEL_DESTINATIONS)
       },
       content = { innerPadding ->
         Column(modifier = Modifier.padding(innerPadding)) {
@@ -112,8 +122,8 @@ fun FriendsScreen(
                 }
               }
           when (selectedTabIndex) {
-            0 -> FollowersList(followers.value, "FollowersList", navigationActions)
-            1 -> FollowersList(following.value, "FollowingList", navigationActions)
+            0 -> FollowersList(followers.value, "FollowersList", navigationActions, profileViewModel)
+            1 -> FollowersList(following.value, "FollowingList", navigationActions, profileViewModel)
           }
         }
       })
@@ -126,9 +136,14 @@ fun FriendsScreen(
  * @param tag A testing tag used for UI tests to identify the list view.
  */
 @Composable
-fun FollowersList(profiles: List<Profile>, tag: String, navigationActions: NavigationActions) {
+fun FollowersList(
+    profiles: List<Profile>,
+    tag: String,
+    navigationActions: NavigationActions,
+    profileViewModel: ProfileViewModel
+) {
   LazyColumn(modifier = Modifier.fillMaxSize().testTag(tag)) {
-    items(profiles) { profile -> FollowerCard(profile = profile, navigationActions) }
+    items(profiles) { profile -> FollowerCard(profile = profile, navigationActions, profileViewModel) }
   }
 }
 
@@ -139,7 +154,8 @@ fun FollowersList(profiles: List<Profile>, tag: String, navigationActions: Navig
  * @param profile The profile data of the user.
  */
 @Composable
-fun FollowerCard(profile: Profile, navigationActions: NavigationActions) {
+fun FollowerCard(profile: Profile, navigationActions: NavigationActions,    profileViewModel: ProfileViewModel
+) {
   Card(
       modifier =
           Modifier.padding(4.dp)
@@ -152,6 +168,7 @@ fun FollowerCard(profile: Profile, navigationActions: NavigationActions) {
             modifier =
                 Modifier.fillMaxWidth().clickable {
                   /*TODO Navigate to profile view of follower*/
+                    profileViewModel.setViewingProfile(profile)
                   navigationActions.navigateTo(Route.PROFILE + "/" + profile.id)
                 }) {
               Image(

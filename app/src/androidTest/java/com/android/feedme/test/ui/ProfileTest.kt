@@ -32,19 +32,21 @@ class ProfileTest {
     ComposeScreen.onComposeScreen<ProfileScreen>(composeTestRule) {
       val mockProfileViewModel = mockk<ProfileViewModel>()
       val profile =
-          Profile(
-              // Sample profile data
-              name = "John Doe",
-              username = "johndoe",
-              followers = listOf("follower1", "follower2"),
-              following = listOf("following1", "following2"),
-              description = "Lorem ipsum dolor sit amet, consectetur adipiscing elit."
-              // Add any other required fields for Profile
-              )
+            Profile(
+                // Sample profile data
+                name = "John Doe",
+                username = "johndoe",
+                followers = listOf("follower1", "follower2"),
+                following = listOf("following1", "following2"),
+                description = "Lorem ipsum dolor sit amet, consectetur adipiscing elit."
+                // Add any other required fields for Profile
+                )
 
-      every { mockProfileViewModel.googleId } returns "ID_DEFAULT"
-      every { mockProfileViewModel.getProfile() } returns profile
-      every { mockProfileViewModel.fetchProfile("ID_DEFAULT") } returns Unit
+      every { mockProfileViewModel.currentUserId } returns "ID_DEFAULT"
+      every { mockProfileViewModel.viewingUserId } returns null
+      every { mockProfileViewModel.isViewingProfile() } returns false
+      every { mockProfileViewModel.profileToShow() } returns profile
+      every { mockProfileViewModel.fetchCurrentUserProfile() } returns Unit
 
       composeTestRule.setContent { ProfileScreen(mockk<NavigationActions>(), mockProfileViewModel) }
 
@@ -97,12 +99,14 @@ class ProfileTest {
               // Add any other required fields for Profile
               )
 
-      every { mockProfileViewModel.googleId } returns "ID_DEFAULT_2"
-      every { mockProfileViewModel.getProfile() } returns profile
-      every { mockProfileViewModel.fetchProfile("ID_DEFAULT") } returns Unit
+      every { mockProfileViewModel.currentUserId } returns "ID_DEFAULT_1"
+      every { mockProfileViewModel.viewingUserId } returns "ID_DEFAULT_2"
+      every { mockProfileViewModel.isViewingProfile() } returns true
+      every { mockProfileViewModel.profileToShow() } returns profile
+      every { mockProfileViewModel.fetchCurrentUserProfile() } returns Unit
 
       composeTestRule.setContent {
-        ProfileScreen(mockk<NavigationActions>(), mockProfileViewModel, "ID_DEFAULT")
+        ProfileScreen(mockk<NavigationActions>(), mockProfileViewModel)
       }
 
       topBarProfile { assertIsDisplayed() }

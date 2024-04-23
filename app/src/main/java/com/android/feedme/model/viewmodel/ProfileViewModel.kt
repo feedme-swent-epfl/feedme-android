@@ -72,7 +72,7 @@ class ProfileViewModel : ViewModel() {
     }
   }
 
-    private fun fetchCurrentUserProfile() {
+    fun fetchCurrentUserProfile() {
         viewModelScope.launch {
             repository.getProfile(
                 currentUserId!!,

@@ -38,6 +38,7 @@ import com.android.feedme.ui.component.IngredientList
 import com.android.feedme.ui.navigation.BottomNavigationMenu
 import com.android.feedme.ui.navigation.NavigationActions
 import com.android.feedme.ui.navigation.Route
+import com.android.feedme.ui.navigation.Screen
 import com.android.feedme.ui.navigation.TOP_LEVEL_DESTINATIONS
 import com.android.feedme.ui.navigation.TopBarNavigation
 
@@ -105,11 +106,7 @@ fun CreateScreen(navigationActions: NavigationActions) {
 
           IngredientList()
 
-
       }
-
-
-
   }
 }
 

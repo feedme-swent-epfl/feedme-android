@@ -6,7 +6,7 @@ import androidx.compose.ui.test.onNodeWithContentDescription
 import androidx.compose.ui.test.onNodeWithText
 import androidx.test.ext.junit.runners.AndroidJUnit4
 import com.android.feedme.model.data.Comment
-import com.android.feedme.ui.navigation.SmallCommentsDisplay
+import com.android.feedme.ui.component.SmallCommentsDisplay
 import java.util.Date
 import org.junit.Rule
 import org.junit.Test

@@ -4,7 +4,7 @@ import android.os.Looper
 import androidx.test.core.app.ApplicationProvider
 import com.android.feedme.model.data.Profile
 import com.android.feedme.model.data.ProfileRepository
-import com.android.feedme.ui.auth.AuthViewModel
+import com.android.feedme.model.viewmodel.AuthViewModel
 import com.google.android.gms.tasks.Tasks
 import com.google.firebase.FirebaseApp
 import com.google.firebase.firestore.*

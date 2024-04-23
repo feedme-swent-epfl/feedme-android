@@ -38,6 +38,7 @@ import com.android.feedme.ui.component.IngredientList
 import com.android.feedme.ui.navigation.BottomNavigationMenu
 import com.android.feedme.ui.navigation.NavigationActions
 import com.android.feedme.ui.navigation.Route
+import com.android.feedme.ui.navigation.Screen
 import com.android.feedme.ui.navigation.TOP_LEVEL_DESTINATIONS
 import com.android.feedme.ui.navigation.TopBarNavigation
 
@@ -72,7 +73,7 @@ fun CreateScreen(navigationActions: NavigationActions) {
                           .padding(bottom = 20.dp)
                           .testTag("CameraButton"),
                   shape = RoundedCornerShape(size = 10.dp),
-                  onClick = { navigationActions.navigateTo(Route.CAMERA) },
+                  onClick = { navigationActions.navigateTo(Screen.CAMERA) },
                   border = BorderStroke(width = 2.dp, color = Color.Black)) {
                     Icon(
                         painter = painterResource(id = R.drawable.camera),

@@ -32,15 +32,15 @@ class ProfileTest {
     ComposeScreen.onComposeScreen<ProfileScreen>(composeTestRule) {
       val mockProfileViewModel = mockk<ProfileViewModel>()
       val profile =
-            Profile(
-                // Sample profile data
-                name = "John Doe",
-                username = "johndoe",
-                followers = listOf("follower1", "follower2"),
-                following = listOf("following1", "following2"),
-                description = "Lorem ipsum dolor sit amet, consectetur adipiscing elit."
-                // Add any other required fields for Profile
-                )
+          Profile(
+              // Sample profile data
+              name = "John Doe",
+              username = "johndoe",
+              followers = listOf("follower1", "follower2"),
+              following = listOf("following1", "following2"),
+              description = "Lorem ipsum dolor sit amet, consectetur adipiscing elit."
+              // Add any other required fields for Profile
+              )
 
       every { mockProfileViewModel.currentUserId } returns "ID_DEFAULT"
       every { mockProfileViewModel.viewingUserId } returns null
@@ -105,9 +105,7 @@ class ProfileTest {
       every { mockProfileViewModel.profileToShow() } returns profile
       every { mockProfileViewModel.fetchCurrentUserProfile() } returns Unit
 
-      composeTestRule.setContent {
-        ProfileScreen(mockk<NavigationActions>(), mockProfileViewModel)
-      }
+      composeTestRule.setContent { ProfileScreen(mockk<NavigationActions>(), mockProfileViewModel) }
 
       topBarProfile { assertIsDisplayed() }
 

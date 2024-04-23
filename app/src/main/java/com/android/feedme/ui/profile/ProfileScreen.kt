@@ -69,17 +69,16 @@ fun ProfileScreen(
       modifier = Modifier.fillMaxSize().testTag("ProfileScreen"),
       topBar = { TopBarNavigation(title = "Profile") },
       bottomBar = {
-          BottomNavigationMenu(Route.PROFILE,
-              {top ->
-                  profileViewModel.removeViewingProfile()
-                  navigationActions.navigateTo(top)}, TOP_LEVEL_DESTINATIONS)
+        BottomNavigationMenu(
+            Route.PROFILE,
+            { top ->
+              profileViewModel.removeViewingProfile()
+              navigationActions.navigateTo(top)
+            },
+            TOP_LEVEL_DESTINATIONS)
       },
       content = { padding ->
-        ProfileBox(
-            padding,
-            profileViewModel.profileToShow(),
-            navigationActions,
-            profileViewModel)
+        ProfileBox(padding, profileViewModel.profileToShow(), navigationActions, profileViewModel)
       })
 }
 

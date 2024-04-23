@@ -94,17 +94,26 @@ fun FriendsScreen(
   val tabTitles = listOf("Followers", "Following")
 
   // Now, collect followers and following as state to display them
-  val followers = if(profileViewModel.isViewingProfile()) profileViewModel.viewingUserFollowers.collectAsState() else  profileViewModel.currentUserFollowers.collectAsState()
-  val following = if(profileViewModel.isViewingProfile()) profileViewModel.viewingUserFollowing.collectAsState() else  profileViewModel.currentUserFollowing.collectAsState()
+  val followers =
+      if (profileViewModel.isViewingProfile())
+          profileViewModel.viewingUserFollowers.collectAsState()
+      else profileViewModel.currentUserFollowers.collectAsState()
+  val following =
+      if (profileViewModel.isViewingProfile())
+          profileViewModel.viewingUserFollowing.collectAsState()
+      else profileViewModel.currentUserFollowing.collectAsState()
 
   Scaffold(
       modifier = Modifier.fillMaxSize().testTag("FriendsScreen"),
       topBar = { TopBarNavigation(title = "Friends", navigationActions, null) },
       bottomBar = {
-        BottomNavigationMenu(Route.PROFILE,
-            {top ->
-                profileViewModel.removeViewingProfile()
-                navigationActions.navigateTo(top)}, TOP_LEVEL_DESTINATIONS)
+        BottomNavigationMenu(
+            Route.PROFILE,
+            { top ->
+              profileViewModel.removeViewingProfile()
+              navigationActions.navigateTo(top)
+            },
+            TOP_LEVEL_DESTINATIONS)
       },
       content = { innerPadding ->
         Column(modifier = Modifier.padding(innerPadding)) {
@@ -122,8 +131,10 @@ fun FriendsScreen(
                 }
               }
           when (selectedTabIndex) {
-            0 -> FollowersList(followers.value, "FollowersList", navigationActions, profileViewModel)
-            1 -> FollowersList(following.value, "FollowingList", navigationActions, profileViewModel)
+            0 ->
+                FollowersList(followers.value, "FollowersList", navigationActions, profileViewModel)
+            1 ->
+                FollowersList(following.value, "FollowingList", navigationActions, profileViewModel)
           }
         }
       })
@@ -143,7 +154,9 @@ fun FollowersList(
     profileViewModel: ProfileViewModel
 ) {
   LazyColumn(modifier = Modifier.fillMaxSize().testTag(tag)) {
-    items(profiles) { profile -> FollowerCard(profile = profile, navigationActions, profileViewModel) }
+    items(profiles) { profile ->
+      FollowerCard(profile = profile, navigationActions, profileViewModel)
+    }
   }
 }
 
@@ -154,7 +167,10 @@ fun FollowersList(
  * @param profile The profile data of the user.
  */
 @Composable
-fun FollowerCard(profile: Profile, navigationActions: NavigationActions,    profileViewModel: ProfileViewModel
+fun FollowerCard(
+    profile: Profile,
+    navigationActions: NavigationActions,
+    profileViewModel: ProfileViewModel
 ) {
   Card(
       modifier =
@@ -168,7 +184,7 @@ fun FollowerCard(profile: Profile, navigationActions: NavigationActions,    prof
             modifier =
                 Modifier.fillMaxWidth().clickable {
                   /*TODO Navigate to profile view of follower*/
-                    profileViewModel.setViewingProfile(profile)
+                  profileViewModel.setViewingProfile(profile)
                   navigationActions.navigateTo(Route.PROFILE + "/" + profile.id)
                 }) {
               Image(

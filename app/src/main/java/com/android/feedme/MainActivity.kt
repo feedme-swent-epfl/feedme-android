@@ -87,9 +87,7 @@ class MainActivity : ComponentActivity() {
                 }
 
                 navigation(startDestination = Screen.PROFILE, route = Route.PROFILE) {
-                  composable(Screen.PROFILE) {
-                    ProfileScreen(navigationActions, profileViewModel)
-                  }
+                  composable(Screen.PROFILE) { ProfileScreen(navigationActions, profileViewModel) }
                   composable(Screen.EDIT_PROFILE) {
                     EditProfileScreen(navigationActions, profileViewModel)
                   }

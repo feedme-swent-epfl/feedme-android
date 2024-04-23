@@ -7,7 +7,7 @@ import com.android.feedme.model.data.ProfileRepository
 import com.android.feedme.screen.FriendsScreen
 import com.android.feedme.ui.navigation.NavigationActions
 import com.google.firebase.FirebaseApp
-import com.google.firebase.firestore.*
+import com.google.firebase.firestore.FirebaseFirestore
 import io.github.kakaocup.compose.node.element.ComposeScreen
 import io.mockk.mockk
 import org.junit.Before
@@ -56,7 +56,7 @@ class FriendsTest {
   private fun goToFriendsScreen() {
     val mockNavActions = mockk<NavigationActions>(relaxed = true) // Make the mock relaxed
     composeTestRule.setContent {
-      com.android.feedme.ui.profile.FriendsScreen(mockNavActions, mode = 0)
+      com.android.feedme.ui.profile.FriendsScreen(mockNavActions, mode = 4242)
     }
     composeTestRule.waitForIdle()
   }

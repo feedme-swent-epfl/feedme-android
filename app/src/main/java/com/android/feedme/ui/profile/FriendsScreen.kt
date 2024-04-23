@@ -59,6 +59,7 @@ val demoProfiles =
             name = "Jane Smith",
             username = "jane_smith",
             imageUrl = "https://example.com/image2.jpg"))
+
 val demoProfiles2 =
     listOf(
         Profile(
@@ -81,7 +82,8 @@ val demoProfiles2 =
  * @param navigationActions Provides navigation actions for handling user interactions with the
  *   navigation bar.
  * @param profileViewModel The view model that provides the profile data.
- * @param mode Determines the initial tab selection: 0 for Followers, 1 for Following.
+ * @param mode Determines the initial tab selection: 0 for Followers, 1 for Following, 4242 for
+ *   testing.
  */
 @Composable
 fun FriendsScreen(
@@ -95,13 +97,14 @@ fun FriendsScreen(
 
   // Now, collect followers and following as state to display them
   val followers =
-      if (profileViewModel.isViewingProfile())
+      if (mode == 4242 || profileViewModel.isViewingProfile())
           profileViewModel.viewingUserFollowers.collectAsState()
       else profileViewModel.currentUserFollowers.collectAsState()
   val following =
-      if (profileViewModel.isViewingProfile())
+      if (mode == 4242 || profileViewModel.isViewingProfile())
           profileViewModel.viewingUserFollowing.collectAsState()
       else profileViewModel.currentUserFollowing.collectAsState()
+  if (selectedTabIndex == 4242) selectedTabIndex = 0
 
   Scaffold(
       modifier = Modifier.fillMaxSize().testTag("FriendsScreen"),

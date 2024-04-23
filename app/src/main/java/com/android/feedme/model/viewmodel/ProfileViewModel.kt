@@ -96,11 +96,22 @@ class ProfileViewModel : ViewModel() {
    *
    * @param profile: the profile to set in the database
    */
-  fun setProfile(profile: Profile) {
+  fun setProfile(profile: Profile, isCurrent: Boolean = true) {
     viewModelScope.launch {
       repository.addProfile(
           profile,
-          onSuccess = { _currentUserProfile.value = profile },
+          onSuccess = {
+            if (isCurrent) {
+              _currentUserProfile.value = profile
+              fetchProfiles(profile.followers, _currentUserFollowers)
+              fetchProfiles(profile.following, _currentUserFollowing)
+            } else {
+              _viewingUserProfile.value = profile
+              fetchProfiles(profile.followers, _viewingUserFollowers)
+              fetchProfiles(profile.following, _viewingUserFollowing)
+            }
+            Log.d("ProfileViewModel", "Profile updated")
+          },
           onFailure = {
             // Handle failure
             throw error("Profile could not get updated")

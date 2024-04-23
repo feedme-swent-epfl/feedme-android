@@ -16,39 +16,41 @@ import org.junit.Test
 import org.junit.runner.RunWith
 
 @RunWith(AndroidJUnit4::class)
+class IngredientListTest : TestCase() {
 
-class IngredientListTest : TestCase(){
+  @get:Rule val composeTestRule = createComposeRule()
 
-    @get:Rule
-    val composeTestRule = createComposeRule()
+  @Test
+  fun testIngredientListTestEverythingDisplayed() {
+    composeTestRule.setContent { IngredientList() }
 
+    composeTestRule.onNodeWithTag("LazyList").assertIsDisplayed()
 
-    @Test
-    fun testIngredientListTestEverythingDisplayed() {
-        composeTestRule.setContent { IngredientList() }
+    composeTestRule.onNodeWithTag("IngredientsBox").assertIsDisplayed()
+    composeTestRule.onNodeWithTag("QuantityInput").assertIsDisplayed()
+    composeTestRule.onNodeWithTag("DoseBox").assertIsDisplayed()
+    composeTestRule.onNodeWithTag("DoseInput").assertIsDisplayed()
+  }
 
-        composeTestRule.onNodeWithTag("LazyList").assertIsDisplayed()
+  @Test
+  fun testIngredientDropDownMenuWorksAndHasClickableItem() {
 
-        composeTestRule.onNodeWithTag("IngredientsBox").assertIsDisplayed()
-        composeTestRule.onNodeWithTag("QuantityInput").assertIsDisplayed()
-        composeTestRule.onNodeWithTag("DoseBox").assertIsDisplayed()
-        composeTestRule.onNodeWithTag("DoseInput").assertIsDisplayed()
+    composeTestRule.setContent { IngredientList() }
 
+    composeTestRule.onNodeWithTag("LazyList").assertIsDisplayed()
 
-    }
-
-    @Test
-    fun testIngredientDropDownMenuWorksAndHasClickableItem() {
-
-        composeTestRule.setContent { IngredientList() }
-
-        composeTestRule.onNodeWithTag("LazyList").assertIsDisplayed()
-
-        composeTestRule.onNodeWithTag("IngredientsBox").assertIsDisplayed()
-        composeTestRule.onNodeWithTag("IngredientsInput").assertIsDisplayed().performTextInput("Item 1")
-        composeTestRule.onNodeWithText("Item 1").assertIsDisplayed().assertHasClickAction().performClick()
-        composeTestRule.onNodeWithTag("DeleteIconButton").assertIsDisplayed().assertHasClickAction().performClick()
-        composeTestRule.onNodeWithTag("DeleteIconButton").assertIsNotDisplayed()
-    }
-
+    composeTestRule.onNodeWithTag("IngredientsBox").assertIsDisplayed()
+    composeTestRule.onNodeWithTag("IngredientsInput").assertIsDisplayed().performTextInput("Item 1")
+    composeTestRule
+        .onNodeWithText("Item 1")
+        .assertIsDisplayed()
+        .assertHasClickAction()
+        .performClick()
+    composeTestRule
+        .onNodeWithTag("DeleteIconButton")
+        .assertIsDisplayed()
+        .assertHasClickAction()
+        .performClick()
+    composeTestRule.onNodeWithTag("DeleteIconButton").assertIsNotDisplayed()
+  }
 }

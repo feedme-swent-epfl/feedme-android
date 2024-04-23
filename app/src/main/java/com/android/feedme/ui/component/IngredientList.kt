@@ -214,7 +214,7 @@ fun IngredientInput(
                   isError = dose == MeasureUnit.EMPTY && state != IngredientInputState.EMPTY,
                   readOnly = true,
                   value = if (dose != MeasureUnit.EMPTY) dose.toString() else " ",
-                  onValueChange = { expanded = expanded },
+                  onValueChange = {},
                   label = { Text("Dose") },
                   modifier = Modifier.menuAnchor().testTag("DoseInput"))
               ExposedDropdownMenu(

@@ -24,15 +24,19 @@ class ProfileViewModel : ViewModel() {
   var currentUserId: String? = null
   private val _currentUserProfile = MutableStateFlow<Profile?>(null)
   val currentUserProfile: StateFlow<Profile?> = _currentUserProfile
-  val currentUserFollowers = MutableStateFlow(listOf(Profile()))
-  val currentUserFollowing = MutableStateFlow(listOf(Profile()))
+  private val _currentUserFollowers = MutableStateFlow<List<Profile>>(listOf(Profile()))
+  private val _currentUserFollowing = MutableStateFlow<List<Profile>>(listOf(Profile()))
+  val currentUserFollowers: StateFlow<List<Profile>> = _currentUserFollowers
+  val currentUserFollowing: StateFlow<List<Profile>> = _currentUserFollowing
 
   // Viewing User
   var viewingUserId: String? = null
   private val _viewingUserProfile = MutableStateFlow<Profile?>(null)
+  private val _viewingUserFollowing = MutableStateFlow<List<Profile>>(listOf(Profile()))
+  private val _viewingUserFollowers = MutableStateFlow<List<Profile>>(listOf(Profile()))
   val viewingUserProfile: StateFlow<Profile?> = _viewingUserProfile
-  val viewingUserFollowers = MutableStateFlow(listOf(Profile()))
-  val viewingUserFollowing = MutableStateFlow(listOf(Profile()))
+  val viewingUserFollowing: StateFlow<List<Profile>> = _viewingUserFollowing
+  val viewingUserFollowers: StateFlow<List<Profile>> = _viewingUserFollowers
 
   init {
     // Listen to FirebaseAuth state changes
@@ -58,8 +62,8 @@ class ProfileViewModel : ViewModel() {
             _viewingUserProfile.value = profile
             viewingUserId = id
             if (profile != null) {
-              fetchProfiles(profile.followers, viewingUserFollowers)
-              fetchProfiles(profile.following, viewingUserFollowing)
+              fetchProfiles(profile.followers, _viewingUserFollowers)
+              fetchProfiles(profile.following, _viewingUserFollowing)
             }
           },
           onFailure = {
@@ -76,8 +80,8 @@ class ProfileViewModel : ViewModel() {
           onSuccess = { profile ->
             _currentUserProfile.value = profile
             if (profile != null) {
-              fetchProfiles(profile.followers, currentUserFollowers)
-              fetchProfiles(profile.following, currentUserFollowing)
+              fetchProfiles(profile.followers, _currentUserFollowers)
+              fetchProfiles(profile.following, _currentUserFollowing)
             }
           },
           onFailure = {
@@ -179,7 +183,7 @@ class ProfileViewModel : ViewModel() {
   fun setViewingProfile(profile: Profile) {
     _viewingUserProfile.value = profile
     viewingUserId = profile.id
-    fetchProfiles(profile.followers, viewingUserFollowers)
-    fetchProfiles(profile.following, currentUserFollowing)
+    fetchProfiles(profile.followers, _viewingUserFollowers)
+    fetchProfiles(profile.following, _currentUserFollowing)
   }
 }

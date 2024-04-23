@@ -21,10 +21,12 @@ import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Text
+import androidx.compose.material3.TextFieldColors
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.movableContentOf
 import androidx.compose.runtime.mutableDoubleStateOf
+import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.mutableStateListOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -46,8 +48,12 @@ fun IngredientList(
     modifier: Modifier = Modifier,
     list: MutableList<IngredientMetaData>? = null,
 ) {
-    var totalIngredients = remember { mutableStateOf(1 + (list?.size ?: 0)) }
+    val totalIngredients = remember { mutableIntStateOf(1 + (list?.size ?: 0)) }
     val listOfIngredients = remember { mutableStateListOf<IngredientMetaData?>() }
+
+    //If (totalCompleteIngredients == totalIngredients - 1) then all ingredients are Complete
+    val totalCompleteIngredients = remember { mutableIntStateOf(0) }
+
 
     list?.let { listOfIngredients.addAll(it) }
     listOfIngredients.add(null)
@@ -56,20 +62,28 @@ fun IngredientList(
         modifier = modifier
     ){
         this.
-        items(totalIngredients.value) { index ->
+        items(totalIngredients.intValue) { index ->
             val movableContent = movableContentOf {
                 IngredientInput(listOfIngredients[index]) { before, now, newIngredient ->
+                    if (now != IngredientInputState.COMPLETE && before == IngredientInputState.COMPLETE) {
+                        listOfIngredients[index] = newIngredient
+                        totalCompleteIngredients.intValue -= 1
+                    }
+                    if (now == IngredientInputState.COMPLETE && before == IngredientInputState.SEMI_COMPLETE) {
+                        listOfIngredients[index] = newIngredient
+                        totalCompleteIngredients.intValue += 1
+                    }
                     if (now == IngredientInputState.SEMI_COMPLETE && before == IngredientInputState.SEMI_COMPLETE) {
                         listOfIngredients[index] = newIngredient
                     }
                     if (now == IngredientInputState.SEMI_COMPLETE && before == IngredientInputState.EMPTY) {
                         listOfIngredients[index] = newIngredient
                         listOfIngredients.add(null)
-                        totalIngredients.value += 1
+                        totalIngredients.intValue += 1
                     }
                     if (now == IngredientInputState.EMPTY && before != IngredientInputState.EMPTY) {
                         listOfIngredients.removeAt(index)
-                        totalIngredients.value -= 1
+                        totalIngredients.intValue -= 1
                     }
                 }
             }
@@ -77,6 +91,9 @@ fun IngredientList(
         }
     }
 }
+
+
+
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun IngredientInput(
@@ -86,10 +103,14 @@ fun IngredientInput(
     var name by remember { mutableStateOf(ingredient?.ingredient?.name ?: " ") }
     var quantity by remember { mutableDoubleStateOf(ingredient?.quantity ?: 0.0) }
     var dose by remember { mutableStateOf(ingredient?.measure ?: MeasureUnit.EMPTY) }
-    var state by remember { mutableStateOf(if(ingredient != null) IngredientInputState.SEMI_COMPLETE else IngredientInputState.EMPTY) }
+
+    val isComplete by remember { mutableStateOf(name.isNotBlank() && dose != MeasureUnit.EMPTY && quantity != 0.0) }
+    var state by remember { mutableStateOf(if(isComplete) IngredientInputState.COMPLETE else if(ingredient != null) IngredientInputState.SEMI_COMPLETE else  IngredientInputState.EMPTY) }
 
     var isDropdownVisible by remember { mutableStateOf(false) }
     val suggestionIngredients = listOf("Item 1", "Item 2", "Item 3", "Item 4", "Item 5") // Your list of items
+
+
 
     Row(
         modifier = Modifier
@@ -99,10 +120,10 @@ fun IngredientInput(
         verticalAlignment = Alignment.CenterVertically) {
 
 
-        // Ingredients
+        // Ingredients Box
         Box(modifier = Modifier.weight(1.5f).height(55.dp)) {
             OutlinedTextField(
-                colors = ExposedDropdownMenuDefaults.textFieldColors(unfocusedContainerColor =  if (state != IngredientInputState.EMPTY) ValidInput else NoInput, focusedContainerColor = if (state != IngredientInputState.EMPTY) ValidInput else NoInput, errorContainerColor = InValidInput ),
+                colors = colorOfInputBoxes(state),
                 value = name,
                 isError = name == " " && state != IngredientInputState.EMPTY,
                 onValueChange = {
@@ -133,7 +154,7 @@ fun IngredientInput(
                             isDropdownVisible = false
                             val beforeState = state
                             if (name != " ") {
-                                state = IngredientInputState.SEMI_COMPLETE
+                                state = if (isComplete) IngredientInputState.COMPLETE else IngredientInputState.SEMI_COMPLETE
                                 action(
                                     beforeState,
                                     state,
@@ -150,9 +171,11 @@ fun IngredientInput(
 
 
 
+
+
         // Quantity
         OutlinedTextField(
-            colors = ExposedDropdownMenuDefaults.textFieldColors(unfocusedContainerColor =  if (state != IngredientInputState.EMPTY) ValidInput else NoInput, focusedContainerColor = if (state != IngredientInputState.EMPTY) ValidInput else NoInput, errorContainerColor = InValidInput ),
+            colors = colorOfInputBoxes(state),
             isError = quantity == 0.0 && state != IngredientInputState.EMPTY,
             value = if (quantity == 0.0) " " else quantity.toString(),
             onValueChange = { // Check if the input is a valid number
@@ -180,6 +203,9 @@ fun IngredientInput(
 
 
 
+
+
+
         // Dose
         var expanded by remember { mutableStateOf(false) }
 
@@ -191,7 +217,7 @@ fun IngredientInput(
             }
         ) {
             OutlinedTextField(
-                colors = ExposedDropdownMenuDefaults.textFieldColors(unfocusedContainerColor =  if (state != IngredientInputState.EMPTY) ValidInput else NoInput, focusedContainerColor = if (state != IngredientInputState.EMPTY) ValidInput else NoInput, errorContainerColor = InValidInput ),
+                colors = colorOfInputBoxes(state),
                 isError = dose == MeasureUnit.EMPTY && state != IngredientInputState.EMPTY,
                 readOnly = true,
                 value = if (dose != MeasureUnit.EMPTY) dose.toString() else " ",
@@ -215,10 +241,9 @@ fun IngredientInput(
                         onClick = {
                             dose = selectionOption
                             expanded = false
-                            val beforeState = state
-                            if (!(dose == MeasureUnit.EMPTY)) {
+                            if (dose != MeasureUnit.EMPTY) {
                                 val beforeState = state
-                                state = IngredientInputState.SEMI_COMPLETE
+                                state = if (isComplete) IngredientInputState.COMPLETE else IngredientInputState.SEMI_COMPLETE
                                 action(
                                     beforeState,
                                     state,
@@ -241,6 +266,14 @@ fun IngredientInput(
             }
         }
     }
+
+}
+
+@OptIn(ExperimentalMaterial3Api::class)
+@Composable
+fun colorOfInputBoxes(state: IngredientInputState): TextFieldColors {
+    return ExposedDropdownMenuDefaults.textFieldColors(unfocusedContainerColor =  if (state != IngredientInputState.EMPTY) ValidInput else NoInput, focusedContainerColor = if (state != IngredientInputState.EMPTY) ValidInput else NoInput, errorContainerColor = InValidInput )
+
 }
 
 enum class IngredientInputState {

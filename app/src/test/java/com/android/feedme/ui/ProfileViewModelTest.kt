@@ -7,13 +7,17 @@ import com.android.feedme.model.data.ProfileRepository
 import com.android.feedme.model.viewmodel.ProfileViewModel
 import com.google.android.gms.tasks.Tasks
 import com.google.firebase.FirebaseApp
-import com.google.firebase.firestore.*
-import junit.framework.TestCase.*
+import com.google.firebase.firestore.CollectionReference
+import com.google.firebase.firestore.DocumentReference
+import com.google.firebase.firestore.DocumentSnapshot
+import com.google.firebase.firestore.FirebaseFirestore
+import junit.framework.TestCase.assertTrue
 import org.junit.Before
 import org.junit.Test
 import org.junit.runner.RunWith
 import org.mockito.Mock
-import org.mockito.Mockito.*
+import org.mockito.Mockito.anyString
+import org.mockito.Mockito.`when`
 import org.mockito.MockitoAnnotations
 import org.robolectric.RobolectricTestRunner
 import org.robolectric.Shadows.shadowOf
@@ -72,6 +76,6 @@ class ProfileViewModelTest {
     profileViewModel.fetchProfile("1")
     shadowOf(Looper.getMainLooper()).idle()
 
-    assertTrue(profileViewModel.profile.value!!.email == expectedProfile.email)
+    assertTrue(profileViewModel.viewingUserProfile.value!!.email == expectedProfile.email)
   }
 }

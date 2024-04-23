@@ -43,6 +43,13 @@ import com.android.feedme.ui.theme.InValidInput
 import com.android.feedme.ui.theme.NoInput
 import com.android.feedme.ui.theme.ValidInput
 
+
+/**
+ * Composable function for displaying a list of ingredients.
+ *
+ * @param modifier the modifier for this composable.
+ * @param list the list of [IngredientMetaData] items to display. Default is null.
+ */
 @Composable
 fun IngredientList(
     modifier: Modifier = Modifier,
@@ -94,6 +101,12 @@ fun IngredientList(
 
 
 
+/**
+ * Composable function for displaying an input field for ingredient details.
+ *
+ * @param ingredient the [IngredientMetaData] to display in the input fields.
+ * @param action the action to perform on input changes.
+ */
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun IngredientInput(
@@ -121,7 +134,7 @@ fun IngredientInput(
 
 
         // Ingredients Box
-        Box(modifier = Modifier.weight(1.5f).height(55.dp)) {
+        Box(modifier = Modifier.weight(1.5f).height(60.dp)) {
             OutlinedTextField(
                 colors = colorOfInputBoxes(state),
                 value = name,
@@ -179,7 +192,7 @@ fun IngredientInput(
             isError = quantity == 0.0 && state != IngredientInputState.EMPTY,
             value = if (quantity == 0.0) " " else quantity.toString(),
             onValueChange = { // Check if the input is a valid number
-                if ((it.isEmpty() || it.toDoubleOrNull() != null) && it.toDouble() >= 0.0 ) {
+                if (it.isNotEmpty() && it.toDoubleOrNull() != null && it.toDouble() >= 0.0 ) {
                     quantity = it.toDouble()
                     if (quantity != 0.0) {
                         action(
@@ -191,7 +204,7 @@ fun IngredientInput(
                 }
             },
             singleLine = true,
-            modifier = Modifier.weight(1f).height(55.dp),
+            modifier = Modifier.weight(1f).height(60.dp),
             placeholder = { Text(text = "...")},
             label = { Text(text = "Quantity", modifier= Modifier.background(color = Color.Transparent))}
         )
@@ -210,7 +223,7 @@ fun IngredientInput(
         var expanded by remember { mutableStateOf(false) }
 
         ExposedDropdownMenuBox(
-            modifier = Modifier.weight(1f).height(55.dp),
+            modifier = Modifier.weight(1f).height(60.dp),
             expanded = expanded,
             onExpandedChange = {
                 expanded = !expanded
@@ -256,7 +269,7 @@ fun IngredientInput(
             }
         }
 
-
+        // Delete button for removing the ingredient
         if (state == IngredientInputState.SEMI_COMPLETE || state == IngredientInputState.COMPLETE) {
             IconButton(onClick = { action(state, IngredientInputState.EMPTY, IngredientMetaData(quantity, dose, Ingredient(name, "", ""))) }) {
                 Icon(
@@ -269,6 +282,13 @@ fun IngredientInput(
 
 }
 
+
+/**
+ * Function to determine the colors of input boxes based on input state.
+ *
+ * @param state the state of the input.
+ * @return [TextFieldColors] object representing the colors of input boxes.
+ */
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun colorOfInputBoxes(state: IngredientInputState): TextFieldColors {
@@ -276,6 +296,10 @@ fun colorOfInputBoxes(state: IngredientInputState): TextFieldColors {
 
 }
 
+
+/**
+ * Enum class representing the state of an ingredient input.
+ */
 enum class IngredientInputState {
     EMPTY,
     SEMI_COMPLETE,

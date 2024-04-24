@@ -2,6 +2,9 @@ package com.android.feedme.ML
 
 import android.graphics.Bitmap
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberUpdatedState
 import com.google.mlkit.vision.common.InputImage
 import com.google.mlkit.vision.text.Text
 import com.google.mlkit.vision.text.TextRecognition
@@ -9,22 +12,22 @@ import com.google.mlkit.vision.text.latin.TextRecognizerOptions
 
 //input : bitmap image
 //output : text in the image display in a popup ?
-
-fun TextRecognition(bitmap: Bitmap){
+@Composable
+fun TextRecognition(bitmap: Bitmap) : Text {
+    val visionTextState = remember { mutableStateOf<Text?>(null) }
     val recognizer = TextRecognition.getClient(TextRecognizerOptions.DEFAULT_OPTIONS)
     val image = InputImage.fromBitmap(bitmap, 0)
     val result = recognizer.process(image)
         .addOnSuccessListener { visionText ->
             // Task completed successfully
-
+            visionTextState.value = visionText
         }
-        .addOnFailureListener { e ->
-            // Task failed with an exception
-
-        }
+    return visionTextState.value ?: error("Text recognition result is null")
 }
-fun TextProcessing(text : Text) {
-    for (block in text.textBlocks) {
+
+@Composable
+fun TextProcessingAndDisplay(text : Text) {
+    for (block in processedText.textBlocks) {
         val blockText = block.text
         val blockCornerPoints = block.cornerPoints
         val blockFrame = block.boundingBox
@@ -39,6 +42,7 @@ fun TextProcessing(text : Text) {
             }
         }
     }
+
 }
 @Composable
 fun PopUpTextDisplay(text : String){

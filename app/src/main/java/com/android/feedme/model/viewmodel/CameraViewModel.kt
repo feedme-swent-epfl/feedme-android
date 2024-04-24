@@ -25,6 +25,10 @@ class CameraViewModel : ViewModel() {
   fun onTakePhoto(bitmap: Bitmap) {
     _bitmaps.value += bitmap
   }
+  fun onTakePhotoTextReco(bitmap: Bitmap){
+    _bitmaps.value += bitmap
+
+  }
 
   /**
    * This function is called when the user taps the save button in the CameraScreen. It sets the

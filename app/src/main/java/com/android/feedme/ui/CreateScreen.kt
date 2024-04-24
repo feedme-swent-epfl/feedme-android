@@ -29,10 +29,8 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import androidx.navigation.compose.rememberNavController
 import com.android.feedme.R
 import com.android.feedme.ui.component.IngredientList
 import com.android.feedme.ui.navigation.BottomNavigationMenu
@@ -42,7 +40,11 @@ import com.android.feedme.ui.navigation.Screen
 import com.android.feedme.ui.navigation.TOP_LEVEL_DESTINATIONS
 import com.android.feedme.ui.navigation.TopBarNavigation
 
-/** Composable function that */
+/**
+ * Composable function for the Create Screen.
+ *
+ * @param navigationActions actions for navigating to different screens.
+ */
 @SuppressLint("UnusedMaterial3ScaffoldPaddingParameter")
 @Composable
 fun CreateScreen(navigationActions: NavigationActions) {
@@ -60,12 +62,15 @@ fun CreateScreen(navigationActions: NavigationActions) {
             modifier = Modifier.fillMaxSize().padding(it).padding(top = 10.dp),
             verticalArrangement = Arrangement.Top,
             horizontalAlignment = Alignment.CenterHorizontally) {
+
+              // Title
               Text(
                   text = "Ingredients",
                   style = MaterialTheme.typography.headlineMedium,
                   fontWeight = FontWeight.Bold,
               )
 
+              // Camera Button
               OutlinedButton(
                   modifier =
                       Modifier.fillMaxWidth()
@@ -96,6 +101,7 @@ fun CreateScreen(navigationActions: NavigationActions) {
                             ))
                   }
 
+              // Line separator
               Image(
                   modifier =
                       Modifier.border(width = 4.dp, color = Color(0xFF8C8C8C))
@@ -106,13 +112,8 @@ fun CreateScreen(navigationActions: NavigationActions) {
                   contentDescription = "Line Seperator",
                   contentScale = ContentScale.None)
 
+              // List Of Ingredients
               IngredientList()
             }
       }
-}
-
-@Preview
-@Composable
-fun CreateScreenPreview() {
-  CreateScreen(navigationActions = NavigationActions(rememberNavController()))
 }

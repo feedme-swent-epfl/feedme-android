@@ -23,3 +23,7 @@ val BlueUser = Color(0xff0008bf)
 val FollowButton = Color(0xFF0008C2)
 val FollowingButton = Color(0xFFFFFFFF)
 val FollowButtonBorder = Color(0xFF8FC0A9)
+
+val NoInput = Color(0xFFE6DFEB)
+val InValidInput = Color(0xFFFFB3B3)
+val ValidInput = Color(0xFFC1FFC4)

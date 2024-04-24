@@ -34,5 +34,7 @@ enum class MeasureUnit {
   KG,
   L,
   ML,
+  NONE,
+  EMPTY
   // Add more units as needed
 }

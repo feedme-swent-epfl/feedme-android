@@ -30,6 +30,8 @@ replay_pid*
 local.properties
 .gradle
 /app/google-services.json
+/app/release
+upload-keystore.jks
 
 # MacOS
 **/.DS_Store

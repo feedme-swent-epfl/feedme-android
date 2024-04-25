@@ -4,6 +4,7 @@ on:
   push:
     branches:
       - main
+      - 71-self-sign-apk
 
 permissions:
     contents: write
@@ -23,32 +24,42 @@ jobs:
           java-version: '17'
           distribution: 'temurin'
 
-      - name: Create file
-        run: cat /home/runner/work/feedme-android/app/google-services.json | base64
+      - name: Create files
+        run: |
+          cat /home/runner/work/feedme-android/app/google-services.json | base64
+          cat /home/runner/work/feedme-android/upload-keystore.jks | base64
+          cat /home/runner/work/feedme-android/keystore.properties | base64
 
       - name: Load Google Service file
         env:
-            DATA: ${{ secrets.GOOGLE_SERVICES_JSON }}
-        run: echo $DATA | base64 -di > app/google-services.json
-  
+          DATA: ${{ secrets.GOOGLE_SERVICES_JSON }}
+          ENCODED_KEYSTORE: ${{ secrets.KEYSTORE_FILE }}
+          ENCODED_PASSWORDS: ${{ secrets.KEYSTORE_PASSWORDS }}
+        run: |
+          echo $DATA | base64 -di > app/google-services.json
+          echo $ENCODED_KEYSTORE | base64 -di > keystore.jks
+          echo $ENCODED_PASSWORDS | base64 -di > keystore.properties
+
+      - name: Gradle cache
+        uses: gradle/actions/setup-gradle@v3
   
       - name: Grant execute permission for gradlew
         run: chmod +x ./gradlew
   
       - name: Build APK
-        run: ./gradlew build
+        run: ./gradlew assembleRelease
 
-      - name: Rename APK
-        run: mv app/build/outputs/apk/debug/app-debug.apk app/build/outputs/apk/debug/feedme-android-v1.x.x.apk
+      - name: Get release file apk path
+        id: releaseApk
+        run: echo "apkfile=$(find app/build/outputs/apk/release/*.apk)" >> $GITHUB_OUTPUT
 
       - name: Upload APK in artifacts
         uses: actions/upload-artifact@v4
         with:
           name: feedme-apk
-          path: app/build/outputs/apk/debug/feedme-android-v1.x.x.apk
+          path: ${{ steps.releaseApk.outputs.apkfile }}
           if-no-files-found: error
-          retention-days: 90
-          
+
       - name: Release APK
         uses: softprops/action-gh-release@v2
         with:

@@ -64,7 +64,7 @@ jobs:
         uses: softprops/action-gh-release@v2
         with:
           name: FeedMe v1.x.x
-          files: app/build/outputs/apk/debug/feedme-android-v1.x.x.apk
+          files: ${{ steps.releaseApk.outputs.apkfile }}
           draft: true
           token: ${{ secrets.GITHUB_TOKEN }}
         

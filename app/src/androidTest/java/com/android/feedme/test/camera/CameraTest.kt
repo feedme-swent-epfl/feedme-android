@@ -131,8 +131,8 @@ class CameraTest : TestCase() {
       }
 
       composeTestRule.waitForIdle()
-      composeTestRule.onNodeWithTag("Ml Text Box")
-      composeTestRule.onNodeWithTag("Ml Text Box inside")
+      composeTestRule.onNodeWithTag("ML Text Box")
+      composeTestRule.onNodeWithTag("ML Text Box inside")
     }
   }
 }

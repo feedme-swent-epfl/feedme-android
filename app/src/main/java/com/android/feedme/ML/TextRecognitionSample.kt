@@ -99,7 +99,7 @@ fun OverlayTextField(isVisible: Boolean, onDismiss: () -> Unit, text: String = "
           Surface(
               shape = RectangleShape,
               color = Color.White,
-              modifier = Modifier.padding(16.dp).testTag("Ml Text Box")) {
+              modifier = Modifier.padding(16.dp).testTag("ML Text Box")) {
                 Column(modifier = Modifier.fillMaxWidth().padding(16.dp)) {
                   Text(text = text, modifier = Modifier.testTag("ML Text Box Inside"))
                 }

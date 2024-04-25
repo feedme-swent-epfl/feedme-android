@@ -37,7 +37,7 @@ jobs:
           ENCODED_PASSWORDS: ${{ secrets.KEYSTORE_PASSWORDS }}
         run: |
           echo $DATA | base64 -di > app/google-services.json
-          echo $ENCODED_KEYSTORE | base64 -di > keystore.jks
+          echo $ENCODED_KEYSTORE | base64 -di > upload-keystore.jks
           echo $ENCODED_PASSWORDS | base64 -di > keystore.properties
 
       - name: Gradle cache

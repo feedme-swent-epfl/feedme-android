@@ -5,6 +5,7 @@ import androidx.compose.ui.test.assertIsDisplayed
 import androidx.compose.ui.test.isDisplayed
 import androidx.compose.ui.test.junit4.createComposeRule
 import androidx.compose.ui.test.onNodeWithContentDescription
+import androidx.compose.ui.test.onNodeWithTag
 import androidx.compose.ui.test.onNodeWithText
 import androidx.test.ext.junit.runners.AndroidJUnit4
 import androidx.test.rule.GrantPermissionRule
@@ -106,5 +107,31 @@ class CameraTest : TestCase() {
     every { navActions.canGoBack() } returns true
     composeTestRule.setContent { CameraScreen(navActions) }
     composeTestRule.waitForIdle()
+  }
+
+  @Test
+  fun MLButtonIsDisplayed() {
+    goToCameraScreen()
+    ComposeScreen.onComposeScreen<CameraScreen>(composeTestRule) {
+      cameraPreview { assertIsDisplayed() }
+
+      photoButton {
+        assertIsDisplayed()
+        performClick()
+      }
+
+      // Wait until the "Photo saved" text appears on the UI.
+      composeTestRule.waitUntil(timeoutMillis = 5000) {
+        composeTestRule.onNodeWithText("Photo saved", useUnmergedTree = true).isDisplayed()
+      }
+
+      MLButton {
+        assertIsDisplayed()
+        performClick()
+      }
+
+      composeTestRule.waitForIdle()
+      composeTestRule.onNodeWithTag("Ml Text Box")
+    }
   }
 }

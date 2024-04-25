@@ -144,11 +144,13 @@ fun CameraScreen(navigationActions: NavigationActions) {
                     }
                 // Icon for text recognition
                 if (textRecognitionMode.value) {
-                  IconButton(onClick = { displayText.value = true }) {
-                    Icon(
-                        imageVector = Icons.TwoTone.TextFields,
-                        contentDescription = "Display text after ML")
-                  }
+                  IconButton(
+                      onClick = { displayText.value = true },
+                      modifier = Modifier.testTag("MLButton")) {
+                        Icon(
+                            imageVector = Icons.TwoTone.TextFields,
+                            contentDescription = "Display text after ML")
+                      }
                 }
               }
           // Show the message box if the photo was taken

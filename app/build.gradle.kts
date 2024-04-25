@@ -173,7 +173,6 @@ dependencies {
     implementation("com.google.mlkit:text-recognition:16.0.0")
 
 
-
     // ---------------- CameraX --------------------
     implementation(libs.camera.core)
     implementation(libs.camera.camera2)

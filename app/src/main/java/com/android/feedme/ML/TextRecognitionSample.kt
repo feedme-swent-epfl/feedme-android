@@ -11,6 +11,7 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.RectangleShape
+import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.window.Dialog
 import com.google.mlkit.vision.common.InputImage
@@ -66,7 +67,7 @@ fun TextProcessing(text: Text): String {
   var blockText = ""
   for (block in text.textBlocks) {
     blockText = block.text
-    val blockCornerPoints = block.cornerPoints
+    /*val blockCornerPoints = block.cornerPoints
     val blockFrame = block.boundingBox
     for (line in block.lines) {
       val lineText = line.text
@@ -77,7 +78,7 @@ fun TextProcessing(text: Text): String {
         val elementCornerPoints = element.cornerPoints
         val elementFrame = element.boundingBox
       }
-    }
+    }*/
   }
   return blockText
 }
@@ -95,9 +96,12 @@ fun OverlayTextField(isVisible: Boolean, onDismiss: () -> Unit, text: String = "
     Dialog(
         onDismissRequest = { onDismiss() },
         content = {
-          Surface(shape = RectangleShape, color = Color.White, modifier = Modifier.padding(16.dp)) {
-            Column(modifier = Modifier.fillMaxWidth().padding(16.dp)) { Text(text = text) }
-          }
+          Surface(
+              shape = RectangleShape,
+              color = Color.White,
+              modifier = Modifier.padding(16.dp).testTag("Ml Text Box")) {
+                Column(modifier = Modifier.fillMaxWidth().padding(16.dp)) { Text(text = text) }
+              }
         })
   }
 }

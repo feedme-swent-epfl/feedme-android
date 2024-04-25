@@ -1,8 +1,16 @@
 package com.android.feedme.model.viewmodel
 
 import android.graphics.Bitmap
+import android.util.Log
+import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.setValue
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.android.feedme.ML.TextProcessing
+import com.android.feedme.ML.TextRecognition
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
@@ -18,16 +26,26 @@ class CameraViewModel : ViewModel() {
   private val _photoSavedMessageVisible = MutableStateFlow<Boolean>(false)
   val photoSavedMessageVisible = _photoSavedMessageVisible.asStateFlow()
 
+  var lastPhoto: Bitmap? by mutableStateOf(null)
+
+  // Observe changes in bitmaps and update lastPhoto
+
   /**
    * This function is called when the user taps the photo button in the CameraScreen. It adds the
    * bitmap to the list of bitmaps in the _bitmaps state.
    */
   fun onTakePhoto(bitmap: Bitmap) {
     _bitmaps.value += bitmap
-  }
-  fun onTakePhotoTextReco(bitmap: Bitmap){
-    _bitmaps.value += bitmap
 
+  }
+
+  @Composable
+  fun OnTakePhotoTextReco() {
+    Log.d("pb", "text reco")
+    LaunchedEffect(bitmaps) {
+      bitmaps.collect { bitmapsList -> lastPhoto = bitmapsList.lastOrNull() }
+    }
+    //TextProcessingAndDisplay(text = TextRecognition(bitmap = lastPhoto))
   }
 
   /**

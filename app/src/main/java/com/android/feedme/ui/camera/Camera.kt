@@ -29,6 +29,7 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Photo
 import androidx.compose.material.icons.filled.PhotoCamera
+import androidx.compose.material.icons.twotone.TextFields
 import androidx.compose.material3.BottomSheetScaffold
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
@@ -36,8 +37,10 @@ import androidx.compose.material3.IconButton
 import androidx.compose.material3.Text
 import androidx.compose.material3.rememberBottomSheetScaffoldState
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Alignment
@@ -53,9 +56,13 @@ import androidx.compose.ui.viewinterop.AndroidView
 import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
 import androidx.lifecycle.viewmodel.compose.viewModel
+import com.android.feedme.ML.OverlayTextField
+import com.android.feedme.ML.TextProcessing
+import com.android.feedme.ML.TextRecognition
 import com.android.feedme.model.viewmodel.CameraViewModel
 import com.android.feedme.ui.navigation.NavigationActions
 import com.android.feedme.ui.navigation.TopBarNavigation
+import com.google.mlkit.vision.text.TextRecognition
 import kotlinx.coroutines.launch
 
 /**
@@ -69,6 +76,8 @@ import kotlinx.coroutines.launch
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun CameraScreen(navigationActions: NavigationActions) {
+    val textRecognitionMode = remember { mutableStateOf(true) }
+    val displayText = remember { mutableStateOf(false) }
   val applicationContext = LocalContext.current
 
   // Request camera permission if not already granted
@@ -97,11 +106,16 @@ fun CameraScreen(navigationActions: NavigationActions) {
       sheetContent = {
         PhotoBottomSheetContent(bitmaps = bitmaps, modifier = Modifier.fillMaxWidth())
       }) { padding ->
-        Box(modifier = Modifier.fillMaxSize().padding(padding)) {
+        Box(modifier = Modifier
+            .fillMaxSize()
+            .padding(padding)) {
           CameraPreview(controller = controller, modifier = Modifier.fillMaxSize())
 
           Row(
-              modifier = Modifier.fillMaxWidth().align(Alignment.BottomCenter).padding(16.dp),
+              modifier = Modifier
+                  .fillMaxWidth()
+                  .align(Alignment.BottomCenter)
+                  .padding(16.dp),
               horizontalArrangement = Arrangement.SpaceAround) {
                 IconButton(
                     modifier = Modifier.testTag("GalleryButton"),
@@ -118,12 +132,20 @@ fun CameraScreen(navigationActions: NavigationActions) {
                           controller = controller,
                           onPhotoTaken = viewModel::onTakePhoto,
                           showText = viewModel::onPhotoSaved,
-                          context = applicationContext)
+                          context = applicationContext,)
                     }) {
                       Icon(
                           imageVector = Icons.Default.PhotoCamera,
                           contentDescription = "Take photo")
                     }
+                ////////////////////////////////////////////////
+                if (textRecognitionMode.value) {
+                    IconButton(onClick = { displayText.value = true}) {
+                        Icon(imageVector = Icons.TwoTone.TextFields,
+                            contentDescription = "Display text after ML")
+                    }
+                }
+              ////////////////////////////////////////////
               }
           // Show the message box if the photo was taken
           if (photoSavedMessageVisible) {
@@ -131,17 +153,26 @@ fun CameraScreen(navigationActions: NavigationActions) {
             // Show the message box
             Box(
                 modifier =
-                    Modifier.padding(16.dp)
-                        .background(
-                            Color.Black.copy(alpha = 0.7f), shape = RoundedCornerShape(8.dp))
-                        .padding(horizontal = 24.dp, vertical = 16.dp)
-                        .align(Alignment.BottomCenter)) {
+                Modifier
+                    .padding(16.dp)
+                    .background(
+                        Color.Black.copy(alpha = 0.7f), shape = RoundedCornerShape(8.dp)
+                    )
+                    .padding(horizontal = 24.dp, vertical = 16.dp)
+                    .align(Alignment.BottomCenter)) {
                   Text(
                       text = "Photo saved",
                       color = Color.White,
                       modifier = Modifier.testTag("PhotoSavedMessage"))
                 }
           }
+            if (displayText.value) {
+                OverlayTextField(isVisible = true, onDismiss = {displayText.value = false },
+                    text = TextProcessing(
+                        text = TextRecognition(
+                        viewModel.lastPhoto)
+                    ))
+            }
         }
       }
 }

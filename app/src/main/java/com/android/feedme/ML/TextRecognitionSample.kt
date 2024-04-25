@@ -1,26 +1,17 @@
 package com.android.feedme.ML
 
 import android.graphics.Bitmap
-import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
-import androidx.compose.material3.AlertDialog
-import androidx.compose.material3.Button
-import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
-import androidx.compose.runtime.setValue
-import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.RectangleShape
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.window.Dialog
 import com.google.mlkit.vision.common.InputImage
@@ -44,8 +35,18 @@ fun TextRecognition(bitmap: Bitmap?): Text {
   return visionTextState.value ?: error("Text recognition result is null")
 }
 
+/**
+ * Processes the provided [Text] object and returns a concatenated string containing the text of each block.
+ *
+ * This function iterates through each block, line, and element in the provided [Text] object,
+ * extracting their text content and bounding box information. It then returns a string
+ * containing the text of each block concatenated together.
+ *
+ * @param text The [Text] object containing the text to be processed.
+ * @return A concatenated string containing the text of each block.
+ */
 @Composable
-fun TextProcessingAndDisplay(text: Text) {
+fun TextProcessing(text: Text): String {
   var blockText = ""
   for (block in text.textBlocks) {
     blockText = block.text
@@ -62,8 +63,7 @@ fun TextProcessingAndDisplay(text: Text) {
       }
     }
   }
-  /*Surface(color = Color.LightGray) {
-  OverlayExample(blockText)*/
+  return blockText
 
 }
 /**
@@ -87,7 +87,7 @@ fun OverlayTextField(isVisible: Boolean, onDismiss: () -> Unit, text: String = "
   }
 }
 
-@Composable
+/*@Composable
 fun OverlayExample(text: String) {
   var textFieldVisible by remember { mutableStateOf(false) }
 
@@ -100,12 +100,12 @@ fun OverlayExample(text: String) {
 
   OverlayTextField(
       isVisible = textFieldVisible, onDismiss = { textFieldVisible = false }, text = text)
-}
+}*/
 
-@Preview
+/*@Preview
 @Composable
 fun Preview() {
   Surface(color = Color.LightGray) {
     OverlayExample("aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa")
   }
-}
+}*/

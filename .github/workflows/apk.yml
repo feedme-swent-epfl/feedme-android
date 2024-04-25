@@ -24,13 +24,13 @@ jobs:
           java-version: '17'
           distribution: 'temurin'
 
-      - name: Create files
+      - name: Create Google Service and Keystore files
         run: |
           cat /home/runner/work/feedme-android/app/google-services.json | base64
           cat /home/runner/work/feedme-android/upload-keystore.jks | base64
           cat /home/runner/work/feedme-android/keystore.properties | base64
 
-      - name: Load Google Service file
+      - name: Load Google Service and Keystore files
         env:
           DATA: ${{ secrets.GOOGLE_SERVICES_JSON }}
           ENCODED_KEYSTORE: ${{ secrets.KEYSTORE_FILE }}

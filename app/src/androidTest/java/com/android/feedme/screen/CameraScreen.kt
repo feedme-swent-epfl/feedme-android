@@ -13,4 +13,5 @@ class CameraScreen(semanticsProvider: SemanticsNodeInteractionsProvider) :
   val photoButton: KNode = child { hasTestTag("PhotoButton") }
   val galleryButton: KNode = child { hasTestTag("GalleryButton") }
   val cameraPreview: KNode = child { hasTestTag("CameraPreview") }
+  val MLButton: KNode = child { hasTestTag("MLButton") }
 }

@@ -1,50 +1,111 @@
 package com.android.feedme.ML
 
 import android.graphics.Bitmap
+import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.padding
+import androidx.compose.material3.AlertDialog
+import androidx.compose.material3.Button
+import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.Surface
+import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
-import androidx.compose.runtime.rememberUpdatedState
+import androidx.compose.runtime.setValue
+import androidx.compose.ui.Alignment
+import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.RectangleShape
+import androidx.compose.ui.tooling.preview.Preview
+import androidx.compose.ui.unit.dp
+import androidx.compose.ui.window.Dialog
 import com.google.mlkit.vision.common.InputImage
 import com.google.mlkit.vision.text.Text
 import com.google.mlkit.vision.text.TextRecognition
 import com.google.mlkit.vision.text.latin.TextRecognizerOptions
 
-//input : bitmap image
-//output : text in the image display in a popup ?
+// input : bitmap image
+// output : text in the image display in a popup ?
 @Composable
-fun TextRecognition(bitmap: Bitmap) : Text {
-    val visionTextState = remember { mutableStateOf<Text?>(null) }
-    val recognizer = TextRecognition.getClient(TextRecognizerOptions.DEFAULT_OPTIONS)
-    val image = InputImage.fromBitmap(bitmap, 0)
-    val result = recognizer.process(image)
-        .addOnSuccessListener { visionText ->
-            // Task completed successfully
-            visionTextState.value = visionText
-        }
-    return visionTextState.value ?: error("Text recognition result is null")
-}
-
-@Composable
-fun TextProcessingAndDisplay(text : Text) {
-    for (block in processedText.textBlocks) {
-        val blockText = block.text
-        val blockCornerPoints = block.cornerPoints
-        val blockFrame = block.boundingBox
-        for (line in block.lines) {
-            val lineText = line.text
-            val lineCornerPoints = line.cornerPoints
-            val lineFrame = line.boundingBox
-            for (element in line.elements) {
-                val elementText = element.text
-                val elementCornerPoints = element.cornerPoints
-                val elementFrame = element.boundingBox
-            }
-        }
+fun TextRecognition(bitmap: Bitmap?): Text {
+  val visionTextState = remember { mutableStateOf<Text?>(null) }
+  val recognizer = TextRecognition.getClient(TextRecognizerOptions.DEFAULT_OPTIONS)
+  val image = bitmap?.let { InputImage.fromBitmap(it, 0) }
+  if (image != null) {
+    recognizer.process(image).addOnSuccessListener { visionText ->
+      // Task completed successfully
+      visionTextState.value = visionText
     }
+  }
+  return visionTextState.value ?: error("Text recognition result is null")
+}
+
+@Composable
+fun TextProcessingAndDisplay(text: Text) {
+  var blockText = ""
+  for (block in text.textBlocks) {
+    blockText = block.text
+    val blockCornerPoints = block.cornerPoints
+    val blockFrame = block.boundingBox
+    for (line in block.lines) {
+      val lineText = line.text
+      val lineCornerPoints = line.cornerPoints
+      val lineFrame = line.boundingBox
+      for (element in line.elements) {
+        val elementText = element.text
+        val elementCornerPoints = element.cornerPoints
+        val elementFrame = element.boundingBox
+      }
+    }
+  }
+  /*Surface(color = Color.LightGray) {
+  OverlayExample(blockText)*/
 
 }
+/**
+ * Displays an overlay text field when [isVisible] is true. When you click outside of the text field
+ * the [onDismiss] function is called.
+ *
+ * @param isVisible Whether the overlay text field should be displayed.
+ * @param onDismiss Callback function to be invoked when the overlay text field is dismissed.
+ * @param text The text to display within the overlay text field.
+ */
 @Composable
-fun PopUpTextDisplay(text : String){
+fun OverlayTextField(isVisible: Boolean, onDismiss: () -> Unit, text: String = "") {
+  if (isVisible) {
+    Dialog(
+        onDismissRequest = { onDismiss() },
+        content = {
+          Surface(shape = RectangleShape, color = Color.White, modifier = Modifier.padding(16.dp)) {
+            Column(modifier = Modifier.fillMaxWidth().padding(16.dp)) { Text(text = text) }
+          }
+        })
+  }
+}
 
+@Composable
+fun OverlayExample(text: String) {
+  var textFieldVisible by remember { mutableStateOf(false) }
+
+  Column(
+      modifier = Modifier.fillMaxSize().padding(16.dp),
+      horizontalAlignment = Alignment.CenterHorizontally,
+      verticalArrangement = Arrangement.Center) {
+        Button(onClick = { textFieldVisible = true }) { Text(text = "Open Text Field") }
+      }
+
+  OverlayTextField(
+      isVisible = textFieldVisible, onDismiss = { textFieldVisible = false }, text = text)
+}
+
+@Preview
+@Composable
+fun Preview() {
+  Surface(color = Color.LightGray) {
+    OverlayExample("aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa")
+  }
 }

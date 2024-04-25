@@ -8,7 +8,6 @@ import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.RectangleShape
@@ -19,31 +18,48 @@ import com.google.mlkit.vision.text.Text
 import com.google.mlkit.vision.text.TextRecognition
 import com.google.mlkit.vision.text.latin.TextRecognizerOptions
 
-// input : bitmap image
-// output : text in the image display in a popup ?
-@Composable
-fun TextRecognition(bitmap: Bitmap?): Text {
-  val visionTextState = remember { mutableStateOf<Text?>(null) }
+/**
+ * Recognizes text in the given bitmap image asynchronously, using the Google ML Kit.
+ *
+ * @param bitmap The bitmap containing the image with text to be recognized.
+ * @param onSuccess A lambda function to be called when text recognition succeeds. It receives a
+ *   Text object as a parameter.
+ * @param onFailure A lambda function to be called when text recognition fails. It receives an
+ *   Exception as a parameter.
+ */
+fun TextRecognition(
+    bitmap: Bitmap?,
+    onSuccess: (Text) -> Unit = {},
+    onFailure: (Exception) -> Unit = {}
+) {
+  val visionTextState = mutableStateOf<Text?>(null)
   val recognizer = TextRecognition.getClient(TextRecognizerOptions.DEFAULT_OPTIONS)
   val image = bitmap?.let { InputImage.fromBitmap(it, 0) }
   if (image != null) {
-    recognizer.process(image).addOnSuccessListener { visionText ->
-      // Task completed successfully
-      visionTextState.value = visionText
-    }
+    recognizer
+        .process(image)
+        .addOnSuccessListener { visionText ->
+          // Task completed successfully
+          visionTextState.value = visionText
+          onSuccess(visionText)
+        }
+        .addOnFailureListener { e -> onFailure(e) }
   }
-  return visionTextState.value ?: error("Text recognition result is null")
 }
 
 /**
- * Processes the provided [Text] object and returns a concatenated string containing the text of each block.
+ * Processes the provided [Text] object and returns a concatenated string containing the text of
+ * each block.
  *
  * This function iterates through each block, line, and element in the provided [Text] object,
- * extracting their text content and bounding box information. It then returns a string
- * containing the text of each block concatenated together.
+ * extracting their text content and bounding box information. It then returns a string containing
+ * the text of each block concatenated together.
  *
  * @param text The [Text] object containing the text to be processed.
  * @return A concatenated string containing the text of each block.
+ *
+ * TODO("A lot of work on exact image processing an display of the relevant information's in a smart
+ *   way")
  */
 @Composable
 fun TextProcessing(text: Text): String {
@@ -64,7 +80,6 @@ fun TextProcessing(text: Text): String {
     }
   }
   return blockText
-
 }
 /**
  * Displays an overlay text field when [isVisible] is true. When you click outside of the text field
@@ -86,26 +101,3 @@ fun OverlayTextField(isVisible: Boolean, onDismiss: () -> Unit, text: String = "
         })
   }
 }
-
-/*@Composable
-fun OverlayExample(text: String) {
-  var textFieldVisible by remember { mutableStateOf(false) }
-
-  Column(
-      modifier = Modifier.fillMaxSize().padding(16.dp),
-      horizontalAlignment = Alignment.CenterHorizontally,
-      verticalArrangement = Arrangement.Center) {
-        Button(onClick = { textFieldVisible = true }) { Text(text = "Open Text Field") }
-      }
-
-  OverlayTextField(
-      isVisible = textFieldVisible, onDismiss = { textFieldVisible = false }, text = text)
-}*/
-
-/*@Preview
-@Composable
-fun Preview() {
-  Surface(color = Color.LightGray) {
-    OverlayExample("aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa")
-  }
-}*/

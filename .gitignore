@@ -32,6 +32,7 @@ local.properties
 /app/google-services.json
 /app/release
 upload-keystore.jks
+keystore.properties
 
 # MacOS
 **/.DS_Store

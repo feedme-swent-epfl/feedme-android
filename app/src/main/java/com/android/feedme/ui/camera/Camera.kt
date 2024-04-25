@@ -1,6 +1,7 @@
 package com.android.feedme.ui.camera
 
 import android.Manifest
+import android.annotation.SuppressLint
 import android.app.Activity
 import android.content.Context
 import android.content.pm.PackageManager
@@ -37,7 +38,7 @@ import androidx.compose.material3.IconButton
 import androidx.compose.material3.Text
 import androidx.compose.material3.rememberBottomSheetScaffoldState
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -62,6 +63,7 @@ import com.android.feedme.ML.TextRecognition
 import com.android.feedme.model.viewmodel.CameraViewModel
 import com.android.feedme.ui.navigation.NavigationActions
 import com.android.feedme.ui.navigation.TopBarNavigation
+import com.google.mlkit.vision.text.Text
 import com.google.mlkit.vision.text.TextRecognition
 import kotlinx.coroutines.launch
 
@@ -73,12 +75,18 @@ import kotlinx.coroutines.launch
  * images and viewing them in a gallery. Utilizes CameraX for camera operations and Jetpack Compose
  * for the UI components.
  */
+@SuppressLint("UnrememberedMutableState")
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun CameraScreen(navigationActions: NavigationActions) {
-    val textRecognitionMode = remember { mutableStateOf(true) }
-    val displayText = remember { mutableStateOf(false) }
+  // Switch off and on the text recognition functionality
+  val textRecognitionMode = remember { mutableStateOf(true) }
+  // Display the text box with the recognised text
+  val displayText = remember { mutableStateOf(false) }
   val applicationContext = LocalContext.current
+
+  // val textResult = remember { mutableStateOf(true) }
+  val text: MutableState<Text?> = remember { mutableStateOf(null) }
 
   // Request camera permission if not already granted
   if (!hasRequiredPermissions(applicationContext)) {
@@ -106,16 +114,11 @@ fun CameraScreen(navigationActions: NavigationActions) {
       sheetContent = {
         PhotoBottomSheetContent(bitmaps = bitmaps, modifier = Modifier.fillMaxWidth())
       }) { padding ->
-        Box(modifier = Modifier
-            .fillMaxSize()
-            .padding(padding)) {
+        Box(modifier = Modifier.fillMaxSize().padding(padding)) {
           CameraPreview(controller = controller, modifier = Modifier.fillMaxSize())
 
           Row(
-              modifier = Modifier
-                  .fillMaxWidth()
-                  .align(Alignment.BottomCenter)
-                  .padding(16.dp),
+              modifier = Modifier.fillMaxWidth().align(Alignment.BottomCenter).padding(16.dp),
               horizontalArrangement = Arrangement.SpaceAround) {
                 IconButton(
                     modifier = Modifier.testTag("GalleryButton"),
@@ -132,20 +135,21 @@ fun CameraScreen(navigationActions: NavigationActions) {
                           controller = controller,
                           onPhotoTaken = viewModel::onTakePhoto,
                           showText = viewModel::onPhotoSaved,
-                          context = applicationContext,)
+                          context = applicationContext,
+                      )
                     }) {
                       Icon(
                           imageVector = Icons.Default.PhotoCamera,
                           contentDescription = "Take photo")
                     }
-                ////////////////////////////////////////////////
+                // Icon for text recognition
                 if (textRecognitionMode.value) {
-                    IconButton(onClick = { displayText.value = true}) {
-                        Icon(imageVector = Icons.TwoTone.TextFields,
-                            contentDescription = "Display text after ML")
-                    }
+                  IconButton(onClick = { displayText.value = true }) {
+                    Icon(
+                        imageVector = Icons.TwoTone.TextFields,
+                        contentDescription = "Display text after ML")
+                  }
                 }
-              ////////////////////////////////////////////
               }
           // Show the message box if the photo was taken
           if (photoSavedMessageVisible) {
@@ -153,26 +157,40 @@ fun CameraScreen(navigationActions: NavigationActions) {
             // Show the message box
             Box(
                 modifier =
-                Modifier
-                    .padding(16.dp)
-                    .background(
-                        Color.Black.copy(alpha = 0.7f), shape = RoundedCornerShape(8.dp)
-                    )
-                    .padding(horizontal = 24.dp, vertical = 16.dp)
-                    .align(Alignment.BottomCenter)) {
+                    Modifier.padding(16.dp)
+                        .background(
+                            Color.Black.copy(alpha = 0.7f), shape = RoundedCornerShape(8.dp))
+                        .padding(horizontal = 24.dp, vertical = 16.dp)
+                        .align(Alignment.BottomCenter)) {
                   Text(
                       text = "Photo saved",
                       color = Color.White,
                       modifier = Modifier.testTag("PhotoSavedMessage"))
                 }
           }
-            if (displayText.value) {
-                OverlayTextField(isVisible = true, onDismiss = {displayText.value = false },
-                    text = TextProcessing(
-                        text = TextRecognition(
-                        viewModel.lastPhoto)
-                    ))
+          // If text recognition button is pressed
+          if (displayText.value) {
+            if (viewModel.lastPhoto != null) {
+              TextRecognition(
+                  viewModel.lastPhoto, { rec -> text.value = rec }, { text.value = null })
+            } else {
+              throw (Exception("No Photo taken"))
             }
+
+            if (text.value != null) {
+              text.value
+                  ?.let { TextProcessing(it) }
+                  ?.let {
+                    OverlayTextField(
+                        isVisible = true, onDismiss = { displayText.value = false }, text = it)
+                  }
+            } else {
+              OverlayTextField(
+                  isVisible = true,
+                  onDismiss = { displayText.value = false },
+                  text = "Couldn't detect text")
+            }
+          }
         }
       }
 }

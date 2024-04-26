@@ -12,7 +12,7 @@ import com.android.feedme.model.data.Recipe
 import com.android.feedme.model.data.RecipeRepository
 import com.android.feedme.model.data.Step
 import com.android.feedme.model.viewmodel.RecipeViewModel
-import com.android.feedme.ui.home.RecipeFullDisplay
+import com.android.feedme.ui.component.RecipeFullDisplay
 import com.android.feedme.ui.navigation.NavigationActions
 import com.google.android.gms.tasks.Tasks
 import com.google.firebase.firestore.CollectionReference

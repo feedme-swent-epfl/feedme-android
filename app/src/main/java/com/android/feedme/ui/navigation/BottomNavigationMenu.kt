@@ -1,5 +1,8 @@
 package com.android.feedme.ui.navigation
 
+import androidx.compose.foundation.background
+import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
 import androidx.compose.material3.Icon
 import androidx.compose.material3.NavigationBar
 import androidx.compose.material3.NavigationBarItem
@@ -7,6 +10,8 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.testTag
+import androidx.compose.ui.unit.dp
+import com.android.feedme.ui.theme.TemplateColor
 
 /**
  * Displays a bottom navigation bar with tabs based on provided destinations.
@@ -25,7 +30,7 @@ fun BottomNavigationMenu(
     onTabSelect: (TopLevelDestination) -> Unit,
     tabList: List<TopLevelDestination>,
 ) {
-  NavigationBar(modifier = Modifier.testTag("BottomNavigationMenu")) {
+  NavigationBar(modifier = Modifier.fillMaxWidth().height(80.dp).background(TemplateColor).testTag("BottomNavigationMenu")) {
     tabList.forEach { replyDestination ->
       NavigationBarItem(
           selected = selectedItem == replyDestination.route,

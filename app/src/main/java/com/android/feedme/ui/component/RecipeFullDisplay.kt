@@ -1,4 +1,4 @@
-package com.android.feedme.ui.home
+package com.android.feedme.ui.component
 
 import android.annotation.SuppressLint
 import androidx.compose.foundation.layout.Arrangement

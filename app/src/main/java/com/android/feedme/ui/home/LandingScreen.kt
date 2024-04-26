@@ -20,6 +20,8 @@ import androidx.compose.material.icons.filled.Share
 import androidx.compose.material.icons.outlined.Save
 import androidx.compose.material.icons.outlined.Star
 import androidx.compose.material.icons.outlined.Timer
+import androidx.compose.material.icons.rounded.Star
+import androidx.compose.material.icons.twotone.Bookmark
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
@@ -53,6 +55,7 @@ import com.android.feedme.ui.navigation.TOP_LEVEL_DESTINATIONS
 import com.android.feedme.ui.navigation.TopBarNavigation
 import com.android.feedme.ui.theme.TemplateColor
 import com.android.feedme.ui.theme.TextBarColor
+import com.android.feedme.ui.theme.YellowStar
 
 /**
  * Composable function that generates the landing page / landing screen
@@ -164,8 +167,9 @@ fun RecipeDisplay(
                                           .clickable { /* TODO () : access the comments */}
                                           .testTag("Rating")) {
                                     Icon(
-                                        imageVector = Icons.Outlined.Star,
+                                        imageVector = Icons.Rounded.Star,
                                         contentDescription = "Rating",
+                                        tint = YellowStar,
                                         modifier = Modifier.size(30.dp).padding(end = 6.dp))
                                     Text(text = String.format("%.1f", recipe.rating))
                                   }
@@ -186,7 +190,7 @@ fun RecipeDisplay(
                                   modifier = Modifier.testTag("ShareIcon")) {
                                     Icon(
                                         imageVector = Icons.Default.Share,
-                                        contentDescription = null,
+                                        contentDescription = "Share Icon on Recipe Card",
                                         modifier = Modifier.size(24.dp).padding(4.dp))
                                   }
                               Spacer(modifier = Modifier.weight(1f))
@@ -195,8 +199,8 @@ fun RecipeDisplay(
                                   onClick = { /* TODO() add saving logic here */},
                                   modifier = Modifier.testTag("SaveIcon")) {
                                     Icon(
-                                        imageVector = Icons.Outlined.Save,
-                                        contentDescription = null,
+                                        imageVector = Icons.TwoTone.Bookmark,
+                                        contentDescription = "Bookmark Icon on Recipe Card",
                                         modifier = Modifier.size(24.dp).padding(start = 4.dp))
                                   }
                             }

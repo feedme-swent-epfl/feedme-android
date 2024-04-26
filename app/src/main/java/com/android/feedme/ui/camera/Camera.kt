@@ -45,13 +45,11 @@ import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
-import androidx.compose.ui.draw.shadow
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.asImageBitmap
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalLifecycleOwner
 import androidx.compose.ui.platform.testTag
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.viewinterop.AndroidView
 import androidx.core.app.ActivityCompat
@@ -106,21 +104,29 @@ fun CameraScreen(navigationActions: NavigationActions) {
           CameraPreview(controller = controller, modifier = Modifier.fillMaxSize())
 
           Row(
-              modifier = Modifier.fillMaxWidth().align(Alignment.BottomCenter).padding(16.dp).padding(bottom = 32.dp),
+              modifier =
+                  Modifier.fillMaxWidth()
+                      .align(Alignment.BottomCenter)
+                      .padding(16.dp)
+                      .padding(bottom = 32.dp),
               horizontalArrangement = Arrangement.SpaceAround) {
                 IconButton(
-                    modifier = Modifier.size(56.dp)
-                        .background(CameraButtonsBackground, shape = CircleShape)
-                        .padding(10.dp).testTag("GalleryButton"),
+                    modifier =
+                        Modifier.size(56.dp)
+                            .background(CameraButtonsBackground, shape = CircleShape)
+                            .padding(10.dp)
+                            .testTag("GalleryButton"),
                     // Open the local gallery when the gallery button is clicked
                     onClick = { scope.launch { scaffoldState.bottomSheetState.expand() } }) {
                       Icon(imageVector = Icons.Default.Photo, contentDescription = "Open gallery")
                     }
 
                 IconButton(
-                    modifier = Modifier.size(56.dp)
-                        .background(CameraButtonsBackground, shape = CircleShape)
-                        .padding(10.dp).testTag("PhotoButton"),
+                    modifier =
+                        Modifier.size(56.dp)
+                            .background(CameraButtonsBackground, shape = CircleShape)
+                            .padding(10.dp)
+                            .testTag("PhotoButton"),
                     // Take a photo when the photo button is clicked
                     onClick = {
                       takePhoto(

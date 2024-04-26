@@ -30,16 +30,23 @@ fun BottomNavigationMenu(
     onTabSelect: (TopLevelDestination) -> Unit,
     tabList: List<TopLevelDestination>,
 ) {
-  NavigationBar(modifier = Modifier.fillMaxWidth().height(80.dp).background(TemplateColor).testTag("BottomNavigationMenu")) {
-    tabList.forEach { replyDestination ->
-      NavigationBarItem(
-          selected = selectedItem == replyDestination.route,
-          onClick = { onTabSelect(replyDestination) },
-          icon = {
-            Icon(imageVector = replyDestination.icon, contentDescription = replyDestination.textId)
-          },
-          label = { Text(replyDestination.textId) },
-          modifier = Modifier.testTag(replyDestination.textId))
-    }
-  }
+  NavigationBar(
+      modifier =
+          Modifier.fillMaxWidth()
+              .height(80.dp)
+              .background(TemplateColor)
+              .testTag("BottomNavigationMenu")) {
+        tabList.forEach { replyDestination ->
+          NavigationBarItem(
+              selected = selectedItem == replyDestination.route,
+              onClick = { onTabSelect(replyDestination) },
+              icon = {
+                Icon(
+                    imageVector = replyDestination.icon,
+                    contentDescription = replyDestination.textId)
+              },
+              label = { Text(replyDestination.textId) },
+              modifier = Modifier.testTag(replyDestination.textId))
+        }
+      }
 }

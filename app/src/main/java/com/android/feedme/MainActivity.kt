@@ -24,8 +24,8 @@ import com.android.feedme.ui.CreateScreen
 import com.android.feedme.ui.NotImplementedScreen
 import com.android.feedme.ui.auth.LoginScreen
 import com.android.feedme.ui.camera.CameraScreen
-import com.android.feedme.ui.home.LandingPage
 import com.android.feedme.ui.component.RecipeFullDisplay
+import com.android.feedme.ui.home.LandingPage
 import com.android.feedme.ui.navigation.NavigationActions
 import com.android.feedme.ui.navigation.Route
 import com.android.feedme.ui.navigation.Screen

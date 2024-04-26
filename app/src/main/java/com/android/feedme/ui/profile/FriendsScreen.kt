@@ -27,13 +27,12 @@ import androidx.compose.material3.Tab
 import androidx.compose.material3.TabRow
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.DisposableEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableIntStateOf
+import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
-import androidx.compose.runtime.toMutableStateList
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -74,36 +73,16 @@ fun FriendsScreen(
   // Now, collect followers and following as state to display them
   val followers =
       if (mode == 4242 || profileViewModel.isViewingProfile())
-          profileViewModel.viewingUserFollowers.collectAsState()
-      else profileViewModel.currentUserFollowers.collectAsState()
+          profileViewModel.viewingUserFollowers.collectAsState(initial = listOf())
+      else profileViewModel.currentUserFollowers.collectAsState(initial = listOf())
   val following =
       if (mode == 4242 || profileViewModel.isViewingProfile())
-          profileViewModel.viewingUserFollowing.collectAsState()
-      else profileViewModel.currentUserFollowing.collectAsState()
+          profileViewModel.viewingUserFollowing.collectAsState(initial = listOf())
+      else profileViewModel.currentUserFollowing.collectAsState(initial = listOf())
   if (selectedTabIndex == 4242) {
     selectedTabIndex = 0
   }
 
-  // Create mutable state lists for followers and following
-
-  val followersM = remember { followers.value.toMutableStateList() }
-  val followingM = remember { following.value.toMutableStateList() }
-
-  DisposableEffect(navigationActions) {
-    onDispose {
-      // sync profile with db
-      if (!profileViewModel.isViewingProfile()) {
-        val def = profileViewModel.currentUserProfile.value
-
-        val followersId = followersM.toList().map { it.id }
-        val followingId = followingM.toList().map { it.id }
-        if (def != null) {
-          val profile = def.copy(followers = followersId, following = followingId)
-          profileViewModel.setProfile(profile)
-        }
-      }
-    }
-  }
   Scaffold(
 
       modifier = Modifier
@@ -136,8 +115,12 @@ fun FriendsScreen(
                 }
               }
           when (selectedTabIndex) {
-            0 -> FollowersList(followersM, "FollowersList", navigationActions, profileViewModel)
-            1 -> FollowersList(followingM, "FollowingList", navigationActions, profileViewModel)
+            0 ->
+                FriendsList(
+                    followers.value, "FollowersList", navigationActions, profileViewModel, true)
+            1 ->
+                FriendsList(
+                    following.value, "FollowingList", navigationActions, profileViewModel, false)
           }
         }
       })
@@ -150,12 +133,14 @@ fun FriendsScreen(
  * @param tag A testing tag used for UI tests to identify the list view.
  */
 @Composable
-fun FollowersList(
-    profiles: MutableList<Profile>,
+fun FriendsList(
+    profiles: List<Profile>,
     tag: String,
     navigationActions: NavigationActions,
-    profileViewModel: ProfileViewModel
+    profileViewModel: ProfileViewModel,
+    isFollowerList: Boolean = true
 ) {
+
   if (profiles.isEmpty()) {
     Column(
         modifier = Modifier.fillMaxSize(),
@@ -172,7 +157,7 @@ fun FollowersList(
   } else {
     LazyColumn(modifier = Modifier.fillMaxSize().testTag(tag)) {
       items(profiles) { profile ->
-        FollowerCard(profile = profile, profiles, navigationActions, profileViewModel)
+        FriendsCard(profile = profile, navigationActions, profileViewModel, isFollowerList)
       }
     }
   }
@@ -185,11 +170,11 @@ fun FollowersList(
  * @param profile The profile data of the user.
  */
 @Composable
-fun FollowerCard(
+fun FriendsCard(
     profile: Profile,
-    profiles: MutableList<Profile>,
     navigationActions: NavigationActions,
-    profileViewModel: ProfileViewModel
+    profileViewModel: ProfileViewModel,
+    isFollowerList: Boolean = true
 ) {
   Card(
       modifier =
@@ -202,7 +187,6 @@ fun FollowerCard(
             verticalAlignment = Alignment.CenterVertically,
             modifier =
                 Modifier.fillMaxWidth().clickable {
-                  /*TODO Navigate to profile view of follower*/
                   profileViewModel.setViewingProfile(profile)
                   navigationActions.navigateTo(Screen.PROFILE)
 
@@ -226,16 +210,49 @@ fun FollowerCard(
               Spacer(modifier = Modifier.weight(0.1f))
               Box(modifier = Modifier.align(Alignment.CenterVertically)) {
                 Row {
-                  Button(
-                      onClick = { profiles.remove(profile) },
-                      Modifier.padding(top = 4.dp, bottom = 4.dp, end = 0.dp)) {
-                        Text(text = "Remove")
-                      }
-                  IconButton(onClick = { /* TODO: Implement action */}) {
-                    Icon(imageVector = Icons.Filled.MoreVert, contentDescription = "Options")
-                  }
+                  FollowUnfollowButton(
+                      profile = profile, profileViewModel = profileViewModel, isFollowerList)
+                }
+                IconButton(onClick = { /* TODO: Implement action */}) {
+                  Icon(imageVector = Icons.Filled.MoreVert, contentDescription = "Options")
                 }
               }
             }
       }
+}
+
+@Composable
+fun FollowUnfollowButton(
+    profile: Profile,
+    profileViewModel: ProfileViewModel,
+    isFollowerList: Boolean
+) {
+  val currentUser = profileViewModel.currentUserProfile.collectAsState().value
+  val isFollowing = remember {
+    mutableStateOf(currentUser?.following?.contains(profile.id) ?: false)
+  }
+
+  if (isFollowing.value) {
+    Button(
+        onClick = {
+          isFollowing.value = false
+          if (currentUser != null) {
+            if (isFollowerList) profileViewModel.removeFollower(profile)
+            else profileViewModel.unfollowUser(profile)
+          }
+        }) {
+          Text(if (isFollowerList) "Remove" else "Unfollow")
+        }
+  } else {
+      // should not appear
+    Button(
+        onClick = {
+          isFollowing.value = true
+          if (currentUser != null) {
+            profileViewModel.followUser(profile)
+          }
+        }) {
+          Text("Follow")
+        }
+  }
 }

@@ -38,15 +38,28 @@ class ProfileViewModel : ViewModel() {
   val viewingUserFollowing: StateFlow<List<Profile>> = _viewingUserFollowing
   val viewingUserFollowers: StateFlow<List<Profile>> = _viewingUserFollowers
 
+  // Listen to FirebaseAuth state changes, to fetch the profile of the current user
+  private val authListener =
+      FirebaseAuth.AuthStateListener { firebaseAuth ->
+        val user = firebaseAuth.currentUser
+        user?.uid?.let {
+          currentUserId = it
+          fetchCurrentUserProfile()
+        }
+      }
+
+  // Error message
+  private val _errorMessages = MutableStateFlow<String?>(null)
+  val errorMessages: StateFlow<String?> = _errorMessages
+
   init {
     // Listen to FirebaseAuth state changes
-    FirebaseAuth.getInstance().addAuthStateListener { firebaseAuth ->
-      val user = firebaseAuth.currentUser
-      user?.uid?.let {
-        currentUserId = it
-        fetchCurrentUserProfile()
-      }
-    }
+    FirebaseAuth.getInstance().addAuthStateListener(authListener)
+  }
+
+  override fun onCleared() {
+    FirebaseAuth.getInstance().removeAuthStateListener(authListener)
+    super.onCleared()
   }
 
   /**
@@ -74,21 +87,23 @@ class ProfileViewModel : ViewModel() {
   }
 
   fun fetchCurrentUserProfile() {
-    viewModelScope.launch {
-      repository.getProfile(
-          currentUserId!!,
-          onSuccess = { profile ->
-            _currentUserProfile.value = profile
-            if (profile != null) {
-              fetchProfiles(profile.followers, _currentUserFollowers)
-              fetchProfiles(profile.following, _currentUserFollowing)
-            }
-          },
-          onFailure = {
-            // Handle failure
-            throw error("Profile was not fetched during Login")
-          })
-    }
+    currentUserId?.let { userId ->
+      viewModelScope.launch {
+        repository.getProfile(
+            userId,
+            onSuccess = { profile ->
+              _currentUserProfile.value = profile
+              if (profile != null) {
+                fetchProfiles(profile.followers, _currentUserFollowers)
+                fetchProfiles(profile.following, _currentUserFollowing)
+              }
+            },
+            onFailure = {
+              // Handle failure
+              throw error("Profile was not fetched during Login")
+            })
+      }
+    } ?: Log.e("ProfileViewModel", "Current user ID is null.")
   }
 
   /**
@@ -102,20 +117,12 @@ class ProfileViewModel : ViewModel() {
           profile,
           onSuccess = {
             if (isCurrent) {
-              _currentUserProfile.value = profile
-              fetchProfiles(profile.followers, _currentUserFollowers)
-              fetchProfiles(profile.following, _currentUserFollowing)
+              updateCurrentUserProfile(profile)
             } else {
-              _viewingUserProfile.value = profile
-              fetchProfiles(profile.followers, _viewingUserFollowers)
-              fetchProfiles(profile.following, _viewingUserFollowing)
+              updateViewingUserProfile(profile)
             }
-            Log.d("ProfileViewModel", "Profile updated")
           },
-          onFailure = {
-            // Handle failure
-            throw error("Profile could not get updated")
-          })
+          onFailure = { _errorMessages.value = "Profile could not get updated" })
     }
   }
 
@@ -196,5 +203,220 @@ class ProfileViewModel : ViewModel() {
     viewingUserId = profile.id
     fetchProfiles(profile.followers, _viewingUserFollowers)
     fetchProfiles(profile.following, _viewingUserFollowing)
+  }
+
+  /**
+   * Updates the current user's profile.
+   *
+   * @param profile The updated profile.
+   */
+  private fun updateCurrentUserProfile(profile: Profile) {
+    _currentUserProfile.value = profile
+    currentUserId = profile.id
+    fetchProfiles(profile.followers, _currentUserFollowers)
+    fetchProfiles(profile.following, _currentUserFollowing)
+  }
+
+  /**
+   * Updates the viewing user's profile.
+   *
+   * @param profile The updated profile.
+   */
+  private fun updateViewingUserProfile(profile: Profile) {
+    _viewingUserProfile.value = profile
+    viewingUserId = profile.id
+    fetchProfiles(profile.followers, _viewingUserFollowers)
+    fetchProfiles(profile.following, _viewingUserFollowing)
+  }
+
+  /**
+   * Starts following another user, updating both the current user's following list and the other
+   * user's followers list. This method is transactional, ensuring that both operations succeed or
+   * fail together.
+   *
+   * @param currentUserId The ID of the user doing the following.
+   * @param targetUserId The ID of the user being followed.
+   * @throws Exception If the current user ID is null. Should never happen.
+   * @throws Exception If the current user ID is the same as the target user ID. Should never
+   *   happen.
+   *   @throws Exception If the target user is already a follower of the current user. Should never
+   */
+  fun followUser(targetUser: Profile) {
+    val targetUserId = targetUser.id
+    val currentUserId =
+        currentUserId ?: throw Exception("Current user ID is null. Should never happen.")
+    if (currentUserId == targetUserId) {
+      throw Exception("Current user ID is the same as the target user ID. Should never happen.")
+    }
+    if (targetUser.followers.contains(currentUserId)) {
+      throw Exception("Target user is already a follower of the current user. Should never happen.")
+    }
+
+    viewModelScope.launch {
+      repository.followUser(
+          currentUserId,
+          targetUserId,
+          onSuccess = {
+            Log.d("ProfileViewModel", "Successfully started following the user")
+            // Update local state if needed
+            updateFollowingList(currentUserId, _currentUserProfile.value!!)
+            updateFollowersList(targetUserId, targetUser)
+          },
+          onFailure = { error ->
+            _errorMessages.value = "Failed to start following user: ${error.message}"
+            Log.e("ProfileViewModel", "Failed to start following user: ${error.message}")
+          })
+    }
+  }
+
+  /**
+   * Unfollows another user, updating both the current user's following list and the other user's
+   * followers list. This method is transactional, ensuring that both operations succeed or fail
+   * together.
+   *
+   * @param targetUserId The ID of the user being unfollowed.
+   * @throws Exception If the current user ID is null. Should never happen.
+   * @throws Exception If the current user ID is the same as the target user ID. Should never
+   *   happen.
+   *   @throws Exception If the target user is not a follower of the current user. Should never
+   */
+  fun unfollowUser(targetUser: Profile) {
+    val targetUserId = targetUser.id
+    val requestFromUserId =
+        currentUserId ?: throw Exception("Current user ID is null. Should never happen.")
+
+    if (requestFromUserId == targetUserId) {
+      throw Exception("Current user ID is the same as the target user ID. Should never happen.")
+    }
+   if(!targetUser.followers.contains(requestFromUserId)){
+      throw Exception("Target user is not a follower of the current user. Should never happen.")
+    }
+
+    viewModelScope.launch {
+      repository.unfollowUser(
+          requestFromUserId,
+          targetUserId,
+          onSuccess = {
+            Log.d("ProfileViewModel", "Successfully unfollowed the user")
+            // Update local state if needed
+            removeFollowingFromList(requestFromUserId, _currentUserProfile.value!!)
+            removeFollowerFromList(targetUserId, targetUser)
+          },
+          onFailure = { error ->
+            _errorMessages.value = "Failed to unfollow user: ${error.message}"
+            Log.e("ProfileViewModel", "Failed to unfollow user: ${error.message}")
+          })
+    }
+  }
+
+  /**
+   * Removes a follower from the user's followers list and the user from the follower's following
+   * list. This method is transactional, ensuring that both operations succeed or fail together.
+   *
+   * @param requestFromUserId The ID of the user whose followers list will be updated.
+   * @param followerId The ID of the follower to remove.
+   * @throws Exception If the current user ID is null. Should never happen.
+   * @throws Exception If the current user ID is the same as the follower ID. Should never happen.
+   * @throws Exception If the follower is not in the current user's following list. Should never
+   */
+  fun removeFollower(follower: Profile) {
+    Log.d("ProfileViewModel", "Removing follower and following CALLED")
+    val followerId = follower.id
+    val requestFromUserId =
+        currentUserId ?: throw Exception("Current user ID is null. Should never happen.")
+    if (requestFromUserId == followerId) {
+      throw Exception("Current user ID is the same as the follower ID. Should never happen.")
+    }
+    if (!follower.following.contains(requestFromUserId)) {
+      throw Exception("Current user is not following the follower. Should never happen.")
+    }
+
+
+    viewModelScope.launch {
+      repository.removeFollower(
+          requestFromUserId,
+          followerId,
+          onSuccess = {
+            Log.d("ProfileViewModel", "Successfully removed follower and following")
+            // Update local state if needed
+            removeFollowingFromList(followerId, follower)
+            removeFollowerFromList(requestFromUserId, _currentUserProfile.value!!)
+          },
+          onFailure = { error ->
+            _errorMessages.value = "Failed to remove follower and following: ${error.message}"
+            Log.e("ProfileViewModel", "Failed to remove follower and following: ${error.message}")
+          })
+    }
+  }
+
+  /**
+   * Updates the local following list by adding a new profile.
+   *
+   * @param userId the ID of the user whose following list will be updated.
+   * @param newFollowing the profile to add to the following list.
+   */
+  private fun updateFollowingList(userId: String, newFollowing: Profile) {
+    if (userId == currentUserId) {
+      val updatedList = _currentUserFollowing.value.toMutableList()
+      updatedList.add(newFollowing)
+      _currentUserFollowing.value = updatedList
+      _currentUserProfile.value?.following = updatedList.toList().map { it.id }
+    } else if (userId == viewingUserId) {
+      val updatedList = _viewingUserFollowing.value.toMutableList()
+      updatedList.add(newFollowing)
+      _viewingUserFollowing.value = updatedList
+      _viewingUserProfile.value?.following = updatedList.toList().map { it.id }
+    }
+  }
+
+  /**
+   * Removes a profile from the local following list.
+   *
+   * @param userId the ID of the user whose following list will be updated.
+   * @param followingProfile the profile to remove from the following list.
+   */
+  private fun removeFollowingFromList(userId: String, followingProfile: Profile) {
+    followingProfile.following = followingProfile.following.filter { it != userId }
+    if (userId == currentUserId) {
+      _currentUserFollowing.value = _currentUserFollowing.value.filter { it.id != userId }
+    } else if (userId == viewingUserId) {
+      _viewingUserFollowing.value = _viewingUserFollowing.value.filter { it.id != userId }
+    }
+  }
+  /**
+   * Updates the local followers list by adding a new profile.
+   *
+   * @param userId the ID of the user whose followers list will be updated.
+   * @param newFollower the profile to add to the followers list.
+   */
+  private fun updateFollowersList(userId: String, newFollower: Profile) {
+      newFollower.followers = newFollower.followers.plus(userId)
+    if (userId == currentUserId){
+        val updatedList = _currentUserFollowers.value.toMutableList()
+        updatedList.add(newFollower)
+        _currentUserFollowers.value = updatedList
+        _currentUserProfile.value?.followers = updatedList.toList().map { it.id }
+        } else if (userId == viewingUserId) {
+        val updatedList = _viewingUserFollowers.value.toMutableList()
+        updatedList.add(newFollower)
+        _viewingUserFollowers.value = updatedList
+        _viewingUserProfile.value?.followers = updatedList.toList().map { it.id }
+    }
+
+  }
+
+  /**
+   * Removes a profile from the local followers list.
+   *
+   * @param userId the ID of the user whose followers list will be updated.
+   * @param followerProfile the profile to remove from the followers list.
+   */
+  private fun removeFollowerFromList(userId: String, followerProfile: Profile) {
+    followerProfile.followers = followerProfile.followers.filter { it != userId }
+    if (userId == currentUserId) {
+      _currentUserFollowers.value = _currentUserFollowers.value.filter { it.id != userId }
+    } else if (userId == viewingUserId) {
+      _viewingUserFollowers.value = _viewingUserFollowers.value.filter { it.id != userId }
+    }
   }
 }

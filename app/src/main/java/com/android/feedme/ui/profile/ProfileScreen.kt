@@ -19,6 +19,7 @@ import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -49,6 +50,7 @@ import com.android.feedme.ui.theme.FollowButton
 import com.android.feedme.ui.theme.FollowButtonBorder
 import com.android.feedme.ui.theme.FollowingButton
 import com.android.feedme.ui.theme.TextBarColor
+import com.google.firebase.auth.FirebaseAuth
 
 /**
  * A composable function that generates the profile screen.
@@ -66,8 +68,12 @@ fun ProfileScreen(
 ) {
 
   val profile =
-      if (profileViewModel.isViewingProfile()) profileViewModel.viewingUserProfile.collectAsState()
-      else profileViewModel.currentUserProfile.collectAsState()
+      if (FirebaseAuth.getInstance().uid != null) {
+
+        if (profileViewModel.isViewingProfile())
+            profileViewModel.viewingUserProfile.collectAsState()
+        else profileViewModel.currentUserProfile.collectAsState()
+      } else remember { mutableStateOf(Profile()) }
 
   Scaffold(
       modifier = Modifier.fillMaxSize().testTag("ProfileScreen"),
@@ -234,91 +240,108 @@ fun ProfileButtons(
     profile: Profile,
     profileViewModel: ProfileViewModel
 ) {
+  val currentUserProfile = profileViewModel.currentUserProfile.collectAsState().value ?: Profile()
+  val isFollowing = remember {
+    mutableStateOf(profile.followers.contains(profileViewModel.currentUserId))
+  }
+
   Row(
       modifier = Modifier.fillMaxWidth().padding(vertical = 20.dp),
       horizontalArrangement = Arrangement.SpaceEvenly,
       verticalAlignment = Alignment.CenterVertically) {
         if (!profileViewModel.isViewingProfile()) {
-          OutlinedButton(
-              modifier = Modifier.testTag("EditButton"),
-              border = BorderStroke(2.dp, FollowButtonBorder),
-              onClick = { navigationActions.navigateTo(Screen.EDIT_PROFILE) }) {
-                Text(
-                    modifier = Modifier.width(110.dp).height(13.dp),
-                    text = "Edit Profile",
-                    fontWeight = FontWeight.Bold,
-                    style = textStyle())
-              }
+          EditProfileButton(navigationActions)
         } else {
-          val isFollowing = remember {
-            mutableStateOf(profile.followers.contains(profileViewModel.currentUserId))
-          }
-          if (isFollowing.value) {
-            OutlinedButton(
-                colors = ButtonDefaults.buttonColors(containerColor = FollowingButton),
-                border = BorderStroke(2.dp, FollowButtonBorder),
-                modifier = Modifier.testTag("FollowingButton"),
-                onClick = {
-                  isFollowing.value = false
-                  /*TODO ADD follower*/
-                  val prof = profileViewModel.currentUserProfile.value ?: Profile()
-                  val newProf =
-                      prof.copy(following = prof.following - (profileViewModel.viewingUserId ?: ""))
-                  profileViewModel.setProfile(newProf)
-
-                  val prof2 = profileViewModel.profileToShow()
-                  val newProf2 =
-                      prof2.copy(
-                          followers = prof2.followers - (profileViewModel.currentUserId ?: ""))
-                  profileViewModel.setProfile(newProf2, false)
-                }) {
-                  Text(
-                      modifier = Modifier.width(110.dp).height(13.dp),
-                      text = "Following",
-                      fontWeight = FontWeight.Bold,
-                      style = textStyle())
-                }
-          } else {
-            OutlinedButton(
-                colors = ButtonDefaults.buttonColors(containerColor = FollowButton),
-                border = BorderStroke(2.dp, FollowButtonBorder),
-                modifier = Modifier.testTag("FollowButton"),
-                onClick = {
-                  isFollowing.value = true
-                  /*TODO ADD follower*/
-                  val prof = profileViewModel.currentUserProfile.value ?: Profile()
-                  val newProf =
-                      prof.copy(following = prof.following + (profileViewModel.viewingUserId ?: ""))
-                  profileViewModel.setProfile(newProf)
-
-                  val prof2 = profileViewModel.profileToShow()
-                  val newProf2 =
-                      prof2.copy(
-                          followers = prof2.followers + (profileViewModel.currentUserId ?: ""))
-                  profileViewModel.setProfile(newProf2, false)
-                }) {
-                  Text(
-                      color = TextBarColor,
-                      modifier = Modifier.width(110.dp).height(13.dp),
-                      text = "Follow",
-                      fontWeight = FontWeight.Bold,
-                      style = textStyle(color = TextBarColor))
-                }
-          }
+          FollowUnfollowButton(profile, isFollowing, profileViewModel, currentUserProfile)
         }
+        ShareProfileButton()
+      }
+}
 
-        OutlinedButton(
-            modifier = Modifier.testTag("ShareButton"),
-            border = BorderStroke(2.dp, FollowButtonBorder),
-            onClick = {
-              /*TODO*/
-            }) {
-              Text(
-                  modifier = Modifier.width(110.dp),
-                  text = "Share Profile",
-                  fontWeight = FontWeight.Bold,
-                  style = textStyle())
-            }
+/**
+ * A composable function that generates the edit profile button.
+ *
+ * @param navigationActions: NavigationActions object to handle navigation events
+ */
+@Composable
+fun EditProfileButton(navigationActions: NavigationActions) {
+  OutlinedButton(
+      modifier = Modifier.testTag("EditButton"),
+      border = BorderStroke(2.dp, FollowButtonBorder),
+      onClick = { navigationActions.navigateTo(Screen.EDIT_PROFILE) }) {
+        Text(
+            modifier = Modifier.width(110.dp).height(13.dp),
+            text = "Edit Profile",
+            fontWeight = FontWeight.Bold,
+            style = textStyle())
+      }
+}
+
+/**
+ * A composable function that generates the follow/unfollow button.
+ *
+ * @param profile: Extract the needed information from the user's profile in the database
+ * @param isFollowing: Flag indicating whether the current user is following the profile or not
+ * @param profileViewModel: ProfileViewModel object to interact with profile data
+ * @param currentUserProfile: Profile object of the current user
+ */
+@Composable
+fun FollowUnfollowButton(
+    profile: Profile,
+    isFollowing: MutableState<Boolean>,
+    profileViewModel: ProfileViewModel,
+    currentUserProfile: Profile
+) {
+  if (isFollowing.value) {
+    OutlinedButton(
+        colors = ButtonDefaults.buttonColors(containerColor = FollowingButton),
+        border = BorderStroke(2.dp, FollowButtonBorder),
+        modifier = Modifier.testTag("FollowingButton"),
+        onClick = {
+          // Unfollow logic
+          isFollowing.value = false
+          profileViewModel.unfollowUser(profile)
+        }) {
+          Text(
+              modifier = Modifier.width(110.dp).height(13.dp),
+              text = "Unfollow",
+              fontWeight = FontWeight.Bold,
+              style = textStyle())
+        }
+  } else {
+    OutlinedButton(
+        colors = ButtonDefaults.buttonColors(containerColor = FollowButton),
+        border = BorderStroke(2.dp, FollowButtonBorder),
+        modifier = Modifier.testTag("FollowButton"),
+        onClick = {
+          // Follow logic
+          isFollowing.value = true
+          profileViewModel.followUser(profile) // Assuming the function signature matches
+        }) {
+          Text(
+              modifier = Modifier.width(110.dp).height(13.dp),
+              text = "Follow",
+              color = TextBarColor,
+              fontWeight = FontWeight.Bold,
+              style = textStyle(color = TextBarColor))
+        }
+  }
+}
+
+/** A composable function that generates the share profile button. */
+@Composable
+fun ShareProfileButton() {
+  OutlinedButton(
+      modifier = Modifier.testTag("ShareButton"),
+      border = BorderStroke(2.dp, FollowButtonBorder),
+      onClick = {
+        // Placeholder for future share functionality
+      }) {
+        Text(
+            modifier = Modifier.width(110.dp),
+            text = "Share Profile",
+            fontWeight = FontWeight.Bold,
+            style = textStyle())
       }
 }
 

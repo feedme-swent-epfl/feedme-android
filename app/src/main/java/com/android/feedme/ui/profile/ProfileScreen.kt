@@ -20,6 +20,7 @@ import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.MutableState
+import androidx.compose.runtime.State
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -51,6 +52,7 @@ import com.android.feedme.ui.theme.FollowButtonBorder
 import com.android.feedme.ui.theme.FollowingButton
 import com.android.feedme.ui.theme.TextBarColor
 import com.google.firebase.auth.FirebaseAuth
+import kotlinx.coroutines.flow.StateFlow
 
 /**
  * A composable function that generates the profile screen.
@@ -68,12 +70,9 @@ fun ProfileScreen(
 ) {
 
   val profile =
-      if (FirebaseAuth.getInstance().uid != null) {
-
         if (profileViewModel.isViewingProfile())
             profileViewModel.viewingUserProfile.collectAsState()
         else profileViewModel.currentUserProfile.collectAsState()
-      } else remember { mutableStateOf(Profile()) }
 
   Scaffold(
       modifier = Modifier.fillMaxSize().testTag("ProfileScreen"),
@@ -98,7 +97,7 @@ fun ProfileScreen(
             TOP_LEVEL_DESTINATIONS)
       },
       content = { padding ->
-        ProfileBox(padding, profile.value ?: Profile(), navigationActions, profileViewModel)
+        ProfileBox(padding, profile.value, navigationActions, profileViewModel)
       })
 }
 
@@ -116,7 +115,7 @@ fun ProfileScreen(
 @Composable
 fun ProfileBox(
     padding: PaddingValues,
-    profile: Profile,
+    profile: Profile?,
     navigationActions: NavigationActions,
     profileViewModel: ProfileViewModel
 ) { // TODO add font
@@ -130,17 +129,17 @@ fun ProfileBox(
             verticalAlignment = Alignment.CenterVertically) {
               UserProfilePicture()
               Spacer(modifier = Modifier.width(20.dp))
-              UserNameBox(profile)
+              UserNameBox(profile ?: Profile())
               Spacer(modifier = Modifier.width(5.dp))
               Row(
                   horizontalArrangement = Arrangement.Center,
                   verticalAlignment = Alignment.CenterVertically) {
-                    FollowersButton(profile, navigationActions)
-                    FollowingButton(profile, navigationActions)
+                    FollowersButton(profile ?: Profile(), navigationActions)
+                    FollowingButton(profile ?: Profile(), navigationActions)
                   }
             }
-        UserBio(profile)
-        ProfileButtons(navigationActions, profile, profileViewModel)
+        UserBio(profile ?: Profile(),)
+        ProfileButtons(navigationActions, profile ?: Profile(), profileViewModel)
       }
 }
 

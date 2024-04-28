@@ -32,6 +32,7 @@ import com.android.feedme.ui.navigation.Screen
 import com.android.feedme.ui.profile.EditProfileScreen
 import com.android.feedme.ui.profile.FriendsScreen
 import com.android.feedme.ui.profile.ProfileScreen
+import com.android.feedme.ui.settings.SettingsScreen
 import com.android.feedme.ui.theme.feedmeAppTheme
 import com.google.firebase.firestore.FirebaseFirestore
 
@@ -98,9 +99,7 @@ class MainActivity : ComponentActivity() {
                   }
                 }
                 navigation(startDestination = Screen.SETTINGS, route = Route.SETTINGS) {
-                  composable(Screen.SETTINGS) {
-                    NotImplementedScreen(navigationActions, Route.SETTINGS)
-                  }
+                  composable(Screen.SETTINGS) { SettingsScreen(navigationActions) }
                 }
               }
             }

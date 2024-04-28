@@ -14,8 +14,11 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.testTag
 import com.android.feedme.R
+import com.android.feedme.ui.navigation.BottomNavigationMenu
 import com.android.feedme.ui.navigation.NavigationActions
+import com.android.feedme.ui.navigation.Route
 import com.android.feedme.ui.navigation.TOP_LEVEL_AUTH
+import com.android.feedme.ui.navigation.TOP_LEVEL_DESTINATIONS
 import com.google.android.gms.auth.api.signin.GoogleSignIn
 import com.google.android.gms.auth.api.signin.GoogleSignInOptions
 import kotlinx.coroutines.launch
@@ -32,7 +35,9 @@ fun SettingsScreen(navigationActions: NavigationActions) {
   Scaffold(
       modifier = Modifier.testTag("SettingsScreen"),
       topBar = { /*TODO*/},
-      bottomBar = { /*TODO*/},
+      bottomBar = {
+        BottomNavigationMenu(Route.SETTINGS, navigationActions::navigateTo, TOP_LEVEL_DESTINATIONS)
+      },
       content = { padding ->
         Box(
             modifier = Modifier.fillMaxSize().padding(padding),

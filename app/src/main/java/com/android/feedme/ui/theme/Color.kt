@@ -13,6 +13,7 @@ val Pink40 = Color(0xFF7D5260)
 val DarkGrey = Color(0xFF191C1E)
 
 val YellowStar = Color(0xFFFFE600)
+val YellowStarBlackOutline = Color(0xFF000000)
 val TemplateColor = Color(0xFF002C47)
 private val cardColor = Color(0xC9C2E1EE)
 val CardBackground = CardColors(cardColor, cardColor, cardColor, cardColor)

@@ -90,7 +90,7 @@ object Screen {
   const val CAMERA = "Camera"
   const val EDIT_PROFILE = "Edit Profile"
   const val FRIENDS = "Friends/{showFollowers}"
-  const val RECIPE = "Recipe/{recipeId}"
+  const val RECIPE = "Recipe"
 }
 
 /**

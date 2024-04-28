@@ -2,6 +2,7 @@ package com.android.feedme.ui.component
 
 import android.annotation.SuppressLint
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
@@ -9,12 +10,15 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.rounded.AccessTime
+import androidx.compose.material.icons.outlined.Timer
 import androidx.compose.material.icons.rounded.Star
+import androidx.compose.material.icons.rounded.Timer
 import androidx.compose.material.icons.twotone.Bookmark
+import androidx.compose.material.icons.twotone.Star
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
@@ -46,6 +50,7 @@ import com.android.feedme.ui.navigation.TOP_LEVEL_DESTINATIONS
 import com.android.feedme.ui.navigation.TopBarNavigation
 import com.android.feedme.ui.theme.BlueUser
 import com.android.feedme.ui.theme.YellowStar
+import com.android.feedme.ui.theme.YellowStarBlackOutline
 
 /**
  * Displays a full recipe view. The screen contains the [TopBarNavigation], the
@@ -125,11 +130,11 @@ fun GeneralInfosDisplay(recipe: Recipe, modifier: Modifier = Modifier) {
         // Recipe time
         Spacer(modifier = Modifier.weight(1f))
         Icon(
-            imageVector = Icons.Rounded.AccessTime,
+            imageVector = Icons.Outlined.Timer,
             contentDescription = "Time Icon",
-            modifier = Modifier.testTag("Time Icon"))
+            modifier = Modifier.size(26.dp).testTag("Time Icon"))
         Text(
-            text = recipe.time.toString(),
+            text = "${recipe.time.toInt()} '",
             modifier = Modifier.padding(start = 4.dp).testTag("Text Time"),
             style = TextStyle(fontSize = 16.sp, fontWeight = FontWeight.Medium))
 
@@ -146,12 +151,23 @@ fun GeneralInfosDisplay(recipe: Recipe, modifier: Modifier = Modifier) {
             style = TextStyle(fontSize = 16.sp, fontWeight = FontWeight.Medium))
         Spacer(modifier = Modifier.weight(1f))
 
-        // Recipe rating
-        Icon(
-            imageVector = Icons.Rounded.Star,
-            contentDescription = "Rating Icon",
-            tint = YellowStar,
-            modifier = Modifier.testTag("Rating Icon"))
+        // Recipe ratings
+        Box(contentAlignment = Alignment.Center) {
+          // Larger black star to act as the outline
+          Icon(
+              imageVector = Icons.TwoTone.Star,
+              contentDescription = "Rating Outline",
+              tint = YellowStarBlackOutline,
+              modifier = Modifier.size(26.dp) // Make this star slightly larger to show as the edge
+              )
+          // Smaller yellow star to act as the inner part
+          Icon(
+              imageVector = Icons.Rounded.Star,
+              contentDescription = "Rating",
+              tint = YellowStar,
+              modifier = Modifier.size(17.dp) // Smaller than the outline star
+              )
+        }
         Text(
             text = recipe.rating.toString(),
             modifier = Modifier.padding(start = 4.dp).testTag("Text Rating"),

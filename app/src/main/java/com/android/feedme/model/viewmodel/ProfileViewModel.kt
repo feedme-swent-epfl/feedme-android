@@ -184,6 +184,6 @@ class ProfileViewModel : ViewModel() {
     _viewingUserProfile.value = profile
     viewingUserId = profile.id
     fetchProfiles(profile.followers, _viewingUserFollowers)
-    fetchProfiles(profile.following, _currentUserFollowing)
+    fetchProfiles(profile.following, _viewingUserFollowing)
   }
 }

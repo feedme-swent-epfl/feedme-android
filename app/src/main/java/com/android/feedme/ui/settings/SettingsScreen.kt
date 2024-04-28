@@ -34,11 +34,12 @@ import kotlinx.coroutines.launch
 fun SettingsScreen(navigationActions: NavigationActions) {
   Scaffold(
       modifier = Modifier.testTag("SettingsScreen"),
-      topBar = { /*TODO*/},
+      topBar = { /*TODO: add top bar navigation composable */},
       bottomBar = {
         BottomNavigationMenu(Route.SETTINGS, navigationActions::navigateTo, TOP_LEVEL_DESTINATIONS)
       },
       content = { padding ->
+        // TODO: modify the content of the settings screen adapting it to the desired UI screen
         Box(
             modifier = Modifier.fillMaxSize().padding(padding),
             contentAlignment = Alignment.Center) {
@@ -65,6 +66,7 @@ fun SignOutButton(navigationActions: NavigationActions) {
   val googleSignInClient = GoogleSignIn.getClient(context, gso)
 
   OutlinedButton(
+      // TODO: the button's UI will be updated in a future PR
       modifier = Modifier.testTag("SignOutButton"),
       onClick = {
         coroutineScope.launch {

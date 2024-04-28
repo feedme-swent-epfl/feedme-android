@@ -1,9 +1,11 @@
 package com.android.feedme.ui.navigation
 
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.automirrored.filled.Login
 import androidx.compose.material.icons.filled.AccountCircle
 import androidx.compose.material.icons.filled.Add
 import androidx.compose.material.icons.filled.Home
+import androidx.compose.material.icons.filled.Login
 import androidx.compose.material.icons.filled.Search
 import androidx.compose.material.icons.filled.Settings
 import androidx.compose.ui.graphics.vector.ImageVector
@@ -39,7 +41,9 @@ class NavigationActions(private val navController: NavHostController) {
       launchSingleTop = true
 
       // Restore state when reselecting a previously selected item
-      restoreState = true
+      if (destination.route != Route.AUTHENTICATION) {
+        restoreState = true
+      }
     }
   }
 
@@ -112,3 +116,13 @@ val TOP_LEVEL_DESTINATIONS =
             route = Route.PROFILE, icon = Icons.Default.AccountCircle, textId = "Profile"),
         TopLevelDestination(
             route = Route.SETTINGS, icon = Icons.Default.Settings, textId = "Settings"))
+
+/**
+ * Top-level destination for authentication screen (isn't part of the list since it isn't on the
+ * BottomNavigationMenu)
+ */
+val TOP_LEVEL_AUTH =
+    TopLevelDestination(
+        route = Route.AUTHENTICATION,
+        icon = Icons.AutoMirrored.Filled.Login,
+        textId = "Authentication")

@@ -19,7 +19,7 @@ class NotImplementedTest : TestCase() {
 
   @Test
   fun mainComponentsAreDisplayed() {
-    goToCreateScreen()
+    goToScreen()
 
     ComposeScreen.onComposeScreen<NotImplementedScreen>(composeTestRule) {
       topBarLanding { assertIsDisplayed() }
@@ -30,7 +30,7 @@ class NotImplementedTest : TestCase() {
     }
   }
 
-  private fun goToCreateScreen() {
+  private fun goToScreen() {
     composeTestRule.setContent { NotImplementedScreen(mockk<NavigationActions>(), Route.SETTINGS) }
     composeTestRule.waitForIdle()
   }

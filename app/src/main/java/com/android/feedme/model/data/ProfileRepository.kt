@@ -97,10 +97,10 @@ class ProfileRepository(private val db: FirebaseFirestore) {
       onSuccess: () -> Unit,
       onFailure: (Exception) -> Unit
   ) {
-      val currentUserRef = db.collection(collectionPath).document(currentUserId)
-      val targetUserRef = db.collection(collectionPath).document(targetUserId)
+    val currentUserRef = db.collection(collectionPath).document(currentUserId)
+    val targetUserRef = db.collection(collectionPath).document(targetUserId)
 
-      db.runTransaction { transaction ->
+    db.runTransaction { transaction ->
           // First, read both user documents
           val currentUserSnapshot = transaction.get(currentUserRef)
           val targetUserSnapshot = transaction.get(targetUserRef)
@@ -111,22 +111,22 @@ class ProfileRepository(private val db: FirebaseFirestore) {
           // Update current user's following list
           val currentFollowing = currentUser?.following?.toMutableList() ?: mutableListOf()
           if (!currentFollowing.contains(targetUserId)) {
-              currentFollowing.add(targetUserId)
-              transaction.update(currentUserRef, "following", currentFollowing)
+            currentFollowing.add(targetUserId)
+            transaction.update(currentUserRef, "following", currentFollowing)
           }
 
           // Update target user's followers list
           val targetFollowers = targetUser?.followers?.toMutableList() ?: mutableListOf()
           if (!targetFollowers.contains(currentUserId)) {
-              targetFollowers.add(currentUserId)
-              transaction.update(targetUserRef, "followers", targetFollowers)
+            targetFollowers.add(currentUserId)
+            transaction.update(targetUserRef, "followers", targetFollowers)
           }
-      }
-          .addOnSuccessListener { onSuccess() }
-          .addOnFailureListener { exception -> onFailure(exception) }
+        }
+        .addOnSuccessListener { onSuccess() }
+        .addOnFailureListener { exception -> onFailure(exception) }
   }
 
-    /**
+  /**
    * Unfollows a user, removing the target user from the current user's following list and the
    * current user from the target user's followers list. This method is transactional, ensuring that
    * both operations succeed or fail together.
@@ -142,10 +142,10 @@ class ProfileRepository(private val db: FirebaseFirestore) {
       onSuccess: () -> Unit,
       onFailure: (Exception) -> Unit
   ) {
-      val currentUserRef = db.collection(collectionPath).document(currentUserId)
-      val targetUserRef = db.collection(collectionPath).document(targetUserId)
+    val currentUserRef = db.collection(collectionPath).document(currentUserId)
+    val targetUserRef = db.collection(collectionPath).document(targetUserId)
 
-      db.runTransaction { transaction ->
+    db.runTransaction { transaction ->
           // Read both profiles first
           val currentUserSnapshot = transaction.get(currentUserRef)
           val targetUserSnapshot = transaction.get(targetUserRef)
@@ -163,13 +163,12 @@ class ProfileRepository(private val db: FirebaseFirestore) {
           // Perform the updates
           transaction.update(currentUserRef, "following", currentFollowing)
           transaction.update(targetUserRef, "followers", targetFollowers)
-      }
-          .addOnSuccessListener { onSuccess() }
-          .addOnFailureListener { exception -> onFailure(exception) }
+        }
+        .addOnSuccessListener { onSuccess() }
+        .addOnFailureListener { exception -> onFailure(exception) }
   }
 
-
-    /**
+  /**
    * Removes a follower from the specified user's followers list and updates the following list of
    * the follower. This method is transactional, ensuring that both operations succeed or fail
    * together.
@@ -180,39 +179,38 @@ class ProfileRepository(private val db: FirebaseFirestore) {
    * @param onFailure A callback function invoked on failure to remove the follower, with an
    *   exception.
    */
-    fun removeFollower(
-        userId: String,
-        followerId: String,
-        onSuccess: () -> Unit,
-        onFailure: (Exception) -> Unit
-    ) {
-        val userDocRef = db.collection(collectionPath).document(userId)
-        val followerDocRef = db.collection(collectionPath).document(followerId)
+  fun removeFollower(
+      userId: String,
+      followerId: String,
+      onSuccess: () -> Unit,
+      onFailure: (Exception) -> Unit
+  ) {
+    val userDocRef = db.collection(collectionPath).document(userId)
+    val followerDocRef = db.collection(collectionPath).document(followerId)
 
-        db.runTransaction { transaction ->
-            // Read both documents first
-            val userSnapshot = transaction.get(userDocRef)
-            val followerSnapshot = transaction.get(followerDocRef)
+    db.runTransaction { transaction ->
+          // Read both documents first
+          val userSnapshot = transaction.get(userDocRef)
+          val followerSnapshot = transaction.get(followerDocRef)
 
-            val user = userSnapshot.toObject(Profile::class.java)
-            val follower = followerSnapshot.toObject(Profile::class.java)
+          val user = userSnapshot.toObject(Profile::class.java)
+          val follower = followerSnapshot.toObject(Profile::class.java)
 
-            // Update the user's followers list
-            val userFollowers = user?.followers?.toMutableList() ?: mutableListOf()
-            if (userFollowers.contains(followerId)) {
-                userFollowers.remove(followerId)
-                transaction.update(userDocRef, "followers", userFollowers)
-            }
+          // Update the user's followers list
+          val userFollowers = user?.followers?.toMutableList() ?: mutableListOf()
+          if (userFollowers.contains(followerId)) {
+            userFollowers.remove(followerId)
+            transaction.update(userDocRef, "followers", userFollowers)
+          }
 
-            // Update the follower's following list
-            val followerFollowing = follower?.following?.toMutableList() ?: mutableListOf()
-            if (followerFollowing.contains(userId)) {
-                followerFollowing.remove(userId)
-                transaction.update(followerDocRef, "following", followerFollowing)
-            }
+          // Update the follower's following list
+          val followerFollowing = follower?.following?.toMutableList() ?: mutableListOf()
+          if (followerFollowing.contains(userId)) {
+            followerFollowing.remove(userId)
+            transaction.update(followerDocRef, "following", followerFollowing)
+          }
         }
-            .addOnSuccessListener { onSuccess() }
-            .addOnFailureListener { exception -> onFailure(exception) }
-    }
-
+        .addOnSuccessListener { onSuccess() }
+        .addOnFailureListener { exception -> onFailure(exception) }
+  }
 }

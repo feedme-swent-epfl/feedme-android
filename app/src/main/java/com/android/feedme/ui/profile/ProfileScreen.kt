@@ -20,7 +20,6 @@ import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.MutableState
-import androidx.compose.runtime.State
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -51,8 +50,6 @@ import com.android.feedme.ui.theme.FollowButton
 import com.android.feedme.ui.theme.FollowButtonBorder
 import com.android.feedme.ui.theme.FollowingButton
 import com.android.feedme.ui.theme.TextBarColor
-import com.google.firebase.auth.FirebaseAuth
-import kotlinx.coroutines.flow.StateFlow
 
 /**
  * A composable function that generates the profile screen.
@@ -70,9 +67,8 @@ fun ProfileScreen(
 ) {
 
   val profile =
-        if (profileViewModel.isViewingProfile())
-            profileViewModel.viewingUserProfile.collectAsState()
-        else profileViewModel.currentUserProfile.collectAsState()
+      if (profileViewModel.isViewingProfile()) profileViewModel.viewingUserProfile.collectAsState()
+      else profileViewModel.currentUserProfile.collectAsState()
 
   Scaffold(
       modifier = Modifier.fillMaxSize().testTag("ProfileScreen"),
@@ -138,7 +134,9 @@ fun ProfileBox(
                     FollowingButton(profile ?: Profile(), navigationActions)
                   }
             }
-        UserBio(profile ?: Profile(),)
+        UserBio(
+            profile ?: Profile(),
+        )
         ProfileButtons(navigationActions, profile ?: Profile(), profileViewModel)
       }
 }

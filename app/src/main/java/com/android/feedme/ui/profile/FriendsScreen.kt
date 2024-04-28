@@ -244,7 +244,7 @@ fun FollowUnfollowButton(
           Text(if (isFollowerList) "Remove" else "Unfollow")
         }
   } else {
-      // should not appear
+    // should not appear
     Button(
         onClick = {
           isFollowing.value = true

@@ -62,7 +62,7 @@ fun SmallThumbnailsDisplay(listRecipe: List<Recipe>) {
             Row(verticalAlignment = Alignment.CenterVertically) {
 
               // Star icon for ratings
-              Box(contentAlignment = Alignment.Center) {
+              Box(contentAlignment = Alignment.Center, modifier = Modifier.testTag("Star Icon")) {
                 // Larger black star to act as the outline
                 Icon(
                     imageVector = Icons.TwoTone.Star,
@@ -83,19 +83,19 @@ fun SmallThumbnailsDisplay(listRecipe: List<Recipe>) {
               // Recipe rating
               Text(
                   String.format("%.1f", listRecipe[i].rating),
-                  modifier = Modifier.padding(end = 10.dp))
+                  modifier = Modifier.padding(end = 10.dp).testTag("Text Rating"))
 
               // Clock icon for the time
               // There is no clock icon in Material, so for now i'm using the "build" icon
               Icon(
                   imageVector = Icons.Outlined.Timer,
-                  contentDescription = "Info Icon",
+                  contentDescription = "Timer Icon",
                   modifier = Modifier.size(26.dp).padding(end = 3.dp))
 
               // Recipe time
               Text(
                   text = "${listRecipe[i].time.toInt()} '",
-                  modifier = Modifier.padding(end = 45.dp))
+                  modifier = Modifier.padding(end = 45.dp).testTag("Text Time"))
 
               // Save button, to keep the recipe accessible even offline
               // There is no save icon in Material, so for now i'm using the "build" icon
@@ -107,7 +107,7 @@ fun SmallThumbnailsDisplay(listRecipe: List<Recipe>) {
               }
             }
             // Recipe Title
-            Text(text = listRecipe[i].title)
+            Text(text = listRecipe[i].title, modifier = Modifier.testTag("Text Title"))
           }
     }
   }

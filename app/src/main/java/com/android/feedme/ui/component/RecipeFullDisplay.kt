@@ -16,7 +16,6 @@ import androidx.compose.foundation.lazy.items
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.outlined.Timer
 import androidx.compose.material.icons.rounded.Star
-import androidx.compose.material.icons.rounded.Timer
 import androidx.compose.material.icons.twotone.Bookmark
 import androidx.compose.material.icons.twotone.Star
 import androidx.compose.material3.HorizontalDivider
@@ -84,7 +83,7 @@ fun RecipeFullDisplay(
         if (recipe != null) {
           LazyColumn(modifier = Modifier.padding(padding)) {
             item { ImageDisplay(recipe = recipe) }
-            item { GeneralInfosDisplay(recipe = recipe) }
+            item { GeneralInfoDisplay(recipe = recipe) }
             item { IngredientTitleDisplay() }
             items(recipe.ingredients) { ingredient -> IngredientDisplay(ingredient = ingredient) }
             item { IngredientStepsDividerDisplay() }
@@ -121,7 +120,7 @@ fun ImageDisplay(recipe: Recipe, modifier: Modifier = Modifier) {
  * @param modifier The [Modifier] for the layout of the row wrapping the content.
  */
 @Composable
-fun GeneralInfosDisplay(recipe: Recipe, modifier: Modifier = Modifier) {
+fun GeneralInfoDisplay(recipe: Recipe, modifier: Modifier = Modifier) {
   Row(
       horizontalArrangement = Arrangement.SpaceAround,
       verticalAlignment = Alignment.CenterVertically,
@@ -132,7 +131,7 @@ fun GeneralInfosDisplay(recipe: Recipe, modifier: Modifier = Modifier) {
         Icon(
             imageVector = Icons.Outlined.Timer,
             contentDescription = "Time Icon",
-            modifier = Modifier.size(26.dp).testTag("Time Icon"))
+            modifier = Modifier.size(26.dp))
         Text(
             text = "${recipe.time.toInt()} '",
             modifier = Modifier.padding(start = 4.dp).testTag("Text Time"),
@@ -156,14 +155,14 @@ fun GeneralInfosDisplay(recipe: Recipe, modifier: Modifier = Modifier) {
           // Larger black star to act as the outline
           Icon(
               imageVector = Icons.TwoTone.Star,
-              contentDescription = "Rating Outline",
+              contentDescription = "Star Outline",
               tint = YellowStarBlackOutline,
               modifier = Modifier.size(26.dp) // Make this star slightly larger to show as the edge
               )
           // Smaller yellow star to act as the inner part
           Icon(
               imageVector = Icons.Rounded.Star,
-              contentDescription = "Rating",
+              contentDescription = "Star Icon",
               tint = YellowStar,
               modifier = Modifier.size(17.dp) // Smaller than the outline star
               )

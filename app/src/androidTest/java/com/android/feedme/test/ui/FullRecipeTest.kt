@@ -2,6 +2,7 @@ package com.android.feedme.test.ui
 
 import androidx.compose.ui.test.assertIsDisplayed
 import androidx.compose.ui.test.junit4.createComposeRule
+import androidx.compose.ui.test.onNodeWithContentDescription
 import androidx.compose.ui.test.onNodeWithTag
 import androidx.compose.ui.test.onNodeWithText
 import androidx.test.ext.junit.runners.AndroidJUnit4
@@ -101,9 +102,11 @@ class FullRecipeTest : TestCase() {
     }
     composeTestRule.onNodeWithTag("General Infos Row").assertIsDisplayed()
 
-    composeTestRule.onNodeWithTag("Time Icon").assertIsDisplayed()
+    composeTestRule.onNodeWithContentDescription("Time Icon").assertIsDisplayed()
     composeTestRule.onNodeWithTag("Text Time").assertIsDisplayed()
-    composeTestRule.onNodeWithTag("Rating Icon").assertIsDisplayed()
+    composeTestRule
+        .onNodeWithContentDescription("Star Icon", useUnmergedTree = true)
+        .assertIsDisplayed()
     composeTestRule.onNodeWithTag("Text Rating").assertIsDisplayed()
     composeTestRule.onNodeWithTag("Horizontal Divider 1").assertIsDisplayed()
 

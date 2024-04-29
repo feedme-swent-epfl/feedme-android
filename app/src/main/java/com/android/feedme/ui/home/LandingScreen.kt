@@ -177,9 +177,8 @@ fun RecipeDisplay(
                                           tint = YellowStarBlackOutline,
                                           modifier =
                                               Modifier.size(
-                                                  34
-                                                      .dp) // Make this star slightly larger to show
-                                                           // as the edge
+                                                  34.dp) // Make this star slightly larger to show
+                                          // as the edge
                                           )
                                       // Smaller yellow star to act as the inner part
                                       Icon(

@@ -11,6 +11,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.unit.dp
 import com.android.feedme.ui.theme.BottomIconColor
+import com.android.feedme.ui.theme.BottomIconColorSelected
 import com.android.feedme.ui.theme.TemplateColor
 
 /**
@@ -41,7 +42,9 @@ fun BottomNavigationMenu(
                 Icon(
                     imageVector = replyDestination.icon,
                     contentDescription = replyDestination.textId,
-                    tint = BottomIconColor,
+                    tint =
+                        if (selectedItem == replyDestination.route) BottomIconColorSelected
+                        else BottomIconColor,
                     modifier = Modifier.size(30.dp))
               },
               label = null,

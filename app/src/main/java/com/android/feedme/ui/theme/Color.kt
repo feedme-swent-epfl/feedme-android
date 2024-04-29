@@ -19,6 +19,7 @@ private val cardColor = Color(0xC9C2E1EE)
 val CardBackground = CardColors(cardColor, cardColor, cardColor, cardColor)
 val TextBarColor = Color(0xFFFFFFFF)
 val BottomIconColor = Color(0xFFFFFFFF)
+val BottomIconColorSelected = Color(0xFF000000)
 
 val BlueUser = Color(0xff0008bf)
 

@@ -43,7 +43,7 @@ fun SearchBarFun() {
   // Search bar + filters icon
   Row(modifier = Modifier.background(Color.White), verticalAlignment = Alignment.CenterVertically) {
     SearchBar(
-        modifier = Modifier.fillMaxWidth().padding(10.dp).height(50.dp).testTag("SearchBar"),
+        modifier = Modifier.fillMaxWidth().padding(10.dp).height(53.dp).testTag("SearchBar"),
         query = query,
         active = active,
         onActiveChange = { active = it },

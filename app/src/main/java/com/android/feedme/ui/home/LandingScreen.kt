@@ -14,13 +14,14 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.Share
+import androidx.compose.material.icons.outlined.BookmarkBorder
+import androidx.compose.material.icons.outlined.Share
 import androidx.compose.material.icons.outlined.Timer
 import androidx.compose.material.icons.rounded.Star
-import androidx.compose.material.icons.twotone.Bookmark
 import androidx.compose.material.icons.twotone.Star
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Card
@@ -130,7 +131,7 @@ fun RecipeDisplay(
         // Scrollable list of recipes
         LazyColumn(
             modifier =
-                Modifier.testTag("RecipeList").padding(top = 10.dp).background(TextBarColor)) {
+                Modifier.testTag("RecipeList").padding(top = 8.dp).background(TextBarColor)) {
               items(recipes) { recipe ->
                 // Recipe card
                 Card(
@@ -165,59 +166,61 @@ fun RecipeDisplay(
                               Row(
                                   verticalAlignment = Alignment.CenterVertically,
                                   modifier =
-                                      Modifier.padding(end = 20.dp)
-                                          .clickable { /* TODO () : access the comments */}
+                                      Modifier.clickable { /* TODO () : access the comments */}
                                           .testTag("Rating")) {
                                     // Star icon for ratings
-                                    Box(contentAlignment = Alignment.Center) {
-                                      // Larger black star to act as the outline
-                                      Icon(
-                                          imageVector = Icons.TwoTone.Star,
-                                          contentDescription = "Rating Outline",
-                                          tint = YellowStarBlackOutline,
-                                          modifier =
-                                              Modifier.size(
-                                                  34.dp) // Make this star slightly larger to show
-                                          // as the edge
-                                          )
-                                      // Smaller yellow star to act as the inner part
-                                      Icon(
-                                          imageVector = Icons.Rounded.Star,
-                                          contentDescription = "Rating",
-                                          tint = YellowStar,
-                                          modifier =
-                                              Modifier.size(23.dp) // Smaller than the outline star
-                                          )
-                                    }
-                                    Text(text = String.format("%.1f", recipe.rating))
+                                    Box(
+                                        contentAlignment = Alignment.Center,
+                                        modifier = Modifier.padding(end = 2.dp)) {
+                                          // Larger black star to act as the outline
+                                          Icon(
+                                              imageVector = Icons.TwoTone.Star,
+                                              contentDescription = "Rating Outline",
+                                              tint = YellowStarBlackOutline,
+                                              modifier = Modifier.size(34.dp))
+                                          // Smaller yellow star to act as the inner part
+                                          Icon(
+                                              imageVector = Icons.Rounded.Star,
+                                              contentDescription = "Rating",
+                                              tint = YellowStar,
+                                              modifier = Modifier.size(23.dp))
+                                        }
+                                    Text(
+                                        text = String.format("%.1f", recipe.rating),
+                                        fontWeight = FontWeight.Bold,
+                                    )
                                   }
+
+                              Spacer(modifier = Modifier.width(10.dp))
+
                               // Cooking time
-                              Row(verticalAlignment = Alignment.CenterVertically) {
-                                Icon(
-                                    imageVector = Icons.Outlined.Timer,
-                                    contentDescription = null,
-                                    modifier = Modifier.size(34.dp).padding(end = 4.dp))
-                                Text(
-                                    text = "${recipe.time.toInt()} '",
-                                    modifier = Modifier.padding(end = 8.dp),
-                                )
-                              }
+                              Icon(
+                                  imageVector = Icons.Outlined.Timer,
+                                  contentDescription = null,
+                                  modifier = Modifier.size(34.dp).padding(end = 4.dp))
+                              Text(
+                                  text = "${recipe.time.toInt()} '",
+                                  fontWeight = FontWeight.Bold,
+                              )
+                              Spacer(modifier = Modifier.width(3.dp))
+
                               // Share icon
                               IconButton(
                                   onClick = { /* TODO() adding the options to share */},
                                   modifier = Modifier.testTag("ShareIcon")) {
                                     Icon(
-                                        imageVector = Icons.Default.Share,
+                                        imageVector = Icons.Outlined.Share,
                                         contentDescription = "Share Icon on Recipe Card",
-                                        modifier = Modifier.size(34.dp).padding(4.dp))
+                                        modifier = Modifier.size(32.dp))
                                   }
+
                               Spacer(modifier = Modifier.weight(1f))
                               // Save icon
                               IconButton(
                                   onClick = { /* TODO() add saving logic here */},
                                   modifier = Modifier.testTag("SaveIcon")) {
                                     Icon(
-                                        imageVector = Icons.TwoTone.Bookmark,
+                                        imageVector = Icons.Outlined.BookmarkBorder,
                                         contentDescription = "Bookmark Icon on Recipe Card",
                                         modifier = Modifier.size(34.dp).padding(start = 4.dp))
                                   }

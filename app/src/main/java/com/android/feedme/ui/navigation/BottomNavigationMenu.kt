@@ -32,7 +32,6 @@ fun BottomNavigationMenu(
 ) {
   NavigationBar(
       modifier = Modifier.fillMaxWidth().height(60.dp).testTag("BottomNavigationMenu"),
-      // contentColor = TemplateColor,
       containerColor = TemplateColor) {
         tabList.forEach { replyDestination ->
           NavigationBarItem(

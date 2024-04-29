@@ -59,33 +59,33 @@ class UserFlowTest : TestCase() {
       composeTestRule.waitForIdle()
     }
 
-    // From HOME Page go to EXPLORE page
-    composeTestRule.onNodeWithText("Explore").assertIsDisplayed().performClick()
+    // From HOME Page go to SAVED page
+    composeTestRule.onNodeWithContentDescription("Saved").assertIsDisplayed().performClick()
 
     // Wait for the EXPLORE page to load
     composeTestRule.waitForIdle()
 
-    // From EXPLORE Page go to CREATE page
-    composeTestRule.onNodeWithText("Create").assertIsDisplayed().performClick()
+    // From EXPLORE Page go to FIND_RECIPE page
+    composeTestRule.onNodeWithContentDescription("Find Recipe").assertIsDisplayed().performClick()
 
     // Wait for the CREATE page to load
     composeTestRule.waitForIdle()
 
     // From CREATE Page go to PROFILE page
     // TODO We got to Mockk Firebase another issue
-    // composeTestRule.onNodeWithText("Profile").assertIsDisplayed().performClick()
+    // composeTestRule.onNodeWithContentDescription("Profile").assertIsDisplayed().performClick()
 
     // Wait for the PROFILE page to load
     composeTestRule.waitForIdle()
 
     // From PROFILE Page go to SETTINGS page
-    composeTestRule.onNodeWithText("Settings").assertIsDisplayed().performClick()
+    composeTestRule.onNodeWithContentDescription("Settings").assertIsDisplayed().performClick()
 
     // Wait for the SETTINGS page to load
     composeTestRule.waitForIdle()
 
     // From SETTINGS Page go to HOME page
-    composeTestRule.onNodeWithText("Home").assertIsDisplayed().performClick()
+    composeTestRule.onNodeWithContentDescription("Home").assertIsDisplayed().performClick()
 
     // Wait for the HOME page to load
     composeTestRule.waitForIdle()
@@ -105,8 +105,8 @@ class UserFlowTest : TestCase() {
     }
 
     ComposeScreen.onComposeScreen<LandingScreen>(composeTestRule) {
-      // From Home Page go to CREATE page
-      composeTestRule.onNodeWithText("Create").assertIsDisplayed().performClick()
+      // From Home Page go to FIND_RECIPE page
+      composeTestRule.onNodeWithContentDescription("Find Recipe").assertIsDisplayed().performClick()
 
       // Wait for the CREATE page to load
       composeTestRule.waitForIdle()

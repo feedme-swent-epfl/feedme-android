@@ -43,6 +43,7 @@ fun SearchBarFun() {
   // Search bar + filters icon
   Row(modifier = Modifier.background(Color.White), verticalAlignment = Alignment.CenterVertically) {
     SearchBar(
+        modifier = Modifier.fillMaxWidth().padding(10.dp).height(50.dp).testTag("SearchBar"),
         query = query,
         active = active,
         onActiveChange = { active = it },
@@ -84,7 +85,6 @@ fun SearchBarFun() {
               fontStyle = FontStyle.Italic,
               fontSize = 16.sp,
               modifier = Modifier.testTag("Placeholder Text"))
-        },
-        modifier = Modifier.fillMaxWidth().padding(10.dp).height(50.dp).testTag("SearchBar")) {}
+        }){}
   }
 }

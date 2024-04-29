@@ -88,7 +88,7 @@ object Screen {
   const val HOME = "Home Screen"
   const val SAVED = "Saved Screen"
   const val FIND_RECIPE = "Find Recipe Screen"
-  const val PROFILE = "Profile/{profileId}"
+  const val PROFILE = "Profile Screen"
   const val SETTINGS = "Settings Screen"
   const val CAMERA = "Camera"
   const val EDIT_PROFILE = "Edit Profile"

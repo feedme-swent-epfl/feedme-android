@@ -46,7 +46,7 @@ import com.android.feedme.ui.navigation.NavigationActions
 import com.android.feedme.ui.navigation.Route
 import com.android.feedme.ui.navigation.TOP_LEVEL_DESTINATIONS
 import com.android.feedme.ui.navigation.TopBarNavigation
-import com.android.feedme.ui.theme.BlueUser
+import com.android.feedme.ui.theme.BlueUsername
 import com.android.feedme.ui.theme.YellowStar
 import com.android.feedme.ui.theme.YellowStarBlackOutline
 
@@ -144,7 +144,7 @@ fun GeneralInfoDisplay(recipe: Recipe, modifier: Modifier = Modifier) {
         Text(
             text = recipe.userid,
             textAlign = TextAlign.Center,
-            color = BlueUser,
+            color = BlueUsername,
             style = TextStyle(fontSize = 16.sp, fontWeight = FontWeight.Medium))
         Spacer(modifier = Modifier.weight(1f))
 

@@ -94,7 +94,7 @@ fun CameraScreen(navigationActions: NavigationActions) {
 
   BottomSheetScaffold(
       modifier = Modifier.testTag("CameraScreen"),
-      topBar = { TopBarNavigation(title = "Camera", navigationActions, null) },
+      topBar = { TopBarNavigation(title = "Camera", navAction = navigationActions) },
       scaffoldState = scaffoldState,
       sheetPeekHeight = 0.dp,
       sheetContent = {

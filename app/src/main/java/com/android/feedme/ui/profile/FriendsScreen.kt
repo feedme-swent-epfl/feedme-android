@@ -44,6 +44,7 @@ import com.android.feedme.model.viewmodel.ProfileViewModel
 import com.android.feedme.ui.navigation.BottomNavigationMenu
 import com.android.feedme.ui.navigation.NavigationActions
 import com.android.feedme.ui.navigation.Route
+import com.android.feedme.ui.navigation.Screen
 import com.android.feedme.ui.navigation.TOP_LEVEL_DESTINATIONS
 import com.android.feedme.ui.navigation.TopBarNavigation
 
@@ -108,7 +109,7 @@ fun FriendsScreen(
 
   Scaffold(
       modifier = Modifier.fillMaxSize().testTag("FriendsScreen"),
-      topBar = { TopBarNavigation(title = "Friends", navigationActions, null) },
+      topBar = { TopBarNavigation(title = "Friends", navAction = navigationActions) },
       bottomBar = {
         BottomNavigationMenu(
             Route.PROFILE,
@@ -188,7 +189,7 @@ fun FollowerCard(
                 Modifier.fillMaxWidth().clickable {
                   /*TODO Navigate to profile view of follower*/
                   profileViewModel.setViewingProfile(profile)
-                  navigationActions.navigateTo(Route.PROFILE + "/" + profile.id)
+                  navigationActions.navigateTo(Screen.PROFILE)
                 }) {
               Image(
                   painter =

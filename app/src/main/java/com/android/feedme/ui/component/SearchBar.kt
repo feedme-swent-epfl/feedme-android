@@ -85,6 +85,6 @@ fun SearchBarFun() {
               fontStyle = FontStyle.Italic,
               fontSize = 16.sp,
               modifier = Modifier.testTag("Placeholder Text"))
-        }){}
+        }) {}
   }
 }

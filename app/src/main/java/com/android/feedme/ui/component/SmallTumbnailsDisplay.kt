@@ -40,10 +40,10 @@ import com.android.feedme.ui.theme.YellowStarBlackOutline
 fun SmallThumbnailsDisplay(listRecipe: List<Recipe>) {
   // Calculate the width of each image based on the screen width
   val NB_IMAGE_PER_LINE = 2
-  val IMAGE_WIDTH = LocalConfiguration.current.screenWidthDp / NB_IMAGE_PER_LINE
-  val ImageSuccessfulDownload = remember { mutableStateOf(false) }
+  val imageWidth = LocalConfiguration.current.screenWidthDp / NB_IMAGE_PER_LINE
+  val imageSuccessfulDownload = remember { mutableStateOf(false) }
 
-  LazyVerticalGrid(columns = GridCells.Adaptive(minSize = IMAGE_WIDTH.dp)) {
+  LazyVerticalGrid(columns = GridCells.Adaptive(minSize = imageWidth.dp)) {
     items(listRecipe.size) { i ->
       Column(
           horizontalAlignment = Alignment.CenterHorizontally, modifier = Modifier.padding(3.dp)) {
@@ -52,10 +52,10 @@ fun SmallThumbnailsDisplay(listRecipe: List<Recipe>) {
                 model = listRecipe[i].imageUrl,
                 contentDescription = "Recipe Image",
                 modifier = Modifier.testTag("Recipe Image"),
-                onSuccess = { ImageSuccessfulDownload.value = true })
+                onSuccess = { imageSuccessfulDownload.value = true })
 
             // Display a warning message if image couldn't be downloaded from internets
-            if (!ImageSuccessfulDownload.value) {
+            if (!imageSuccessfulDownload.value) {
               Text("Failed to download image", modifier = Modifier.testTag("Fail Image Download"))
             }
 
@@ -112,32 +112,3 @@ fun SmallThumbnailsDisplay(listRecipe: List<Recipe>) {
     }
   }
 }
-
-/*@Preview
-@Composable
-fun SmallThumbnailsDisplayPreview() {
-  val recipe1 =
-      Recipe(
-          recipeId = "lasagna1",
-          title = "Tasty Lasagna",
-          description = "a",
-          ingredients =
-              listOf(
-                  IngredientMetaData(
-                      quantity = 2.0,
-                      measure = MeasureUnit.ML,
-                      ingredient = Ingredient("Tomato", "Vegetables", "tomatoID"))),
-          steps = listOf(Step(1, "a", "Step1")),
-          tags = listOf("Meat"),
-          time = 75.0,
-          rating = 4.5,
-          userid = "PasDavid",
-          difficulty = "Intermediate",
-          "https://external-content.duckduckgo.com/iu/?u=https%3A%2F%2Fwww.mamablip.com%2Fstorage%2FLasagna%2520with%2520Meat%2520and%2520Tomato%2520Sauce_3481612355355.jpg&f=1&nofb=1&ipt=8e887ba99ce20a85fb867dabbe0206c1146ebf2f13548b5653a2778e3ea18c54&ipo=images")
-
-  Box(modifier = Modifier.background(Color.White)) {
-      SmallThumbnailsDisplay(listRecipe = listOf(recipe1, recipe1, recipe1, recipe1, recipe1))
-  }
-}
-
- */

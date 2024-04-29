@@ -1,6 +1,5 @@
 package com.android.feedme.ui.component
 
-import android.annotation.SuppressLint
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -60,7 +59,6 @@ import com.android.feedme.ui.theme.YellowStarBlackOutline
  * @param navigationActions Gives access to the navigation actions.
  * @param recipeViewModel The [RecipeViewModel] to get the recipe from.
  */
-@SuppressLint("UnusedMaterial3ScaffoldPaddingParameter")
 @Composable
 fun RecipeFullDisplay(
     navigationActions: NavigationActions,

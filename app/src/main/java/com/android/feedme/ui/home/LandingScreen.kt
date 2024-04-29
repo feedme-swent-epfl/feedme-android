@@ -1,12 +1,12 @@
 package com.android.feedme.ui.home
 
-import android.annotation.SuppressLint
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
@@ -18,7 +18,6 @@ import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Share
-import androidx.compose.material.icons.outlined.Star
 import androidx.compose.material.icons.outlined.Timer
 import androidx.compose.material.icons.rounded.Star
 import androidx.compose.material.icons.twotone.Bookmark
@@ -64,7 +63,6 @@ import com.android.feedme.ui.theme.YellowStarBlackOutline
  *
  * @param navigationActions The [NavigationActions] instance for handling back navigation.
  */
-@SuppressLint("UnusedMaterial3ScaffoldPaddingParameter")
 @Composable
 fun LandingPage(
     navigationActions: NavigationActions,
@@ -106,7 +104,7 @@ fun LandingPage(
       bottomBar = {
         BottomNavigationMenu(Route.HOME, navigationActions::navigateTo, TOP_LEVEL_DESTINATIONS)
       },
-      content = { RecipeDisplay(navigationActions, testRecipes, recipeViewModel) })
+      content = { RecipeDisplay(it, navigationActions, testRecipes, recipeViewModel) })
 }
 
 /**
@@ -116,13 +114,15 @@ fun LandingPage(
  */
 @Composable
 fun RecipeDisplay(
+    paddingValues: PaddingValues,
     navigationActions: NavigationActions,
     recipes: List<Recipe>,
     recipeViewModel: RecipeViewModel
 ) {
 
   Column(
-      modifier = Modifier.testTag("CompleteScreen").padding(top = 60.dp).background(Color.White)) {
+      modifier =
+          Modifier.testTag("CompleteScreen").padding(paddingValues).background(Color.White)) {
 
         // Search bar + filters icon
         SearchBarFun()

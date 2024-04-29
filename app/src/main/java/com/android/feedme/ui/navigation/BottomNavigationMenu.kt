@@ -1,16 +1,16 @@
 package com.android.feedme.ui.navigation
 
-import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.size
 import androidx.compose.material3.Icon
 import androidx.compose.material3.NavigationBar
 import androidx.compose.material3.NavigationBarItem
-import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.unit.dp
+import com.android.feedme.ui.theme.BottomIconColor
 import com.android.feedme.ui.theme.TemplateColor
 
 /**
@@ -31,11 +31,9 @@ fun BottomNavigationMenu(
     tabList: List<TopLevelDestination>,
 ) {
   NavigationBar(
-      modifier =
-          Modifier.fillMaxWidth()
-              .height(80.dp)
-              .background(TemplateColor)
-              .testTag("BottomNavigationMenu")) {
+      modifier = Modifier.fillMaxWidth().height(60.dp).testTag("BottomNavigationMenu"),
+      // contentColor = TemplateColor,
+      containerColor = TemplateColor) {
         tabList.forEach { replyDestination ->
           NavigationBarItem(
               selected = selectedItem == replyDestination.route,
@@ -43,9 +41,11 @@ fun BottomNavigationMenu(
               icon = {
                 Icon(
                     imageVector = replyDestination.icon,
-                    contentDescription = replyDestination.textId)
+                    contentDescription = replyDestination.textId,
+                    tint = BottomIconColor,
+                    modifier = Modifier.size(30.dp))
               },
-              label = { Text(replyDestination.textId) },
+              label = null,
               modifier = Modifier.testTag(replyDestination.textId))
         }
       }

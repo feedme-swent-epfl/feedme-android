@@ -1,6 +1,5 @@
-package com.android.feedme.ui
+package com.android.feedme.ui.find
 
-import android.annotation.SuppressLint
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.border
@@ -45,16 +44,15 @@ import com.android.feedme.ui.navigation.TopBarNavigation
  *
  * @param navigationActions actions for navigating to different screens.
  */
-@SuppressLint("UnusedMaterial3ScaffoldPaddingParameter")
 @Composable
-fun CreateScreen(navigationActions: NavigationActions) {
+fun FindRecipeScreen(navigationActions: NavigationActions) {
 
   Scaffold(
-      modifier = Modifier.testTag("CreateScreen"),
+      modifier = Modifier.testTag("FindRecipeScreen"),
       topBar = { TopBarNavigation(title = "Find Recipe") },
       bottomBar = {
         BottomNavigationMenu(
-            selectedItem = Route.CREATE,
+            selectedItem = Route.FIND_RECIPE,
             onTabSelect = navigationActions::navigateTo,
             tabList = TOP_LEVEL_DESTINATIONS)
       }) {

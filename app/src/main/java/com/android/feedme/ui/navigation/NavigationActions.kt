@@ -2,12 +2,11 @@ package com.android.feedme.ui.navigation
 
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.Login
-import androidx.compose.material.icons.filled.AccountCircle
-import androidx.compose.material.icons.filled.Add
-import androidx.compose.material.icons.filled.Home
-import androidx.compose.material.icons.filled.Login
-import androidx.compose.material.icons.filled.Search
-import androidx.compose.material.icons.filled.Settings
+import androidx.compose.material.icons.outlined.AccountCircle
+import androidx.compose.material.icons.outlined.BookmarkBorder
+import androidx.compose.material.icons.outlined.Home
+import androidx.compose.material.icons.outlined.Restaurant
+import androidx.compose.material.icons.outlined.Settings
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.navigation.NavGraph.Companion.findStartDestination
 import androidx.navigation.NavHostController
@@ -77,8 +76,8 @@ class NavigationActions(private val navController: NavHostController) {
 object Route {
   const val AUTHENTICATION = "Authentication"
   const val HOME = "Home"
-  const val EXPLORE = "Explore"
-  const val CREATE = "Create"
+  const val SAVED = "Saved"
+  const val FIND_RECIPE = "Find Recipe"
   const val PROFILE = "Profile"
   const val SETTINGS = "Settings"
 }
@@ -87,8 +86,8 @@ object Route {
 object Screen {
   const val AUTHENTICATION = "Authentication Screen"
   const val HOME = "Home Screen"
-  const val EXPLORE = "Explore Screen"
-  const val CREATE = "Create Screen"
+  const val SAVED = "Saved Screen"
+  const val FIND_RECIPE = "Find Recipe Screen"
   const val PROFILE = "Profile/{profileId}"
   const val SETTINGS = "Settings Screen"
   const val CAMERA = "Camera"
@@ -109,13 +108,15 @@ data class TopLevelDestination(val route: String, val icon: ImageVector, val tex
 /** List of top-level destinations within the app navigation. */
 val TOP_LEVEL_DESTINATIONS =
     listOf(
-        TopLevelDestination(route = Route.HOME, icon = Icons.Default.Home, textId = "Home"),
-        TopLevelDestination(route = Route.EXPLORE, icon = Icons.Default.Search, textId = "Explore"),
-        TopLevelDestination(route = Route.CREATE, icon = Icons.Default.Add, textId = "Create"),
+        TopLevelDestination(route = Route.HOME, icon = Icons.Outlined.Home, textId = "Home"),
         TopLevelDestination(
-            route = Route.PROFILE, icon = Icons.Default.AccountCircle, textId = "Profile"),
+            route = Route.SAVED, icon = Icons.Outlined.BookmarkBorder, textId = "Saved"),
         TopLevelDestination(
-            route = Route.SETTINGS, icon = Icons.Default.Settings, textId = "Settings"))
+            route = Route.FIND_RECIPE, icon = Icons.Outlined.Restaurant, textId = "Find Recipe"),
+        TopLevelDestination(
+            route = Route.PROFILE, icon = Icons.Outlined.AccountCircle, textId = "Profile"),
+        TopLevelDestination(
+            route = Route.SETTINGS, icon = Icons.Outlined.Settings, textId = "Settings"))
 
 /**
  * Top-level destination for authentication screen (isn't part of the list since it isn't on the

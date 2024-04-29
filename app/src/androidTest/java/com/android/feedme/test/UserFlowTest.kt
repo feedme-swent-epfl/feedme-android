@@ -10,7 +10,7 @@ import androidx.test.ext.junit.runners.AndroidJUnit4
 import androidx.test.rule.GrantPermissionRule
 import com.android.feedme.MainActivity
 import com.android.feedme.screen.CameraScreen
-import com.android.feedme.screen.CreateScreen
+import com.android.feedme.screen.FindRecipeScreen
 import com.android.feedme.screen.LandingScreen
 import com.android.feedme.screen.LoginScreen
 import com.android.feedme.test.auth.mockGoogleSignInAccount
@@ -112,7 +112,7 @@ class UserFlowTest : TestCase() {
       composeTestRule.waitForIdle()
     }
 
-    ComposeScreen.onComposeScreen<CreateScreen>(composeTestRule) {
+    ComposeScreen.onComposeScreen<FindRecipeScreen>(composeTestRule) {
       cameraButton {
         assertIsDisplayed()
         performClick()

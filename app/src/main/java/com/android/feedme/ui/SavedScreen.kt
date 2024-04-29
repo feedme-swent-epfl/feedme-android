@@ -21,11 +21,11 @@ import com.android.feedme.ui.navigation.TopBarNavigation
  * @param navigationActions The navigation actions instance for handling back navigation.
  */
 @Composable
-fun NotImplementedScreen(navigationActions: NavigationActions, selectedItem: String) {
+fun SavedScreen(navigationActions: NavigationActions, selectedItem: String) {
 
   Scaffold(
-      modifier = Modifier.testTag("NotImplementedScreen"),
-      topBar = { TopBarNavigation(title = "Not Implemented", navAction = null) },
+      modifier = Modifier.testTag("SavedScreen"),
+      topBar = { TopBarNavigation(title = "Saved", navAction = null) },
       bottomBar = {
         BottomNavigationMenu(
             selectedItem = selectedItem,

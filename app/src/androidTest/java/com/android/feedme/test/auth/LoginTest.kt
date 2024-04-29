@@ -1,9 +1,7 @@
 package com.android.feedme.test.auth
 
 import androidx.compose.ui.test.junit4.createComposeRule
-import androidx.test.espresso.intent.rule.IntentsTestRule
 import androidx.test.ext.junit.runners.AndroidJUnit4
-import com.android.feedme.MainActivity
 import com.android.feedme.screen.LoginScreen
 import com.android.feedme.ui.auth.LoginScreen
 import com.android.feedme.ui.navigation.NavigationActions
@@ -20,7 +18,7 @@ class LoginTest : TestCase() {
   // The IntentsTestRule simply calls Intents.init() before the @Test block
   // and Intents.release() after the @Test block is completed. IntentsTestRule
   // is deprecated, but it was MUCH faster than using IntentsRule in our tests
-  @get:Rule val intentsTestRule = IntentsTestRule(MainActivity::class.java)
+  // @get:Rule val intentsTestRule = IntentsTestRule(MainActivity::class.java)
 
   @Test
   fun titleAndButtonAreCorrectlyDisplayed() {

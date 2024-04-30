@@ -56,10 +56,8 @@ import com.android.feedme.ui.theme.ValidInput
 fun IngredientList(
     inputViewModel: InputViewModel = InputViewModel(),
     modifier: Modifier = Modifier,
-    list: MutableList<IngredientMetaData?> = mutableListOf(),
 ) {
 
-  inputViewModel.setNewList(list)
   val totalIngredients by inputViewModel.totalIngredients.collectAsState()
   LazyColumn(modifier = modifier.testTag("LazyList")) {
     this.items(totalIngredients) { index ->

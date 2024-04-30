@@ -20,7 +20,7 @@ class InputViewModel : ViewModel() {
   val listOfIngredients: StateFlow<List<IngredientMetaData?>> = _listOfIngredients
 
   // StateFlow to hold the total number of complete ingredients
-  private val _totalCompleteIngredients = MutableStateFlow(1)
+  private val _totalCompleteIngredients = MutableStateFlow(0)
   val totalCompleteIngredients: StateFlow<Int> = _totalCompleteIngredients
 
   /**

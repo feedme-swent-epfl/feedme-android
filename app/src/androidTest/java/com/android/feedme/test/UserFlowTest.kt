@@ -6,9 +6,11 @@ import androidx.compose.ui.test.junit4.createAndroidComposeRule
 import androidx.compose.ui.test.onNodeWithContentDescription
 import androidx.compose.ui.test.onNodeWithText
 import androidx.compose.ui.test.performClick
+import androidx.test.core.app.ApplicationProvider
 import androidx.test.ext.junit.runners.AndroidJUnit4
 import androidx.test.rule.GrantPermissionRule
 import com.android.feedme.MainActivity
+import com.android.feedme.model.data.ProfileRepository
 import com.android.feedme.screen.CameraScreen
 import com.android.feedme.screen.FindRecipeScreen
 import com.android.feedme.screen.LandingScreen
@@ -16,8 +18,11 @@ import com.android.feedme.screen.LoginScreen
 import com.android.feedme.test.auth.mockGoogleSignInAccount
 import com.android.feedme.ui.auth.setLoginMockingForTests
 import com.android.feedme.ui.auth.setTestMode
+import com.google.firebase.FirebaseApp
+import com.google.firebase.firestore.FirebaseFirestore
 import com.kaspersky.kaspresso.testcases.api.testcase.TestCase
 import io.github.kakaocup.compose.node.element.ComposeScreen
+import io.mockk.mockk
 import org.junit.After
 import org.junit.Before
 import org.junit.Rule
@@ -27,6 +32,7 @@ import org.junit.runner.RunWith
 @RunWith(AndroidJUnit4::class)
 class UserFlowTest : TestCase() {
   @get:Rule val composeTestRule = createAndroidComposeRule<MainActivity>()
+  private val mockFirestore = mockk<FirebaseFirestore>(relaxed = true)
 
   // Grant camera permission for tests
   @get:Rule
@@ -38,6 +44,11 @@ class UserFlowTest : TestCase() {
     // Set up the test environment for Login mocking
     setTestMode(true)
     setLoginMockingForTests(::mockGoogleSignInAccount)
+
+    if (FirebaseApp.getApps(ApplicationProvider.getApplicationContext()).isEmpty()) {
+      FirebaseApp.initializeApp(ApplicationProvider.getApplicationContext())
+    }
+    ProfileRepository.initialize(mockFirestore)
   }
 
   @After

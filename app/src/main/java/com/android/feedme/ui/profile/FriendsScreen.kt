@@ -26,11 +26,15 @@ import androidx.compose.material3.Tab
 import androidx.compose.material3.TabRow
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.DisposableEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableIntStateOf
+import androidx.compose.runtime.mutableStateListOf
+import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
+import androidx.compose.runtime.toMutableStateList
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -47,34 +51,6 @@ import com.android.feedme.ui.navigation.Route
 import com.android.feedme.ui.navigation.Screen
 import com.android.feedme.ui.navigation.TOP_LEVEL_DESTINATIONS
 import com.android.feedme.ui.navigation.TopBarNavigation
-
-val demoProfiles =
-    listOf(
-        Profile(
-            id = "1",
-            name = "John Doe",
-            username = "john_doe",
-            imageUrl = "https://example.com/image1.jpg"),
-        Profile(
-            id = "2",
-            name = "Jane Smith",
-            username = "jane_smith",
-            imageUrl = "https://example.com/image2.jpg"))
-
-val demoProfiles2 =
-    listOf(
-        Profile(
-            id = "1",
-            name = "Michel Doe",
-            username = "john_doe",
-            imageUrl = "https://example.com/image3.jpg"),
-        Profile(
-            id = "2",
-            name = "Michel Smith",
-            username = "jane_smith",
-            imageUrl = "https://example.com/image4.jpg"),
-        // Generate more profile
-    )
 
 /**
  * Composable that displays either a list of followers or following based on the selected tab. It
@@ -105,11 +81,44 @@ fun FriendsScreen(
       if (mode == 4242 || profileViewModel.isViewingProfile())
           profileViewModel.viewingUserFollowing.collectAsState()
       else profileViewModel.currentUserFollowing.collectAsState()
-  if (selectedTabIndex == 4242) selectedTabIndex = 0
+  if (selectedTabIndex == 4242) {selectedTabIndex = 0}
 
+
+    // Create mutable state lists for followers and following
+
+    val followersM = remember { followers.value.toMutableStateList() }
+    val followingM = remember { following.value.toMutableStateList() }
+
+
+    DisposableEffect(navigationActions) {
+        onDispose {
+            // sync profile with db
+            if (!profileViewModel.isViewingProfile()) {
+                var def = profileViewModel.currentUserProfile.value ?: Profile()
+                var followersId = followersM.toList().map { it.id }
+                var followingId = followingM.toList().map { it.id }
+                var profile = Profile(
+                    def.id,
+                    def.name,
+                    def.username,
+                    def.email,
+                    def.description,
+                    def.imageUrl,
+                    followersId,
+                    followingId,
+                    def.filter,
+                    def.recipeList,
+                    def.commentList
+                )
+                profileViewModel.setProfile(profile)
+            }
+        }
+    }
   Scaffold(
-      modifier = Modifier.fillMaxSize().testTag("FriendsScreen"),
-      topBar = { TopBarNavigation(title = "Friends", navAction = navigationActions) },
+      modifier = Modifier
+          .fillMaxSize()
+          .testTag("FriendsScreen"),
+      topBar = { TopBarNavigation(title = "Friends", navigationActions) },
       bottomBar = {
         BottomNavigationMenu(
             Route.PROFILE,
@@ -136,9 +145,9 @@ fun FriendsScreen(
               }
           when (selectedTabIndex) {
             0 ->
-                FollowersList(followers.value, "FollowersList", navigationActions, profileViewModel)
+                FollowersList(followersM, "FollowersList", navigationActions, profileViewModel)
             1 ->
-                FollowersList(following.value, "FollowingList", navigationActions, profileViewModel)
+                FollowersList(followingM, "FollowingList", navigationActions, profileViewModel)
           }
         }
       })
@@ -152,14 +161,16 @@ fun FriendsScreen(
  */
 @Composable
 fun FollowersList(
-    profiles: List<Profile>,
+    profiles: MutableList<Profile>,
     tag: String,
     navigationActions: NavigationActions,
     profileViewModel: ProfileViewModel
 ) {
-  LazyColumn(modifier = Modifier.fillMaxSize().testTag(tag)) {
+  LazyColumn(modifier = Modifier
+      .fillMaxSize()
+      .testTag(tag)) {
     items(profiles) { profile ->
-      FollowerCard(profile = profile, navigationActions, profileViewModel)
+      FollowerCard(profile = profile,profiles, navigationActions, profileViewModel)
     }
   }
 }
@@ -173,15 +184,17 @@ fun FollowersList(
 @Composable
 fun FollowerCard(
     profile: Profile,
+    profiles: MutableList<Profile>,
     navigationActions: NavigationActions,
     profileViewModel: ProfileViewModel
 ) {
   Card(
       modifier =
-          Modifier.padding(4.dp)
-              .fillMaxWidth()
-              .background(MaterialTheme.colorScheme.surface.copy(alpha = 0.5f))
-              .testTag("FollowerCard") // Applying a semi-transparent background
+      Modifier
+          .padding(4.dp)
+          .fillMaxWidth()
+          .background(MaterialTheme.colorScheme.surface.copy(alpha = 0.5f))
+          .testTag("FollowerCard") // Applying a semi-transparent background
       ) {
         Row(
             verticalAlignment = Alignment.CenterVertically,
@@ -198,9 +211,14 @@ fun FollowerCard(
                               R.drawable
                                   .user_logo), // Assuming google_logo is your default profile icon
                   contentDescription = "Profile Image",
-                  modifier = Modifier.padding(horizontal = 10.dp).size(50.dp).clip(CircleShape),
+                  modifier = Modifier
+                      .padding(horizontal = 10.dp)
+                      .size(50.dp)
+                      .clip(CircleShape),
               )
-              Column(modifier = Modifier.padding(10.dp).weight(1f)) {
+              Column(modifier = Modifier
+                  .padding(10.dp)
+                  .weight(1f)) {
                 Text(text = profile.name, fontSize = 14.sp)
                 Text(
                     text = "@" + profile.username,
@@ -211,7 +229,7 @@ fun FollowerCard(
               Box(modifier = Modifier.align(Alignment.CenterVertically)) {
                 Row {
                   Button(
-                      onClick = { /* TODO: Implement action */},
+                      onClick = { profiles.remove(profile)},
                       Modifier.padding(top = 4.dp, bottom = 4.dp, end = 0.dp)) {
                         Text(text = "Remove")
                       }

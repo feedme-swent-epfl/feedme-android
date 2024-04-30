@@ -1,5 +1,6 @@
 package com.android.feedme.ui.component
 
+import android.annotation.SuppressLint
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Row
@@ -23,11 +24,10 @@ import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextFieldColors
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.movableContentOf
 import androidx.compose.runtime.mutableDoubleStateOf
-import androidx.compose.runtime.mutableIntStateOf
-import androidx.compose.runtime.mutableStateListOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
@@ -40,6 +40,7 @@ import androidx.compose.ui.window.PopupProperties
 import com.android.feedme.model.data.Ingredient
 import com.android.feedme.model.data.IngredientMetaData
 import com.android.feedme.model.data.MeasureUnit
+import com.android.feedme.model.viewmodel.InputViewModel
 import com.android.feedme.ui.theme.InValidInput
 import com.android.feedme.ui.theme.NoInput
 import com.android.feedme.ui.theme.ValidInput
@@ -50,46 +51,22 @@ import com.android.feedme.ui.theme.ValidInput
  * @param modifier the modifier for this composable.
  * @param list the list of [IngredientMetaData] items to display. Default is null.
  */
+@SuppressLint("StateFlowValueCalledInComposition")
 @Composable
 fun IngredientList(
+    inputViewModel: InputViewModel = InputViewModel(),
     modifier: Modifier = Modifier,
-    list: MutableList<IngredientMetaData>? = null,
+    list: MutableList<IngredientMetaData?> = mutableListOf(),
 ) {
-  val totalIngredients = remember { mutableIntStateOf(1 + (list?.size ?: 0)) }
-  val listOfIngredients = remember { mutableStateListOf<IngredientMetaData?>() }
 
-  // If (totalCompleteIngredients == totalIngredients - 1) then all ingredients are Complete
-  val totalCompleteIngredients = remember { mutableIntStateOf(0) }
-
-  list?.let { listOfIngredients.addAll(it) }
-  listOfIngredients.add(null)
-
+  inputViewModel.setNewList(list)
+  val totalIngredients by inputViewModel.totalIngredients.collectAsState()
   LazyColumn(modifier = modifier.testTag("LazyList")) {
-    this.items(totalIngredients.intValue) { index ->
+    this.items(totalIngredients) { index ->
       val movableContent = movableContentOf {
-        IngredientInput(listOfIngredients[index]) { before, now, newIngredient ->
-          if (now != IngredientInputState.COMPLETE && before == IngredientInputState.COMPLETE) {
-            listOfIngredients[index] = newIngredient
-            totalCompleteIngredients.intValue -= 1
-          }
-          if (now == IngredientInputState.COMPLETE &&
-              before == IngredientInputState.SEMI_COMPLETE) {
-            listOfIngredients[index] = newIngredient
-            totalCompleteIngredients.intValue += 1
-          }
-          if (now == IngredientInputState.SEMI_COMPLETE &&
-              before == IngredientInputState.SEMI_COMPLETE) {
-            listOfIngredients[index] = newIngredient
-          }
-          if (now == IngredientInputState.SEMI_COMPLETE && before == IngredientInputState.EMPTY) {
-            listOfIngredients[index] = newIngredient
-            listOfIngredients.add(null)
-            totalIngredients.intValue += 1
-          }
-          if (now == IngredientInputState.EMPTY && before != IngredientInputState.EMPTY) {
-            listOfIngredients.removeAt(index)
-            totalIngredients.intValue -= 1
-          }
+        IngredientInput(inputViewModel.listOfIngredients.value[index]) { before, now, newIngredient
+          ->
+          inputViewModel.setUpdate(index, before, now, newIngredient)
         }
       }
       movableContent()
@@ -116,6 +93,7 @@ fun IngredientInput(
   val isComplete by remember {
     mutableStateOf(name.isNotBlank() && dose != MeasureUnit.EMPTY && quantity != 0.0)
   }
+
   var state by remember {
     mutableStateOf(
         if (isComplete) IngredientInputState.COMPLETE

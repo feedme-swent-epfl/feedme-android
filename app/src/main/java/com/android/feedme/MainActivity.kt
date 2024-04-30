@@ -17,6 +17,7 @@ import androidx.navigation.compose.navigation
 import androidx.navigation.compose.rememberNavController
 import com.android.feedme.model.data.ProfileRepository
 import com.android.feedme.model.data.RecipeRepository
+import com.android.feedme.model.viewmodel.InputViewModel
 import com.android.feedme.model.viewmodel.ProfileViewModel
 import com.android.feedme.model.viewmodel.RecipeViewModel
 import com.android.feedme.resources.C
@@ -55,6 +56,7 @@ class MainActivity : ComponentActivity() {
               val navController = rememberNavController()
               val navigationActions = NavigationActions(navController)
               val profileViewModel: ProfileViewModel = viewModel<ProfileViewModel>()
+              val inputViewModel: InputViewModel = viewModel<InputViewModel>()
 
               // Set up the nested navigation graph
               NavHost(navController = navController, startDestination = Route.AUTHENTICATION) {
@@ -83,7 +85,7 @@ class MainActivity : ComponentActivity() {
                 }
 
                 navigation(startDestination = Screen.CREATE, route = Route.CREATE) {
-                  composable(Screen.CREATE) { CreateScreen(navigationActions) }
+                  composable(Screen.CREATE) { CreateScreen(navigationActions, inputViewModel) }
                   composable(Screen.CAMERA) { CameraScreen(navigationActions) }
                 }
 

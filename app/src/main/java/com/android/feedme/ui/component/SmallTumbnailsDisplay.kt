@@ -38,9 +38,9 @@ import com.android.feedme.ui.theme.YellowStarBlackOutline
  */
 @Composable
 fun SmallThumbnailsDisplay(listRecipe: List<Recipe>) {
-  // Calculate the width of each image based on the screen width
-  val NB_IMAGE_PER_LINE = 2
-  val imageWidth = LocalConfiguration.current.screenWidthDp / NB_IMAGE_PER_LINE
+  // Calculate the width of each image based on the screen width, we want to display 2 images per
+  // line
+  val imageWidth = LocalConfiguration.current.screenWidthDp / 2
   val imageSuccessfulDownload = remember { mutableStateOf(false) }
 
   LazyVerticalGrid(columns = GridCells.Adaptive(minSize = imageWidth.dp)) {

@@ -68,10 +68,10 @@ class UserFlowTest : TestCase() {
     // From EXPLORE Page go to FIND_RECIPE page
     composeTestRule.onNodeWithContentDescription("Find Recipe").assertIsDisplayed().performClick()
 
-    // Wait for the CREATE page to load
+    // Wait for the FIND_RECIPE page to load
     composeTestRule.waitForIdle()
 
-    // From CREATE Page go to PROFILE page
+    // From FIND_RECIPE Page go to PROFILE page
     // TODO We got to Mockk Firebase another issue
     // composeTestRule.onNodeWithContentDescription("Profile").assertIsDisplayed().performClick()
 
@@ -108,7 +108,7 @@ class UserFlowTest : TestCase() {
       // From Home Page go to FIND_RECIPE page
       composeTestRule.onNodeWithContentDescription("Find Recipe").assertIsDisplayed().performClick()
 
-      // Wait for the CREATE page to load
+      // Wait for the FIND_RECIPE page to load
       composeTestRule.waitForIdle()
     }
 

@@ -66,7 +66,7 @@ fun TextRecognition(
 fun TextProcessing(text: Text): String {
   var blockText = ""
   for (block in text.textBlocks) {
-    blockText = block.text
+    blockText += block.text
     /*val blockCornerPoints = block.cornerPoints
     val blockFrame = block.boundingBox
     for (line in block.lines) {

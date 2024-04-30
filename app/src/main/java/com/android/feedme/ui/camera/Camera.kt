@@ -79,15 +79,16 @@ import kotlinx.coroutines.launch
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun CameraScreen(navigationActions: NavigationActions) {
+  ///// Machine Learning Part /////
   // Switch off and on the text recognition functionality
   val textRecognitionMode = remember { mutableStateOf(true) }
   // Display the text box with the recognised text
   val displayText = remember { mutableStateOf(false) }
-  val applicationContext = LocalContext.current
-
-  // val textResult = remember { mutableStateOf(true) }
+  // Text extract by [TextRecognition] function
   val text: MutableState<Text?> = remember { mutableStateOf(null) }
+  ///// Machine Learning Part /////
 
+  val applicationContext = LocalContext.current
   // Request camera permission if not already granted
   if (!hasRequiredPermissions(applicationContext)) {
     ActivityCompat.requestPermissions(
@@ -153,7 +154,7 @@ fun CameraScreen(navigationActions: NavigationActions) {
                       }
                 }
               }
-          // Show the message box if the photo was taken
+          // Show the message "Photo Saved" box if the photo was taken
           if (photoSavedMessageVisible) {
             Log.d("CameraScreen", "Photo saved message visible")
             // Show the message box
@@ -173,29 +174,38 @@ fun CameraScreen(navigationActions: NavigationActions) {
           // If text recognition button is pressed
           if (displayText.value) {
             if (viewModel.lastPhoto != null) {
+              // If there is a photo in the app gallery we launch text recognition
               TextRecognition(
                   viewModel.lastPhoto, { rec -> text.value = rec }, { text.value = null })
             } else {
-              throw (Exception("No Photo taken"))
+              // If there is no photo in app gallery we show an OverlayTextField saying "ERROR : no
+              // photo to analyse"
+              OverlayTextField(
+                  isVisible = true,
+                  onDismiss = { displayText.value = false },
+                  text = "ERROR : no photo to analyse.")
             }
 
             if (text.value != null) {
+              // If text recognition succeeded and produced text, we launch text processing and
+              // display the result in an OverlayTextField
               text.value
                   ?.let { TextProcessing(it) }
                   ?.let {
                     OverlayTextField(
                         isVisible = true, onDismiss = { displayText.value = false }, text = it)
                   }
-            } else {
+              // Will improve later this part for ERROR communication with user.
+            } /*else {
               OverlayTextField(
                   isVisible = true,
                   onDismiss = { displayText.value = false },
-                  text = "Couldn't detect text")
-            }
+                  text = "Couldn't detect text")*/
           }
         }
       }
 }
+// }
 
 /** Create a new [LifecycleCameraController] to control the camera. */
 fun takePhoto(

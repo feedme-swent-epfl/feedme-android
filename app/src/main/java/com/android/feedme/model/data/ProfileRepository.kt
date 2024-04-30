@@ -94,7 +94,7 @@ class ProfileRepository(private val db: FirebaseFirestore) {
   fun followUser(
       currentUserId: String,
       targetUserId: String,
-      onSuccess: () -> Unit,
+      onSuccess: (Profile, Profile) -> Unit,
       onFailure: (Exception) -> Unit
   ) {
     val currentUserRef = db.collection(collectionPath).document(currentUserId)
@@ -105,13 +105,16 @@ class ProfileRepository(private val db: FirebaseFirestore) {
           val currentUserSnapshot = transaction.get(currentUserRef)
           val targetUserSnapshot = transaction.get(targetUserRef)
 
-          val currentUser = currentUserSnapshot.toObject(Profile::class.java)
-          val targetUser = targetUserSnapshot.toObject(Profile::class.java)
+          val currentUser =
+              currentUserSnapshot.toObject(Profile::class.java) ?: return@runTransaction null
+          val targetUser =
+              targetUserSnapshot.toObject(Profile::class.java) ?: return@runTransaction null
 
           // Update current user's following list
           val currentFollowing = currentUser?.following?.toMutableList() ?: mutableListOf()
           if (!currentFollowing.contains(targetUserId)) {
             currentFollowing.add(targetUserId)
+            currentUser.following = currentFollowing // Update the local object
             transaction.update(currentUserRef, "following", currentFollowing)
           }
 
@@ -119,10 +122,24 @@ class ProfileRepository(private val db: FirebaseFirestore) {
           val targetFollowers = targetUser?.followers?.toMutableList() ?: mutableListOf()
           if (!targetFollowers.contains(currentUserId)) {
             targetFollowers.add(currentUserId)
+
+            targetUser.followers = targetFollowers // Update the local object
             transaction.update(targetUserRef, "followers", targetFollowers)
           }
+
+          transaction.set(currentUserRef, currentUser)
+
+          transaction.set(targetUserRef, targetUser)
+
+          return@runTransaction Pair(
+              currentUser, targetUser) // Returning the Pair of updated profiles
         }
-        .addOnSuccessListener { onSuccess() }
+        .addOnSuccessListener { result ->
+          result as Pair<*, *> // Cast result to Pair<Profile, Profile>
+          result.first?.let {
+            result.second?.let { it1 -> onSuccess(it, it1) }
+          } // Call onSuccess with the updated profiles
+        }
         .addOnFailureListener { exception -> onFailure(exception) }
   }
 
@@ -139,7 +156,7 @@ class ProfileRepository(private val db: FirebaseFirestore) {
   fun unfollowUser(
       currentUserId: String,
       targetUserId: String,
-      onSuccess: () -> Unit,
+      onSuccess: (Profile, Profile) -> Unit, // Updated to pass Profile objects
       onFailure: (Exception) -> Unit
   ) {
     val currentUserRef = db.collection(collectionPath).document(currentUserId)
@@ -150,21 +167,35 @@ class ProfileRepository(private val db: FirebaseFirestore) {
           val currentUserSnapshot = transaction.get(currentUserRef)
           val targetUserSnapshot = transaction.get(targetUserRef)
 
-          val currentUser = currentUserSnapshot.toObject(Profile::class.java)
-          val targetUser = targetUserSnapshot.toObject(Profile::class.java)
+          val currentUser =
+              currentUserSnapshot.toObject(Profile::class.java) ?: return@runTransaction null
+          val targetUser =
+              targetUserSnapshot.toObject(Profile::class.java) ?: return@runTransaction null
 
           // Prepare the updated lists
-          val currentFollowing = currentUser?.following?.toMutableList() ?: mutableListOf()
+          val currentFollowing = currentUser.following.toMutableList()
           currentFollowing.remove(targetUserId)
+          currentUser.following = currentFollowing // Update the local object
 
-          val targetFollowers = targetUser?.followers?.toMutableList() ?: mutableListOf()
+          val targetFollowers = targetUser.followers.toMutableList()
           targetFollowers.remove(currentUserId)
+          targetUser.followers = targetFollowers // Update the local object
 
-          // Perform the updates
+          // Perform the updates in the database
           transaction.update(currentUserRef, "following", currentFollowing)
           transaction.update(targetUserRef, "followers", targetFollowers)
+
+          // Return the updated profiles to be used in the onSuccess callback
+          transaction.set(currentUserRef, currentUser)
+          transaction.set(targetUserRef, targetUser)
+
+          return@runTransaction Pair(
+              currentUser, targetUser) // Returning the Pair of updated profiles
         }
-        .addOnSuccessListener { onSuccess() }
+        .addOnSuccessListener { result ->
+          result as Pair<Profile, Profile> // Cast result to Pair<Profile, Profile>
+          onSuccess(result.first, result.second) // Call onSuccess with the updated profiles
+        }
         .addOnFailureListener { exception -> onFailure(exception) }
   }
 
@@ -182,7 +213,7 @@ class ProfileRepository(private val db: FirebaseFirestore) {
   fun removeFollower(
       userId: String,
       followerId: String,
-      onSuccess: () -> Unit,
+      onSuccess: (Profile, Profile) -> Unit, // Updated to pass Profile objects
       onFailure: (Exception) -> Unit
   ) {
     val userDocRef = db.collection(collectionPath).document(userId)
@@ -193,24 +224,36 @@ class ProfileRepository(private val db: FirebaseFirestore) {
           val userSnapshot = transaction.get(userDocRef)
           val followerSnapshot = transaction.get(followerDocRef)
 
-          val user = userSnapshot.toObject(Profile::class.java)
-          val follower = followerSnapshot.toObject(Profile::class.java)
+          val user = userSnapshot.toObject(Profile::class.java) ?: return@runTransaction null
+          val follower =
+              followerSnapshot.toObject(Profile::class.java) ?: return@runTransaction null
 
           // Update the user's followers list
-          val userFollowers = user?.followers?.toMutableList() ?: mutableListOf()
+          val userFollowers = user.followers.toMutableList()
           if (userFollowers.contains(followerId)) {
             userFollowers.remove(followerId)
+            user.followers = userFollowers // Update the local object
             transaction.update(userDocRef, "followers", userFollowers)
           }
 
           // Update the follower's following list
-          val followerFollowing = follower?.following?.toMutableList() ?: mutableListOf()
+          val followerFollowing = follower.following.toMutableList()
           if (followerFollowing.contains(userId)) {
             followerFollowing.remove(userId)
+            follower.following = followerFollowing // Update the local object
             transaction.update(followerDocRef, "following", followerFollowing)
           }
+
+          // Return the updated profiles to be used in the onSuccess callback
+          transaction.set(userDocRef, user)
+          transaction.set(followerDocRef, follower)
+
+          return@runTransaction Pair(user, follower) // Returning the Pair of updated profiles
         }
-        .addOnSuccessListener { onSuccess() }
+        .addOnSuccessListener { result ->
+          result as Pair<Profile, Profile> // Cast result to Pair<Profile, Profile>
+          onSuccess(result.first, result.second) // Call onSuccess with the updated profiles
+        }
         .addOnFailureListener { exception -> onFailure(exception) }
   }
 }

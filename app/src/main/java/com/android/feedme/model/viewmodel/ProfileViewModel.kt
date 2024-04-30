@@ -243,37 +243,38 @@ class ProfileViewModel : ViewModel() {
    *       never
    */
   fun followUser(targetUser: Profile) {
-      Log.d("ProfileViewModel", "Follow user called")
-      Log.d("ProfileViewModel", "Current user ID: $currentUserId")
-      Log.d("ProfileViewModel", "Viewing user ID: $viewingUserId")
-      Log.d("ProfileViewModel", "Target user ID: ${targetUser.id}")
-        Log.d("ProfileViewModel", "Target user followers: $targetUser")
-
-    val targetUserId = targetUser.id
-    val currentUserId =
-        currentUserId ?: throw Exception("Current user ID is null. Should never happen.")
-    if (currentUserId == targetUserId) {
-      throw Exception("Current user ID is the same as the target user ID. Should never happen.")
+    if (currentUserId == null) {
+      return
     }
-    if (targetUser.followers.contains(currentUserId)) {
-      throw Exception("Target user is already a follower of the current user. Should never happen.")
-    }
-
     viewModelScope.launch {
       repository.followUser(
-          currentUserId,
-          targetUserId,
-          onSuccess = {
+          currentUserId!!,
+          targetUser.id,
+          onSuccess = { curr, target ->
             Log.d("ProfileViewModel", "Successfully started following the user")
-              targetUser.followers += currentUserId
-              currentUserProfile.value!!.followers  += targetUserId
-                _currentUserFollowers.value += targetUser
+            _currentUserProfile.value = curr
+            _currentUserFollowing.value += target
+            _currentUserFollowers.value =
+                _currentUserFollowers.value.map {
+                  if (it.id == target.id) {
+                    target
+                  } else {
+                    it
+                  }
+                }
+            if (viewingUserId == target.id) {
+              _viewingUserProfile.value = target
 
-              if (viewingUserId == targetUserId) {
-                viewingUserProfile.value!!.followers += currentUserId
-                _viewingUserFollowers.value += currentUserProfile.value!!
-              }
-
+              _viewingUserFollowers.value = _viewingUserFollowers.value.plus(curr)
+              _viewingUserFollowing.value =
+                  _viewingUserFollowing.value.map { user ->
+                    if (user.id == currentUserId) {
+                      curr
+                    } else {
+                      user
+                    }
+                  }
+            }
           },
           onFailure = { error ->
             _errorMessages.value = "Failed to start following user: ${error.message}"
@@ -294,36 +295,38 @@ class ProfileViewModel : ViewModel() {
    *     @throws Exception If the target user is not a follower of the current user. Should never
    */
   fun unfollowUser(targetUser: Profile) {
-      Log.d("ProfileViewModel", "Unfollow user called")
-      Log.d("ProfileViewModel", "Current user ID: $currentUserId")
-      Log.d("ProfileViewModel", "Viewing user ID: $viewingUserId")
-      Log.d("ProfileViewModel", "Target user ID: ${targetUser.id}")
-      Log.d("ProfileViewModel", "Target user followers: $targetUser")
-    val targetUserId = targetUser.id
-    val requestFromUserId =
-        currentUserId ?: throw Exception("Current user ID is null. Should never happen.")
-
-    if (requestFromUserId == targetUserId) {
-      throw Exception("Current user ID is the same as the target user ID. Should never happen.")
+    if (currentUserId == null) {
+      return
     }
-    if (!targetUser.followers.contains(requestFromUserId)) {
-      throw Exception("Target user is not a follower of the current user. Should never happen.")
-    }
-
     viewModelScope.launch {
       repository.unfollowUser(
-          requestFromUserId,
-          targetUserId,
-          onSuccess = {
+          currentUserId!!,
+          targetUser.id,
+          onSuccess = { curr, target ->
             Log.d("ProfileViewModel", "Successfully unfollowed the user")
-                targetUser.followers -= requestFromUserId
-                currentUserProfile.value!!.followers -= targetUserId
-                _currentUserFollowers.value = _currentUserFollowers.value.toMutableList().apply { remove(targetUser) }
-                if (viewingUserId == targetUserId) {
-                    viewingUserProfile.value!!.followers -= requestFromUserId
-                    _viewingUserFollowers.value = _viewingUserFollowers.value.toMutableList().apply { remove(currentUserProfile.value!!) }
+            _currentUserProfile.value = curr
+            _currentUserFollowing.value = _currentUserFollowing.value.filter { it.id != target.id }
+            _currentUserFollowers.value =
+                _currentUserFollowers.value.map {
+                  if (it.id == target.id) {
+                    target
+                  } else {
+                    it
+                  }
                 }
-
+            if (viewingUserId == target.id) {
+              _viewingUserProfile.value = target
+              _viewingUserFollowers.value =
+                  _viewingUserFollowers.value.filter { it.id != currentUserId }
+              _viewingUserFollowing.value =
+                  _viewingUserFollowing.value.map {
+                    if (it.id == currentUserId) {
+                      curr
+                    } else {
+                      it
+                    }
+                  }
+            }
           },
           onFailure = { error ->
             _errorMessages.value = "Failed to unfollow user: ${error.message}"
@@ -343,35 +346,40 @@ class ProfileViewModel : ViewModel() {
    * @throws Exception If the follower is not in the current user's following list. Should never
    */
   fun removeFollower(follower: Profile) {
-    Log.d("ProfileViewModel", "Removing follower and following CALLED")
-    val followerId = follower.id
-    val requestFromUserId =
-        currentUserId ?: throw Exception("Current user ID is null. Should never happen.")
-    if (requestFromUserId == followerId) {
-      throw Exception("Current user ID is the same as the follower ID. Should never happen.")
-    }
-    if (!follower.following.contains(requestFromUserId)) {
-      throw Exception("Current user is not following the follower. Should never happen.")
+
+    if (currentUserId == null) {
+      return
     }
 
     viewModelScope.launch {
       repository.removeFollower(
-          requestFromUserId,
-          followerId,
-          onSuccess = {
+          currentUserId!!,
+          follower.id,
+          onSuccess = { curr, target ->
             Log.d("ProfileViewModel", "Successfully removed follower and following")
-               // TODO Update local state if needed
-                val updatedFollowers = _currentUserFollowers.value.toMutableList().apply { remove(follower) }
-                _currentUserFollowers.value = updatedFollowers
-                _currentUserProfile.value =
-                    _currentUserProfile.value?.copy(followers = updatedFollowers.map { it.id })
-
-              if (viewingUserId == followerId) {
-                val updatedFollowing = _viewingUserFollowing.value.toMutableList().apply { remove(follower) }
-                _viewingUserFollowing.value = updatedFollowing
-                _viewingUserProfile.value =
-                    _viewingUserProfile.value?.copy(following = updatedFollowing.map { it.id })
-              }
+            _currentUserProfile.value = curr
+            _currentUserFollowers.value = _currentUserFollowers.value.filter { it.id != target.id }
+            _currentUserFollowing.value =
+                _currentUserFollowing.value.map {
+                  if (it.id == target.id) {
+                    target
+                  } else {
+                    it
+                  }
+                }
+            if (viewingUserId == target.id) {
+              _viewingUserProfile.value = target
+              _viewingUserFollowing.value =
+                  _viewingUserFollowing.value.filter { it.id != currentUserId }
+              _viewingUserFollowers.value =
+                  _viewingUserFollowers.value.map {
+                    if (it.id == currentUserId) {
+                      curr
+                    } else {
+                      it
+                    }
+                  }
+            }
           },
           onFailure = { error ->
             _errorMessages.value = "Failed to remove follower and following: ${error.message}"

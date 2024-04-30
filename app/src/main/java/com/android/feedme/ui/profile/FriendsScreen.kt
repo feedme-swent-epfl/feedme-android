@@ -7,7 +7,6 @@ import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
@@ -200,14 +199,14 @@ fun FriendsCard(
                   contentDescription = "Profile Image",
                   modifier = Modifier.padding(horizontal = 10.dp).size(50.dp).clip(CircleShape),
               )
-              Column(modifier = Modifier.padding(10.dp).weight(1f)) {
-                Text(text = profile.name, fontSize = 14.sp)
+              Column(modifier = Modifier.padding(8.dp).weight(1f)) {
+                Text(text = profile.name, fontSize = 12.sp)
                 Text(
                     text = "@" + profile.username,
                     fontSize = 10.sp,
                     color = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.5f))
               }
-              Spacer(modifier = Modifier.weight(0.1f))
+
               Box(modifier = Modifier.align(Alignment.CenterVertically)) {
                 Row {
                   FollowUnfollowButton(

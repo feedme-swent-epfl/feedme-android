@@ -36,6 +36,18 @@ class InputViewModel : ViewModel() {
         newList.size - 1 // TODO Check the number of complete Ingredients
   }
 
+  /**
+   * Add a new list of ingredients to the one already exisiting.
+   *
+   * @param newList The new list of ingredients.
+   */
+  fun addToList(newList: MutableList<IngredientMetaData?>) {
+    _listOfIngredients.value = newList.plus(_listOfIngredients.value)
+    _totalIngredients.value += newList.size
+    _totalCompleteIngredients.value +=
+        newList.size - 1 // TODO Check the number of complete Ingredients
+  }
+
   /** Resets the list of ingredients. */
   fun resetList() {
     _listOfIngredients.value = listOf(null)

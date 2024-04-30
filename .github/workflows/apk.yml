@@ -24,12 +24,14 @@ jobs:
           java-version: '17'
           distribution: 'temurin'
 
+    # We create several files needed to add our secrets (google services, keystore data for app signing) for correct build of app
       - name: Create Google Service and Keystore files
         run: |
           cat /home/runner/work/feedme-android/app/google-services.json | base64
           cat /home/runner/work/feedme-android/upload-keystore.jks | base64
           cat /home/runner/work/feedme-android/keystore.properties | base64
-
+    
+    # We load the secrets to the corresponding files
       - name: Load Google Service and Keystore files
         env:
           DATA: ${{ secrets.GOOGLE_SERVICES_JSON }}
@@ -40,16 +42,16 @@ jobs:
           echo $ENCODED_KEYSTORE | base64 -di > upload-keystore.jks
           echo $ENCODED_PASSWORDS | base64 -di > keystore.properties
 
-      - name: Gradle cache
+      - name: Set up Gradle cache
         uses: gradle/actions/setup-gradle@v3
   
       - name: Grant execute permission for gradlew
         run: chmod +x ./gradlew
   
-      - name: Build APK
+      - name: Build Release APK
         run: ./gradlew assembleRelease
 
-      - name: Get release file apk path
+      - name: Get the path of our apk file
         id: releaseApk
         run: echo "apkfile=$(find app/build/outputs/apk/release/*.apk)" >> $GITHUB_OUTPUT
 
@@ -60,7 +62,7 @@ jobs:
           path: ${{ steps.releaseApk.outputs.apkfile }}
           if-no-files-found: error
 
-      - name: Release APK
+      - name: Upload APK in a draft release branch
         uses: softprops/action-gh-release@v2
         with:
           name: FeedMe v1.x.x

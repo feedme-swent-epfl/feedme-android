@@ -43,6 +43,7 @@ class SmallThumbnailsDisplayTest {
             "https://external-content.duckduckgo.com/iu/?u=https%3A%2F%2Fwww.mamablip.com%2Fstorage%2FLasagna%2520with%2520Meat%2520and%2520Tomato%2520Sauce_3481612355355.jpg&f=1&nofb=1&ipt=8e887ba99ce20a85fb867dabbe0206c1146ebf2f13548b5653a2778e3ea18c54&ipo=images")
 
     composeTestRule.setContent { SmallThumbnailsDisplay(listRecipe = listOf(recipe1)) }
+    composeTestRule.waitForIdle()
 
     // Check whether the Image or the warning message is displayed
     try {
@@ -51,17 +52,20 @@ class SmallThumbnailsDisplayTest {
       composeTestRule.onNodeWithText("Fail Image Download")
     }
 
-    // Thread.sleep(30000)
-    composeTestRule.onNodeWithContentDescription("Star Icon").assertIsDisplayed()
-    composeTestRule.onNodeWithText(recipe1.rating.toString()).assertIsDisplayed()
+    composeTestRule
+        .onNodeWithContentDescription("Star Icon", useUnmergedTree = true)
+        .assertIsDisplayed()
+    composeTestRule.onNodeWithTag("Text Rating").assertIsDisplayed()
 
-    composeTestRule.onNodeWithContentDescription("Info Icon").assertIsDisplayed()
-    composeTestRule.onNodeWithText(recipe1.time.toString()).assertIsDisplayed()
+    composeTestRule
+        .onNodeWithContentDescription("Timer Icon", useUnmergedTree = true)
+        .assertIsDisplayed()
+    composeTestRule.onNodeWithTag("Text Time").assertIsDisplayed()
 
-    composeTestRule.waitForIdle()
-    /*composeTestRule
-    .onNodeWithContentDescription("Save Icon", useUnmergedTree = true)
-    .assertIsDisplayed()*/
-    composeTestRule.onNodeWithText(recipe1.title).assertIsDisplayed()
+    composeTestRule
+        .onNodeWithContentDescription("Save Icon", useUnmergedTree = true)
+        .assertIsDisplayed()
+
+    composeTestRule.onNodeWithTag("Text Title").assertIsDisplayed()
   }
 }

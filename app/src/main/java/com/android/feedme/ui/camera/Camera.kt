@@ -22,9 +22,11 @@ import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.lazy.staggeredgrid.LazyVerticalStaggeredGrid
 import androidx.compose.foundation.lazy.staggeredgrid.StaggeredGridCells
 import androidx.compose.foundation.lazy.staggeredgrid.items
+import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Photo
@@ -56,6 +58,7 @@ import androidx.lifecycle.viewmodel.compose.viewModel
 import com.android.feedme.model.viewmodel.CameraViewModel
 import com.android.feedme.ui.navigation.NavigationActions
 import com.android.feedme.ui.navigation.TopBarNavigation
+import com.android.feedme.ui.theme.CameraButtonsBackground
 import kotlinx.coroutines.launch
 
 /**
@@ -91,7 +94,7 @@ fun CameraScreen(navigationActions: NavigationActions) {
 
   BottomSheetScaffold(
       modifier = Modifier.testTag("CameraScreen"),
-      topBar = { TopBarNavigation(title = "Camera", navigationActions, null) },
+      topBar = { TopBarNavigation(title = "Camera", navAction = navigationActions) },
       scaffoldState = scaffoldState,
       sheetPeekHeight = 0.dp,
       sheetContent = {
@@ -101,17 +104,29 @@ fun CameraScreen(navigationActions: NavigationActions) {
           CameraPreview(controller = controller, modifier = Modifier.fillMaxSize())
 
           Row(
-              modifier = Modifier.fillMaxWidth().align(Alignment.BottomCenter).padding(16.dp),
+              modifier =
+                  Modifier.fillMaxWidth()
+                      .align(Alignment.BottomCenter)
+                      .padding(16.dp)
+                      .padding(bottom = 32.dp),
               horizontalArrangement = Arrangement.SpaceAround) {
                 IconButton(
-                    modifier = Modifier.testTag("GalleryButton"),
+                    modifier =
+                        Modifier.size(56.dp)
+                            .background(CameraButtonsBackground, shape = CircleShape)
+                            .padding(10.dp)
+                            .testTag("GalleryButton"),
                     // Open the local gallery when the gallery button is clicked
                     onClick = { scope.launch { scaffoldState.bottomSheetState.expand() } }) {
                       Icon(imageVector = Icons.Default.Photo, contentDescription = "Open gallery")
                     }
 
                 IconButton(
-                    modifier = Modifier.testTag("PhotoButton"),
+                    modifier =
+                        Modifier.size(56.dp)
+                            .background(CameraButtonsBackground, shape = CircleShape)
+                            .padding(10.dp)
+                            .testTag("PhotoButton"),
                     // Take a photo when the photo button is clicked
                     onClick = {
                       takePhoto(

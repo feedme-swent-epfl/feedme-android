@@ -38,6 +38,7 @@ import com.android.feedme.ui.theme.TextBarColor
 fun TopBarNavigation(
     title: String,
     navAction: NavigationActions? = null,
+    backArrowOnClickAction: () -> Unit = { navAction?.goBack() },
     rightIcon: ImageVector? = null,
     rightIconOnClickAction: (() -> Unit) = {}
 ) {
@@ -60,7 +61,7 @@ fun TopBarNavigation(
                     if (navAction != null && navAction.canGoBack()) {
                       IconButton(
                           modifier = Modifier.testTag("LeftIconButton"),
-                          onClick = { navAction.goBack() },
+                          onClick = { backArrowOnClickAction() },
                       ) {
                         Icon(
                             modifier = Modifier.testTag("LeftIcon"),

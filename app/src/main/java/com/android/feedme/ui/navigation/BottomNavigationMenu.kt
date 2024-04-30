@@ -52,7 +52,8 @@ fun BottomNavigationMenu(
               },
               modifier =
                   Modifier.padding(vertical = 12.dp, horizontal = 10.dp)
-                      .clip(RoundedCornerShape(50.dp)))
+                      .clip(RoundedCornerShape(50.dp))
+                      .testTag(replyDestination.textId))
         }
       }
 }

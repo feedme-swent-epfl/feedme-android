@@ -145,7 +145,9 @@ fun FriendsList(
         horizontalAlignment = Alignment.CenterHorizontally,
         verticalArrangement = Arrangement.Center) {
           if (tag == "FollowersList") {
-            Text(text = "No Followers Yet", modifier = Modifier.padding(16.dp).testTag("NoFollowers"))
+            Text(
+                text = "No Followers Yet",
+                modifier = Modifier.padding(16.dp).testTag("NoFollowers"))
             Text(text = "Make a Recipe to gain some Fan!", modifier = Modifier.padding(16.dp))
           } else {
             Text(text = "No Fan Yet", modifier = Modifier.padding(16.dp).testTag("NoFollowing"))

@@ -56,58 +56,59 @@ class FriendsTest {
   }
 
   @Test
-    fun emptyFriendsDisplayed() {
+  fun emptyFriendsDisplayed() {
     val mockNavActions = mockk<NavigationActions>(relaxed = true) // Make the mock relaxed
     val profileViewModel = ProfileViewModel()
     profileViewModel.updateCurrentUserProfile(Profile())
     composeTestRule.setContent {
       com.android.feedme.ui.profile.FriendsScreen(mockNavActions, profileViewModel, mode = 0)
     }
-        ComposeScreen.onComposeScreen<FriendsScreen>(composeTestRule) {
-        tabFollowing {
-            assertIsDisplayed()
-            assertHasClickAction()
-            performClick()
-        }
-        emptyFriends { assertIsDisplayed() }
-        }
-    }
-
-    @Test
-    fun noFollowersDisplayed() {
-      val mockNavActions = mockk<NavigationActions>(relaxed = true) // Make the mock relaxed
-      val profileViewModel = ProfileViewModel()
-      profileViewModel.updateCurrentUserProfile(Profile())
-      composeTestRule.setContent {
-        com.android.feedme.ui.profile.FriendsScreen(mockNavActions,profileViewModel, mode = 0)
+    ComposeScreen.onComposeScreen<FriendsScreen>(composeTestRule) {
+      tabFollowing {
+        assertIsDisplayed()
+        assertHasClickAction()
+        performClick()
       }
-        ComposeScreen.onComposeScreen<FriendsScreen>(composeTestRule) {
-        tabFollowers {
-            assertIsDisplayed()
-            assertHasClickAction()
-            performClick()
-        }
-        noFollowers { assertIsDisplayed() }
-        }
+      emptyFriends { assertIsDisplayed() }
     }
+  }
 
-    @Test
-    fun noFollowingDisplayed() {
-      val profileViewModel = ProfileViewModel()
-      profileViewModel.updateCurrentUserProfile(Profile())
-      val mockNavActions = mockk<NavigationActions>(relaxed = true) // Make the mock relaxed
-      composeTestRule.setContent {
-        com.android.feedme.ui.profile.FriendsScreen(mockNavActions, profileViewModel, mode = 0)
-      }
-        ComposeScreen.onComposeScreen<FriendsScreen>(composeTestRule) {
-        tabFollowing {
-            assertIsDisplayed()
-            assertHasClickAction()
-            performClick()
-        }
-        noFollowing { assertIsDisplayed() }
-        }
+  @Test
+  fun noFollowersDisplayed() {
+    val mockNavActions = mockk<NavigationActions>(relaxed = true) // Make the mock relaxed
+    val profileViewModel = ProfileViewModel()
+    profileViewModel.updateCurrentUserProfile(Profile())
+    composeTestRule.setContent {
+      com.android.feedme.ui.profile.FriendsScreen(mockNavActions, profileViewModel, mode = 0)
     }
+    ComposeScreen.onComposeScreen<FriendsScreen>(composeTestRule) {
+      tabFollowers {
+        assertIsDisplayed()
+        assertHasClickAction()
+        performClick()
+      }
+      noFollowers { assertIsDisplayed() }
+    }
+  }
+
+  @Test
+  fun noFollowingDisplayed() {
+    val profileViewModel = ProfileViewModel()
+    profileViewModel.updateCurrentUserProfile(Profile())
+    val mockNavActions = mockk<NavigationActions>(relaxed = true) // Make the mock relaxed
+    composeTestRule.setContent {
+      com.android.feedme.ui.profile.FriendsScreen(mockNavActions, profileViewModel, mode = 0)
+    }
+    ComposeScreen.onComposeScreen<FriendsScreen>(composeTestRule) {
+      tabFollowing {
+        assertIsDisplayed()
+        assertHasClickAction()
+        performClick()
+      }
+      noFollowing { assertIsDisplayed() }
+    }
+  }
+
   private fun goToFriendsScreen() {
     val mockNavActions = mockk<NavigationActions>(relaxed = true) // Make the mock relaxed
     composeTestRule.setContent {

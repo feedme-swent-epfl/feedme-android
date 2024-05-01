@@ -33,8 +33,8 @@ class InputViewModel : ViewModel() {
     newList.add(null)
     _listOfIngredients.value = newList
     _totalIngredients.value = newList.size
-    _totalCompleteIngredients.value += newList.count { it != null && it.measure != MeasureUnit.EMPTY && it.quantity != 0.0}
-
+    _totalCompleteIngredients.value +=
+        newList.count { it != null && it.measure != MeasureUnit.EMPTY && it.quantity != 0.0 }
   }
 
   /**
@@ -45,7 +45,8 @@ class InputViewModel : ViewModel() {
   fun addToList(newList: MutableList<IngredientMetaData>) {
     _listOfIngredients.value = newList.plus(_listOfIngredients.value)
     _totalIngredients.value += newList.size
-    _totalCompleteIngredients.value += newList.count { it.measure != MeasureUnit.EMPTY && it.quantity != 0.0}
+    _totalCompleteIngredients.value +=
+        newList.count { it.measure != MeasureUnit.EMPTY && it.quantity != 0.0 }
   }
 
   /** Resets the list of ingredients. */

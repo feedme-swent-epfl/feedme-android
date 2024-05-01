@@ -95,7 +95,8 @@ fun IngredientInput(
   var state by remember {
     mutableStateOf(
         if (isComplete) IngredientInputState.COMPLETE
-        else if (name.isNotBlank() || dose != MeasureUnit.EMPTY || quantity != 0.0) IngredientInputState.SEMI_COMPLETE
+        else if (name.isNotBlank() || dose != MeasureUnit.EMPTY || quantity != 0.0)
+            IngredientInputState.SEMI_COMPLETE
         else IngredientInputState.EMPTY)
   }
 

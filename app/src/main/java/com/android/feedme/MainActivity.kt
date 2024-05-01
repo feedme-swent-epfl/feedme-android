@@ -2,8 +2,8 @@ package com.android.feedme
 
 import android.annotation.SuppressLint
 import android.os.Bundle
-import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
+import androidx.appcompat.app.AppCompatActivity
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
@@ -23,6 +23,7 @@ import com.android.feedme.resources.C
 import com.android.feedme.ui.SavedScreen
 import com.android.feedme.ui.auth.LoginScreen
 import com.android.feedme.ui.camera.CameraScreen
+import com.android.feedme.ui.camera.GalleryScreen
 import com.android.feedme.ui.component.RecipeFullDisplay
 import com.android.feedme.ui.find.FindRecipeScreen
 import com.android.feedme.ui.home.LandingPage
@@ -36,7 +37,7 @@ import com.android.feedme.ui.settings.SettingsScreen
 import com.android.feedme.ui.theme.feedmeAppTheme
 import com.google.firebase.firestore.FirebaseFirestore
 
-class MainActivity : ComponentActivity() {
+class MainActivity : AppCompatActivity() {
   @SuppressLint("UnrememberedGetBackStackEntry")
   override fun onCreate(savedInstanceState: Bundle?) {
     super.onCreate(savedInstanceState)
@@ -83,6 +84,7 @@ class MainActivity : ComponentActivity() {
                 navigation(startDestination = Screen.FIND_RECIPE, route = Route.FIND_RECIPE) {
                   composable(Screen.FIND_RECIPE) { FindRecipeScreen(navigationActions) }
                   composable(Screen.CAMERA) { CameraScreen(navigationActions) }
+                  composable(Screen.GALLERY) { GalleryScreen(navigationActions, 10) }
                 }
 
                 navigation(startDestination = Screen.PROFILE, route = Route.PROFILE) {

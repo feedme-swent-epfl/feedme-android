@@ -1,7 +1,7 @@
-package com.android.feedme.ui.home
+package com.android.feedme.ui.component
 
-import android.annotation.SuppressLint
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
@@ -9,12 +9,14 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.rounded.AccessTime
+import androidx.compose.material.icons.outlined.Timer
 import androidx.compose.material.icons.rounded.Star
 import androidx.compose.material.icons.twotone.Bookmark
+import androidx.compose.material.icons.twotone.Star
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
@@ -44,8 +46,9 @@ import com.android.feedme.ui.navigation.NavigationActions
 import com.android.feedme.ui.navigation.Route
 import com.android.feedme.ui.navigation.TOP_LEVEL_DESTINATIONS
 import com.android.feedme.ui.navigation.TopBarNavigation
-import com.android.feedme.ui.theme.BlueUser
+import com.android.feedme.ui.theme.BlueUsername
 import com.android.feedme.ui.theme.YellowStar
+import com.android.feedme.ui.theme.YellowStarBlackOutline
 
 /**
  * Displays a full recipe view. The screen contains the [TopBarNavigation], the
@@ -56,7 +59,6 @@ import com.android.feedme.ui.theme.YellowStar
  * @param navigationActions Gives access to the navigation actions.
  * @param recipeViewModel The [RecipeViewModel] to get the recipe from.
  */
-@SuppressLint("UnusedMaterial3ScaffoldPaddingParameter")
 @Composable
 fun RecipeFullDisplay(
     navigationActions: NavigationActions,
@@ -79,7 +81,7 @@ fun RecipeFullDisplay(
         if (recipe != null) {
           LazyColumn(modifier = Modifier.padding(padding)) {
             item { ImageDisplay(recipe = recipe) }
-            item { GeneralInfosDisplay(recipe = recipe) }
+            item { GeneralInfoDisplay(recipe = recipe) }
             item { IngredientTitleDisplay() }
             items(recipe.ingredients) { ingredient -> IngredientDisplay(ingredient = ingredient) }
             item { IngredientStepsDividerDisplay() }
@@ -116,7 +118,7 @@ fun ImageDisplay(recipe: Recipe, modifier: Modifier = Modifier) {
  * @param modifier The [Modifier] for the layout of the row wrapping the content.
  */
 @Composable
-fun GeneralInfosDisplay(recipe: Recipe, modifier: Modifier = Modifier) {
+fun GeneralInfoDisplay(recipe: Recipe, modifier: Modifier = Modifier) {
   Row(
       horizontalArrangement = Arrangement.SpaceAround,
       verticalAlignment = Alignment.CenterVertically,
@@ -125,11 +127,11 @@ fun GeneralInfosDisplay(recipe: Recipe, modifier: Modifier = Modifier) {
         // Recipe time
         Spacer(modifier = Modifier.weight(1f))
         Icon(
-            imageVector = Icons.Rounded.AccessTime,
+            imageVector = Icons.Outlined.Timer,
             contentDescription = "Time Icon",
-            modifier = Modifier.testTag("Time Icon"))
+            modifier = Modifier.size(26.dp))
         Text(
-            text = recipe.time.toString(),
+            text = "${recipe.time.toInt()} '",
             modifier = Modifier.padding(start = 4.dp).testTag("Text Time"),
             style = TextStyle(fontSize = 16.sp, fontWeight = FontWeight.Medium))
 
@@ -142,16 +144,27 @@ fun GeneralInfosDisplay(recipe: Recipe, modifier: Modifier = Modifier) {
         Text(
             text = recipe.userid,
             textAlign = TextAlign.Center,
-            color = BlueUser,
+            color = BlueUsername,
             style = TextStyle(fontSize = 16.sp, fontWeight = FontWeight.Medium))
         Spacer(modifier = Modifier.weight(1f))
 
-        // Recipe rating
-        Icon(
-            imageVector = Icons.Rounded.Star,
-            contentDescription = "Rating Icon",
-            tint = YellowStar,
-            modifier = Modifier.testTag("Rating Icon"))
+        // Recipe ratings
+        Box(contentAlignment = Alignment.Center) {
+          // Larger black star to act as the outline
+          Icon(
+              imageVector = Icons.TwoTone.Star,
+              contentDescription = "Star Outline",
+              tint = YellowStarBlackOutline,
+              modifier = Modifier.size(26.dp) // Make this star slightly larger to show as the edge
+              )
+          // Smaller yellow star to act as the inner part
+          Icon(
+              imageVector = Icons.Rounded.Star,
+              contentDescription = "Star Icon",
+              tint = YellowStar,
+              modifier = Modifier.size(17.dp) // Smaller than the outline star
+              )
+        }
         Text(
             text = recipe.rating.toString(),
             modifier = Modifier.padding(start = 4.dp).testTag("Text Rating"),

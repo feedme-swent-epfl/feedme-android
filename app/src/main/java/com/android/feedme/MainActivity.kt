@@ -20,12 +20,12 @@ import com.android.feedme.model.data.RecipeRepository
 import com.android.feedme.model.viewmodel.ProfileViewModel
 import com.android.feedme.model.viewmodel.RecipeViewModel
 import com.android.feedme.resources.C
-import com.android.feedme.ui.CreateScreen
-import com.android.feedme.ui.NotImplementedScreen
+import com.android.feedme.ui.SavedScreen
 import com.android.feedme.ui.auth.LoginScreen
 import com.android.feedme.ui.camera.CameraScreen
+import com.android.feedme.ui.component.RecipeFullDisplay
+import com.android.feedme.ui.find.FindRecipeScreen
 import com.android.feedme.ui.home.LandingPage
-import com.android.feedme.ui.home.RecipeFullDisplay
 import com.android.feedme.ui.navigation.NavigationActions
 import com.android.feedme.ui.navigation.Route
 import com.android.feedme.ui.navigation.Screen
@@ -76,14 +76,12 @@ class MainActivity : ComponentActivity() {
                   }
                 }
 
-                navigation(startDestination = Screen.EXPLORE, route = Route.EXPLORE) {
-                  composable(Screen.EXPLORE) {
-                    NotImplementedScreen(navigationActions, Route.EXPLORE)
-                  }
+                navigation(startDestination = Screen.SAVED, route = Route.SAVED) {
+                  composable(Screen.SAVED) { SavedScreen(navigationActions, Route.SAVED) }
                 }
 
-                navigation(startDestination = Screen.CREATE, route = Route.CREATE) {
-                  composable(Screen.CREATE) { CreateScreen(navigationActions) }
+                navigation(startDestination = Screen.FIND_RECIPE, route = Route.FIND_RECIPE) {
+                  composable(Screen.FIND_RECIPE) { FindRecipeScreen(navigationActions) }
                   composable(Screen.CAMERA) { CameraScreen(navigationActions) }
                 }
 

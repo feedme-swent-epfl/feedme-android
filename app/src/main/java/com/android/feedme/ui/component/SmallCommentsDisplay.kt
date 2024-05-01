@@ -29,7 +29,7 @@ import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import com.android.feedme.R
 import com.android.feedme.model.data.Comment
-import com.android.feedme.ui.theme.BlueUser
+import com.android.feedme.ui.theme.BlueUsername
 
 /**
  * Composable function to display a list of small comments.
@@ -81,7 +81,7 @@ fun CommentCard(comment: Comment) {
                 Text(
                     text = comment.authorId,
                     style = MaterialTheme.typography.bodyMedium,
-                    color = BlueUser,
+                    color = BlueUsername,
                     fontWeight = FontWeight.Bold)
 
                 Spacer(modifier = Modifier.height(8.dp))

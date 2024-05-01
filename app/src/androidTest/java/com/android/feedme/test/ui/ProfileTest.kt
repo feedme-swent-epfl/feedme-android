@@ -21,6 +21,7 @@ import org.junit.runner.RunWith
 class ProfileTest {
   @get:Rule val composeTestRule = createComposeRule()
   private val mockFirestore = mockk<FirebaseFirestore>(relaxed = true)
+  private val navAction = mockk<NavigationActions>(relaxed = true)
 
   @Before
   fun init() {
@@ -48,7 +49,7 @@ class ProfileTest {
       every { mockProfileViewModel.profileToShow() } returns profile
       every { mockProfileViewModel.fetchCurrentUserProfile() } returns Unit
 
-      composeTestRule.setContent { ProfileScreen(mockk<NavigationActions>(), mockProfileViewModel) }
+      composeTestRule.setContent { ProfileScreen(navAction, mockProfileViewModel) }
 
       topBarProfile { assertIsDisplayed() }
 
@@ -105,7 +106,9 @@ class ProfileTest {
       every { mockProfileViewModel.profileToShow() } returns profile
       every { mockProfileViewModel.fetchCurrentUserProfile() } returns Unit
 
-      composeTestRule.setContent { ProfileScreen(mockk<NavigationActions>(), mockProfileViewModel) }
+      every { navAction.canGoBack() } returns false
+
+      composeTestRule.setContent { ProfileScreen(navAction, mockProfileViewModel) }
 
       topBarProfile { assertIsDisplayed() }
 

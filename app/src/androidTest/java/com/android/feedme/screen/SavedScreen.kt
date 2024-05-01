@@ -5,10 +5,9 @@ import io.github.kakaocup.compose.node.element.ComposeScreen
 import io.github.kakaocup.compose.node.element.KNode
 
 /** This class represents the Landing Screen and the elements it contains. */
-class NotImplementedScreen(semanticsProvider: SemanticsNodeInteractionsProvider) :
-    ComposeScreen<NotImplementedScreen>(
-        semanticsProvider = semanticsProvider,
-        viewBuilderAction = { hasTestTag("NotImplementedScreen") }) {
+class SavedScreen(semanticsProvider: SemanticsNodeInteractionsProvider) :
+    ComposeScreen<SavedScreen>(
+        semanticsProvider = semanticsProvider, viewBuilderAction = { hasTestTag("SavedScreen") }) {
 
   // Structural elements of the UI
   val topBarLanding: KNode = child { hasTestTag("TopBarNavigation") }

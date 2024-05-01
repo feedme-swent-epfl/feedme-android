@@ -32,6 +32,9 @@ local.properties
 keystore.properties
 .gradle
 /app/google-services.json
+/app/release
+upload-keystore.jks
+keystore.properties
 
 # MacOS
 **/.DS_Store

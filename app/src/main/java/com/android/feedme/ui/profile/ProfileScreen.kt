@@ -57,7 +57,6 @@ import com.android.feedme.ui.theme.TextBarColor
  *
  * @param navigationActions: NavigationActions object to handle navigation events
  * @param profileViewModel: ProfileViewModel object to interact with profile data
- * @param profileID: Optional profile ID if viewing another user's profile
  */
 @Composable
 fun ProfileScreen(
@@ -67,7 +66,15 @@ fun ProfileScreen(
 
   Scaffold(
       modifier = Modifier.fillMaxSize().testTag("ProfileScreen"),
-      topBar = { TopBarNavigation(title = "Profile") },
+      topBar = {
+        TopBarNavigation(
+            title = "Profile",
+            navAction = if (profileViewModel.viewingUserId == null) null else navigationActions,
+            backArrowOnClickAction = {
+              profileViewModel.removeViewingProfile()
+              navigationActions.goBack()
+            })
+      },
       bottomBar = {
         BottomNavigationMenu(
             Route.PROFILE,
@@ -77,8 +84,8 @@ fun ProfileScreen(
             },
             TOP_LEVEL_DESTINATIONS)
       },
-      content = { padding ->
-        ProfileBox(padding, profileViewModel.profileToShow(), navigationActions, profileViewModel)
+      content = {
+        ProfileBox(it, profileViewModel.profileToShow(), navigationActions, profileViewModel)
       })
 }
 
@@ -91,8 +98,7 @@ fun ProfileScreen(
  * @param padding: Padding around the profile box depending on the format of the phone
  * @param profile: Extract the needed information from the user's profile in the database
  * @param navigationActions: NavigationActions object to handle navigation events
- * @param isViewingProfile: Flag indicating whether the profile being viewed is the current user's
- *   or not
+ * @param profileViewModel: ProfileViewModel object to interact with profile data
  */
 @Composable
 fun ProfileBox(

@@ -1,6 +1,7 @@
 package com.android.feedme.ui.camera
 
 import android.Manifest
+import android.annotation.SuppressLint
 import android.app.Activity
 import android.content.Context
 import android.content.pm.PackageManager
@@ -31,6 +32,7 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Photo
 import androidx.compose.material.icons.filled.PhotoCamera
+import androidx.compose.material.icons.twotone.TextFields
 import androidx.compose.material3.BottomSheetScaffold
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
@@ -38,8 +40,10 @@ import androidx.compose.material3.IconButton
 import androidx.compose.material3.Text
 import androidx.compose.material3.rememberBottomSheetScaffoldState
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Alignment
@@ -55,10 +59,15 @@ import androidx.compose.ui.viewinterop.AndroidView
 import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
 import androidx.lifecycle.viewmodel.compose.viewModel
+import com.android.feedme.ML.OverlayTextField
+import com.android.feedme.ML.TextProcessing
+import com.android.feedme.ML.TextRecognition
 import com.android.feedme.model.viewmodel.CameraViewModel
 import com.android.feedme.ui.navigation.NavigationActions
 import com.android.feedme.ui.navigation.TopBarNavigation
 import com.android.feedme.ui.theme.CameraButtonsBackground
+import com.google.mlkit.vision.text.Text
+import com.google.mlkit.vision.text.TextRecognition
 import kotlinx.coroutines.launch
 
 /**
@@ -69,11 +78,20 @@ import kotlinx.coroutines.launch
  * images and viewing them in a gallery. Utilizes CameraX for camera operations and Jetpack Compose
  * for the UI components.
  */
+@SuppressLint("UnrememberedMutableState")
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun CameraScreen(navigationActions: NavigationActions) {
-  val applicationContext = LocalContext.current
+  ///// Machine Learning Part /////
+  // Switch off and on the text recognition functionality
+  val textRecognitionMode = remember { mutableStateOf(true) }
+  // Display the text box with the recognised text
+  val displayText = remember { mutableStateOf(false) }
+  // Text extract by [TextRecognition] function
+  val text: MutableState<Text?> = remember { mutableStateOf(null) }
+  ///// Machine Learning Part /////
 
+  val applicationContext = LocalContext.current
   // Request camera permission if not already granted
   if (!hasRequiredPermissions(applicationContext)) {
     ActivityCompat.requestPermissions(
@@ -133,14 +151,25 @@ fun CameraScreen(navigationActions: NavigationActions) {
                           controller = controller,
                           onPhotoTaken = viewModel::onTakePhoto,
                           showText = viewModel::onPhotoSaved,
-                          context = applicationContext)
+                          context = applicationContext,
+                      )
                     }) {
                       Icon(
                           imageVector = Icons.Default.PhotoCamera,
                           contentDescription = "Take photo")
                     }
+                // Icon for text recognition
+                if (textRecognitionMode.value) {
+                  IconButton(
+                      onClick = { displayText.value = true },
+                      modifier = Modifier.testTag("MLButton")) {
+                        Icon(
+                            imageVector = Icons.TwoTone.TextFields,
+                            contentDescription = "Display text after ML")
+                      }
+                }
               }
-          // Show the message box if the photo was taken
+          // Show the message "Photo Saved" box if the photo was taken
           if (photoSavedMessageVisible) {
             Log.d("CameraScreen", "Photo saved message visible")
             // Show the message box
@@ -157,9 +186,41 @@ fun CameraScreen(navigationActions: NavigationActions) {
                       modifier = Modifier.testTag("PhotoSavedMessage"))
                 }
           }
+          // If text recognition button is pressed
+          if (displayText.value) {
+            if (viewModel.lastPhoto != null) {
+              // If there is a photo in the app gallery we launch text recognition
+              TextRecognition(
+                  viewModel.lastPhoto, { rec -> text.value = rec }, { text.value = null })
+            } else {
+              // If there is no photo in app gallery we show an OverlayTextField saying "ERROR : no
+              // photo to analyse"
+              OverlayTextField(
+                  isVisible = true,
+                  onDismiss = { displayText.value = false },
+                  text = "ERROR : no photo to analyse.")
+            }
+
+            if (text.value != null) {
+              // If text recognition succeeded and produced text, we launch text processing and
+              // display the result in an OverlayTextField
+              text.value
+                  ?.let { TextProcessing(it) }
+                  ?.let {
+                    OverlayTextField(
+                        isVisible = true, onDismiss = { displayText.value = false }, text = it)
+                  }
+              // Will improve later this part for ERROR communication with user.
+            } /*else {
+              OverlayTextField(
+                  isVisible = true,
+                  onDismiss = { displayText.value = false },
+                  text = "Couldn't detect text")*/
+          }
         }
       }
 }
+// }
 
 /** Create a new [LifecycleCameraController] to control the camera. */
 fun takePhoto(

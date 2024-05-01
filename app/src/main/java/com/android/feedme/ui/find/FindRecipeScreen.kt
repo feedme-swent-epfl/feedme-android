@@ -57,10 +57,7 @@ fun FindRecipeScreen(navigationActions: NavigationActions) {
             tabList = TOP_LEVEL_DESTINATIONS)
       }) {
         Column(
-            modifier = Modifier
-                .fillMaxSize()
-                .padding(it)
-                .padding(top = 10.dp),
+            modifier = Modifier.fillMaxSize().padding(it).padding(top = 10.dp),
             verticalArrangement = Arrangement.Top,
             horizontalAlignment = Alignment.CenterHorizontally) {
 
@@ -74,11 +71,10 @@ fun FindRecipeScreen(navigationActions: NavigationActions) {
               // Camera Button
               OutlinedButton(
                   modifier =
-                  Modifier
-                      .fillMaxWidth()
-                      .padding(horizontal = 20.dp)
-                      .padding(bottom = 20.dp)
-                      .testTag("CameraButton"),
+                      Modifier.fillMaxWidth()
+                          .padding(horizontal = 20.dp)
+                          .padding(bottom = 20.dp)
+                          .testTag("CameraButton"),
                   shape = RoundedCornerShape(size = 10.dp),
                   onClick = { navigationActions.navigateTo(Screen.CAMERA) },
                   border = BorderStroke(width = 2.dp, color = Color.Black)) {
@@ -103,48 +99,44 @@ fun FindRecipeScreen(navigationActions: NavigationActions) {
                             ))
                   }
 
-            // Gallery Button
-            OutlinedButton(
-                modifier =
-                Modifier
-                    .fillMaxWidth()
-                    .padding(horizontal = 20.dp)
-                    .padding(bottom = 20.dp)
-                    .testTag("GalleryButton"),
-                shape = RoundedCornerShape(size = 10.dp),
-                onClick = { navigationActions.navigateTo(Screen.GALLERY) },
-                border = BorderStroke(width = 2.dp, color = Color.Black)) {
-                Icon(
-                    painter = painterResource(id = R.drawable.gallery),
-                    contentDescription = "Add Icon",
-                    tint = Color(0xFF4E5FFB),
-                    modifier = Modifier.size(24.dp))
+              // Gallery Button
+              OutlinedButton(
+                  modifier =
+                      Modifier.fillMaxWidth()
+                          .padding(horizontal = 20.dp)
+                          .padding(bottom = 20.dp)
+                          .testTag("GalleryButton"),
+                  shape = RoundedCornerShape(size = 10.dp),
+                  onClick = { navigationActions.navigateTo(Screen.GALLERY) },
+                  border = BorderStroke(width = 2.dp, color = Color.Black)) {
+                    Icon(
+                        painter = painterResource(id = R.drawable.gallery),
+                        contentDescription = "Add Icon",
+                        tint = Color(0xFF4E5FFB),
+                        modifier = Modifier.size(24.dp))
 
-                Spacer(modifier = Modifier.width(8.dp))
+                    Spacer(modifier = Modifier.width(8.dp))
 
-                Text(
-                    text = "Select from Gallery",
-                    style =
-                    TextStyle(
-                        fontSize = 16.sp,
-                        lineHeight = 20.sp,
-                        fontWeight = FontWeight(700),
-                        color = Color(0xFF4E5FFB),
-                        textAlign = TextAlign.Center,
-                        letterSpacing = 0.25.sp,
-                    ))
-            }
-
-
+                    Text(
+                        text = "Select from Gallery",
+                        style =
+                            TextStyle(
+                                fontSize = 16.sp,
+                                lineHeight = 20.sp,
+                                fontWeight = FontWeight(700),
+                                color = Color(0xFF4E5FFB),
+                                textAlign = TextAlign.Center,
+                                letterSpacing = 0.25.sp,
+                            ))
+                  }
 
               // Line separator
               Image(
                   modifier =
-                  Modifier
-                      .border(width = 4.dp, color = Color(0xFF8C8C8C))
-                      .padding(4.dp)
-                      .width(180.dp)
-                      .height(0.dp),
+                      Modifier.border(width = 4.dp, color = Color(0xFF8C8C8C))
+                          .padding(4.dp)
+                          .width(180.dp)
+                          .height(0.dp),
                   painter = painterResource(id = R.drawable.line_8),
                   contentDescription = "Line Separator",
                   contentScale = ContentScale.None)

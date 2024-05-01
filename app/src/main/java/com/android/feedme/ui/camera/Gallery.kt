@@ -29,29 +29,31 @@ import com.android.feedme.ui.navigation.TopBarNavigation
  * @param navigationActions : the nav actions given in the MainActivity
  */
 @Composable
-fun GalleryScreen(navigationActions: NavigationActions, maxItems : Int) {
-    val galleryViewModel = viewModel<GalleryViewModel>()
-    val pickImage = galleryViewModel.galleryLauncher(maxItems)
+fun GalleryScreen(navigationActions: NavigationActions, maxItems: Int) {
+  val galleryViewModel = viewModel<GalleryViewModel>()
+  val pickImage = galleryViewModel.galleryLauncher(maxItems)
 
-    // Creating an intermediate screen with a button to add a level of indirection, needed to launch the PickImage activity
-    Scaffold(
-        modifier = Modifier.testTag("GalleryScreen"),
-        topBar = { TopBarNavigation(title = "Select pictures", navAction = navigationActions) },
-        bottomBar = {
-            BottomNavigationMenu(Route.FIND_RECIPE, navigationActions::navigateTo, TOP_LEVEL_DESTINATIONS)
-        },
-        content = { padding ->
-            Box(
-                modifier = Modifier.fillMaxSize().padding(padding),
-                contentAlignment = Alignment.Center) {
-                OutlinedButton(
-                    modifier = Modifier.testTag("GalleryButton"),
-                    onClick = { pickImage.launch(PickVisualMediaRequest(ActivityResultContracts.PickVisualMedia.ImageOnly))}) {
+  // Creating an intermediate screen with a button to add a level of indirection, needed to launch
+  // the PickImage activity
+  Scaffold(
+      modifier = Modifier.testTag("GalleryScreen"),
+      topBar = { TopBarNavigation(title = "Select pictures", navAction = navigationActions) },
+      bottomBar = {
+        BottomNavigationMenu(
+            Route.FIND_RECIPE, navigationActions::navigateTo, TOP_LEVEL_DESTINATIONS)
+      },
+      content = { padding ->
+        Box(
+            modifier = Modifier.fillMaxSize().padding(padding),
+            contentAlignment = Alignment.Center) {
+              OutlinedButton(
+                  modifier = Modifier.testTag("GalleryButton"),
+                  onClick = {
+                    pickImage.launch(
+                        PickVisualMediaRequest(ActivityResultContracts.PickVisualMedia.ImageOnly))
+                  }) {
                     Text(text = "Access gallery")
-                }
+                  }
             }
-        })
-
+      })
 }
-
-

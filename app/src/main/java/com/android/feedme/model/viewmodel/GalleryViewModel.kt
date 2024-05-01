@@ -29,16 +29,15 @@ class GalleryViewModel : ViewModel() {
     val maxImages = if (maxItems < 1) 1 else maxItems
 
     if (!hasRequiredPermissions(context)) {
-        val permission =
-        if (Build.VERSION.SDK_INT >= 34)
-            arrayOf(Manifest.permission.READ_MEDIA_IMAGES, Manifest.permission.READ_MEDIA_VISUAL_USER_SELECTED)
-        else if (Build.VERSION.SDK_INT < 33)
-            arrayOf((Manifest.permission.READ_EXTERNAL_STORAGE))
-        else
-            arrayOf(Manifest.permission.READ_MEDIA_IMAGES)
+      val permission =
+          if (Build.VERSION.SDK_INT >= 34)
+              arrayOf(
+                  Manifest.permission.READ_MEDIA_IMAGES,
+                  Manifest.permission.READ_MEDIA_VISUAL_USER_SELECTED)
+          else if (Build.VERSION.SDK_INT < 33) arrayOf((Manifest.permission.READ_EXTERNAL_STORAGE))
+          else arrayOf(Manifest.permission.READ_MEDIA_IMAGES)
 
-        ActivityCompat.requestPermissions(
-          context as Activity, permission, 0)
+      ActivityCompat.requestPermissions(context as Activity, permission, 0)
     }
 
     return rememberLauncherForActivityResult(
@@ -50,8 +49,16 @@ class GalleryViewModel : ViewModel() {
 }
 
 private fun hasRequiredPermissions(context: Context): Boolean {
-    return if (Build.VERSION.SDK_INT >= 34) ContextCompat.checkSelfPermission(context, Manifest.permission.READ_MEDIA_VISUAL_USER_SELECTED) == PackageManager.PERMISSION_GRANTED ||  ContextCompat.checkSelfPermission(context, Manifest.permission.READ_MEDIA_IMAGES) == PackageManager.PERMISSION_GRANTED
-    else if (Build.VERSION.SDK_INT < 33) ContextCompat.checkSelfPermission(context, Manifest.permission.READ_EXTERNAL_STORAGE) == PackageManager.PERMISSION_GRANTED
-    else ContextCompat.checkSelfPermission(context, Manifest.permission.READ_MEDIA_IMAGES) == PackageManager.PERMISSION_GRANTED
+  return if (Build.VERSION.SDK_INT >= 34)
+      ContextCompat.checkSelfPermission(
+          context, Manifest.permission.READ_MEDIA_VISUAL_USER_SELECTED) ==
+          PackageManager.PERMISSION_GRANTED ||
+          ContextCompat.checkSelfPermission(context, Manifest.permission.READ_MEDIA_IMAGES) ==
+              PackageManager.PERMISSION_GRANTED
+  else if (Build.VERSION.SDK_INT < 33)
+      ContextCompat.checkSelfPermission(context, Manifest.permission.READ_EXTERNAL_STORAGE) ==
+          PackageManager.PERMISSION_GRANTED
+  else
+      ContextCompat.checkSelfPermission(context, Manifest.permission.READ_MEDIA_IMAGES) ==
+          PackageManager.PERMISSION_GRANTED
 }
-

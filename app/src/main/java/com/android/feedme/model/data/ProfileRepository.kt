@@ -2,7 +2,6 @@ package com.android.feedme.model.data
 
 import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.firestore.Transaction
-import com.google.firebase.firestore.toObject
 
 /**
  * A repository class for managing user profiles in Firebase Firestore.
@@ -95,43 +94,43 @@ class ProfileRepository(private val db: FirebaseFirestore) {
    */
   fun followUser(
       currentUserId: String,
-      targetUserId: String,
+      toFollowId: String,
       onSuccess: (Profile, Profile) -> Unit,
       onFailure: (Exception) -> Unit
   ) {
     handleFirestoreTransaction(
         {
-          val currentUserRef = db.collection(collectionPath).document(currentUserId)
-          val targetUserRef = db.collection(collectionPath).document(targetUserId)
+          val currentUserFRef = db.collection(collectionPath).document(currentUserId)
+          val targetUserFRef = db.collection(collectionPath).document(toFollowId)
           val currentUser =
-              get(currentUserRef).toObject(Profile::class.java)
+              get(currentUserFRef).toObject(Profile::class.java)
                   ?: return@handleFirestoreTransaction null
-          val targetUser =
-              get(targetUserRef).toObject(Profile::class.java)
+          val toFollowUser =
+              get(targetUserFRef).toObject(Profile::class.java)
                   ?: return@handleFirestoreTransaction null
 
           // Update current user's following list
           val currentFollowing = currentUser?.following?.toMutableList() ?: mutableListOf()
-          if (!currentFollowing.contains(targetUserId)) {
-            currentFollowing.add(targetUserId)
+          if (!currentFollowing.contains(toFollowId)) {
+            currentFollowing.add(toFollowId)
             currentUser.following = currentFollowing // Update the local object
-            update(currentUserRef, "following", currentFollowing)
+            update(currentUserFRef, "following", currentFollowing)
           }
 
           // Update target user's followers list
-          val targetFollowers = targetUser?.followers?.toMutableList() ?: mutableListOf()
+          val targetFollowers = toFollowUser?.followers?.toMutableList() ?: mutableListOf()
           if (!targetFollowers.contains(currentUserId)) {
             targetFollowers.add(currentUserId)
 
-            targetUser.followers = targetFollowers // Update the local object
-            update(targetUserRef, "followers", targetFollowers)
+            toFollowUser.followers = targetFollowers // Update the local object
+            update(targetUserFRef, "followers", targetFollowers)
           }
 
-          set(currentUserRef, currentUser)
+          set(currentUserFRef, currentUser)
 
-          set(targetUserRef, targetUser)
+          set(targetUserFRef, toFollowUser)
 
-          Pair(currentUser, targetUser) // Returning the Pair of updated profiles
+          Pair(currentUser, toFollowUser) // Returning the Pair of updated profiles
         },
         {
           it as Pair<Profile, Profile> // Cast result to Pair<Profile, Profile>

@@ -5,6 +5,7 @@ import androidx.compose.ui.test.assertIsDisplayed
 import androidx.compose.ui.test.isDisplayed
 import androidx.compose.ui.test.junit4.createComposeRule
 import androidx.compose.ui.test.onNodeWithContentDescription
+import androidx.compose.ui.test.onNodeWithTag
 import androidx.compose.ui.test.onNodeWithText
 import androidx.test.ext.junit.runners.AndroidJUnit4
 import androidx.test.rule.GrantPermissionRule
@@ -106,5 +107,52 @@ class CameraTest : TestCase() {
     every { navActions.canGoBack() } returns true
     composeTestRule.setContent { CameraScreen(navActions) }
     composeTestRule.waitForIdle()
+  }
+  // Test the normal case
+  @Test
+  fun MLButton() {
+    goToCameraScreen()
+    ComposeScreen.onComposeScreen<CameraScreen>(composeTestRule) {
+      cameraPreview { assertIsDisplayed() }
+
+      photoButton {
+        assertIsDisplayed()
+        performClick()
+      }
+
+      // Wait until the "Photo saved" text appears on the UI.
+      composeTestRule.waitUntil(timeoutMillis = 5000) {
+        composeTestRule.onNodeWithText("Photo saved", useUnmergedTree = true).isDisplayed()
+      }
+
+      MLButton {
+        assertIsDisplayed()
+        performClick()
+      }
+
+      composeTestRule.waitForIdle()
+      composeTestRule.onNodeWithTag("ML Text Box")
+      composeTestRule.onNodeWithTag("ML Text Box inside")
+    }
+  }
+  // Test the case where no photo was taken before asking for text recognition.
+  @Test
+  fun MLButtonWithNoPhoto() {
+    goToCameraScreen()
+    ComposeScreen.onComposeScreen<CameraScreen>(composeTestRule) {
+      cameraPreview { assertIsDisplayed() }
+
+      photoButton { assertIsDisplayed() }
+
+      MLButton {
+        assertIsDisplayed()
+        performClick()
+      }
+
+      composeTestRule.waitForIdle()
+      composeTestRule.onNodeWithTag("ML Text Box")
+      composeTestRule.onNodeWithTag("ML Text Box inside")
+      composeTestRule.onNodeWithText("ERROR : no photo to analyse.").assertIsDisplayed()
+    }
   }
 }

@@ -3,8 +3,8 @@ package com.android.feedme.test.navigation
 import androidx.compose.ui.test.assertHasClickAction
 import androidx.compose.ui.test.assertIsDisplayed
 import androidx.compose.ui.test.junit4.createComposeRule
+import androidx.compose.ui.test.onNodeWithContentDescription
 import androidx.compose.ui.test.onNodeWithTag
-import androidx.compose.ui.test.onNodeWithText
 import androidx.test.ext.junit.runners.AndroidJUnit4
 import com.android.feedme.ui.navigation.BottomNavigationMenu
 import com.android.feedme.ui.navigation.TOP_LEVEL_DESTINATIONS
@@ -29,7 +29,7 @@ class BottomNavigationMenuTest : TestCase() {
 
     TOP_LEVEL_DESTINATIONS.forEach { destination ->
       composeTestRule.onNodeWithTag(destination.textId).assertIsDisplayed().assertHasClickAction()
-      composeTestRule.onNodeWithText(destination.textId).assertIsDisplayed()
+      composeTestRule.onNodeWithContentDescription(destination.textId).assertIsDisplayed()
     }
   }
 }

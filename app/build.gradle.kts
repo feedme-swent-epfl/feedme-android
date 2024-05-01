@@ -1,3 +1,6 @@
+import java.io.FileInputStream
+import java.util.Properties
+
 plugins {
     // Jacoco is a built-in plugin, no need to go through the version catalog
     jacoco
@@ -25,8 +28,23 @@ android {
         }
     }
 
+    val keystorePropertiesFile = rootProject.file("keystore.properties")
+    val keystoreProperties = Properties()
+    keystoreProperties.load(FileInputStream(keystorePropertiesFile))
+
+    signingConfigs {
+        create("release") {
+            storeFile = file("../upload-keystore.jks")
+            storePassword = keystoreProperties["store.password"] as String
+            keyAlias = keystoreProperties["key.alias"] as String
+            keyPassword = keystoreProperties["key.password"] as String
+        }
+    }
+
+
     buildTypes {
         release {
+            signingConfig = signingConfigs.getByName("release")
             isMinifyEnabled = false
             proguardFiles(
                 getDefaultProguardFile("proguard-android-optimize.txt"),
@@ -142,8 +160,6 @@ dependencies {
     globalTestImplementation(libs.androidx.espresso.core)
     // Android Navigation
     implementation(libs.androidx.navigation.runtime.ktx)
-    // Import image from url
-    implementation("io.coil-kt:coil-compose:2.4.0")
 
     // ------------- Jetpack Compose ------------------
     val composeBom = platform(libs.compose.bom)
@@ -165,11 +181,10 @@ dependencies {
     // UI Tests
     globalTestImplementation(libs.compose.test.junit)
     debugImplementation(libs.compose.test.manifest)
-    // Accompanist library
+    // Accompanist library + load images from URL
     implementation(libs.coil.compose)
-    // load Images from URL
-    implementation("io.coil-kt:coil-compose:2.4.0")
-
+    //ML kit text recognition
+    implementation(libs.mlkit.textrecognition)
 
     // ---------------- CameraX --------------------
     implementation(libs.camera.core)

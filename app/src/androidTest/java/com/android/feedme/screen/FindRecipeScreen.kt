@@ -5,12 +5,14 @@ import io.github.kakaocup.compose.node.element.ComposeScreen
 import io.github.kakaocup.compose.node.element.KNode
 
 /** This class represents the Create Screen and the elements it contains. */
-class CreateScreen(semanticsProvider: SemanticsNodeInteractionsProvider) :
-    ComposeScreen<CreateScreen>(
-        semanticsProvider = semanticsProvider, viewBuilderAction = { hasTestTag("CreateScreen") }) {
+class FindRecipeScreen(semanticsProvider: SemanticsNodeInteractionsProvider) :
+    ComposeScreen<FindRecipeScreen>(
+        semanticsProvider = semanticsProvider,
+        viewBuilderAction = { hasTestTag("FindRecipeScreen") }) {
 
   // Structural elements of the UI
   val topBarLanding: KNode = child { hasTestTag("TopBarNavigation") }
   val bottomBarLanding: KNode = child { hasTestTag("BottomNavigationMenu") }
   val cameraButton: KNode = child { hasTestTag("CameraButton") }
+  val galleryButton: KNode = child { hasTestTag("GalleryButton") }
 }

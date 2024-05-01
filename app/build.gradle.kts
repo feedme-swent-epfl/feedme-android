@@ -141,8 +141,6 @@ dependencies {
     globalTestImplementation(libs.androidx.espresso.core)
     // Android Navigation
     implementation(libs.androidx.navigation.runtime.ktx)
-    // Import image from url
-    implementation("io.coil-kt:coil-compose:2.4.0")
 
     // ------------- Jetpack Compose ------------------
     val composeBom = platform(libs.compose.bom)
@@ -164,14 +162,10 @@ dependencies {
     // UI Tests
     globalTestImplementation(libs.compose.test.junit)
     debugImplementation(libs.compose.test.manifest)
-    // Accompanist library
+    // Accompanist library + load images from URL
     implementation(libs.coil.compose)
-    // load Images from URL
-    implementation("io.coil-kt:coil-compose:2.4.0")
-
     //ML kit text recognition
-    implementation("com.google.mlkit:text-recognition:16.0.0")
-
+    implementation(libs.mlkit.textrecognition)
 
     // ---------------- CameraX --------------------
     implementation(libs.camera.core)

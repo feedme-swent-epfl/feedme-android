@@ -150,4 +150,146 @@ class ProfileRepositoryTest {
 
     assertNotNull("Singleton instance should be initialized", ProfileRepository.instance)
   }
+
+  @Test
+  fun followUser_Success() {
+    val currentUserID = "1"
+    val targetUserID = "2"
+    val mockTransaction = mock(Transaction::class.java)
+
+    val currentUserRef = mock(DocumentReference::class.java)
+    val targetUserRef = mock(DocumentReference::class.java)
+
+    val currentUserSnapshot = mock(DocumentSnapshot::class.java)
+    val targetUserSnapshot = mock(DocumentSnapshot::class.java)
+
+    // Setup document references
+    `when`(mockFirestore.collection("profiles")).thenReturn(mockCollectionReference)
+    `when`(mockCollectionReference.document(currentUserID)).thenReturn(currentUserRef)
+    `when`(mockCollectionReference.document(targetUserID)).thenReturn(targetUserRef)
+
+    // Setup snapshot return from the transaction
+    // Setup direct returns for document snapshots from the transaction
+    `when`(mockTransaction.get(currentUserRef)).thenReturn(currentUserSnapshot)
+    `when`(mockTransaction.get(targetUserRef)).thenReturn(targetUserSnapshot)
+
+    val currentUser = Profile(currentUserID)
+    val targetUser = Profile(targetUserID)
+    `when`(currentUserSnapshot.toObject(Profile::class.java)).thenReturn(currentUser)
+    `when`(targetUserSnapshot.toObject(Profile::class.java)).thenReturn(targetUser)
+
+    // Mock the transaction function to return a Task
+    `when`(mockFirestore.runTransaction<Any>(any())).thenAnswer { invocation ->
+      val transactionFunction = invocation.arguments[0] as Transaction.Function<*>
+      val resultPair = transactionFunction.apply(mockTransaction)
+      Tasks.forResult(resultPair)
+    }
+
+    var successCalled = false
+    profileRepository.followUser(
+        currentUserID,
+        targetUserID,
+        { user1, user2 -> successCalled = true },
+        { fail("Failure should not be called") })
+
+    shadowOf(Looper.getMainLooper()).idle()
+
+    verify(mockTransaction).get(currentUserRef)
+    verify(mockTransaction).get(targetUserRef)
+    assertTrue("Success callback was not called", successCalled)
+  }
+
+  @Test
+  fun unfollowUser_Success() {
+    val currentUserID = "1"
+    val targetUserID = "2"
+    val mockTransaction = mock(Transaction::class.java)
+
+    val currentUserRef = mock(DocumentReference::class.java)
+    val targetUserRef = mock(DocumentReference::class.java)
+
+    val currentUserSnapshot = mock(DocumentSnapshot::class.java)
+    val targetUserSnapshot = mock(DocumentSnapshot::class.java)
+
+    // Setup document references
+    `when`(mockFirestore.collection("profiles")).thenReturn(mockCollectionReference)
+    `when`(mockCollectionReference.document(currentUserID)).thenReturn(currentUserRef)
+    `when`(mockCollectionReference.document(targetUserID)).thenReturn(targetUserRef)
+
+    // Setup direct returns for document snapshots from the transaction
+    `when`(mockTransaction.get(currentUserRef)).thenReturn(currentUserSnapshot)
+    `when`(mockTransaction.get(targetUserRef)).thenReturn(targetUserSnapshot)
+
+    val currentUser = Profile(currentUserID) // Populate with appropriate constructor arguments
+    val targetUser = Profile(targetUserID) // Populate with appropriate constructor arguments
+    `when`(currentUserSnapshot.toObject(Profile::class.java)).thenReturn(currentUser)
+    `when`(targetUserSnapshot.toObject(Profile::class.java)).thenReturn(targetUser)
+
+    // Mock the transaction function to execute and use a mock result
+    `when`(mockFirestore.runTransaction<Any>(any())).thenAnswer { invocation ->
+      val transactionFunction = invocation.arguments[0] as Transaction.Function<*>
+      transactionFunction.apply(mockTransaction) // Simulates the transaction being executed
+      Tasks.forResult(Pair(currentUser, targetUser)) // Correctly return a Task wrapping the Pair
+    }
+
+    var successCalled = false
+    profileRepository.unfollowUser(
+        currentUserID,
+        targetUserID,
+        { user1, user2 -> successCalled = true },
+        { fail("Failure should not be called") })
+
+    shadowOf(Looper.getMainLooper()).idle()
+
+    verify(mockTransaction).get(currentUserRef)
+    verify(mockTransaction).get(targetUserRef)
+    assertTrue("Success callback was not called", successCalled)
+  }
+
+  @Test
+  fun removeFollower_Success() {
+    val userID = "1"
+    val followerID = "2"
+    val mockTransaction = mock(Transaction::class.java)
+
+    val userRef = mock(DocumentReference::class.java)
+    val followerRef = mock(DocumentReference::class.java)
+
+    val userSnapshot = mock(DocumentSnapshot::class.java)
+    val followerSnapshot = mock(DocumentSnapshot::class.java)
+
+    // Setup document references
+    `when`(mockFirestore.collection("profiles")).thenReturn(mockCollectionReference)
+    `when`(mockCollectionReference.document(userID)).thenReturn(userRef)
+    `when`(mockCollectionReference.document(followerID)).thenReturn(followerRef)
+
+    // Setup direct returns for document snapshots from the transaction
+    `when`(mockTransaction.get(userRef)).thenReturn(userSnapshot)
+    `when`(mockTransaction.get(followerRef)).thenReturn(followerSnapshot)
+
+    val user = Profile(userID) // Populate with appropriate constructor arguments
+    val follower = Profile(followerID) // Populate with appropriate constructor arguments
+    `when`(userSnapshot.toObject(Profile::class.java)).thenReturn(user)
+    `when`(followerSnapshot.toObject(Profile::class.java)).thenReturn(follower)
+
+    // Mock the transaction function to execute and use a mock result
+    `when`(mockFirestore.runTransaction<Any>(any())).thenAnswer { invocation ->
+      val transactionFunction = invocation.arguments[0] as Transaction.Function<*>
+      transactionFunction.apply(mockTransaction) // Simulates the transaction being executed
+      Tasks.forResult(Pair(user, follower)) // Correctly return a Task wrapping the Pair
+    }
+
+    var successCalled = false
+    profileRepository.removeFollower(
+        userID,
+        followerID,
+        { user, follower -> successCalled = true },
+        { fail("Failure should not be called") })
+
+    shadowOf(Looper.getMainLooper()).idle()
+
+    verify(mockTransaction).get(userRef)
+    verify(mockTransaction).get(followerRef)
+    assertTrue("Success callback was not called", successCalled)
+  }
 }

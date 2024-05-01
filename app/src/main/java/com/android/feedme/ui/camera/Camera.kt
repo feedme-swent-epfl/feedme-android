@@ -65,9 +65,9 @@ import com.android.feedme.ML.TextRecognition
 import com.android.feedme.model.viewmodel.CameraViewModel
 import com.android.feedme.ui.navigation.NavigationActions
 import com.android.feedme.ui.navigation.TopBarNavigation
+import com.android.feedme.ui.theme.CameraButtonsBackground
 import com.google.mlkit.vision.text.Text
 import com.google.mlkit.vision.text.TextRecognition
-import com.android.feedme.ui.theme.CameraButtonsBackground
 import kotlinx.coroutines.launch
 
 /**

@@ -217,18 +217,6 @@ class ProfileViewModel : ViewModel() {
   }
 
   /**
-   * Updates the viewing user's profile.
-   *
-   * @param profile The updated profile.
-   */
-  private fun updateViewingUserProfile(profile: Profile) {
-    _viewingUserProfile.value = profile
-    viewingUserId = profile.id
-    fetchProfiles(profile.followers, _viewingUserFollowers)
-    fetchProfiles(profile.following, _viewingUserFollowing)
-  }
-
-  /**
    * Starts following another user, updating both the current user's following list and the other
    * user's followers list. This method is transactional, ensuring that both operations succeed or
    * fail together.
@@ -345,11 +333,9 @@ class ProfileViewModel : ViewModel() {
    * @throws Exception If the follower is not in the current user's following list. Should never
    */
   fun removeFollower(follower: Profile) {
-
     if (currentUserId == null) {
       return
     }
-
     viewModelScope.launch {
       repository.removeFollower(
           currentUserId!!,

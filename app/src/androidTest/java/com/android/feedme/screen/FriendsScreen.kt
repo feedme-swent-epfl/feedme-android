@@ -18,4 +18,7 @@ class FriendsScreen(semanticsProvider: SemanticsNodeInteractionsProvider) :
   val followerCard: KNode = child {
     hasTestTag("FollowerCard")
   } // You may need to iterate through the list for multiple cards
+    val emptyFriends: KNode = child { hasTestTag("EmptyFriends") }
+    val noFollowers: KNode = child { hasTestTag("NoFollowers") }
+    val noFollowing: KNode = child { hasTestTag("NoFollowing") }
 }

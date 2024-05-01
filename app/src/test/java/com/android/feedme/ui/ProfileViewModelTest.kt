@@ -11,13 +11,19 @@ import com.google.firebase.firestore.CollectionReference
 import com.google.firebase.firestore.DocumentReference
 import com.google.firebase.firestore.DocumentSnapshot
 import com.google.firebase.firestore.FirebaseFirestore
+import com.google.firebase.firestore.Query
+import com.google.firebase.firestore.QuerySnapshot
+import com.google.firebase.firestore.Transaction
 import junit.framework.TestCase.assertEquals
 import junit.framework.TestCase.assertFalse
 import junit.framework.TestCase.assertTrue
 import org.junit.Before
 import org.junit.Test
 import org.junit.runner.RunWith
+import org.mockito.ArgumentMatchers.any
+import org.mockito.ArgumentMatchers.anyList
 import org.mockito.Mock
+import org.mockito.Mockito
 import org.mockito.Mockito.anyString
 import org.mockito.Mockito.`when`
 import org.mockito.MockitoAnnotations
@@ -38,6 +44,8 @@ class ProfileViewModelTest {
   private lateinit var profileRepository: ProfileRepository
 
   private lateinit var profileViewModel: ProfileViewModel
+  @Mock private lateinit var mockQuery: Query
+  @Mock private lateinit var mockQuerySnapshot: QuerySnapshot
 
   @Before
   fun setUp() {
@@ -53,7 +61,167 @@ class ProfileViewModelTest {
     `when`(mockFirestore.collection("profiles")).thenReturn(mockCollectionReference)
     `when`(mockCollectionReference.document(anyString())).thenReturn(mockDocumentReference)
 
+    `when`(mockCollectionReference.whereIn(anyString(), anyList())).thenReturn(mockQuery)
+
+    `when`(mockQuery.get())
+        .thenReturn(Tasks.forResult(mockQuerySnapshot)) // Ensure this returns a valid Task
+
+    // You might need to mock what happens when the QuerySnapshot is processed
+    `when`(mockQuerySnapshot.documents).thenReturn(listOf(mockDocumentSnapshot))
+    `when`(mockDocumentSnapshot.toObject(Profile::class.java))
+        .thenReturn(Profile("1"), Profile("2")) // Example
     profileViewModel = ProfileViewModel()
+  }
+
+  @Test
+  fun followUser_Success() {
+    val currentUser = Profile("1")
+    val targetUser = Profile("2")
+    profileViewModel.currentUserId = "1"
+
+    val mockTransaction = Mockito.mock(Transaction::class.java)
+
+    val currentUserRef = Mockito.mock(DocumentReference::class.java)
+    val targetUserRef = Mockito.mock(DocumentReference::class.java)
+
+    val currentUserSnapshot = Mockito.mock(DocumentSnapshot::class.java)
+    val targetUserSnapshot = Mockito.mock(DocumentSnapshot::class.java)
+
+    // Setup document references
+    `when`(mockFirestore.collection("profiles")).thenReturn(mockCollectionReference)
+    `when`(mockCollectionReference.document(currentUser.id)).thenReturn(currentUserRef)
+    `when`(mockCollectionReference.document(targetUser.id)).thenReturn(targetUserRef)
+
+    // Setup snapshot return from the transaction
+    // Setup direct returns for document snapshots from the transaction
+    `when`(mockTransaction.get(currentUserRef)).thenReturn(currentUserSnapshot)
+    `when`(mockTransaction.get(targetUserRef)).thenReturn(targetUserSnapshot)
+
+    `when`(mockFirestore.runTransaction<Any>(any())).thenAnswer { invocation ->
+      val transactionFunction = invocation.arguments[0] as Transaction.Function<*>
+      transactionFunction.apply(mockTransaction)
+      Tasks.forResult(Pair(currentUser, targetUser)) // Mock successful transaction
+    }
+
+    profileViewModel.updateCurrentUserProfile(currentUser)
+    profileViewModel.setViewingProfile(targetUser)
+
+    profileViewModel.followUser(targetUser)
+    shadowOf(Looper.getMainLooper()).idle()
+
+    assertEquals("2", profileViewModel.currentUserFollowing.value.first().id)
+    assertEquals("1", profileViewModel.viewingUserFollowers.value.first().id)
+  }
+
+  @Test
+  fun unfollowUser_Success() {
+    val currentUser = Profile("1", following = listOf("2"))
+    val targetUser = Profile("2", followers = listOf("1"))
+    profileViewModel.currentUserId = "1"
+
+    val mockTransaction = Mockito.mock(Transaction::class.java)
+    val currentUserRef = Mockito.mock(DocumentReference::class.java)
+    val targetUserRef = Mockito.mock(DocumentReference::class.java)
+    val currentUserSnapshot = Mockito.mock(DocumentSnapshot::class.java)
+    val targetUserSnapshot = Mockito.mock(DocumentSnapshot::class.java)
+
+    // Setup document references
+    `when`(mockFirestore.collection("profiles")).thenReturn(mockCollectionReference)
+    `when`(mockCollectionReference.document(currentUser.id)).thenReturn(currentUserRef)
+    `when`(mockCollectionReference.document(targetUser.id)).thenReturn(targetUserRef)
+
+    `when`(mockTransaction.get(currentUserRef)).thenReturn(currentUserSnapshot)
+    `when`(mockTransaction.get(targetUserRef)).thenReturn(targetUserSnapshot)
+
+    `when`(mockFirestore.runTransaction<Any>(any())).thenAnswer { invocation ->
+      val transactionFunction = invocation.arguments[0] as Transaction.Function<*>
+      transactionFunction.apply(mockTransaction)
+      Tasks.forResult(Pair(currentUser, targetUser)) // Mock successful transaction
+    }
+
+    profileViewModel.updateCurrentUserProfile(currentUser)
+    profileViewModel.setViewingProfile(targetUser)
+
+    profileViewModel.unfollowUser(targetUser)
+    shadowOf(Looper.getMainLooper()).idle()
+
+    assertTrue(profileViewModel.currentUserFollowing.value.none { it.id == targetUser.id })
+  }
+
+  @Test
+  fun unfollowUser_Failure() {
+    val targetUser = Profile("2")
+    profileViewModel.currentUserId = "1"
+
+    `when`(mockFirestore.runTransaction<Any>(any()))
+        .thenReturn(Tasks.forException(Exception("Transaction failed")))
+
+    profileViewModel.unfollowUser(targetUser)
+    shadowOf(Looper.getMainLooper()).idle()
+
+    assertTrue(profileViewModel.errorMessages.value!!.contains("Failed to unfollow user"))
+  }
+
+  @Test
+  fun followUser_Failure() {
+    val targetUser = Profile("2")
+    profileViewModel.currentUserId = "1"
+
+    `when`(mockFirestore.runTransaction<Any>(any()))
+        .thenReturn(Tasks.forException(Exception("Transaction failed")))
+
+    profileViewModel.followUser(targetUser)
+    shadowOf(Looper.getMainLooper()).idle()
+
+    assertTrue(profileViewModel.errorMessages.value!!.contains("Failed to start following user"))
+  }
+
+  @Test
+  fun removeFollower_Success() {
+    val currentUser = Profile("1", followers = listOf("3")) // Assume '1' is followed by '3'
+    val follower = Profile("3", following = listOf("1")) // Assume '3' is a follower of '1'
+    profileViewModel.currentUserId = "1"
+
+    val mockTransaction = Mockito.mock(Transaction::class.java)
+    val userRef = Mockito.mock(DocumentReference::class.java)
+    val followerRef = Mockito.mock(DocumentReference::class.java)
+    val userSnapshot = Mockito.mock(DocumentSnapshot::class.java)
+    val followerSnapshot = Mockito.mock(DocumentSnapshot::class.java)
+
+    // Setup document references
+    `when`(mockFirestore.collection("profiles")).thenReturn(mockCollectionReference)
+    `when`(mockCollectionReference.document(currentUser.id)).thenReturn(userRef)
+    `when`(mockCollectionReference.document(follower.id)).thenReturn(followerRef)
+
+    `when`(mockTransaction.get(userRef)).thenReturn(userSnapshot)
+    `when`(mockTransaction.get(followerRef)).thenReturn(followerSnapshot)
+
+    `when`(mockFirestore.runTransaction<Any>(any())).thenAnswer { invocation ->
+      val transactionFunction = invocation.arguments[0] as Transaction.Function<*>
+      transactionFunction.apply(mockTransaction)
+      Tasks.forResult(Pair(currentUser, follower)) // Mock successful transaction
+    }
+
+    profileViewModel.updateCurrentUserProfile(currentUser)
+
+    profileViewModel.removeFollower(follower)
+    shadowOf(Looper.getMainLooper()).idle()
+
+    assertTrue(profileViewModel.currentUserFollowers.value.none { it.id == follower.id })
+  }
+
+  @Test
+  fun removeFollower_Failure() {
+    val follower = Profile("3")
+    profileViewModel.currentUserId = "1"
+
+    `when`(mockFirestore.runTransaction<Any>(any()))
+        .thenReturn(Tasks.forException(Exception("Transaction failed")))
+
+    profileViewModel.removeFollower(follower)
+    shadowOf(Looper.getMainLooper()).idle()
+
+    assertTrue(profileViewModel.errorMessages.value!!.contains("Failed to remove follower"))
   }
 
   @Test

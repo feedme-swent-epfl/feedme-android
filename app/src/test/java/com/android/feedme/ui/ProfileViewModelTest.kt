@@ -74,6 +74,43 @@ class ProfileViewModelTest {
   }
 
   @Test
+  fun updateCurrentUserProfile_Success() {
+    val profile = Profile("1")
+    profileViewModel.updateCurrentUserProfile(profile)
+    assertEquals("1", profileViewModel.currentUserId)
+  }
+
+  @Test
+  fun setViewingProfile_Success() {
+    val profile = Profile("1")
+    profileViewModel.setViewingProfile(profile)
+    assertEquals("1", profileViewModel.viewingUserId)
+  }
+
+  @Test
+  fun fetchCurrentUserProfile_Success() {
+    val profile = Profile("1")
+    `when`(mockDocumentReference.get()).thenReturn(Tasks.forResult(mockDocumentSnapshot))
+    `when`(mockDocumentSnapshot.toObject(Profile::class.java)).thenReturn(profile)
+
+    profileViewModel.currentUserId = "1"
+    profileViewModel.fetchCurrentUserProfile()
+    shadowOf(Looper.getMainLooper()).idle()
+
+    assertEquals("1", profileViewModel.currentUserProfile.value!!.id)
+  }
+
+  @Test
+  fun fetchCurrentUserProfile_Failure() {
+    `when`(mockDocumentReference.get())
+        .thenReturn(Tasks.forException(Exception("Failed to fetch profile")))
+    profileViewModel.currentUserId = "1"
+    profileViewModel.fetchCurrentUserProfile()
+    shadowOf(Looper.getMainLooper()).idle()
+    assertTrue(profileViewModel.errorMessages.value!!.contains("Failed to fetch profile"))
+  }
+
+  @Test
   fun followUser_Success() {
     val currentUser = Profile("1")
     val targetUser = Profile("2")
@@ -281,5 +318,17 @@ class ProfileViewModelTest {
     assertEquals("John", profile.name)
     assertEquals("blabla", profile.username)
     assertEquals("john@example.com", profile.email)
+  }
+
+  @Test
+  fun isViewingThrow() {
+    profileViewModel.currentUserId = "1"
+    profileViewModel.viewingUserId = null
+    // catch exception of isViewingProfile
+    try {
+      profileViewModel.isViewingProfile()
+    } catch (e: Exception) {
+      assertTrue(e is IllegalStateException)
+    }
   }
 }

@@ -100,7 +100,8 @@ class ProfileViewModel : ViewModel() {
             },
             onFailure = {
               // Handle failure
-              throw error("Profile was not fetched during Login")
+              _errorMessages.value = "Failed to fetch profile"
+              Log.d("ProfileViewModel", "Failed to fetch profile")
             })
       }
     } ?: Log.e("ProfileViewModel", "Current user ID is null.")
@@ -118,8 +119,6 @@ class ProfileViewModel : ViewModel() {
           onSuccess = {
             if (isCurrent) {
               updateCurrentUserProfile(profile)
-            } else {
-              updateViewingUserProfile(profile)
             }
           },
           onFailure = { _errorMessages.value = "Profile could not get updated" })

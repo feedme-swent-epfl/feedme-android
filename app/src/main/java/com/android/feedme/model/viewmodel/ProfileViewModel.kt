@@ -210,7 +210,7 @@ class ProfileViewModel : ViewModel() {
    *
    * @param profile The updated profile.
    */
-  private fun updateCurrentUserProfile(profile: Profile) {
+  fun updateCurrentUserProfile(profile: Profile) {
     _currentUserProfile.value = profile
     currentUserId = profile.id
     fetchProfiles(profile.followers, _currentUserFollowers)

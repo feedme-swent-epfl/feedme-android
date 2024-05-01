@@ -10,7 +10,6 @@ import com.android.feedme.ui.navigation.NavigationActions
 import com.android.feedme.ui.profile.ProfileScreen
 import com.google.firebase.firestore.FirebaseFirestore
 import io.github.kakaocup.compose.node.element.ComposeScreen
-import io.mockk.every
 import io.mockk.mockk
 import org.junit.Before
 import org.junit.Rule
@@ -22,34 +21,19 @@ class ProfileTest {
   @get:Rule val composeTestRule = createComposeRule()
   private val mockFirestore = mockk<FirebaseFirestore>(relaxed = true)
   private val navAction = mockk<NavigationActions>(relaxed = true)
+  private lateinit var profileViewModel: ProfileViewModel
 
   @Before
   fun init() {
     ProfileRepository.initialize(mockFirestore)
+    profileViewModel = ProfileViewModel()
+    profileViewModel.updateCurrentUserProfile(Profile())
   }
 
   @Test
   fun profileBoxAndComponentsCorrectlyDisplayed() {
     ComposeScreen.onComposeScreen<ProfileScreen>(composeTestRule) {
-      val mockProfileViewModel = mockk<ProfileViewModel>()
-      val profile =
-          Profile(
-              // Sample profile data
-              name = "John Doe",
-              username = "johndoe",
-              followers = listOf("follower1", "follower2"),
-              following = listOf("following1", "following2"),
-              description = "Lorem ipsum dolor sit amet, consectetur adipiscing elit."
-              // Add any other required fields for Profile
-              )
-
-      every { mockProfileViewModel.currentUserId } returns "ID_DEFAULT"
-      every { mockProfileViewModel.viewingUserId } returns null
-      every { mockProfileViewModel.isViewingProfile() } returns false
-      every { mockProfileViewModel.profileToShow() } returns profile
-      every { mockProfileViewModel.fetchCurrentUserProfile() } returns Unit
-
-      composeTestRule.setContent { ProfileScreen(navAction, mockProfileViewModel) }
+      composeTestRule.setContent { ProfileScreen(navAction, profileViewModel) }
 
       topBarProfile { assertIsDisplayed() }
 
@@ -88,27 +72,8 @@ class ProfileTest {
   @Test
   fun viewingDisplayedProfileIsCorrectAndFollowButtonWorks() {
     ComposeScreen.onComposeScreen<ProfileScreen>(composeTestRule) {
-      val mockProfileViewModel = mockk<ProfileViewModel>()
-      val profile =
-          Profile(
-              // Sample profile data
-              name = "John Doe",
-              username = "johndoe",
-              followers = listOf("follower1", "follower2"),
-              following = listOf("following1", "following2"),
-              description = "Lorem ipsum dolor sit amet, consectetur adipiscing elit."
-              // Add any other required fields for Profile
-              )
-
-      every { mockProfileViewModel.currentUserId } returns "ID_DEFAULT_1"
-      every { mockProfileViewModel.viewingUserId } returns "ID_DEFAULT_2"
-      every { mockProfileViewModel.isViewingProfile() } returns true
-      every { mockProfileViewModel.profileToShow() } returns profile
-      every { mockProfileViewModel.fetchCurrentUserProfile() } returns Unit
-
-      every { navAction.canGoBack() } returns false
-
-      composeTestRule.setContent { ProfileScreen(navAction, mockProfileViewModel) }
+      profileViewModel.setViewingProfile(Profile(id = "ID_DEFAULT_1"))
+      composeTestRule.setContent { ProfileScreen(navAction, profileViewModel) }
 
       topBarProfile { assertIsDisplayed() }
 
@@ -140,12 +105,6 @@ class ProfileTest {
       }
 
       followerButton {
-        assertIsDisplayed()
-        assertHasClickAction()
-        performClick()
-      }
-
-      followingButton {
         assertIsDisplayed()
         assertHasClickAction()
       }

@@ -14,4 +14,5 @@ class FindRecipeScreen(semanticsProvider: SemanticsNodeInteractionsProvider) :
   val topBarLanding: KNode = child { hasTestTag("TopBarNavigation") }
   val bottomBarLanding: KNode = child { hasTestTag("BottomNavigationMenu") }
   val cameraButton: KNode = child { hasTestTag("CameraButton") }
+  val galleryButton: KNode = child { hasTestTag("GalleryButton") }
 }

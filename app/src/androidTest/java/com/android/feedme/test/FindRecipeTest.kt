@@ -30,6 +30,11 @@ class FindRecipeTest : TestCase() {
         assertIsDisplayed()
         assertHasClickAction()
       }
+
+      galleryButton {
+        assertIsDisplayed()
+        assertHasClickAction()
+      }
     }
   }
 

@@ -31,12 +31,9 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import androidx.navigation.compose.rememberNavController
 import com.android.feedme.R
-import com.android.feedme.model.viewmodel.InputViewModel
 import com.android.feedme.model.viewmodel.InputViewModel
 import com.android.feedme.ui.component.IngredientList
 import com.android.feedme.ui.navigation.BottomNavigationMenu

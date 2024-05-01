@@ -2,6 +2,7 @@ package com.android.feedme.model.viewmodel
 
 import androidx.lifecycle.ViewModel
 import com.android.feedme.model.data.IngredientMetaData
+import com.android.feedme.model.data.MeasureUnit
 import com.android.feedme.ui.component.IngredientInputState
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
@@ -32,8 +33,8 @@ class InputViewModel : ViewModel() {
     newList.add(null)
     _listOfIngredients.value = newList
     _totalIngredients.value = newList.size
-    _totalCompleteIngredients.value =
-        newList.size - 1 // TODO Check the number of complete Ingredients
+    _totalCompleteIngredients.value += newList.count { it != null && it.measure != MeasureUnit.EMPTY && it.quantity != 0.0}
+
   }
 
   /**
@@ -41,11 +42,10 @@ class InputViewModel : ViewModel() {
    *
    * @param newList The new list of ingredients.
    */
-  fun addToList(newList: MutableList<IngredientMetaData?>) {
+  fun addToList(newList: MutableList<IngredientMetaData>) {
     _listOfIngredients.value = newList.plus(_listOfIngredients.value)
     _totalIngredients.value += newList.size
-    _totalCompleteIngredients.value +=
-        newList.size - 1 // TODO Check the number of complete Ingredients
+    _totalCompleteIngredients.value += newList.count { it.measure != MeasureUnit.EMPTY && it.quantity != 0.0}
   }
 
   /** Resets the list of ingredients. */
@@ -76,7 +76,6 @@ class InputViewModel : ViewModel() {
     if (wasComplete != isComplete) {
       _totalCompleteIngredients.value += if (isComplete) 1 else -1
     }
-
     newList[index] = newIngredient
     if (now == IngredientInputState.SEMI_COMPLETE && before == IngredientInputState.EMPTY) {
       newList.add(null)

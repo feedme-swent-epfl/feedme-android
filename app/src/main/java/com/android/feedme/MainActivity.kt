@@ -23,6 +23,7 @@ import com.android.feedme.resources.C
 import com.android.feedme.ui.SavedScreen
 import com.android.feedme.ui.auth.LoginScreen
 import com.android.feedme.ui.camera.CameraScreen
+import com.android.feedme.ui.camera.GalleryScreen
 import com.android.feedme.ui.component.RecipeFullDisplay
 import com.android.feedme.ui.find.FindRecipeScreen
 import com.android.feedme.ui.home.LandingPage
@@ -83,6 +84,7 @@ class MainActivity : ComponentActivity() {
                 navigation(startDestination = Screen.FIND_RECIPE, route = Route.FIND_RECIPE) {
                   composable(Screen.FIND_RECIPE) { FindRecipeScreen(navigationActions) }
                   composable(Screen.CAMERA) { CameraScreen(navigationActions) }
+                  composable(Screen.GALLERY) { GalleryScreen(navigationActions, 10) }
                 }
 
                 navigation(startDestination = Screen.PROFILE, route = Route.PROFILE) {

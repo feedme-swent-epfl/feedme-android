@@ -13,6 +13,9 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.PhotoCamera
+import androidx.compose.material.icons.filled.PhotoLibrary
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedButton
@@ -38,6 +41,7 @@ import com.android.feedme.ui.navigation.Route
 import com.android.feedme.ui.navigation.Screen
 import com.android.feedme.ui.navigation.TOP_LEVEL_DESTINATIONS
 import com.android.feedme.ui.navigation.TopBarNavigation
+import com.android.feedme.ui.theme.FindRecipeIcons
 
 /**
  * Composable function for the Create Screen.
@@ -79,9 +83,9 @@ fun FindRecipeScreen(navigationActions: NavigationActions) {
                   onClick = { navigationActions.navigateTo(Screen.CAMERA) },
                   border = BorderStroke(width = 2.dp, color = Color.Black)) {
                     Icon(
-                        painter = painterResource(id = R.drawable.camera),
-                        contentDescription = "Add Icon",
-                        tint = Color(0xFF4E5FFB),
+                        imageVector = Icons.Default.PhotoCamera,
+                        contentDescription = "Camera Icon",
+                        tint = FindRecipeIcons,
                         modifier = Modifier.size(24.dp))
 
                     Spacer(modifier = Modifier.width(8.dp))
@@ -93,7 +97,38 @@ fun FindRecipeScreen(navigationActions: NavigationActions) {
                                 fontSize = 16.sp,
                                 lineHeight = 20.sp,
                                 fontWeight = FontWeight(700),
-                                color = Color(0xFF4E5FFB),
+                                color = FindRecipeIcons,
+                                textAlign = TextAlign.Center,
+                                letterSpacing = 0.25.sp,
+                            ))
+                  }
+
+              // Gallery Button
+              OutlinedButton(
+                  modifier =
+                      Modifier.fillMaxWidth()
+                          .padding(horizontal = 20.dp)
+                          .padding(bottom = 20.dp)
+                          .testTag("GalleryButton"),
+                  shape = RoundedCornerShape(size = 10.dp),
+                  onClick = { navigationActions.navigateTo(Screen.GALLERY) },
+                  border = BorderStroke(width = 2.dp, color = Color.Black)) {
+                    Icon(
+                        imageVector = Icons.Default.PhotoLibrary,
+                        contentDescription = "Gallery Icon",
+                        tint = FindRecipeIcons,
+                        modifier = Modifier.size(24.dp))
+
+                    Spacer(modifier = Modifier.width(8.dp))
+
+                    Text(
+                        text = "Select from Gallery",
+                        style =
+                            TextStyle(
+                                fontSize = 16.sp,
+                                lineHeight = 20.sp,
+                                fontWeight = FontWeight(700),
+                                color = FindRecipeIcons,
                                 textAlign = TextAlign.Center,
                                 letterSpacing = 0.25.sp,
                             ))
@@ -102,12 +137,12 @@ fun FindRecipeScreen(navigationActions: NavigationActions) {
               // Line separator
               Image(
                   modifier =
-                      Modifier.border(width = 4.dp, color = Color(0xFF8C8C8C))
+                      Modifier.border(width = 4.dp, color = Color.Gray)
                           .padding(4.dp)
                           .width(180.dp)
                           .height(0.dp),
                   painter = painterResource(id = R.drawable.line_8),
-                  contentDescription = "Line Seperator",
+                  contentDescription = "Line Separator",
                   contentScale = ContentScale.None)
 
               // List Of Ingredients

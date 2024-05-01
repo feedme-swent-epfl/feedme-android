@@ -67,7 +67,6 @@ import com.android.feedme.ui.navigation.NavigationActions
 import com.android.feedme.ui.navigation.TopBarNavigation
 import com.android.feedme.ui.theme.CameraButtonsBackground
 import com.google.mlkit.vision.text.Text
-import com.google.mlkit.vision.text.TextRecognition
 import kotlinx.coroutines.launch
 
 /**
@@ -253,7 +252,7 @@ fun takePhoto(
 }
 
 /** Check if the app has the required permissions to use the camera. */
-fun hasRequiredPermissions(context: Context): Boolean {
+private fun hasRequiredPermissions(context: Context): Boolean {
   return ContextCompat.checkSelfPermission(context, Manifest.permission.CAMERA) ==
       PackageManager.PERMISSION_GRANTED
 }

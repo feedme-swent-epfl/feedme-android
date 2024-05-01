@@ -72,7 +72,6 @@ fun ProfileScreen(
 
   Scaffold(
       modifier = Modifier.fillMaxSize().testTag("ProfileScreen"),
-
       topBar = {
         TopBarNavigation(
             title = "Profile",
@@ -82,7 +81,6 @@ fun ProfileScreen(
               navigationActions.goBack()
             })
       },
-
       bottomBar = {
         BottomNavigationMenu(
             Route.PROFILE,

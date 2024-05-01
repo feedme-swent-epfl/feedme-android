@@ -14,12 +14,8 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.CircleShape
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.MoreVert
 import androidx.compose.material3.Button
 import androidx.compose.material3.Card
-import androidx.compose.material3.Icon
-import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Tab
@@ -48,6 +44,7 @@ import com.android.feedme.ui.navigation.Route
 import com.android.feedme.ui.navigation.Screen
 import com.android.feedme.ui.navigation.TOP_LEVEL_DESTINATIONS
 import com.android.feedme.ui.navigation.TopBarNavigation
+import kotlinx.coroutines.flow.MutableStateFlow
 
 /**
  * Composable that displays either a list of followers or following based on the selected tab. It
@@ -62,7 +59,7 @@ import com.android.feedme.ui.navigation.TopBarNavigation
 @Composable
 fun FriendsScreen(
     navigationActions: NavigationActions,
-    profileViewModel: ProfileViewModel = ProfileViewModel(),
+    profileViewModel: ProfileViewModel,
     mode: Int = 0,
 ) {
 
@@ -71,11 +68,17 @@ fun FriendsScreen(
 
   // Now, collect followers and following as state to display them
   val followers =
-      if (mode == 4242 || profileViewModel.isViewingProfile())
-          profileViewModel.viewingUserFollowers.collectAsState(initial = listOf())
-      else profileViewModel.currentUserFollowers.collectAsState(initial = listOf())
+      if (mode == 4242) {
+        MutableStateFlow<List<Profile>>(listOf(Profile())).collectAsState()
+      } else if (profileViewModel.isViewingProfile()) {
+        profileViewModel.viewingUserFollowers.collectAsState(initial = listOf())
+      } else {
+        profileViewModel.currentUserFollowers.collectAsState(initial = listOf())
+      }
+
   val following =
-      if (mode == 4242 || profileViewModel.isViewingProfile())
+      if (mode == 4242) MutableStateFlow<List<Profile>>(listOf(Profile())).collectAsState()
+      else if (profileViewModel.isViewingProfile())
           profileViewModel.viewingUserFollowing.collectAsState(initial = listOf())
       else profileViewModel.currentUserFollowing.collectAsState(initial = listOf())
   if (selectedTabIndex == 4242) {
@@ -83,12 +86,8 @@ fun FriendsScreen(
   }
 
   Scaffold(
-
-      modifier = Modifier
-          .fillMaxSize()
-          .testTag("FriendsScreen"),
+      modifier = Modifier.fillMaxSize().testTag("FriendsScreen"),
       topBar = { TopBarNavigation(title = "Friends", navigationActions) },
-
       bottomBar = {
         BottomNavigationMenu(
             Route.PROFILE,
@@ -188,7 +187,6 @@ fun FriendsCard(
                 Modifier.fillMaxWidth().clickable {
                   profileViewModel.setViewingProfile(profile)
                   navigationActions.navigateTo(Screen.PROFILE)
-
                 }) {
               Image(
                   painter =
@@ -208,12 +206,11 @@ fun FriendsCard(
               }
 
               Box(modifier = Modifier.align(Alignment.CenterVertically)) {
-                Row {
+                Row(
+                    modifier = Modifier.padding(8.dp),
+                ) {
                   FollowUnfollowButton(
                       profile = profile, profileViewModel = profileViewModel, isFollowerList)
-                }
-                IconButton(onClick = { /* TODO: Implement action */}) {
-                  Icon(imageVector = Icons.Filled.MoreVert, contentDescription = "Options")
                 }
               }
             }

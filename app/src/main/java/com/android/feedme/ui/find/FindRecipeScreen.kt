@@ -49,7 +49,6 @@ import com.android.feedme.ui.theme.FindRecipeIcons
  *
  * @param navigationActions actions for navigating to different screens.
  */
-@SuppressLint("UnusedMaterial3ScaffoldPaddingParameter")
 @Composable
 fun FindRecipeScreen(navigationActions: NavigationActions, inputViewModel: InputViewModel) {
 

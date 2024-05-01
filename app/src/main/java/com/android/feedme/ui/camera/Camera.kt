@@ -252,7 +252,7 @@ fun takePhoto(
 }
 
 /** Check if the app has the required permissions to use the camera. */
-fun hasRequiredPermissions(context: Context): Boolean {
+private fun hasRequiredPermissions(context: Context): Boolean {
   return ContextCompat.checkSelfPermission(context, Manifest.permission.CAMERA) ==
       PackageManager.PERMISSION_GRANTED
 }

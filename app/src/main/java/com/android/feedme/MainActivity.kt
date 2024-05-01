@@ -2,8 +2,8 @@ package com.android.feedme
 
 import android.annotation.SuppressLint
 import android.os.Bundle
+import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
-import androidx.appcompat.app.AppCompatActivity
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
@@ -37,7 +37,7 @@ import com.android.feedme.ui.settings.SettingsScreen
 import com.android.feedme.ui.theme.feedmeAppTheme
 import com.google.firebase.firestore.FirebaseFirestore
 
-class MainActivity : AppCompatActivity() {
+class MainActivity : ComponentActivity() {
   @SuppressLint("UnrememberedGetBackStackEntry")
   override fun onCreate(savedInstanceState: Bundle?) {
     super.onCreate(savedInstanceState)

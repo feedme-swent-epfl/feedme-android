@@ -1,6 +1,7 @@
 package com.android.feedme.test.camera
 
 import android.Manifest
+import android.os.Build
 import androidx.compose.ui.test.assertIsDisplayed
 import androidx.compose.ui.test.junit4.createComposeRule
 import androidx.test.ext.junit.runners.AndroidJUnit4
@@ -20,10 +21,12 @@ import org.junit.runner.RunWith
 class GalleryTest : TestCase() {
   @get:Rule val composeTestRule = createComposeRule()
 
-  // Grant camera permission for tests
+  // Grant gallery permission for tests
   @get:Rule
   val permissionRule: GrantPermissionRule =
-      GrantPermissionRule.grant(Manifest.permission.READ_EXTERNAL_STORAGE)
+      if (Build.VERSION.SDK_INT <= 32)
+          GrantPermissionRule.grant(Manifest.permission.READ_EXTERNAL_STORAGE)
+      else GrantPermissionRule.grant(Manifest.permission.READ_MEDIA_IMAGES)
 
   @Test
   fun buttonsAndGalleryCorrectlyDisplayed() {

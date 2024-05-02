@@ -15,6 +15,7 @@ import com.android.feedme.model.data.Step
 import com.android.feedme.model.viewmodel.RecipeViewModel
 import com.android.feedme.ui.component.RecipeFullDisplay
 import com.android.feedme.ui.navigation.NavigationActions
+import com.android.feedme.ui.navigation.Route
 import com.google.android.gms.tasks.Tasks
 import com.google.firebase.firestore.CollectionReference
 import com.google.firebase.firestore.DocumentReference
@@ -119,7 +120,7 @@ class FullRecipeTest : TestCase() {
   }
 
   private fun goToFullRecipeScreen() {
-    composeTestRule.setContent { RecipeFullDisplay(mockNavActions, recipeViewModel) }
+    composeTestRule.setContent { RecipeFullDisplay(Route.HOME, mockNavActions, recipeViewModel) }
     composeTestRule.waitForIdle()
   }
 }

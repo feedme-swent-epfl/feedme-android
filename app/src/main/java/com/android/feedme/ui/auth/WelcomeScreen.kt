@@ -80,53 +80,65 @@ fun WelcomeScreenContent(
     close()
   }
 
-  Box(modifier = Modifier.fillMaxSize().background(Color(0xFF003C66)).padding(padding).testTag("MainBox")) {
-    // White area with top arc
-    Box(
-        modifier =
-            Modifier.align(Alignment.BottomCenter)
-                .fillMaxWidth()
-                .height(600.dp)
-                .clip(topArcShape)
-                .background(OffWhite)
-                .padding(horizontal = 32.dp, vertical = 50.dp)
-                .testTag("InnerBox")) {
-          Column(
-              horizontalAlignment = Alignment.CenterHorizontally,
-              verticalArrangement = Arrangement.Center,
-              modifier = Modifier.align(Alignment.TopCenter).testTag("InnerColumn")) {
-                Spacer(modifier = Modifier.height(40.dp).testTag("WelcSpacer")) // Space for the logo outside this box
-                Text(
-                    modifier = Modifier.testTag("WelcomeText"),
-                    textAlign = TextAlign.Center,
-                    text = "Welcome to FeedMe!",
-                    fontSize = 30.sp,
-                    fontWeight = FontWeight(600),
-                    color = BackgroundColor)
-                Spacer(modifier = Modifier.height(20.dp).testTag("WelcSpacer"))
-                Text(
-                    modifier = Modifier.testTag("NoAccText"),
-                    text = "Looks like you don’t have an account, click below to create one",
-                    fontSize = 16.sp,
-                    fontWeight = FontWeight(600),
-                    color = BackgroundColor,
-                    textAlign = TextAlign.Center)
-                Spacer(modifier = Modifier.height(24.dp))
-                OutlinedButton(
-                    onClick = {
-                      profileViewModel.fetchCurrentUserProfile()
-                      navigationActions.navigateTo(Screen.EDIT_PROFILE)
-                    },
-                    modifier = Modifier.fillMaxWidth().height(50.dp).testTag("OutlinedButton"),
-                    border = BorderStroke(2.dp, Cyan)) {
-                      Text(text = "Create account", fontSize = 18.sp, color = BackgroundColor)
-                    }
-              }
-        }
-    // Logo placement
-    Image(
-        painter = painterResource(id = R.drawable.sign_in_logo),
-        contentDescription = "Logo",
-        modifier = Modifier.align(Alignment.TopCenter).padding(top = 80.dp).size(100.dp).testTag("LogoImage"))
-  }
+  Box(
+      modifier =
+          Modifier.fillMaxSize()
+              .background(Color(0xFF003C66))
+              .padding(padding)
+              .testTag("MainBox")) {
+        // White area with top arc
+        Box(
+            modifier =
+                Modifier.align(Alignment.BottomCenter)
+                    .fillMaxWidth()
+                    .height(600.dp)
+                    .clip(topArcShape)
+                    .background(OffWhite)
+                    .padding(horizontal = 32.dp, vertical = 50.dp)
+                    .testTag("InnerBox")) {
+              Column(
+                  horizontalAlignment = Alignment.CenterHorizontally,
+                  verticalArrangement = Arrangement.Center,
+                  modifier = Modifier.align(Alignment.TopCenter).testTag("InnerColumn")) {
+                    Spacer(
+                        modifier =
+                            Modifier.height(40.dp)
+                                .testTag("WelcSpacer")) // Space for the logo outside this box
+                    Text(
+                        modifier = Modifier.testTag("WelcomeText"),
+                        textAlign = TextAlign.Center,
+                        text = "Welcome to FeedMe!",
+                        fontSize = 30.sp,
+                        fontWeight = FontWeight(600),
+                        color = BackgroundColor)
+                    Spacer(modifier = Modifier.height(20.dp).testTag("WelcSpacer"))
+                    Text(
+                        modifier = Modifier.testTag("NoAccText"),
+                        text = "Looks like you don’t have an account, click below to create one",
+                        fontSize = 16.sp,
+                        fontWeight = FontWeight(600),
+                        color = BackgroundColor,
+                        textAlign = TextAlign.Center)
+                    Spacer(modifier = Modifier.height(24.dp))
+                    OutlinedButton(
+                        onClick = {
+                          profileViewModel.fetchCurrentUserProfile()
+                          navigationActions.navigateTo(Screen.EDIT_PROFILE)
+                        },
+                        modifier = Modifier.fillMaxWidth().height(50.dp).testTag("OutlinedButton"),
+                        border = BorderStroke(2.dp, Cyan)) {
+                          Text(text = "Create account", fontSize = 18.sp, color = BackgroundColor)
+                        }
+                  }
+            }
+        // Logo placement
+        Image(
+            painter = painterResource(id = R.drawable.sign_in_logo),
+            contentDescription = "Logo",
+            modifier =
+                Modifier.align(Alignment.TopCenter)
+                    .padding(top = 80.dp)
+                    .size(100.dp)
+                    .testTag("LogoImage"))
+      }
 }

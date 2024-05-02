@@ -247,7 +247,7 @@ fun ProfileButtons(
         if (!profileViewModel.isViewingProfile()) {
           EditProfileButton(navigationActions)
         } else {
-          FollowUnfollowButton(profile, isFollowing, profileViewModel, currentUserProfile)
+          FollowUnfollowButton(profile, isFollowing, profileViewModel)
         }
         ShareProfileButton()
       }
@@ -278,14 +278,12 @@ fun EditProfileButton(navigationActions: NavigationActions) {
  * @param profile: Extract the needed information from the user's profile in the database
  * @param isFollowing: Flag indicating whether the current user is following the profile or not
  * @param profileViewModel: ProfileViewModel object to interact with profile data
- * @param currentUserProfile: Profile object of the current user
  */
 @Composable
 fun FollowUnfollowButton(
     profile: Profile,
     isFollowing: MutableState<Boolean>,
     profileViewModel: ProfileViewModel,
-    currentUserProfile: Profile
 ) {
   if (isFollowing.value) {
     OutlinedButton(

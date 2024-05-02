@@ -218,6 +218,7 @@ class ProfileViewModelTest {
     val currentUser = Profile("1", followers = listOf("3")) // Assume '1' is followed by '3'
     val follower = Profile("3", following = listOf("1")) // Assume '3' is a follower of '1'
     profileViewModel.currentUserId = "1"
+    profileViewModel.setViewingProfile(follower)
 
     val mockTransaction = Mockito.mock(Transaction::class.java)
     val userRef = Mockito.mock(DocumentReference::class.java)

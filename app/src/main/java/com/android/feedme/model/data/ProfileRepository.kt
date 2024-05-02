@@ -117,14 +117,14 @@ class ProfileRepository(private val db: FirebaseFirestore) {
           val currentUserFRef = db.collection(collectionPath).document(currentUserId)
           val targetUserFRef = db.collection(collectionPath).document(toFollowId)
           val currentUser =
-              get(currentUserFRef).toObject(Profile::class.java)
+              this.get(currentUserFRef).toObject(Profile::class.java)
                   ?: return@handleFirestoreTransaction null
           val toFollowUser =
-              get(targetUserFRef).toObject(Profile::class.java)
+              this.get(targetUserFRef).toObject(Profile::class.java)
                   ?: return@handleFirestoreTransaction null
 
           // Update current user's following list
-          val currentFollowing = currentUser?.following?.toMutableList() ?: mutableListOf()
+          val currentFollowing = currentUser.following.toMutableList()
           if (!currentFollowing.contains(toFollowId)) {
             currentFollowing.add(toFollowId)
             currentUser.following = currentFollowing // Update the local object
@@ -132,7 +132,7 @@ class ProfileRepository(private val db: FirebaseFirestore) {
           }
 
           // Update target user's followers list
-          val targetFollowers = toFollowUser?.followers?.toMutableList() ?: mutableListOf()
+          val targetFollowers = toFollowUser.followers.toMutableList()
           if (!targetFollowers.contains(currentUserId)) {
             targetFollowers.add(currentUserId)
 
@@ -174,10 +174,10 @@ class ProfileRepository(private val db: FirebaseFirestore) {
           val currentUserRef = db.collection(collectionPath).document(currentUserId)
           val targetUserRef = db.collection(collectionPath).document(targetUserId)
           val currentUser =
-              get(currentUserRef).toObject(Profile::class.java)
+              this.get(currentUserRef).toObject(Profile::class.java)
                   ?: return@handleFirestoreTransaction null
           val targetUser =
-              get(targetUserRef).toObject(Profile::class.java)
+              this.get(targetUserRef).toObject(Profile::class.java)
                   ?: return@handleFirestoreTransaction null
 
           // Prepare the updated lists

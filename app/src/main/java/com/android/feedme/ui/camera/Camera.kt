@@ -96,9 +96,11 @@ fun CameraScreen(navigationActions: NavigationActions) {
   val displayBarcode = remember { mutableStateOf(false) }
   // Text extract by [TextRecognition] function
   val text: MutableState<Text?> = remember { mutableStateOf(null) }
+    // Barcode raw value extract by [barcodeScanner]
   val barcode: MutableState<String> = remember { mutableStateOf("") }
+    // Barcode product information's extract by [extractProductNameFromBarCode]
   val barcodeDetails: MutableState<String> = remember { mutableStateOf("") }
-  var showOverlayTextField = remember { mutableStateOf(false) }
+
   ///// Machine Learning Part /////
 
   val applicationContext = LocalContext.current
@@ -241,7 +243,6 @@ fun CameraScreen(navigationActions: NavigationActions) {
                     OverlayTextField(
                         isVisible = true, onDismiss = { displayText.value = false }, text = it)
                   }
-              // Will improve later this part for ERROR communication with user.
             }
           }
 
@@ -253,6 +254,7 @@ fun CameraScreen(navigationActions: NavigationActions) {
                   viewModel.lastPhoto,
                   { rec -> barcode.value = rec },
                   { barcode.value = "ERROR : no barcode detected" })
+              // Each time the value of the barcode changes, product information's are recomputed
               LaunchedEffect(barcode.value) {
                 extractProductNameFromBarcode(
                     barcode.value,

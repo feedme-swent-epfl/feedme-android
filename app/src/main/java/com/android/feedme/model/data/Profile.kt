@@ -7,8 +7,8 @@ data class Profile(
     val email: String = "EMAIL_DEFAULT",
     val description: String = "BIO_DEFAULT",
     val imageUrl: String = "URL_DEFAULT",
-    val followers: List<String> = listOf(),
-    val following: List<String> = listOf(),
+    var followers: List<String> = listOf(),
+    var following: List<String> = listOf(),
     val filter: List<String> = listOf(), // Setting of alergie / setting
     val recipeList: List<String> = listOf(), // Assuming this is a list of recipe IDs
     // TODO ADD recipeSave / RecipeCreated

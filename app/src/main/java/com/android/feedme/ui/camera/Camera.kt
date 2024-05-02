@@ -63,6 +63,7 @@ import androidx.lifecycle.viewmodel.compose.viewModel
 import com.android.feedme.ML.OverlayTextField
 import com.android.feedme.ML.TextProcessing
 import com.android.feedme.ML.TextRecognition
+import com.android.feedme.ML.barcodeScanner
 import com.android.feedme.R
 import com.android.feedme.model.viewmodel.CameraViewModel
 import com.android.feedme.ui.navigation.NavigationActions
@@ -90,8 +91,10 @@ fun CameraScreen(navigationActions: NavigationActions) {
   val barcodeRecognition = remember { mutableStateOf(true) }
   // Display the text box with the recognised text
   val displayText = remember { mutableStateOf(false) }
+  val displayBarcode = remember { mutableStateOf(false) }
   // Text extract by [TextRecognition] function
   val text: MutableState<Text?> = remember { mutableStateOf(null) }
+  val barcode: MutableState<String> = remember { mutableStateOf("") }
   ///// Machine Learning Part /////
 
   val applicationContext = LocalContext.current
@@ -179,7 +182,7 @@ fun CameraScreen(navigationActions: NavigationActions) {
                 if (barcodeRecognition.value) {
                   val barcodeScannerPainter = painterResource(id = R.drawable.barcode_scanner)
                   IconButton(
-                      onClick = { /*TODO scan barcode and display result*/},
+                      onClick = { displayBarcode.value = true },
                       modifier =
                           Modifier.size(56.dp)
                               .background(CameraButtonsBackground, shape = CircleShape)
@@ -240,6 +243,22 @@ fun CameraScreen(navigationActions: NavigationActions) {
                   isVisible = true,
                   onDismiss = { displayText.value = false },
                   text = "Couldn't detect text")*/
+          }
+          // If barcode scanner button is pressed
+          if (displayBarcode.value) {
+            // If there is a photo in the app gallery we launch barcode scanner
+            if (viewModel.lastPhoto != null) {
+              barcodeScanner(
+                  viewModel.lastPhoto,
+                  { rec -> barcode.value = rec },
+                  { barcode.value = "ERROR : no barcode detected" })
+            } else {
+              barcode.value = "ERROR : no barcode to analyse."
+            }
+            OverlayTextField(
+                isVisible = true,
+                onDismiss = { displayBarcode.value = false },
+                text = barcode.value)
           }
         }
       }

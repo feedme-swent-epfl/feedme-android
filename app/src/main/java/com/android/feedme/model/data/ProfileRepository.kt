@@ -1,6 +1,7 @@
 package com.android.feedme.model.data
 
 import com.google.firebase.firestore.FirebaseFirestore
+import com.google.firebase.firestore.Transaction
 
 /**
  * A repository class for managing user profiles in Firebase Firestore.
@@ -71,7 +72,15 @@ class ProfileRepository(private val db: FirebaseFirestore) {
         }
         .addOnFailureListener { exception -> onFailure(exception) }
   }
-  /** Fetch all the profiles of the given List of Ids */
+
+  /**
+   * Fetch all the profiles of the given List of Ids
+   *
+   * @param ids The list of profile IDs to fetch.
+   * @param onSuccess A callback function invoked with the list of profiles on success.
+   * @param onFailure A callback function invoked on failure to fetch the profiles, with an
+   *   exception.
+   */
   fun getProfiles(
       ids: List<String>,
       onSuccess: (List<Profile>) -> Unit,
@@ -105,5 +114,135 @@ class ProfileRepository(private val db: FirebaseFirestore) {
         .delete()
         .addOnSuccessListener { onSuccess() }
         .addOnFailureListener { exception -> onFailure(exception) }
+  }
+  
+  /**     
+   * follow a user, adding the target user from the current user's following list and the current
+   * user from the target user's followers list. This method is transactional, ensuring that both
+   * operations succeed or fail together.
+   *
+   * @param currentUserId The ID of the user who is following.
+   * @param toFollowId The ID of the user to follow.
+   * @param onSuccess A callback function invoked on successful following.
+   * @param onFailure A callback function invoked on failure to follow, with an exception.
+   */
+  fun followUser(
+      currentUserId: String,
+      toFollowId: String,
+      onSuccess: (Profile, Profile) -> Unit,
+      onFailure: (Exception) -> Unit
+  ) {
+    handleFirestoreTransaction(
+        {
+          val currentUserFRef = db.collection(collectionPath).document(currentUserId)
+          val targetUserFRef = db.collection(collectionPath).document(toFollowId)
+          val currentUser =
+              this.get(currentUserFRef).toObject(Profile::class.java)
+                  ?: return@handleFirestoreTransaction null
+          val toFollowUser =
+              this.get(targetUserFRef).toObject(Profile::class.java)
+                  ?: return@handleFirestoreTransaction null
+
+          // Update current user's following list
+          val currentFollowing = currentUser.following.toMutableList()
+          if (!currentFollowing.contains(toFollowId)) {
+            currentFollowing.add(toFollowId)
+            currentUser.following = currentFollowing // Update the local object
+            update(currentUserFRef, "following", currentFollowing)
+          }
+
+          // Update target user's followers list
+          val targetFollowers = toFollowUser.followers.toMutableList()
+          if (!targetFollowers.contains(currentUserId)) {
+            targetFollowers.add(currentUserId)
+
+            toFollowUser.followers = targetFollowers // Update the local object
+            update(targetUserFRef, "followers", targetFollowers)
+          }
+
+          set(currentUserFRef, currentUser)
+
+          set(targetUserFRef, toFollowUser)
+
+          Pair(currentUser, toFollowUser) // Returning the Pair of updated profiles
+        },
+        {
+          it as Pair<Profile, Profile> // Cast result to Pair<Profile, Profile>
+          onSuccess(it.first, it.second) // Call onSuccess with the updated profiles
+        },
+        onFailure)
+  }
+
+  /**
+   * Unfollows a user, removing the target user from the current user's following list and the
+   * current user from the target user's followers list. This method is transactional, ensuring that
+   * both operations succeed or fail together.
+   *
+   * @param currentUserId The ID of the user who is unfollowing.
+   * @param targetUserId The ID of the user to unfollow.
+   * @param onSuccess A callback function invoked on successful unfollowing.
+   * @param onFailure A callback function invoked on failure to unfollow, with an exception.
+   */
+  fun unfollowUser(
+      currentUserId: String,
+      targetUserId: String,
+      onSuccess: (Profile, Profile) -> Unit, // Updated to pass Profile objects
+      onFailure: (Exception) -> Unit
+  ) {
+    handleFirestoreTransaction(
+        {
+          val currentUserRef = db.collection(collectionPath).document(currentUserId)
+          val targetUserRef = db.collection(collectionPath).document(targetUserId)
+          val currentUser =
+              this.get(currentUserRef).toObject(Profile::class.java)
+                  ?: return@handleFirestoreTransaction null
+          val targetUser =
+              this.get(targetUserRef).toObject(Profile::class.java)
+                  ?: return@handleFirestoreTransaction null
+
+          // Prepare the updated lists
+          val currentFollowing = currentUser.following.toMutableList()
+          if (currentFollowing.contains(targetUserId)) {
+            currentFollowing.remove(targetUserId)
+            currentUser.following = currentFollowing // Update the local object
+          }
+
+          val targetFollowers = targetUser.followers.toMutableList()
+          if (targetFollowers.contains(currentUserId)) {
+            targetFollowers.remove(currentUserId)
+            targetUser.followers = targetFollowers // Update the local object
+          }
+
+          // Perform the updates in the database
+          update(currentUserRef, "following", currentFollowing)
+          update(targetUserRef, "followers", targetFollowers)
+
+          // Return the updated profiles to be used in the onSuccess callback
+          set(currentUserRef, currentUser)
+          set(targetUserRef, targetUser)
+
+          Pair(currentUser, targetUser) // Returning the Pair of updated profiles
+        },
+        {
+          it as Pair<Profile, Profile> // Cast result to Pair<Profile, Profile>
+          onSuccess(it.first, it.second) // Call onSuccess with the updated profiles
+        },
+        onFailure)
+  }
+
+  private fun <T> handleFirestoreTransaction(
+      transactionBlock: Transaction.() -> T,
+      onSuccess: (T) -> Unit,
+      onFailure: (Exception) -> Unit
+  ) {
+    db.runTransaction { transaction ->
+          transactionBlock(transaction) // Execute the specific transaction logic
+        }
+        .addOnSuccessListener { result ->
+          onSuccess(result) // Handle success with the result of the transaction
+        }
+        .addOnFailureListener { exception ->
+          onFailure(exception) // Handle failure
+        }
   }
 }

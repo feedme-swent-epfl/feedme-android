@@ -3,10 +3,10 @@ package com.android.feedme.ui.profile
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
+import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
@@ -14,12 +14,8 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.CircleShape
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.MoreVert
 import androidx.compose.material3.Button
 import androidx.compose.material3.Card
-import androidx.compose.material3.Icon
-import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Tab
@@ -47,34 +43,7 @@ import com.android.feedme.ui.navigation.Route
 import com.android.feedme.ui.navigation.Screen
 import com.android.feedme.ui.navigation.TOP_LEVEL_DESTINATIONS
 import com.android.feedme.ui.navigation.TopBarNavigation
-
-val demoProfiles =
-    listOf(
-        Profile(
-            id = "1",
-            name = "John Doe",
-            username = "john_doe",
-            imageUrl = "https://example.com/image1.jpg"),
-        Profile(
-            id = "2",
-            name = "Jane Smith",
-            username = "jane_smith",
-            imageUrl = "https://example.com/image2.jpg"))
-
-val demoProfiles2 =
-    listOf(
-        Profile(
-            id = "1",
-            name = "Michel Doe",
-            username = "john_doe",
-            imageUrl = "https://example.com/image3.jpg"),
-        Profile(
-            id = "2",
-            name = "Michel Smith",
-            username = "jane_smith",
-            imageUrl = "https://example.com/image4.jpg"),
-        // Generate more profile
-    )
+import kotlinx.coroutines.flow.MutableStateFlow
 
 /**
  * Composable that displays either a list of followers or following based on the selected tab. It
@@ -89,7 +58,7 @@ val demoProfiles2 =
 @Composable
 fun FriendsScreen(
     navigationActions: NavigationActions,
-    profileViewModel: ProfileViewModel = ProfileViewModel(),
+    profileViewModel: ProfileViewModel,
     mode: Int = 0,
 ) {
 
@@ -98,18 +67,26 @@ fun FriendsScreen(
 
   // Now, collect followers and following as state to display them
   val followers =
-      if (mode == 4242 || profileViewModel.isViewingProfile())
-          profileViewModel.viewingUserFollowers.collectAsState()
-      else profileViewModel.currentUserFollowers.collectAsState()
+      if (mode == 4242) {
+        MutableStateFlow<List<Profile>>(listOf(Profile())).collectAsState()
+      } else if (profileViewModel.isViewingProfile()) {
+        profileViewModel.viewingUserFollowers.collectAsState(initial = listOf())
+      } else {
+        profileViewModel.currentUserFollowers.collectAsState(initial = listOf())
+      }
+
   val following =
-      if (mode == 4242 || profileViewModel.isViewingProfile())
-          profileViewModel.viewingUserFollowing.collectAsState()
-      else profileViewModel.currentUserFollowing.collectAsState()
-  if (selectedTabIndex == 4242) selectedTabIndex = 0
+      if (mode == 4242) MutableStateFlow<List<Profile>>(listOf(Profile())).collectAsState()
+      else if (profileViewModel.isViewingProfile())
+          profileViewModel.viewingUserFollowing.collectAsState(initial = listOf())
+      else profileViewModel.currentUserFollowing.collectAsState(initial = listOf())
+  if (selectedTabIndex == 4242) {
+    selectedTabIndex = 0
+  }
 
   Scaffold(
       modifier = Modifier.fillMaxSize().testTag("FriendsScreen"),
-      topBar = { TopBarNavigation(title = "Friends", navAction = navigationActions) },
+      topBar = { TopBarNavigation(title = "Friends", navigationActions) },
       bottomBar = {
         BottomNavigationMenu(
             Route.PROFILE,
@@ -136,9 +113,11 @@ fun FriendsScreen(
               }
           when (selectedTabIndex) {
             0 ->
-                FollowersList(followers.value, "FollowersList", navigationActions, profileViewModel)
+                FriendsList(
+                    followers.value, "FollowersList", navigationActions, profileViewModel, true)
             1 ->
-                FollowersList(following.value, "FollowingList", navigationActions, profileViewModel)
+                FriendsList(
+                    following.value, "FollowingList", navigationActions, profileViewModel, false)
           }
         }
       })
@@ -151,15 +130,34 @@ fun FriendsScreen(
  * @param tag A testing tag used for UI tests to identify the list view.
  */
 @Composable
-fun FollowersList(
+fun FriendsList(
     profiles: List<Profile>,
     tag: String,
     navigationActions: NavigationActions,
-    profileViewModel: ProfileViewModel
+    profileViewModel: ProfileViewModel,
+    isFollowerList: Boolean = true
 ) {
-  LazyColumn(modifier = Modifier.fillMaxSize().testTag(tag)) {
-    items(profiles) { profile ->
-      FollowerCard(profile = profile, navigationActions, profileViewModel)
+
+  if (profiles.isEmpty()) {
+    Column(
+        modifier = Modifier.fillMaxSize().testTag("EmptyFriends"),
+        horizontalAlignment = Alignment.CenterHorizontally,
+        verticalArrangement = Arrangement.Center) {
+          if (tag == "FollowersList") {
+            Text(
+                text = "No Followers Yet",
+                modifier = Modifier.padding(16.dp).testTag("NoFollowers"))
+            Text(text = "Make a Recipe to gain some Fan!", modifier = Modifier.padding(16.dp))
+          } else {
+            Text(text = "No Fan Yet", modifier = Modifier.padding(16.dp).testTag("NoFollowing"))
+            Text(text = "Follow someone to see them here", modifier = Modifier.padding(16.dp))
+          }
+        }
+  } else {
+    LazyColumn(modifier = Modifier.fillMaxSize().testTag(tag)) {
+      items(profiles) { profile ->
+        FriendsCard(profile = profile, navigationActions, profileViewModel, isFollowerList)
+      }
     }
   }
 }
@@ -168,13 +166,18 @@ fun FollowersList(
  * A card representation for a user profile, displaying the user's picture, name, and username. It
  * also provides a 'Remove' button and an options menu for further actions.
  *
- * @param profile The profile data of the user.
+ * @param profile The profile data of the user to display.
+ * @param navigationActions Provides navigation actions for handling user interactions with the
+ *   navigation bar.
+ *     @param profileViewModel The view model that provides the profile data.
+ *     @param isFollowerList A boolean value that determines if the user is in the follower list.
  */
 @Composable
-fun FollowerCard(
+fun FriendsCard(
     profile: Profile,
     navigationActions: NavigationActions,
-    profileViewModel: ProfileViewModel
+    profileViewModel: ProfileViewModel,
+    isFollowerList: Boolean = true
 ) {
   Card(
       modifier =
@@ -187,7 +190,6 @@ fun FollowerCard(
             verticalAlignment = Alignment.CenterVertically,
             modifier =
                 Modifier.fillMaxWidth().clickable {
-                  /*TODO Navigate to profile view of follower*/
                   profileViewModel.setViewingProfile(profile)
                   navigationActions.navigateTo(Screen.PROFILE)
                 }) {
@@ -200,26 +202,49 @@ fun FollowerCard(
                   contentDescription = "Profile Image",
                   modifier = Modifier.padding(horizontal = 10.dp).size(50.dp).clip(CircleShape),
               )
-              Column(modifier = Modifier.padding(10.dp).weight(1f)) {
-                Text(text = profile.name, fontSize = 14.sp)
+              Column(modifier = Modifier.padding(8.dp).weight(1f)) {
+                Text(text = profile.name, fontSize = 12.sp)
                 Text(
                     text = "@" + profile.username,
                     fontSize = 10.sp,
                     color = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.5f))
               }
-              Spacer(modifier = Modifier.weight(0.1f))
+
               Box(modifier = Modifier.align(Alignment.CenterVertically)) {
-                Row {
-                  Button(
-                      onClick = { /* TODO: Implement action */},
-                      Modifier.padding(top = 4.dp, bottom = 4.dp, end = 0.dp)) {
-                        Text(text = "Remove")
-                      }
-                  IconButton(onClick = { /* TODO: Implement action */}) {
-                    Icon(imageVector = Icons.Filled.MoreVert, contentDescription = "Options")
+                Row(
+                    modifier = Modifier.padding(8.dp),
+                ) {
+                  if (profile.id != profileViewModel.currentUserId &&
+                      !profileViewModel.isViewingProfile()) {
+                    FollowUnfollowButton(
+                        profile = profile, profileViewModel = profileViewModel, isFollowerList)
                   }
                 }
               }
             }
+      }
+}
+
+/**
+ * A button that allows the user to follow or unfollow another user.
+ *
+ * @param profile The profile data of the user to follow or unfollow.
+ * @param profileViewModel The view model that provides the profile data.
+ * @param isFollowerList A boolean value that determines if the user is in the follower list.
+ */
+@Composable
+fun FollowUnfollowButton(
+    profile: Profile,
+    profileViewModel: ProfileViewModel,
+    isFollowerList: Boolean
+) {
+  Button(
+      onClick = {
+        if (profileViewModel.currentUserId != null) {
+          if (isFollowerList) profileViewModel.removeFollower(profile)
+          else profileViewModel.unfollowUser(profile)
+        }
+      }) {
+        Text(if (isFollowerList) "Remove" else "Unfollow")
       }
 }

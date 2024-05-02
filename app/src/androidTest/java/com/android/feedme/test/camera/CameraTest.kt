@@ -168,6 +168,24 @@ class CameraTest : TestCase() {
         assertIsDisplayed()
         performClick()
       }
+
+      composeTestRule.waitForIdle()
+      composeTestRule.onNodeWithTag("ML Text Box")
+      composeTestRule.onNodeWithTag("ML Text Box inside")
+      composeTestRule.onNodeWithText("ERROR : no barcode to analyse.").assertIsDisplayed()
+
+      photoButton { performClick() }
+
+      // Wait until the "Photo saved" text appears on the UI.
+      composeTestRule.waitUntil(timeoutMillis = 5000) {
+        composeTestRule.onNodeWithText("Photo saved", useUnmergedTree = true).isDisplayed()
+      }
+
+      MLBarcodeButton { performClick() }
+
+      composeTestRule.waitForIdle()
+      composeTestRule.onNodeWithTag("ML Text Box")
+      composeTestRule.onNodeWithTag("ML Text Box inside")
     }
   }
 }

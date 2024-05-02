@@ -10,6 +10,7 @@ const val OPEN_FOOD_FACTS_URL_END_POINT = "https://world.openfoodfacts.net/api/v
 /**
  * Makes an HTTP request to retrieve product name (only) information based on a barcode number. The
  * request is made to world.openfoodfacts.net.
+ * This function performs the HTTP request asynchronously using coroutines and the IO dispatcher.
  *
  * @param requestMethod The HTTP method to use for the request (e.g., HttpMethod.GET).
  * @param barcodeNb The barcode number used to retrieve product information.
@@ -37,29 +38,11 @@ suspend fun httpRequestBarcode(
       } else {
         println("Error http: ${e.javaClass.simpleName}")
       }
-      e.printStackTrace() // Print stack trace for detailed error information
+      e.printStackTrace()
     }
     response
   }
 }
-/*fun httpRequestBarcode(requestMethod: HttpMethod, barcodeNb: String, urlFields: String): String {
-  val url = "$OPEN_FOOD_FACTS_URL_END_POINT$barcodeNb?$urlFields"
-  var response = ""
-  try {
-    val urlObj = URL(url)
-    val connection = urlObj.openConnection() as HttpURLConnection
-    connection.requestMethod = requestMethod.stringValue()
-
-    response = connection.inputStream.bufferedReader().use { it.readText() }
-  } catch (e: Exception) {
-    println("HTTP request failed with url : $url")
-    println("Error http: ${e.message}")
-    println("hop")
-    e.printStackTrace()
-    println("hop")
-  }
-  return response
-}*/
 
 /** Represents possible HTTP methods for making requests. */
 enum class HttpMethod {

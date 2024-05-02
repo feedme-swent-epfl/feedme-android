@@ -8,9 +8,6 @@ import com.google.mlkit.vision.barcode.BarcodeScannerOptions
 import com.google.mlkit.vision.barcode.BarcodeScanning
 import com.google.mlkit.vision.barcode.common.Barcode
 import com.google.mlkit.vision.common.InputImage
-import kotlinx.serialization.Serializable
-import kotlinx.serialization.decodeFromString
-import kotlinx.serialization.json.Json
 
 /**
  * Scans a barcode from a given bitmap image using google ML kit. By default it's parametrized to
@@ -46,13 +43,6 @@ fun barcodeScanner(
   }
 }
 
-@Serializable
-data class ProductData(
-    val code: String,
-    val product: String,
-    val status: Int,
-    val status_verbose: String
-)
 /**
  * Asynchronously extracts the product name from a barcode number by doing an http request.
  *
@@ -71,17 +61,10 @@ suspend fun extractProductNameFromBarcode(
     onSuccess: (String) -> Unit,
     onFailure: (Exception) -> Unit
 ) {
-
   try {
-    //val jsonString = httpRequestBarcode(HttpMethod.GET, barcodeNB, "fields=product_name")
-    //val productData = Json.decodeFromString<ProductData>(jsonString)
-    //onSuccess("Code : ${productData.code}, product name : ${productData.product}")
     onSuccess(httpRequestBarcode(HttpMethod.GET, barcodeNB, "fields=product_name"))
   } catch (e: Exception) {
     println(e.message)
-      onFailure(e)
-
+    onFailure(e)
   }
 }
-
-// Define a data class representing the JSON structure

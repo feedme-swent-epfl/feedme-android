@@ -12,10 +12,14 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material3.ButtonDefaults
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedButton
 import androidx.compose.material3.Scaffold
+import androidx.compose.material3.Tab
+import androidx.compose.material3.TabRow
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
@@ -44,6 +48,7 @@ import com.android.feedme.model.data.Profile
 import com.android.feedme.model.data.Recipe
 import com.android.feedme.model.data.Step
 import com.android.feedme.model.viewmodel.ProfileViewModel
+import com.android.feedme.model.viewmodel.RecipeViewModel
 import com.android.feedme.ui.component.SmallThumbnailsDisplay
 import com.android.feedme.ui.navigation.BottomNavigationMenu
 import com.android.feedme.ui.navigation.NavigationActions
@@ -57,6 +62,7 @@ import com.android.feedme.ui.theme.FollowButtonBorder
 import com.android.feedme.ui.theme.FollowingButton
 import com.android.feedme.ui.theme.TextBarColor
 
+
 /**
  * A composable function that generates the profile screen.
  *
@@ -65,11 +71,14 @@ import com.android.feedme.ui.theme.TextBarColor
  *
  * @param navigationActions: NavigationActions object to handle navigation events
  * @param profileViewModel: ProfileViewModel object to interact with profile data
+ * @param recipeList: List of recipes of the user
  */
 @Composable
 fun ProfileScreen(
     navigationActions: NavigationActions,
     profileViewModel: ProfileViewModel,
+    recipeList: List<Recipe>,
+    recipeViewModel: RecipeViewModel
 ) {
 
   val profile =
@@ -77,7 +86,9 @@ fun ProfileScreen(
       else profileViewModel.currentUserProfile.collectAsState()
 
   Scaffold(
-      modifier = Modifier.fillMaxSize().testTag("ProfileScreen"),
+      modifier = Modifier
+          .fillMaxSize()
+          .testTag("ProfileScreen"),
       topBar = {
         TopBarNavigation(
             title = "Profile",
@@ -97,7 +108,7 @@ fun ProfileScreen(
             TOP_LEVEL_DESTINATIONS)
       },
       content = { padding ->
-        ProfileBox(padding, profile.value, navigationActions, profileViewModel)
+        ProfileBox(padding, profile.value, recipeList, navigationActions, profileViewModel, recipeViewModel)
       })
 }
 
@@ -116,60 +127,59 @@ fun ProfileScreen(
 fun ProfileBox(
     padding: PaddingValues,
     profile: Profile?,
+    recipeList: List<Recipe>,
     navigationActions: NavigationActions,
-    profileViewModel: ProfileViewModel
+    profileViewModel: ProfileViewModel,
+    recipeViewModel: RecipeViewModel
 ) { // TODO add font
 
-  Column(
-      modifier = Modifier.padding(padding).testTag("ProfileBox"),
-      verticalArrangement = Arrangement.Top) {
-        Row(
-            modifier = Modifier.fillMaxWidth().padding(vertical = 20.dp),
-            horizontalArrangement = Arrangement.Center,
-            verticalAlignment = Alignment.CenterVertically) {
-              UserProfilePicture()
-              Spacer(modifier = Modifier.width(20.dp))
-              UserNameBox(profile ?: Profile())
-              Spacer(modifier = Modifier.width(5.dp))
-              Row(
-                  horizontalArrangement = Arrangement.Center,
-                  verticalAlignment = Alignment.CenterVertically) {
-                    FollowersButton(profile ?: Profile(), navigationActions)
-                    FollowingButton(profile ?: Profile(), navigationActions)
-                  }
-            }
-        UserBio(
-            profile ?: Profile(),
-        )
-        ProfileButtons(navigationActions, profile ?: Profile(), profileViewModel)
-        val recipe =
-            Recipe(
-                recipeId = "lasagna1",
-                title = "Tasty Lasagna",
-                description =
-                    "Description of the recipe, writing a longer one to see if it fills up the whole space available. Still writing with no particular aim lol",
-                ingredients =
-                    listOf(
-                        IngredientMetaData(
-                            quantity = 2.0,
-                            measure = MeasureUnit.ML,
-                            ingredient = Ingredient("Tomato", "Vegetables", "tomatoID"))),
-                steps =
-                    listOf(
-                        Step(
-                            1,
-                            "In a large, heavy pot, put the olive oil, garlic and parsley over medium high heat. When the garlic begins to brown, increase the heat and add the ground beef. Break up the beef, but keep it rather chunky. Sprinkle with about 1/2 tsp of salt. \n" +
-                                "\n" +
-                                "When the beef is beginning to dry up, add the tomatoes and stir well. Add more salt, then lower the heat and allow to simmer for about an hour, stirring from time to time. Taste for salt and add pepper.",
-                            "Make the Meat Sauce")),
-                tags = listOf("Meat"),
-                time = 45.0,
-                rating = 4.5,
-                userid = "username",
-                difficulty = "Intermediate",
-                "https://external-content.duckduckgo.com/iu/?u=https%3A%2F%2Fwww.mamablip.com%2Fstorage%2FLasagna%2520with%2520Meat%2520and%2520Tomato%2520Sauce_3481612355355.jpg&f=1&nofb=1&ipt=8e887ba99ce20a85fb867dabbe0206c1146ebf2f13548b5653a2778e3ea18c54&ipo=images")
+    val tabList = listOf("Recipes", "Comments")
 
-        SmallThumbnailsDisplay(listOf(recipe, recipe, recipe, recipe))
+  LazyColumn(
+      modifier = Modifier
+          .padding(padding)
+          .testTag("ProfileBox"),
+      verticalArrangement = Arrangement.Top) {
+      item {
+
+            Row(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(vertical = 20.dp),
+                horizontalArrangement = Arrangement.Center,
+                verticalAlignment = Alignment.CenterVertically) {
+                  UserProfilePicture()
+                  Spacer(modifier = Modifier.width(20.dp))
+                  UserNameBox(profile ?: Profile())
+                  Spacer(modifier = Modifier.width(5.dp))
+                  Row(
+                      horizontalArrangement = Arrangement.Center,
+                      verticalAlignment = Alignment.CenterVertically) {
+                        FollowersButton(profile ?: Profile(), navigationActions)
+                        FollowingButton(profile ?: Profile(), navigationActions)
+                      }
+                }
+            UserBio(
+                profile ?: Profile(),
+            )
+            ProfileButtons(navigationActions, profile ?: Profile(), profileViewModel)
+
+          TabRow(
+              selectedTabIndex = 0,
+              containerColor = MaterialTheme.colorScheme.surface,
+              contentColor = MaterialTheme.colorScheme.onSurface) {
+              tabList.forEachIndexed { index, title ->
+                  Tab(
+                      text = { Text(title) },
+                      selected = false/*TODO(): selectedTabIndex == index*/,
+                      onClick = { /*TODO selectedTabIndex = index */},
+                      modifier =
+                      Modifier.testTag(if (index == 0) "TabRecipes" else "TabComments"))
+              }
+          }
+
+            SmallThumbnailsDisplay(recipeList, navigationActions, recipeViewModel)
+          }
       }
 }
 
@@ -177,7 +187,11 @@ fun ProfileBox(
 @Composable
 fun UserProfilePicture() {
   Image(
-      modifier = Modifier.width(100.dp).height(100.dp).clip(CircleShape).testTag("ProfileIcon"),
+      modifier = Modifier
+          .width(100.dp)
+          .height(100.dp)
+          .clip(CircleShape)
+          .testTag("ProfileIcon"),
       painter = painterResource(id = R.drawable.user_logo),
       contentDescription = "User Profile Image",
       contentScale = ContentScale.FillBounds)
@@ -190,7 +204,9 @@ fun UserProfilePicture() {
  */
 @Composable
 fun UserNameBox(profile: Profile) {
-  Column(modifier = Modifier.width(100.dp).testTag("ProfileName")) {
+  Column(modifier = Modifier
+      .width(100.dp)
+      .testTag("ProfileName")) {
     Text(text = profile.name, style = textStyle(17, 15, 700), overflow = TextOverflow.Ellipsis)
     Spacer(modifier = Modifier.height(10.dp))
     Text(
@@ -250,7 +266,9 @@ fun FollowingButton(profile: Profile, navigationActions: NavigationActions) {
 @Composable
 fun UserBio(profile: Profile) {
   Text(
-      modifier = Modifier.padding(horizontal = 18.dp).testTag("ProfileBio"),
+      modifier = Modifier
+          .padding(horizontal = 18.dp)
+          .testTag("ProfileBio"),
       text = profile.description,
       style = textStyle(13, 15, 400, TextAlign.Justify))
 }
@@ -260,8 +278,7 @@ fun UserBio(profile: Profile) {
  *
  * @param navigationActions: NavigationActions object to handle navigation events
  * @param profile: Extract the needed information from the user's profile in the database
- * @param isViewingProfile: Flag indicating whether the profile being viewed is the current user's
- *   or not
+ * @param profileViewModel: ProfileViewModel object to interact with profile data
  */
 @Composable
 fun ProfileButtons(
@@ -274,7 +291,9 @@ fun ProfileButtons(
   }
 
   Row(
-      modifier = Modifier.fillMaxWidth().padding(vertical = 20.dp),
+      modifier = Modifier
+          .fillMaxWidth()
+          .padding(vertical = 20.dp),
       horizontalArrangement = Arrangement.SpaceEvenly,
       verticalAlignment = Alignment.CenterVertically) {
         if (!profileViewModel.isViewingProfile()) {
@@ -298,7 +317,9 @@ fun EditProfileButton(navigationActions: NavigationActions) {
       border = BorderStroke(2.dp, FollowButtonBorder),
       onClick = { navigationActions.navigateTo(Screen.EDIT_PROFILE) }) {
         Text(
-            modifier = Modifier.width(110.dp).height(13.dp),
+            modifier = Modifier
+                .width(110.dp)
+                .height(13.dp),
             text = "Edit Profile",
             fontWeight = FontWeight.Bold,
             style = textStyle())
@@ -329,7 +350,9 @@ fun FollowUnfollowButton(
           profileViewModel.unfollowUser(profile)
         }) {
           Text(
-              modifier = Modifier.width(110.dp).height(13.dp),
+              modifier = Modifier
+                  .width(110.dp)
+                  .height(13.dp),
               text = "Unfollow",
               fontWeight = FontWeight.Bold,
               style = textStyle())
@@ -345,7 +368,9 @@ fun FollowUnfollowButton(
           profileViewModel.followUser(profile) // Assuming the function signature matches
         }) {
           Text(
-              modifier = Modifier.width(110.dp).height(13.dp),
+              modifier = Modifier
+                  .width(110.dp)
+                  .height(13.dp),
               text = "Follow",
               color = TextBarColor,
               fontWeight = FontWeight.Bold,

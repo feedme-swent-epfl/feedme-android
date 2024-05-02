@@ -69,7 +69,7 @@ fun LandingPage(
     navigationActions: NavigationActions,
     recipeViewModel: RecipeViewModel = RecipeViewModel()
 ) {
-  /* Note that this val is temporary for this sprint, we're awaiting the implementation of the
+  /* TODO Note that this val is temporary for this sprint, we're awaiting the implementation of the
    * ViewModels to properly do this part. */
   val testRecipes: List<Recipe> =
       listOf(
@@ -142,7 +142,7 @@ fun RecipeDisplay(
                                   // Set the selected recipe in the view model and navigate to the
                                   // recipe screen
                                   recipeViewModel.selectRecipe(recipe)
-                                  navigationActions.navigateTo(Screen.RECIPE)
+                                  navigationActions.navigateTo("Recipe/${Route.HOME}")
                                 })
                             .testTag("RecipeCard"),
                     elevation = CardDefaults.elevatedCardElevation()) {

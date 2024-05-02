@@ -43,7 +43,6 @@ import com.android.feedme.model.data.Step
 import com.android.feedme.model.viewmodel.RecipeViewModel
 import com.android.feedme.ui.navigation.BottomNavigationMenu
 import com.android.feedme.ui.navigation.NavigationActions
-import com.android.feedme.ui.navigation.Route
 import com.android.feedme.ui.navigation.TOP_LEVEL_DESTINATIONS
 import com.android.feedme.ui.navigation.TopBarNavigation
 import com.android.feedme.ui.theme.BlueUsername
@@ -61,6 +60,7 @@ import com.android.feedme.ui.theme.YellowStarBlackOutline
  */
 @Composable
 fun RecipeFullDisplay(
+    route : String,
     navigationActions: NavigationActions,
     recipeViewModel: RecipeViewModel = RecipeViewModel()
 ) {
@@ -75,7 +75,7 @@ fun RecipeFullDisplay(
             rightIconOnClickAction = { null /* TODO() Save recipe offline*/ })
       },
       bottomBar = {
-        BottomNavigationMenu(Route.HOME, navigationActions::navigateTo, TOP_LEVEL_DESTINATIONS)
+        BottomNavigationMenu(route, navigationActions::navigateTo, TOP_LEVEL_DESTINATIONS)
       },
       content = { padding ->
         if (recipe != null) {
@@ -98,15 +98,15 @@ fun RecipeFullDisplay(
  */
 @Composable
 fun ImageDisplay(recipe: Recipe, modifier: Modifier = Modifier) {
-  var ImageSuccessfulDownload = remember { mutableStateOf(false) }
+  val imageSuccessfulDownload = remember { mutableStateOf(false) }
   AsyncImage(
       model = recipe.imageUrl,
       contentDescription = "Recipe Image",
       modifier = modifier.fillMaxWidth().testTag("Recipe Image"),
-      onSuccess = { ImageSuccessfulDownload.value = true })
+      onSuccess = { imageSuccessfulDownload.value = true })
 
   // Display a warning message if image couldn't be downloaded from internets
-  if (!ImageSuccessfulDownload.value) {
+  if (!imageSuccessfulDownload.value) {
     Text("Failed to download image", modifier = Modifier.testTag("Fail Image Download"))
   }
 }

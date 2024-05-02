@@ -70,6 +70,8 @@ fun ProfileScreen(
       if (profileViewModel.isViewingProfile()) profileViewModel.viewingUserProfile.collectAsState()
       else profileViewModel.currentUserProfile.collectAsState()
 
+  // TODO : Add refresh logic instead of a direct fetch
+  if (!profileViewModel.isViewingProfile()) profileViewModel.fetchCurrentUserProfile()
   Scaffold(
       modifier = Modifier.fillMaxSize().testTag("ProfileScreen"),
       topBar = {

@@ -96,9 +96,9 @@ fun CameraScreen(navigationActions: NavigationActions) {
   val displayBarcode = remember { mutableStateOf(false) }
   // Text extract by [TextRecognition] function
   val text: MutableState<Text?> = remember { mutableStateOf(null) }
-    // Barcode raw value extract by [barcodeScanner]
+  // Barcode raw value extract by [barcodeScanner]
   val barcode: MutableState<String> = remember { mutableStateOf("") }
-    // Barcode product information's extract by [extractProductNameFromBarCode]
+  // Barcode product information's extract by [extractProductNameFromBarCode]
   val barcodeDetails: MutableState<String> = remember { mutableStateOf("") }
 
   ///// Machine Learning Part /////

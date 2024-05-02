@@ -9,8 +9,8 @@ const val OPEN_FOOD_FACTS_URL_END_POINT = "https://world.openfoodfacts.net/api/v
 
 /**
  * Makes an HTTP request to retrieve product name (only) information based on a barcode number. The
- * request is made to world.openfoodfacts.net.
- * This function performs the HTTP request asynchronously using coroutines and the IO dispatcher.
+ * request is made to world.openfoodfacts.net. This function performs the HTTP request
+ * asynchronously using coroutines and the IO dispatcher.
  *
  * @param requestMethod The HTTP method to use for the request (e.g., HttpMethod.GET).
  * @param barcodeNb The barcode number used to retrieve product information.

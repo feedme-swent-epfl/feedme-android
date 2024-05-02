@@ -58,9 +58,7 @@ class ProfileTest {
         assertIsDisplayed()
         assertHasClickAction()
       }
-      recipeSmall{
-        assertIsDisplayed()
-      }
+      recipeSmall { assertIsDisplayed() }
       editButton {
         assertIsDisplayed()
         assertHasClickAction()

@@ -12,8 +12,6 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
-import androidx.compose.foundation.lazy.grid.GridCells
-import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.OutlinedButton
@@ -46,7 +44,6 @@ import com.android.feedme.model.data.Profile
 import com.android.feedme.model.data.Recipe
 import com.android.feedme.model.data.Step
 import com.android.feedme.model.viewmodel.ProfileViewModel
-import com.android.feedme.ui.component.RecipeSmallCard
 import com.android.feedme.ui.component.SmallThumbnailsDisplay
 import com.android.feedme.ui.navigation.BottomNavigationMenu
 import com.android.feedme.ui.navigation.NavigationActions

@@ -46,7 +46,8 @@ fun SmallThumbnailsDisplay(listRecipe: List<Recipe>) {
   LazyVerticalGrid(columns = GridCells.Adaptive(minSize = imageWidth.dp)) {
     items(listRecipe.size) { i ->
       Column(
-          horizontalAlignment = Alignment.CenterHorizontally, modifier = Modifier.padding(3.dp).testTag("RecipeSmallCard") ) {
+          horizontalAlignment = Alignment.CenterHorizontally,
+          modifier = Modifier.padding(3.dp).testTag("RecipeSmallCard")) {
             // Recipe photo, downloaded from internet
             AsyncImage(
                 model = listRecipe[i].imageUrl,

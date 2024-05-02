@@ -9,13 +9,14 @@ import java.net.URL
 import java.net.URLConnection
 import java.net.URLStreamHandler
 import java.net.URLStreamHandlerFactory
+import kotlinx.coroutines.runBlocking
 import org.junit.Assert.assertEquals
 import org.junit.Test
 
 class HttpRequestBarcodeTest {
 
   @Test
-  suspend fun testHttpRequestBarcode() {
+  fun testHttpRequestBarcode() = runBlocking {
     val barcodeNb = "7640150491001"
     val urlFields = "fields=product_name"
 

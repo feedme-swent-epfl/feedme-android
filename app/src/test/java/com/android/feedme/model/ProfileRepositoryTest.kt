@@ -267,43 +267,43 @@ class ProfileRepositoryTest {
     assertTrue("Success callback was not called", successCalled)
   }
 
-    @Test
-    fun deleteProfile_Success() {
-        val id = "1"
-        val mockDocumentReference = mock(DocumentReference::class.java)
+  @Test
+  fun deleteProfile_Success() {
+    val id = "1"
+    val mockDocumentReference = mock(DocumentReference::class.java)
 
-        `when`(mockFirestore.collection("profiles")).thenReturn(mockCollectionReference)
-        `when`(mockCollectionReference.document(id)).thenReturn(mockDocumentReference)
-        `when`(mockDocumentReference.delete()).thenReturn(Tasks.forResult(null))
+    `when`(mockFirestore.collection("profiles")).thenReturn(mockCollectionReference)
+    `when`(mockCollectionReference.document(id)).thenReturn(mockDocumentReference)
+    `when`(mockDocumentReference.delete()).thenReturn(Tasks.forResult(null))
 
-        var successCalled = false
-        profileRepository.deleteProfile(id, { successCalled = true }, { fail("Failure should not be called") })
+    var successCalled = false
+    profileRepository.deleteProfile(
+        id, { successCalled = true }, { fail("Failure should not be called") })
 
-        shadowOf(Looper.getMainLooper()).idle()
+    shadowOf(Looper.getMainLooper()).idle()
 
-        verify(mockDocumentReference).delete()
-        assertTrue("Success callback was not called", successCalled)
-    }
+    verify(mockDocumentReference).delete()
+    assertTrue("Success callback was not called", successCalled)
+  }
 
-    @Test
-    fun deleteProfile_Failure() {
-        val id = "1"
-        val exception = Exception("Firestore deletion failure")
-        val mockDocumentReference = mock(DocumentReference::class.java)
+  @Test
+  fun deleteProfile_Failure() {
+    val id = "1"
+    val exception = Exception("Firestore deletion failure")
+    val mockDocumentReference = mock(DocumentReference::class.java)
 
-        `when`(mockFirestore.collection("profiles")).thenReturn(mockCollectionReference)
-        `when`(mockCollectionReference.document(id)).thenReturn(mockDocumentReference)
-        `when`(mockDocumentReference.delete()).thenReturn(Tasks.forException(exception))
+    `when`(mockFirestore.collection("profiles")).thenReturn(mockCollectionReference)
+    `when`(mockCollectionReference.document(id)).thenReturn(mockDocumentReference)
+    `when`(mockDocumentReference.delete()).thenReturn(Tasks.forException(exception))
 
-        var failureCalled = false
-        profileRepository.deleteProfile(
-            id,
-            onSuccess = { fail("Success callback should not be called") },
-            onFailure = { failureCalled = true }
-        )
+    var failureCalled = false
+    profileRepository.deleteProfile(
+        id,
+        onSuccess = { fail("Success callback should not be called") },
+        onFailure = { failureCalled = true })
 
-        shadowOf(Looper.getMainLooper()).idle()
+    shadowOf(Looper.getMainLooper()).idle()
 
-        assertTrue("Failure callback was not called", failureCalled)
-    }
+    assertTrue("Failure callback was not called", failureCalled)
+  }
 }

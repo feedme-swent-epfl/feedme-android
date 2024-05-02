@@ -29,6 +29,7 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.lifecycle.viewmodel.compose.viewModel
 import com.android.feedme.R
 import com.android.feedme.model.viewmodel.AuthViewModel
 import com.android.feedme.model.viewmodel.ProfileViewModel
@@ -54,7 +55,7 @@ import com.android.feedme.ui.theme.OffWhite
 fun WelcomeScreen(
     navigationActions: NavigationActions,
     profileViewModel: ProfileViewModel,
-    authViewModel: AuthViewModel
+    authViewModel: AuthViewModel = viewModel()
 ) {
   Scaffold(
       modifier = Modifier.fillMaxSize().testTag("CreateProfileScreen"),

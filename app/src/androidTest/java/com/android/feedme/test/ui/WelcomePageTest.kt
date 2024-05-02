@@ -6,6 +6,7 @@ import androidx.compose.ui.test.junit4.createComposeRule
 import androidx.compose.ui.test.onNodeWithTag
 import com.android.feedme.model.data.Profile
 import com.android.feedme.model.data.ProfileRepository
+import com.android.feedme.model.viewmodel.AuthViewModel
 import com.android.feedme.model.viewmodel.ProfileViewModel
 import com.android.feedme.screen.WelcomeScreen
 import com.android.feedme.ui.auth.WelcomeScreen
@@ -22,18 +23,26 @@ class WelcomePageTest {
   private val mockFirestore = mockk<FirebaseFirestore>(relaxed = true)
   private val navAction = mockk<NavigationActions>(relaxed = true)
   private lateinit var profileViewModel: ProfileViewModel
+  private lateinit var authViewModel: AuthViewModel
 
   @Before
   fun init() {
     ProfileRepository.initialize(mockFirestore)
     profileViewModel = ProfileViewModel()
     profileViewModel.updateCurrentUserProfile(Profile())
+    authViewModel = AuthViewModel()
+    authViewModel.makeNewProfile {}
   }
 
   @Test
   fun screenIsCorrectlyDisplayed() {
     ComposeScreen.onComposeScreen<WelcomeScreen>(composeTestRule) {
-      composeTestRule.setContent { WelcomeScreen(navAction, profileViewModel) }
+      composeTestRule.setContent {
+        WelcomeScreen(
+            navAction,
+            profileViewModel,
+        )
+      }
 
       composeTestRule.onNodeWithTag("MainBox").assertIsDisplayed()
       composeTestRule.onNodeWithTag("InnerBox").assertIsDisplayed()

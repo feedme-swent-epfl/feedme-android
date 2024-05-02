@@ -84,7 +84,7 @@ class MainActivity : ComponentActivity() {
                 navigation(startDestination = Screen.FIND_RECIPE, route = Route.FIND_RECIPE) {
                   composable(Screen.FIND_RECIPE) { FindRecipeScreen(navigationActions) }
                   composable(Screen.CAMERA) { CameraScreen(navigationActions) }
-                  composable(Screen.GALLERY) { GalleryScreen(navigationActions, 10) }
+                  composable(Screen.GALLERY) { GalleryScreen(navigationActions, 15) }
                 }
 
                 navigation(startDestination = Screen.PROFILE, route = Route.PROFILE) {

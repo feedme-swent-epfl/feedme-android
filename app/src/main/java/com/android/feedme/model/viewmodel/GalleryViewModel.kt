@@ -21,8 +21,8 @@ import kotlinx.coroutines.flow.MutableStateFlow
 
 class GalleryViewModel : ViewModel() {
 
-  val bitmaps = MutableStateFlow<List<Bitmap>>(emptyList())
-  var size = 0
+  val _bitmaps = MutableStateFlow<List<Bitmap>>(emptyList())
+  private val _uris = MutableStateFlow<Set<Uri>>(setOf())
 
   @Composable
   fun galleryLauncher(
@@ -44,13 +44,19 @@ class GalleryViewModel : ViewModel() {
     }
 
     return rememberLauncherForActivityResult(
-        ActivityResultContracts.PickMultipleVisualMedia(maxItems),
+        ActivityResultContracts.PickMultipleVisualMedia(maxImages),
         onResult = { uris ->
           uris.let {
             for (uri in it) {
-              val source = ImageDecoder.createSource(context.contentResolver, uri)
-              val bitmap = ImageDecoder.decodeBitmap(source)
-              bitmaps.value += bitmap
+              // Duplication protection and setting max of uploadable images to 15
+              if (_uris.value.size < 15 && !_uris.value.contains(uri)) {
+                _uris.value += uri
+                val source = ImageDecoder.createSource(context.contentResolver, uri)
+                val bitmap = ImageDecoder.decodeBitmap(source)
+                if (_bitmaps.value.size < 15) {
+                  _bitmaps.value += bitmap
+                }
+              }
             }
           }
         })

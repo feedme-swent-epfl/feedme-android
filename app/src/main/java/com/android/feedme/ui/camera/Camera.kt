@@ -67,6 +67,7 @@ import com.android.feedme.R
 import com.android.feedme.model.viewmodel.CameraViewModel
 import com.android.feedme.ui.navigation.NavigationActions
 import com.android.feedme.ui.navigation.TopBarNavigation
+import com.android.feedme.ui.theme.BottomIconColorSelected
 import com.android.feedme.ui.theme.CameraButtonsBackground
 import com.google.mlkit.vision.text.Text
 import kotlinx.coroutines.launch
@@ -188,7 +189,7 @@ fun CameraScreen(navigationActions: NavigationActions) {
                             painter = barcodeScannerPainter,
                             contentDescription = "Barcode Scanner",
                             modifier = Modifier.size(25.dp),
-                            tint = Color.Black)
+                            tint = BottomIconColorSelected)
                       }
                 }
               }

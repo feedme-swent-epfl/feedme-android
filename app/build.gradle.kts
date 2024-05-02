@@ -186,6 +186,7 @@ dependencies {
     //ML kit text recognition
     implementation(libs.mlkit.textrecognition)
 
+
     // ---------------- CameraX --------------------
     implementation(libs.camera.core)
     implementation(libs.camera.camera2)

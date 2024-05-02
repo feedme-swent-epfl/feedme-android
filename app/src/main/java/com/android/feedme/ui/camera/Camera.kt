@@ -54,6 +54,7 @@ import androidx.compose.ui.graphics.asImageBitmap
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalLifecycleOwner
 import androidx.compose.ui.platform.testTag
+import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.viewinterop.AndroidView
 import androidx.core.app.ActivityCompat
@@ -62,9 +63,11 @@ import androidx.lifecycle.viewmodel.compose.viewModel
 import com.android.feedme.ML.OverlayTextField
 import com.android.feedme.ML.TextProcessing
 import com.android.feedme.ML.TextRecognition
+import com.android.feedme.R
 import com.android.feedme.model.viewmodel.CameraViewModel
 import com.android.feedme.ui.navigation.NavigationActions
 import com.android.feedme.ui.navigation.TopBarNavigation
+import com.android.feedme.ui.theme.BottomIconColorSelected
 import com.android.feedme.ui.theme.CameraButtonsBackground
 import com.google.mlkit.vision.text.Text
 import kotlinx.coroutines.launch
@@ -84,6 +87,7 @@ fun CameraScreen(navigationActions: NavigationActions) {
   ///// Machine Learning Part /////
   // Switch off and on the text recognition functionality
   val textRecognitionMode = remember { mutableStateOf(true) }
+  val barcodeRecognition = remember { mutableStateOf(true) }
   // Display the text box with the recognised text
   val displayText = remember { mutableStateOf(false) }
   // Text extract by [TextRecognition] function
@@ -157,14 +161,35 @@ fun CameraScreen(navigationActions: NavigationActions) {
                           imageVector = Icons.Default.PhotoCamera,
                           contentDescription = "Take photo")
                     }
-                // Icon for text recognition
+                // Button for text recognition
                 if (textRecognitionMode.value) {
                   IconButton(
                       onClick = { displayText.value = true },
-                      modifier = Modifier.testTag("MLButton")) {
+                      modifier =
+                          Modifier.size(56.dp)
+                              .background(CameraButtonsBackground, shape = CircleShape)
+                              .padding(10.dp)
+                              .testTag("MLTextButton")) {
                         Icon(
                             imageVector = Icons.TwoTone.TextFields,
                             contentDescription = "Display text after ML")
+                      }
+                }
+                // Button for barcode scanner
+                if (barcodeRecognition.value) {
+                  val barcodeScannerPainter = painterResource(id = R.drawable.barcode_scanner)
+                  IconButton(
+                      onClick = { /*TODO scan barcode and display result*/},
+                      modifier =
+                          Modifier.size(56.dp)
+                              .background(CameraButtonsBackground, shape = CircleShape)
+                              .padding(10.dp)
+                              .testTag("MLBarcodeButton")) {
+                        Icon(
+                            painter = barcodeScannerPainter,
+                            contentDescription = "Barcode Scanner",
+                            modifier = Modifier.size(25.dp),
+                            tint = BottomIconColorSelected)
                       }
                 }
               }

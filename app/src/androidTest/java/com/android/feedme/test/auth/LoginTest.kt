@@ -27,7 +27,7 @@ class LoginTest : TestCase() {
       // Test the UI elements
       loginTitle {
         assertIsDisplayed()
-        assertTextEquals("Welcome")
+        assertTextEquals("Welcome!")
       }
       loginButton {
         assertIsDisplayed()

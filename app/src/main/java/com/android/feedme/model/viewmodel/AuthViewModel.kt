@@ -25,6 +25,7 @@ class AuthViewModel : ViewModel() {
   fun authenticateWithGoogle(
       idToken: String,
       onSuccess: () -> Unit,
+      onDoesntExist: () -> Unit,
       onFailure: (Exception) -> Unit
   ) {
     // Create a Google sign-in credential using the provided Google ID token.
@@ -43,7 +44,7 @@ class AuthViewModel : ViewModel() {
           val photoUrl = firebaseUser.photoUrl.toString()
 
           // Try to link or create a profile based on the Firebase User details.
-          linkOrCreateProfile(googleId, name, email, photoUrl, onSuccess, onFailure)
+          linkOrCreateProfile(googleId, name, email, photoUrl, onSuccess, onDoesntExist, onFailure)
         } ?: onFailure(Exception("Firebase User is null")) // Handle null user case.
       } catch (e: Exception) {
         // Handle exceptions during the sign-in process.
@@ -68,6 +69,7 @@ class AuthViewModel : ViewModel() {
       email: String?,
       photoUrl: String?,
       onSuccess: () -> Unit,
+      onDoesntExist: () -> Unit,
       onFailure: (Exception) -> Unit
   ) {
     viewModelScope.launch {
@@ -77,7 +79,7 @@ class AuthViewModel : ViewModel() {
             if (existingProfile != null) {
               onSuccess()
             } else {
-              makeNewProfile(googleId, name, email, photoUrl, onSuccess, onFailure)
+              makeNewProfile(googleId, name, email, photoUrl, onDoesntExist, onFailure)
             }
           },
           onFailure = onFailure)
@@ -99,7 +101,7 @@ class AuthViewModel : ViewModel() {
       name: String?,
       email: String?,
       photoUrl: String?,
-      onSuccess: () -> Unit,
+      onDoesntExist: () -> Unit,
       onFailure: (Exception) -> Unit
   ) {
     val newProfile =
@@ -117,6 +119,6 @@ class AuthViewModel : ViewModel() {
             commentList = listOf())
 
     // Add the newly created profile to the Firestore database.
-    ProfileRepository.instance.addProfile(newProfile, onSuccess, onFailure)
+    ProfileRepository.instance.addProfile(newProfile, onDoesntExist, onFailure)
   }
 }

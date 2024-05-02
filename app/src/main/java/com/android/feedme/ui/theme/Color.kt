@@ -12,6 +12,10 @@ val PurpleGrey40 = Color(0xFF625b71)
 val Pink40 = Color(0xFF7D5260)
 val DarkGrey = Color(0xFF191C1E)
 
+val OffWhite = Color(0xFFF2F2F2)
+val BackgroundColor = Color(0xFF032028)
+val Cyan = Color(0xFF317693)
+
 val FindRecipeIcons = Color(0xFF4E5FFB)
 
 val YellowStar = Color(0xFFFFE600)

@@ -23,6 +23,7 @@ import com.android.feedme.model.viewmodel.RecipeViewModel
 import com.android.feedme.resources.C
 import com.android.feedme.ui.SavedScreen
 import com.android.feedme.ui.auth.LoginScreen
+import com.android.feedme.ui.auth.WelcomeScreen
 import com.android.feedme.ui.camera.CameraScreen
 import com.android.feedme.ui.camera.GalleryScreen
 import com.android.feedme.ui.component.RecipeFullDisplay
@@ -51,7 +52,9 @@ class MainActivity : ComponentActivity() {
       feedmeAppTheme {
         // A surface container using the 'background' color from the theme
         Surface(
-            modifier = Modifier.fillMaxSize().semantics { testTag = C.Tag.main_screen_container },
+            modifier = Modifier
+              .fillMaxSize()
+              .semantics { testTag = C.Tag.main_screen_container },
             color = MaterialTheme.colorScheme.background) {
               // Navigation host for the app
               val navController = rememberNavController()
@@ -63,6 +66,8 @@ class MainActivity : ComponentActivity() {
               NavHost(navController = navController, startDestination = Route.AUTHENTICATION) {
                 navigation(startDestination = Screen.AUTHENTICATION, route = Route.AUTHENTICATION) {
                   composable(Screen.AUTHENTICATION) { LoginScreen(navigationActions) }
+                  composable(Screen.WELCOME) { WelcomeScreen(navigationActions, profileViewModel) }
+                  composable(Screen.EDIT_PROFILE) { EditProfileScreen(navigationActions, profileViewModel) }
                 }
 
                 navigation(startDestination = Screen.HOME, route = Route.HOME) {

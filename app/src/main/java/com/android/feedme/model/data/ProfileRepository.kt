@@ -86,4 +86,24 @@ class ProfileRepository(private val db: FirebaseFirestore) {
         }
         .addOnFailureListener { exception -> onFailure(exception) }
   }
+
+  /**
+   * Deletes a user profile from Firestore.
+   *
+   * This method removes the profile document with the given [id] from the Firestore collection
+   * specified by [collectionPath]. On successful deletion, [onSuccess] is called; if an error
+   * occurs, [onFailure] is invoked with the exception.
+   *
+   * @param id The document ID of the profile to delete.
+   * @param onSuccess A callback function invoked on successful deletion of the profile.
+   * @param onFailure A callback function invoked on failure to delete the profile, with an
+   *   exception.
+   */
+  fun deleteProfile(id: String, onSuccess: () -> Unit, onFailure: (Exception) -> Unit) {
+    db.collection(collectionPath)
+        .document(id)
+        .delete()
+        .addOnSuccessListener { onSuccess() }
+        .addOnFailureListener { exception -> onFailure(exception) }
+  }
 }

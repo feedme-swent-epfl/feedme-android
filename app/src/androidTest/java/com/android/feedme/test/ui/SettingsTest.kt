@@ -1,6 +1,7 @@
 package com.android.feedme.test.ui
 
 import androidx.compose.ui.test.junit4.createComposeRule
+import com.android.feedme.model.viewmodel.ProfileViewModel
 import com.android.feedme.screen.SettingsScreen
 import com.android.feedme.ui.navigation.NavigationActions
 import com.android.feedme.ui.settings.SettingsScreen
@@ -17,12 +18,23 @@ class SettingsTest {
     goToSettingsScreen()
 
     ComposeScreen.onComposeScreen<SettingsScreen>(composeTestRule) {
-      signOutButton { assertIsDisplayed() }
+      signOutButton {
+        assertIsDisplayed()
+        assertHasClickAction()
+      }
+
+      deleteAccountButton {
+        assertIsDisplayed()
+        assertHasClickAction()
+      }
     }
   }
 
   private fun goToSettingsScreen() {
-    composeTestRule.setContent { SettingsScreen(mockk<NavigationActions>(relaxed = true)) }
+    composeTestRule.setContent {
+      SettingsScreen(
+          mockk<NavigationActions>(relaxed = true), mockk<ProfileViewModel>(relaxed = true))
+    }
     composeTestRule.waitForIdle()
   }
 }

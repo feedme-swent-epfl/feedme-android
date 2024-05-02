@@ -109,6 +109,30 @@ class ProfileViewModel : ViewModel() {
   }
 
   /**
+   * Deletes the current user's profile.
+   *
+   * This method deletes the profile of the current user from the database. It then resets the
+   * current user's profile state to null.
+   *
+   * @param onSuccess A callback function invoked on successful deletion of the profile.
+   * @param onFailure A callback function invoked on failure to delete the profile, with an
+   *   exception.
+   */
+  fun deleteCurrentUserProfile(onSuccess: () -> Unit, onFailure: (Exception) -> Unit) {
+    val currentUserId = currentUserId ?: throw IllegalStateException("Current user ID is null")
+    viewModelScope.launch {
+      repository.deleteProfile(
+          currentUserId,
+          onSuccess = {
+            _currentUserProfile.value = null
+            onSuccess()
+            // TODO delete Followers
+          },
+          onFailure = onFailure)
+    }
+  }
+
+  /**
    * A function that fetches the profiles of the given Ids
    *
    * @param ids: the unique IDs of the profiles we want to fetch

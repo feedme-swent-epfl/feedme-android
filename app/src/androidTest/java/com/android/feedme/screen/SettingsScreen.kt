@@ -11,4 +11,5 @@ class SettingsScreen(semanticsProvider: SemanticsNodeInteractionsProvider) :
 
   // Structural elements of the UI
   val signOutButton: KNode = child { hasTestTag("SignOutButton") }
+  val deleteAccountButton: KNode = child { hasTestTag("DeleteAccountButton") }
 }

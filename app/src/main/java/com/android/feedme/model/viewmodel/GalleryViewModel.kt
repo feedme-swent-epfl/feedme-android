@@ -13,10 +13,6 @@ import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.PickVisualMediaRequest
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.mutableStateListOf
-import androidx.compose.runtime.remember
-import androidx.compose.ui.graphics.ImageBitmap
-import androidx.compose.ui.graphics.asImageBitmap
 import androidx.compose.ui.platform.LocalContext
 import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
@@ -25,8 +21,8 @@ import kotlinx.coroutines.flow.MutableStateFlow
 
 class GalleryViewModel : ViewModel() {
 
-    val bitmaps = MutableStateFlow<List<Bitmap>>(emptyList())
-    var size = 0
+  val bitmaps = MutableStateFlow<List<Bitmap>>(emptyList())
+  var size = 0
 
   @Composable
   fun galleryLauncher(
@@ -50,15 +46,14 @@ class GalleryViewModel : ViewModel() {
     return rememberLauncherForActivityResult(
         ActivityResultContracts.PickMultipleVisualMedia(maxItems),
         onResult = { uris ->
-            uris.let {
-                for (uri in it) {
-                    val source = ImageDecoder.createSource(context.contentResolver, uri)
-                    val bitmap = ImageDecoder.decodeBitmap(source)
-                    bitmaps.value += bitmap
-                }
+          uris.let {
+            for (uri in it) {
+              val source = ImageDecoder.createSource(context.contentResolver, uri)
+              val bitmap = ImageDecoder.decodeBitmap(source)
+              bitmaps.value += bitmap
             }
+          }
         })
-
   }
 }
 

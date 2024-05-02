@@ -1,20 +1,21 @@
 package com.android.feedme.ui.auth
 
-//import android.app.Instrumentation
+// import android.app.Instrumentation
 import android.content.Intent
 import android.util.Log
 import androidx.activity.compose.ManagedActivityResultLauncher
 import androidx.activity.compose.rememberLauncherForActivityResult
+import androidx.activity.result.ActivityResult
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
@@ -43,17 +44,13 @@ import com.android.feedme.model.viewmodel.AuthViewModel
 import com.android.feedme.ui.navigation.NavigationActions
 import com.android.feedme.ui.navigation.Route
 import com.android.feedme.ui.navigation.TOP_LEVEL_DESTINATIONS
+import com.android.feedme.ui.theme.TemplateColor
+import com.android.feedme.ui.theme.cardColor
 import com.google.android.gms.auth.api.signin.GoogleSignIn
 import com.google.android.gms.auth.api.signin.GoogleSignInClient
 import com.google.android.gms.auth.api.signin.GoogleSignInOptions
 import com.google.android.gms.common.api.ApiException
 import kotlinx.coroutines.launch
-import androidx.activity.result.ActivityResult
-import androidx.compose.ui.tooling.preview.Preview
-import androidx.compose.ui.tooling.preview.PreviewParameter
-import com.android.feedme.ui.home.LandingPage
-import com.android.feedme.ui.theme.TemplateColor
-import com.android.feedme.ui.theme.cardColor
 
 /**
  * A composable function representing the login screen.
@@ -103,168 +100,83 @@ fun LoginScreen(navigationActions: NavigationActions, authViewModel: AuthViewMod
               Log.e("LoginScreen", "Sign in failed", e)
             }
           })
-    //LoginDisplay(navigationActions, googleSignInLauncher, googleSignInClient)
+
+  LoginDisplay(navigationActions, googleSignInLauncher, googleSignInClient)
 }
 
-/**
- * Composable function to display the login screen
- * */
+/** Composable function to display the login screen */
 @Composable
-fun LoginDisplay(navigationActions : NavigationActions, googleSignInLauncher:  ManagedActivityResultLauncher<Intent, ActivityResult>, googleSignInClient: GoogleSignInClient) {
-    Column(
-        modifier = Modifier
-            .fillMaxSize()
-            .padding(16.dp)
-            .testTag("LoginScreen"),
-        verticalArrangement = Arrangement.Center,
-        horizontalAlignment = Alignment.CenterHorizontally) {
+fun LoginDisplay(
+    navigationActions: NavigationActions,
+    googleSignInLauncher: ManagedActivityResultLauncher<Intent, ActivityResult>,
+    googleSignInClient: GoogleSignInClient
+) {
+  Column(
+      modifier =
+          Modifier.fillMaxSize()
+              .padding(16.dp)
+              .background(color = TemplateColor)
+              .testTag("LoginScreen"),
+      verticalArrangement = Arrangement.Center,
+      horizontalAlignment = Alignment.CenterHorizontally) {
         Image(
-            painter = painterResource(id = R.drawable.sign_in_logo),
+            painter = painterResource(id = R.drawable.feedme_logo),
             contentDescription = "Sign-in Logo",
-            modifier = Modifier
-                .width(189.dp)
-                .height(189.dp),
+            modifier = Modifier.fillMaxWidth(),
             contentScale = ContentScale.FillBounds)
 
         Spacer(modifier = Modifier.height(40.dp))
-
-        Text(
-            text = "Welcome",
-            modifier = Modifier.testTag("LoginTitle"),
-            // M3/display/large
-            style =
-            TextStyle(
-                fontSize = 57.sp,
-                lineHeight = 64.sp,
-                fontWeight = FontWeight(400),
-                color = Color(0xFF191C1E),
-                textAlign = TextAlign.Center,
-            ))
-
-        Spacer(modifier = Modifier.height(176.dp))
-        Button(
-            onClick = {
-                if (Testing.isTestMode) {
-                    Testing.mockSuccessfulLogin()
-                    navigationActions.navigateTo(Route.HOME)
-                } else {
-                    googleSignInLauncher.launch(googleSignInClient.signInIntent)
-                }
-            },
-            modifier =
-            Modifier
-                .width(250.dp)
-                .height(40.dp)
-                .background(color = Color(0xFFFFFFFF), shape = RoundedCornerShape(size = 20.dp))
-                .testTag("LoginButton"),
-            colors = ButtonDefaults.buttonColors(Color.White),
-            contentPadding = PaddingValues(2.dp),
-            shape = RoundedCornerShape(20.dp),
-            border = BorderStroke(2.dp, Color(0xFFDADCE0))) {
-            Row(
-                verticalAlignment = Alignment.CenterVertically,
-                horizontalArrangement = Arrangement.spacedBy(8.dp)) {
-                // Replace R.drawable.ic_google_logo with the actual resource ID for
-                // the Google logo
-                Image(
-                    painter = painterResource(id = R.drawable.google_logo),
-                    contentDescription = null, // Provide a meaningful content description
-                    modifier = Modifier.size(24.dp))
-                Spacer(modifier = Modifier.width(4.dp))
-
-                Text(
-                    modifier = Modifier
-                        .width(125.dp)
-                        .height(17.dp),
-                    text = "Sign In with Google",
-                    fontSize = 14.sp,
-                    lineHeight = 17.sp,
-                    fontWeight = FontWeight(500),
-                    color = Color(0xFF3C4043),
-                    textAlign = TextAlign.Center,
-                    letterSpacing = 0.25.sp,
-                )
-            }
-        }
-    }
-}
-
-@Preview
-@Composable
-fun LoginPreview(){
-    //LoginDisplay(navigationActions = navigationActions, googleSignInLauncher = googleSignInLauncher, googleSignInClient = googleSignInClient)
-    Column (
-        modifier = Modifier
-            .fillMaxSize()
-            .padding(16.dp)
-            .background(color = TemplateColor)
-            .testTag("LoginScreen"),
-        verticalArrangement = Arrangement.Center,
-        horizontalAlignment = Alignment.CenterHorizontally
-    ) {
-        Image(
-            painter = painterResource(id = R.drawable.sign_in_logo),
-            contentDescription = "Sign-in Logo",
-            modifier = Modifier
-                .width(189.dp)
-                .height(189.dp),
-            contentScale = ContentScale.FillBounds)
-
-        Spacer(modifier = Modifier.height(50.dp))
 
         Text(
             text = "Welcome!",
             modifier = Modifier.testTag("LoginTitle"),
             // M3/display/large
             style =
-            TextStyle(
-                fontSize = 57.sp,
-                lineHeight = 64.sp,
-                fontWeight = FontWeight(400),
-                color = Color.White, // old : 0xFF191C1E
-                textAlign = TextAlign.Center,
-            ))
+                TextStyle(
+                    fontSize = 57.sp,
+                    lineHeight = 64.sp,
+                    fontWeight = FontWeight(400),
+                    color = Color.White, // old : 0xFF191C1E
+                    textAlign = TextAlign.Center,
+                ))
 
-        Spacer(modifier = Modifier.height(160.dp))
+        Spacer(modifier = Modifier.height(80.dp))
 
         Button(
-            onClick = {},
-            modifier =
-            Modifier
-                .width(250.dp)
-                .height(60.dp)
-                .testTag("LoginButton"),
+            onClick = {
+              if (Testing.isTestMode) {
+                Testing.mockSuccessfulLogin()
+                navigationActions.navigateTo(Route.HOME)
+              } else {
+                googleSignInLauncher.launch(googleSignInClient.signInIntent)
+              }
+            },
+            modifier = Modifier.width(250.dp).height(60.dp).testTag("LoginButton"),
             colors = ButtonDefaults.buttonColors(cardColor),
             shape = RoundedCornerShape(40.dp),
-            border = BorderStroke(2.dp, Color.LightGray)
-        ) {
-                Row(
-                    verticalAlignment = Alignment.CenterVertically) {
-                    // Replace R.drawable.ic_google_logo with the actual resource ID for
-                    // the Google logo
-                    Image (
-                        painter = painterResource(id = R.drawable.google_logo),
-                        contentDescription = null, // Provide a meaningful content description
-                        modifier = Modifier.size(24.dp)
-                    )
+            border = BorderStroke(2.dp, Color.LightGray)) {
+              Row(verticalAlignment = Alignment.CenterVertically) {
+                // Replace R.drawable.ic_google_logo with the actual resource ID for
+                // the Google logo
+                Image(
+                    painter = painterResource(id = R.drawable.google_logo),
+                    contentDescription = "Google logo",
+                    modifier = Modifier.size(24.dp))
 
-                    Text(
-                        modifier = Modifier
-                            .width(125.dp)
-                            .height(17.dp),
-                        text = "Sign In with Google",
-                        fontSize = 15.sp,
-                        lineHeight = 17.sp,
-                        fontWeight = FontWeight(500),
-                        color = Color.White,
-                        textAlign = TextAlign.Center,
-                        letterSpacing = 0.25.sp,
-                    )
-                }
-        }
-    }
+                Text(
+                    modifier = Modifier.fillMaxWidth().height(17.dp),
+                    text = "Sign In with Google",
+                    fontSize = 15.sp,
+                    lineHeight = 17.sp,
+                    fontWeight = FontWeight(500),
+                    color = Color.White,
+                    textAlign = TextAlign.Center,
+                    letterSpacing = 0.25.sp,
+                )
+              }
+            }
+      }
 }
-
 
 /** A function to set the test mode for the app. */
 fun setTestMode(bool: Boolean) {

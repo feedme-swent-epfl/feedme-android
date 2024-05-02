@@ -70,10 +70,6 @@ fun ProfileScreen(
       if (profileViewModel.isViewingProfile()) profileViewModel.viewingUserProfile.collectAsState()
       else profileViewModel.currentUserProfile.collectAsState()
 
-  if (profile.value == null) {
-    profileViewModel.fetchCurrentUserProfile()
-  }
-
   Scaffold(
       modifier = Modifier.fillMaxSize().testTag("ProfileScreen"),
       topBar = {

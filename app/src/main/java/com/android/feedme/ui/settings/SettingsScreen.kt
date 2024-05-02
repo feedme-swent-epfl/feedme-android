@@ -103,9 +103,9 @@ fun SignOutButton(navigationActions: NavigationActions) {
 }
 
 /**
- * A composable function that displays a button to delete the user account.
- * When clicked, it shows a confirmation dialog to ensure the user wants to delete their account.
- * Upon confirmation, it triggers the deletion process through the [profileViewModel].
+ * A composable function that displays a button to delete the user account. When clicked, it shows a
+ * confirmation dialog to ensure the user wants to delete their account. Upon confirmation, it
+ * triggers the deletion process through the [profileViewModel].
  *
  * @param navigationActions Actions to navigate to different screens in the app.
  * @param profileViewModel View model responsible for handling user profile data and actions.
@@ -151,12 +151,11 @@ fun DeleteAccountButton(navigationActions: NavigationActions, profileViewModel: 
               onClick = {
                 showDialog = false
                 // Proceed with account deletion
+                profileViewModel.fetchCurrentUserProfile()
                 coroutineScope.launch {
                   profileViewModel.deleteCurrentUserProfile(
                       {
                         Log.d("DeleteAccount", "Account deletion successful")
-                        // This will sign out the user from Google
-
                         googleSignInClient.signOut().addOnCompleteListener {
                           if (it.isSuccessful) {
                             navigationActions.navigateTo(TOP_LEVEL_AUTH)

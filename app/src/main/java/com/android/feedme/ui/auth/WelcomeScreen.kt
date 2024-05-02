@@ -30,6 +30,7 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.android.feedme.R
+import com.android.feedme.model.viewmodel.AuthViewModel
 import com.android.feedme.model.viewmodel.ProfileViewModel
 import com.android.feedme.ui.navigation.BottomNavigationMenu
 import com.android.feedme.ui.navigation.NavigationActions
@@ -50,7 +51,11 @@ import com.android.feedme.ui.theme.OffWhite
  * @param navigationActions: NavigationActions object to handle navigation events
  */
 @Composable
-fun WelcomeScreen(navigationActions: NavigationActions, profileViewModel: ProfileViewModel) {
+fun WelcomeScreen(
+    navigationActions: NavigationActions,
+    profileViewModel: ProfileViewModel,
+    authViewModel: AuthViewModel
+) {
   Scaffold(
       modifier = Modifier.fillMaxSize().testTag("CreateProfileScreen"),
       topBar = { TopBarNavigation(title = "FeedMe") },
@@ -58,14 +63,17 @@ fun WelcomeScreen(navigationActions: NavigationActions, profileViewModel: Profil
         BottomNavigationMenu(
             Route.PROFILE, { top -> navigationActions.navigateTo(top) }, TOP_LEVEL_DESTINATIONS)
       },
-      content = { padding -> WelcomeScreenContent(padding, profileViewModel, navigationActions) })
+      content = { padding ->
+        WelcomeScreenContent(padding, profileViewModel, navigationActions, authViewModel)
+      })
 }
 
 @Composable
 fun WelcomeScreenContent(
     padding: PaddingValues,
     profileViewModel: ProfileViewModel,
-    navigationActions: NavigationActions
+    navigationActions: NavigationActions,
+    authViewModel: AuthViewModel
 ) {
   val density = LocalDensity.current
   val arcHeight = 50.dp
@@ -91,7 +99,7 @@ fun WelcomeScreenContent(
             modifier =
                 Modifier.align(Alignment.BottomCenter)
                     .fillMaxWidth()
-                    .height(600.dp)
+                    .height(450.dp)
                     .clip(topArcShape)
                     .background(OffWhite)
                     .padding(horizontal = 32.dp, vertical = 50.dp)
@@ -102,7 +110,7 @@ fun WelcomeScreenContent(
                   modifier = Modifier.align(Alignment.TopCenter).testTag("InnerColumn")) {
                     Spacer(
                         modifier =
-                            Modifier.height(40.dp)
+                            Modifier.height(100.dp)
                                 .testTag("WelcSpacer")) // Space for the logo outside this box
                     Text(
                         modifier = Modifier.testTag("WelcomeText"),
@@ -111,7 +119,7 @@ fun WelcomeScreenContent(
                         fontSize = 30.sp,
                         fontWeight = FontWeight(600),
                         color = BackgroundColor)
-                    Spacer(modifier = Modifier.height(20.dp).testTag("WelcSpacer"))
+                    Spacer(modifier = Modifier.height(100.dp))
                     Text(
                         modifier = Modifier.testTag("NoAccText"),
                         text = "Looks like you don’t have an account, click below to create one",
@@ -122,8 +130,11 @@ fun WelcomeScreenContent(
                     Spacer(modifier = Modifier.height(24.dp))
                     OutlinedButton(
                         onClick = {
-                          profileViewModel.fetchCurrentUserProfile()
-                          navigationActions.navigateTo(Screen.EDIT_PROFILE)
+                          authViewModel.makeNewProfile({
+                            profileViewModel.fetchCurrentUserProfile()
+                            navigationActions.navigateTo(Screen.PROFILE)
+                            navigationActions.navigateTo(Screen.EDIT_PROFILE)
+                          })
                         },
                         modifier = Modifier.fillMaxWidth().height(50.dp).testTag("OutlinedButton"),
                         border = BorderStroke(2.dp, Cyan)) {
@@ -137,7 +148,7 @@ fun WelcomeScreenContent(
             contentDescription = "Logo",
             modifier =
                 Modifier.align(Alignment.TopCenter)
-                    .padding(top = 80.dp)
+                    .padding(top = 50.dp)
                     .size(100.dp)
                     .testTag("LogoImage"))
       }

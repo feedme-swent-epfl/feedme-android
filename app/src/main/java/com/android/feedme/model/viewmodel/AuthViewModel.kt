@@ -79,7 +79,7 @@ class AuthViewModel : ViewModel() {
             if (existingProfile != null) {
               onSuccess()
             } else {
-              makeNewProfile(googleId, name, email, photoUrl, onDoesntExist, onFailure)
+              onDoesntExist()
             }
           },
           onFailure = onFailure)
@@ -96,29 +96,29 @@ class AuthViewModel : ViewModel() {
    * @param onSuccess Callback to be invoked when the profile is successfully added.
    * @param onFailure Callback to be invoked when adding the profile fails with an exception.
    */
-  private fun makeNewProfile(
-      googleId: String,
-      name: String?,
-      email: String?,
-      photoUrl: String?,
-      onDoesntExist: () -> Unit,
-      onFailure: (Exception) -> Unit
-  ) {
-    val newProfile =
-        Profile(
-            id = googleId,
-            name = name ?: "",
-            username = name ?: "",
-            email = email ?: "",
-            description = "",
-            imageUrl = photoUrl ?: "",
-            followers = listOf(),
-            following = listOf(),
-            filter = listOf(),
-            recipeList = listOf(),
-            commentList = listOf())
+  fun makeNewProfile(onSuccess: () -> Unit = {}, onFailure: (Exception) -> Unit = {}) {
+    FirebaseAuth.getInstance().currentUser?.let { firebaseUser ->
+      val googleId = firebaseUser.uid
+      val name = firebaseUser.displayName.orEmpty()
+      val email = firebaseUser.email.orEmpty()
+      val photoUrl = firebaseUser.photoUrl.toString()
 
-    // Add the newly created profile to the Firestore database.
-    ProfileRepository.instance.addProfile(newProfile, onDoesntExist, onFailure)
+      val newProfile =
+          Profile(
+              id = googleId,
+              name = name ?: "",
+              username = name ?: "",
+              email = email ?: "",
+              description = "",
+              imageUrl = photoUrl ?: "",
+              followers = listOf(),
+              following = listOf(),
+              filter = listOf(),
+              recipeList = listOf(),
+              commentList = listOf())
+
+      // Add the newly created profile to the Firestore database.
+      ProfileRepository.instance.addProfile(newProfile, onSuccess, onFailure)
+    }
   }
 }

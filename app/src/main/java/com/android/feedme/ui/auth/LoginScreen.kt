@@ -79,10 +79,7 @@ fun LoginScreen(navigationActions: NavigationActions, authViewModel: AuthViewMod
                 coroutineScope.launch {
                   authViewModel.authenticateWithGoogle(
                       idToken = idToken,
-                      onSuccess = {
-                        navigationActions.navigateTo(TOP_LEVEL_DESTINATIONS[0])
-                        // Navigate to next screen or show success message
-                      },
+                      onSuccess = { navigationActions.navigateTo(TOP_LEVEL_DESTINATIONS[0]) },
                       onDoesntExist = { navigationActions.navigateTo(Screen.WELCOME) },
                       onFailure = { exception ->
                         // Log error or show error message

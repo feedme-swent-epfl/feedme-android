@@ -47,6 +47,7 @@ import com.android.feedme.model.data.Recipe
 import com.android.feedme.model.data.Step
 import com.android.feedme.model.viewmodel.ProfileViewModel
 import com.android.feedme.ui.component.RecipeSmallCard
+import com.android.feedme.ui.component.SmallThumbnailsDisplay
 import com.android.feedme.ui.navigation.BottomNavigationMenu
 import com.android.feedme.ui.navigation.NavigationActions
 import com.android.feedme.ui.navigation.Route
@@ -101,17 +102,6 @@ fun ProfileScreen(
       content = { padding ->
         ProfileBox(padding, profile.value, navigationActions, profileViewModel)
       })
-}
-
-@Composable
-fun RecipeGrid(recipes: List<Recipe?>) {
-  LazyVerticalGrid(
-      columns = GridCells.Fixed(2),
-      contentPadding = PaddingValues(10.dp, 0.dp, 10.dp, 10.dp),
-  ) {
-    items(recipes.size) { index -> recipes[index]?.let { RecipeSmallCard(recipe = it) } }
-  }
-  Spacer(modifier = Modifier.height(20.dp))
 }
 
 /**
@@ -182,7 +172,7 @@ fun ProfileBox(
                 difficulty = "Intermediate",
                 "https://external-content.duckduckgo.com/iu/?u=https%3A%2F%2Fwww.mamablip.com%2Fstorage%2FLasagna%2520with%2520Meat%2520and%2520Tomato%2520Sauce_3481612355355.jpg&f=1&nofb=1&ipt=8e887ba99ce20a85fb867dabbe0206c1146ebf2f13548b5653a2778e3ea18c54&ipo=images")
 
-        RecipeGrid(listOf(recipe, recipe, recipe, recipe))
+        SmallThumbnailsDisplay(listOf(recipe, recipe, recipe, recipe))
       }
 }
 

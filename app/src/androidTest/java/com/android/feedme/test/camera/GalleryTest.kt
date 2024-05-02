@@ -2,7 +2,6 @@ package com.android.feedme.test.camera
 
 import android.Manifest
 import android.os.Build
-import androidx.compose.ui.test.assertIsDisplayed
 import androidx.compose.ui.test.junit4.createComposeRule
 import androidx.test.ext.junit.runners.AndroidJUnit4
 import androidx.test.rule.GrantPermissionRule
@@ -10,7 +9,6 @@ import com.android.feedme.screen.GalleryScreen
 import com.android.feedme.ui.camera.GalleryScreen
 import com.android.feedme.ui.navigation.NavigationActions
 import com.kaspersky.kaspresso.testcases.api.testcase.TestCase
-import io.github.kakaocup.compose.node.element.ComposeScreen
 import io.mockk.every
 import io.mockk.mockk
 import org.junit.Rule

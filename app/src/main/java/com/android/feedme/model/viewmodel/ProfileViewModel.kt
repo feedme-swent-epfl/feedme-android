@@ -23,9 +23,9 @@ class ProfileViewModel : ViewModel() {
   // Current User
   var currentUserId: String? = null
   private val _currentUserProfile = MutableStateFlow<Profile?>(null)
-  val currentUserProfile: StateFlow<Profile?> = _currentUserProfile
   private val _currentUserFollowers = MutableStateFlow<List<Profile>>(listOf())
   private val _currentUserFollowing = MutableStateFlow<List<Profile>>(listOf())
+  val currentUserProfile: StateFlow<Profile?> = _currentUserProfile
   val currentUserFollowers: StateFlow<List<Profile>> = _currentUserFollowers
   val currentUserFollowing: StateFlow<List<Profile>> = _currentUserFollowing
 
@@ -136,16 +136,17 @@ class ProfileViewModel : ViewModel() {
    *   exception.
    */
   fun deleteCurrentUserProfile(onSuccess: () -> Unit, onFailure: (Exception) -> Unit) {
-    val currentUserId = currentUserId ?: throw IllegalStateException("Current user ID is null")
-    viewModelScope.launch {
-      repository.deleteProfile(
-          currentUserId,
-          onSuccess = {
-            _currentUserProfile.value = null
-            onSuccess()
-            // TODO delete Followers
-          },
-          onFailure = onFailure)
+    currentUserId ?: throw IllegalStateException("Current user ID is null, and should never be")
+    val delete = {
+      if (currentUserFollowers.value.isEmpty() && _currentUserFollowing.value.isEmpty()) {
+        repository.deleteProfile(currentUserId!!, onSuccess, onFailure)
+      }
+    }
+    _currentUserFollowers.value.forEach { followerId ->
+      removeFollower(followerId, delete, onFailure)
+    }
+    _currentUserFollowing.value.forEach { followerId ->
+      unfollowUser(followerId, delete, onFailure)
     }
   }
 
@@ -295,7 +296,11 @@ class ProfileViewModel : ViewModel() {
    *
    * @param targetUser The Profile of the user being unfollowed.
    */
-  fun unfollowUser(targetUser: Profile) {
+  fun unfollowUser(
+      targetUser: Profile,
+      onSuccess: () -> Unit = {},
+      onFailure: (Exception) -> Unit = {}
+  ) {
     if (currentUserId == null) {
       return
     }
@@ -328,10 +333,12 @@ class ProfileViewModel : ViewModel() {
                     }
                   }
             }
+            onSuccess()
           },
           onFailure = { error ->
             _errorMessages.value = "Failed to unfollow user: ${error.message}"
             Log.e("ProfileViewModel", "Failed to unfollow user: ${error.message}")
+            onFailure(error)
           })
     }
   }
@@ -342,7 +349,11 @@ class ProfileViewModel : ViewModel() {
    *
    * @param follower The Profile of the follower to remove.
    */
-  fun removeFollower(follower: Profile) {
+  fun removeFollower(
+      follower: Profile,
+      onSuccess: () -> Unit = {},
+      onFailure: (Exception) -> Unit = {}
+  ) {
     if (currentUserId == null) {
       return
     }
@@ -375,10 +386,12 @@ class ProfileViewModel : ViewModel() {
                     }
                   }
             }
+            onSuccess()
           },
           onFailure = { error ->
             _errorMessages.value = "Failed to remove follower and following: ${error.message}"
             Log.e("ProfileViewModel", "Failed to remove follower and following: ${error.message}")
+            onFailure(error)
           })
     }
   }

@@ -5,11 +5,17 @@ import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
+import androidx.compose.material3.AlertDialog
+import androidx.compose.material3.Button
 import androidx.compose.material3.OutlinedButton
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
@@ -79,16 +85,23 @@ fun SignOutButton(navigationActions: NavigationActions) {
   OutlinedButton(
       // TODO: the button's UI will be updated in a future PR
       modifier = Modifier.testTag("SignOutButton"),
-      onClick = { coroutineScope.launch {} }) {
+      onClick = {
+        coroutineScope.launch { // This will sign out the user from Google
+          googleSignInClient.signOut().addOnCompleteListener {
+            if (it.isSuccessful) {
+              navigationActions.navigateTo(TOP_LEVEL_AUTH)
+              Log.d("SignOut", "Sign out successful")
+            } else {
+              // Handle the error, could not sign out
+              Log.e("SignOut", "Sign out failed", it.exception)
+            }
+          }
+        }
+      }) {
         Text(text = "Sign Out")
       }
 }
 
-/**
- * A composable function representing a delete account button.
- *
- * @param navigationActions : the nav actions given in the MainActivity
- */
 @Composable
 fun DeleteAccountButton(navigationActions: NavigationActions, profileViewModel: ProfileViewModel) {
   val context = LocalContext.current
@@ -101,28 +114,65 @@ fun DeleteAccountButton(navigationActions: NavigationActions, profileViewModel: 
 
   val googleSignInClient = GoogleSignIn.getClient(context, gso)
 
+  // State to track if the delete confirmation dialog is open
+  var showDialog by remember { mutableStateOf(false) }
+
+  // Function to show the delete confirmation dialog
+  fun showDeleteConfirmationDialog() {
+    showDialog = true
+  }
+
   OutlinedButton(
       // TODO: the button's UI will be updated in a future PR
       modifier = Modifier.testTag("DeleteAccountButton"),
-      onClick = {
-        coroutineScope.launch {
-          profileViewModel.deleteCurrentUserProfile(
-              {
-                Log.d("DeleteAccount", "Account deletion successful")
-                // This will sign out the user from Google
-                googleSignInClient.signOut().addOnCompleteListener {
-                  if (it.isSuccessful) {
-                    navigationActions.navigateTo(TOP_LEVEL_AUTH)
-                    Log.e("Sign-out", "Sign-out sucessful", it.exception)
-                  } else {
-                    navigationActions.navigateTo(TOP_LEVEL_AUTH)
-                    Log.e("Sign-out", "Sign-out failed", it.exception)
-                  }
-                }
-              },
-              { e -> Log.e("DeleteAccount", "Account deletion failed", e) })
-        }
-      }) {
+      onClick = { showDeleteConfirmationDialog() }) {
         Text(text = "Delete Account")
       }
+
+  // Confirmation dialog
+  if (showDialog) {
+    AlertDialog(
+        onDismissRequest = {
+          // Dismiss the dialog if the user cancels
+          showDialog = false
+        },
+        title = { Text(text = "Confirm Deletion") },
+        text = { Text(text = "Are you sure you want to delete your account?") },
+        confirmButton = {
+          Button(
+              onClick = {
+                showDialog = false
+                // Proceed with account deletion
+                coroutineScope.launch {
+                  profileViewModel.deleteCurrentUserProfile(
+                      {
+                        Log.d("DeleteAccount", "Account deletion successful")
+                        // This will sign out the user from Google
+
+                        googleSignInClient.signOut().addOnCompleteListener {
+                          if (it.isSuccessful) {
+                            navigationActions.navigateTo(TOP_LEVEL_AUTH)
+                            Log.d("Sign-out", "Sign-out successful")
+                          } else {
+                            navigationActions.navigateTo(TOP_LEVEL_AUTH)
+                            Log.e("Sign-out", "Sign-out failed", it.exception)
+                          }
+                        }
+                      },
+                      { e -> Log.e("DeleteAccount", "Account deletion failed", e) })
+                }
+              }) {
+                Text(text = "Confirm")
+              }
+        },
+        dismissButton = {
+          Button(
+              onClick = {
+                // Dismiss the dialog if the user cancels
+                showDialog = false
+              }) {
+                Text(text = "Cancel")
+              }
+        })
+  }
 }

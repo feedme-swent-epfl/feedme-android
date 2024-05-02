@@ -115,8 +115,8 @@ class ProfileRepository(private val db: FirebaseFirestore) {
         .addOnSuccessListener { onSuccess() }
         .addOnFailureListener { exception -> onFailure(exception) }
   }
-  
-  /**     
+
+  /**
    * follow a user, adding the target user from the current user's following list and the current
    * user from the target user's followers list. This method is transactional, ensuring that both
    * operations succeed or fail together.

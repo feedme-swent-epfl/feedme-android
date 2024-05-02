@@ -70,6 +70,10 @@ fun ProfileScreen(
       if (profileViewModel.isViewingProfile()) profileViewModel.viewingUserProfile.collectAsState()
       else profileViewModel.currentUserProfile.collectAsState()
 
+  if (profile.value == null) {
+    profileViewModel.fetchCurrentUserProfile()
+  }
+
   Scaffold(
       modifier = Modifier.fillMaxSize().testTag("ProfileScreen"),
       topBar = {
@@ -112,8 +116,7 @@ fun ProfileBox(
     profile: Profile?,
     navigationActions: NavigationActions,
     profileViewModel: ProfileViewModel
-) { // TODO add font
-
+) {
   Column(
       modifier = Modifier.padding(padding).testTag("ProfileBox"),
       verticalArrangement = Arrangement.Top) {
@@ -123,7 +126,10 @@ fun ProfileBox(
             verticalAlignment = Alignment.CenterVertically) {
               UserProfilePicture()
               Spacer(modifier = Modifier.width(20.dp))
-              UserNameBox(profile ?: Profile())
+              UserNameBox(
+                  profile
+                      ?: throw NullPointerException(
+                          "No profile was showed because profile is Null and should never be, because maybe the currentUserId: ${profileViewModel.currentUserId} doesn't have a valid profile in the database"))
               Spacer(modifier = Modifier.width(5.dp))
               Row(
                   horizontalArrangement = Arrangement.Center,

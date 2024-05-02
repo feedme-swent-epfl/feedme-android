@@ -60,10 +60,10 @@ import androidx.compose.ui.viewinterop.AndroidView
 import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
 import androidx.lifecycle.viewmodel.compose.viewModel
-import com.android.feedme.ML.OverlayTextField
-import com.android.feedme.ML.TextProcessing
-import com.android.feedme.ML.TextRecognition
-import com.android.feedme.ML.barcodeScanner
+import com.android.feedme.ml.OverlayTextField
+import com.android.feedme.ml.TextProcessing
+import com.android.feedme.ml.TextRecognition
+import com.android.feedme.ml.barcodeScanner
 import com.android.feedme.R
 import com.android.feedme.model.viewmodel.CameraViewModel
 import com.android.feedme.ui.navigation.NavigationActions

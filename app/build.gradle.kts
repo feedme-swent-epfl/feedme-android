@@ -188,8 +188,6 @@ dependencies {
     //ML kit barcode
     implementation(libs.mlkit.barcode)
     implementation(libs.gson)
-    implementation(libs.volley)
-
 
     // ---------------- CameraX --------------------
     implementation(libs.camera.core)

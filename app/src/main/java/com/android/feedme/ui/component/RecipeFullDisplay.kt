@@ -60,7 +60,7 @@ import com.android.feedme.ui.theme.YellowStarBlackOutline
  */
 @Composable
 fun RecipeFullDisplay(
-    route : String,
+    route: String,
     navigationActions: NavigationActions,
     recipeViewModel: RecipeViewModel = RecipeViewModel()
 ) {

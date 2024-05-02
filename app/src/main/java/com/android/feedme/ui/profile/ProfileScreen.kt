@@ -41,12 +41,8 @@ import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.android.feedme.R
-import com.android.feedme.model.data.Ingredient
-import com.android.feedme.model.data.IngredientMetaData
-import com.android.feedme.model.data.MeasureUnit
 import com.android.feedme.model.data.Profile
 import com.android.feedme.model.data.Recipe
-import com.android.feedme.model.data.Step
 import com.android.feedme.model.viewmodel.ProfileViewModel
 import com.android.feedme.model.viewmodel.RecipeViewModel
 import com.android.feedme.ui.component.SmallThumbnailsDisplay
@@ -61,7 +57,6 @@ import com.android.feedme.ui.theme.FollowButton
 import com.android.feedme.ui.theme.FollowButtonBorder
 import com.android.feedme.ui.theme.FollowingButton
 import com.android.feedme.ui.theme.TextBarColor
-
 
 /**
  * A composable function that generates the profile screen.
@@ -86,9 +81,7 @@ fun ProfileScreen(
       else profileViewModel.currentUserProfile.collectAsState()
 
   Scaffold(
-      modifier = Modifier
-          .fillMaxSize()
-          .testTag("ProfileScreen"),
+      modifier = Modifier.fillMaxSize().testTag("ProfileScreen"),
       topBar = {
         TopBarNavigation(
             title = "Profile",
@@ -108,7 +101,13 @@ fun ProfileScreen(
             TOP_LEVEL_DESTINATIONS)
       },
       content = { padding ->
-        ProfileBox(padding, profile.value, recipeList, navigationActions, profileViewModel, recipeViewModel)
+        ProfileBox(
+            padding,
+            profile.value,
+            recipeList,
+            navigationActions,
+            profileViewModel,
+            recipeViewModel)
       })
 }
 
@@ -133,53 +132,47 @@ fun ProfileBox(
     recipeViewModel: RecipeViewModel
 ) { // TODO add font
 
-    val tabList = listOf("Recipes", "Comments")
+  val tabList = listOf("Recipes", "Comments")
 
   LazyColumn(
-      modifier = Modifier
-          .padding(padding)
-          .testTag("ProfileBox"),
+      modifier = Modifier.padding(padding).testTag("ProfileBox"),
       verticalArrangement = Arrangement.Top) {
-      item {
-
-            Row(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(vertical = 20.dp),
-                horizontalArrangement = Arrangement.Center,
-                verticalAlignment = Alignment.CenterVertically) {
-                  UserProfilePicture()
-                  Spacer(modifier = Modifier.width(20.dp))
-                  UserNameBox(profile ?: Profile())
-                  Spacer(modifier = Modifier.width(5.dp))
-                  Row(
-                      horizontalArrangement = Arrangement.Center,
-                      verticalAlignment = Alignment.CenterVertically) {
-                        FollowersButton(profile ?: Profile(), navigationActions)
-                        FollowingButton(profile ?: Profile(), navigationActions)
-                      }
-                }
-            UserBio(
-                profile ?: Profile(),
-            )
-            ProfileButtons(navigationActions, profile ?: Profile(), profileViewModel)
+        item {
+          Row(
+              modifier = Modifier.fillMaxWidth().padding(vertical = 20.dp),
+              horizontalArrangement = Arrangement.Center,
+              verticalAlignment = Alignment.CenterVertically) {
+                UserProfilePicture()
+                Spacer(modifier = Modifier.width(20.dp))
+                UserNameBox(profile ?: Profile())
+                Spacer(modifier = Modifier.width(5.dp))
+                Row(
+                    horizontalArrangement = Arrangement.Center,
+                    verticalAlignment = Alignment.CenterVertically) {
+                      FollowersButton(profile ?: Profile(), navigationActions)
+                      FollowingButton(profile ?: Profile(), navigationActions)
+                    }
+              }
+          UserBio(
+              profile ?: Profile(),
+          )
+          ProfileButtons(navigationActions, profile ?: Profile(), profileViewModel)
 
           TabRow(
               selectedTabIndex = 0,
               containerColor = MaterialTheme.colorScheme.surface,
               contentColor = MaterialTheme.colorScheme.onSurface) {
-              tabList.forEachIndexed { index, title ->
+                tabList.forEachIndexed { index, title ->
                   Tab(
                       text = { Text(title) },
-                      selected = false/*TODO(): selectedTabIndex == index*/,
+                      selected = false /*TODO(): selectedTabIndex == index*/,
                       onClick = { /*TODO selectedTabIndex = index */},
-                      modifier =
-                      Modifier.testTag(if (index == 0) "TabRecipes" else "TabComments"))
+                      modifier = Modifier.testTag(if (index == 0) "TabRecipes" else "TabComments"))
+                }
               }
-          }
 
-            SmallThumbnailsDisplay(recipeList, navigationActions, recipeViewModel)
-          }
+          SmallThumbnailsDisplay(recipeList, navigationActions, recipeViewModel)
+        }
       }
 }
 
@@ -187,11 +180,7 @@ fun ProfileBox(
 @Composable
 fun UserProfilePicture() {
   Image(
-      modifier = Modifier
-          .width(100.dp)
-          .height(100.dp)
-          .clip(CircleShape)
-          .testTag("ProfileIcon"),
+      modifier = Modifier.width(100.dp).height(100.dp).clip(CircleShape).testTag("ProfileIcon"),
       painter = painterResource(id = R.drawable.user_logo),
       contentDescription = "User Profile Image",
       contentScale = ContentScale.FillBounds)
@@ -204,9 +193,7 @@ fun UserProfilePicture() {
  */
 @Composable
 fun UserNameBox(profile: Profile) {
-  Column(modifier = Modifier
-      .width(100.dp)
-      .testTag("ProfileName")) {
+  Column(modifier = Modifier.width(100.dp).testTag("ProfileName")) {
     Text(text = profile.name, style = textStyle(17, 15, 700), overflow = TextOverflow.Ellipsis)
     Spacer(modifier = Modifier.height(10.dp))
     Text(
@@ -266,9 +253,7 @@ fun FollowingButton(profile: Profile, navigationActions: NavigationActions) {
 @Composable
 fun UserBio(profile: Profile) {
   Text(
-      modifier = Modifier
-          .padding(horizontal = 18.dp)
-          .testTag("ProfileBio"),
+      modifier = Modifier.padding(horizontal = 18.dp).testTag("ProfileBio"),
       text = profile.description,
       style = textStyle(13, 15, 400, TextAlign.Justify))
 }
@@ -291,9 +276,7 @@ fun ProfileButtons(
   }
 
   Row(
-      modifier = Modifier
-          .fillMaxWidth()
-          .padding(vertical = 20.dp),
+      modifier = Modifier.fillMaxWidth().padding(vertical = 20.dp),
       horizontalArrangement = Arrangement.SpaceEvenly,
       verticalAlignment = Alignment.CenterVertically) {
         if (!profileViewModel.isViewingProfile()) {
@@ -317,9 +300,7 @@ fun EditProfileButton(navigationActions: NavigationActions) {
       border = BorderStroke(2.dp, FollowButtonBorder),
       onClick = { navigationActions.navigateTo(Screen.EDIT_PROFILE) }) {
         Text(
-            modifier = Modifier
-                .width(110.dp)
-                .height(13.dp),
+            modifier = Modifier.width(110.dp).height(13.dp),
             text = "Edit Profile",
             fontWeight = FontWeight.Bold,
             style = textStyle())
@@ -350,9 +331,7 @@ fun FollowUnfollowButton(
           profileViewModel.unfollowUser(profile)
         }) {
           Text(
-              modifier = Modifier
-                  .width(110.dp)
-                  .height(13.dp),
+              modifier = Modifier.width(110.dp).height(13.dp),
               text = "Unfollow",
               fontWeight = FontWeight.Bold,
               style = textStyle())
@@ -368,9 +347,7 @@ fun FollowUnfollowButton(
           profileViewModel.followUser(profile) // Assuming the function signature matches
         }) {
           Text(
-              modifier = Modifier
-                  .width(110.dp)
-                  .height(13.dp),
+              modifier = Modifier.width(110.dp).height(13.dp),
               text = "Follow",
               color = TextBarColor,
               fontWeight = FontWeight.Bold,

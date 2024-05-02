@@ -1,4 +1,4 @@
-package com.android.feedme.ML
+package com.android.feedme.ml
 
 import android.graphics.Bitmap
 import androidx.compose.runtime.mutableStateOf

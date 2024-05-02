@@ -54,6 +54,7 @@ import androidx.compose.ui.graphics.asImageBitmap
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalLifecycleOwner
 import androidx.compose.ui.platform.testTag
+import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.viewinterop.AndroidView
 import androidx.core.app.ActivityCompat
@@ -69,8 +70,6 @@ import com.android.feedme.ui.navigation.TopBarNavigation
 import com.android.feedme.ui.theme.CameraButtonsBackground
 import com.google.mlkit.vision.text.Text
 import kotlinx.coroutines.launch
-import androidx.compose.ui.res.painterResource
-
 
 /**
  * A composable function representing the camera screen.
@@ -87,7 +86,7 @@ fun CameraScreen(navigationActions: NavigationActions) {
   ///// Machine Learning Part /////
   // Switch off and on the text recognition functionality
   val textRecognitionMode = remember { mutableStateOf(true) }
-    val barcodeRecognition = remember { mutableStateOf(true) }
+  val barcodeRecognition = remember { mutableStateOf(true) }
   // Display the text box with the recognised text
   val displayText = remember { mutableStateOf(false) }
   // Text extract by [TextRecognition] function
@@ -121,26 +120,22 @@ fun CameraScreen(navigationActions: NavigationActions) {
       sheetContent = {
         PhotoBottomSheetContent(bitmaps = bitmaps, modifier = Modifier.fillMaxWidth())
       }) { padding ->
-        Box(modifier = Modifier
-            .fillMaxSize()
-            .padding(padding)) {
+        Box(modifier = Modifier.fillMaxSize().padding(padding)) {
           CameraPreview(controller = controller, modifier = Modifier.fillMaxSize())
 
           Row(
               modifier =
-              Modifier
-                  .fillMaxWidth()
-                  .align(Alignment.BottomCenter)
-                  .padding(16.dp)
-                  .padding(bottom = 32.dp),
+                  Modifier.fillMaxWidth()
+                      .align(Alignment.BottomCenter)
+                      .padding(16.dp)
+                      .padding(bottom = 32.dp),
               horizontalArrangement = Arrangement.SpaceAround) {
                 IconButton(
                     modifier =
-                    Modifier
-                        .size(56.dp)
-                        .background(CameraButtonsBackground, shape = CircleShape)
-                        .padding(10.dp)
-                        .testTag("GalleryButton"),
+                        Modifier.size(56.dp)
+                            .background(CameraButtonsBackground, shape = CircleShape)
+                            .padding(10.dp)
+                            .testTag("GalleryButton"),
                     // Open the local gallery when the gallery button is clicked
                     onClick = { scope.launch { scaffoldState.bottomSheetState.expand() } }) {
                       Icon(imageVector = Icons.Default.Photo, contentDescription = "Open gallery")
@@ -148,11 +143,10 @@ fun CameraScreen(navigationActions: NavigationActions) {
 
                 IconButton(
                     modifier =
-                    Modifier
-                        .size(56.dp)
-                        .background(CameraButtonsBackground, shape = CircleShape)
-                        .padding(10.dp)
-                        .testTag("PhotoButton"),
+                        Modifier.size(56.dp)
+                            .background(CameraButtonsBackground, shape = CircleShape)
+                            .padding(10.dp)
+                            .testTag("PhotoButton"),
                     // Take a photo when the photo button is clicked
                     onClick = {
                       takePhoto(
@@ -170,30 +164,32 @@ fun CameraScreen(navigationActions: NavigationActions) {
                 if (textRecognitionMode.value) {
                   IconButton(
                       onClick = { displayText.value = true },
-                      modifier = Modifier.size(56.dp)
-                          .background(CameraButtonsBackground, shape = CircleShape)
-                          .padding(10.dp)
-                          .testTag("MLButton")) {
+                      modifier =
+                          Modifier.size(56.dp)
+                              .background(CameraButtonsBackground, shape = CircleShape)
+                              .padding(10.dp)
+                              .testTag("MLTextButton")) {
                         Icon(
                             imageVector = Icons.TwoTone.TextFields,
                             contentDescription = "Display text after ML")
                       }
                 }
-              // Button for barcode scanner
+                // Button for barcode scanner
                 if (barcodeRecognition.value) {
-                    val barcodeScannerPainter = painterResource(id = R.drawable.barcode_scanner)
-                    IconButton(onClick = { /*TODO scan barcode and display result*/ },
-                        modifier = Modifier.size(56.dp)
-                            .background(CameraButtonsBackground, shape = CircleShape)
-                            .padding(10.dp)
-                            .testTag("BarcodeButton")) {
+                  val barcodeScannerPainter = painterResource(id = R.drawable.barcode_scanner)
+                  IconButton(
+                      onClick = { /*TODO scan barcode and display result*/},
+                      modifier =
+                          Modifier.size(56.dp)
+                              .background(CameraButtonsBackground, shape = CircleShape)
+                              .padding(10.dp)
+                              .testTag("MLBarcodeButton")) {
                         Icon(
                             painter = barcodeScannerPainter,
                             contentDescription = "Barcode Scanner",
                             modifier = Modifier.size(25.dp),
-                            tint = Color.Black
-                        )
-                    }
+                            tint = Color.Black)
+                      }
                 }
               }
           // Show the message "Photo Saved" box if the photo was taken
@@ -202,13 +198,11 @@ fun CameraScreen(navigationActions: NavigationActions) {
             // Show the message box
             Box(
                 modifier =
-                Modifier
-                    .padding(16.dp)
-                    .background(
-                        Color.Black.copy(alpha = 0.7f), shape = RoundedCornerShape(8.dp)
-                    )
-                    .padding(horizontal = 24.dp, vertical = 16.dp)
-                    .align(Alignment.BottomCenter)) {
+                    Modifier.padding(16.dp)
+                        .background(
+                            Color.Black.copy(alpha = 0.7f), shape = RoundedCornerShape(8.dp))
+                        .padding(horizontal = 24.dp, vertical = 16.dp)
+                        .align(Alignment.BottomCenter)) {
                   Text(
                       text = "Photo saved",
                       color = Color.White,

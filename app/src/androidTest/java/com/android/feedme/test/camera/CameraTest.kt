@@ -110,7 +110,7 @@ class CameraTest : TestCase() {
   }
   // Test the normal case
   @Test
-  fun MLButton() {
+  fun MLTextButton() {
     goToCameraScreen()
     ComposeScreen.onComposeScreen<CameraScreen>(composeTestRule) {
       cameraPreview { assertIsDisplayed() }
@@ -137,7 +137,7 @@ class CameraTest : TestCase() {
   }
   // Test the case where no photo was taken before asking for text recognition.
   @Test
-  fun MLButtonWithNoPhoto() {
+  fun MLTextButtonWithNoPhoto() {
     goToCameraScreen()
     ComposeScreen.onComposeScreen<CameraScreen>(composeTestRule) {
       cameraPreview { assertIsDisplayed() }
@@ -153,6 +153,21 @@ class CameraTest : TestCase() {
       composeTestRule.onNodeWithTag("ML Text Box")
       composeTestRule.onNodeWithTag("ML Text Box inside")
       composeTestRule.onNodeWithText("ERROR : no photo to analyse.").assertIsDisplayed()
+    }
+  }
+
+  @Test
+  fun MLBarcodeButton() {
+    goToCameraScreen()
+    ComposeScreen.onComposeScreen<CameraScreen>(composeTestRule) {
+      cameraPreview { assertIsDisplayed() }
+
+      photoButton { assertIsDisplayed() }
+
+      MLBarcodeButton {
+        assertIsDisplayed()
+        performClick()
+      }
     }
   }
 }

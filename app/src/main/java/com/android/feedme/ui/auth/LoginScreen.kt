@@ -37,7 +37,6 @@ import androidx.compose.ui.unit.sp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.android.feedme.R
 import com.android.feedme.model.viewmodel.AuthViewModel
-import com.android.feedme.model.viewmodel.ProfileViewModel
 import com.android.feedme.ui.navigation.NavigationActions
 import com.android.feedme.ui.navigation.Route
 import com.android.feedme.ui.navigation.Screen
@@ -84,9 +83,7 @@ fun LoginScreen(navigationActions: NavigationActions, authViewModel: AuthViewMod
                         navigationActions.navigateTo(TOP_LEVEL_DESTINATIONS[0])
                         // Navigate to next screen or show success message
                       },
-                      onDoesntExist = {
-                          navigationActions.navigateTo(Screen.WELCOME)
-                      },
+                      onDoesntExist = { navigationActions.navigateTo(Screen.WELCOME) },
                       onFailure = { exception ->
                         // Log error or show error message
                         Log.e("LoginScreen", "Authentication failed", exception)

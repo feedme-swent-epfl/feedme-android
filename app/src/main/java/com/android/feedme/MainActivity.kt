@@ -52,9 +52,7 @@ class MainActivity : ComponentActivity() {
       feedmeAppTheme {
         // A surface container using the 'background' color from the theme
         Surface(
-            modifier = Modifier
-              .fillMaxSize()
-              .semantics { testTag = C.Tag.main_screen_container },
+            modifier = Modifier.fillMaxSize().semantics { testTag = C.Tag.main_screen_container },
             color = MaterialTheme.colorScheme.background) {
               // Navigation host for the app
               val navController = rememberNavController()
@@ -67,7 +65,9 @@ class MainActivity : ComponentActivity() {
                 navigation(startDestination = Screen.AUTHENTICATION, route = Route.AUTHENTICATION) {
                   composable(Screen.AUTHENTICATION) { LoginScreen(navigationActions) }
                   composable(Screen.WELCOME) { WelcomeScreen(navigationActions, profileViewModel) }
-                  composable(Screen.EDIT_PROFILE) { EditProfileScreen(navigationActions, profileViewModel) }
+                  composable(Screen.EDIT_PROFILE) {
+                    EditProfileScreen(navigationActions, profileViewModel)
+                  }
                 }
 
                 navigation(startDestination = Screen.HOME, route = Route.HOME) {

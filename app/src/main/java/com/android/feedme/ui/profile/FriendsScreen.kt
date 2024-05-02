@@ -229,7 +229,9 @@ fun FollowUnfollowButton(
   val isFollowing = remember {
     mutableStateOf(currentUser?.following?.contains(profile.id) ?: false)
   }
-
+  if (profile.id == currentUser?.id) {
+    return
+  }
   if (isFollowing.value) {
     Button(
         onClick = {

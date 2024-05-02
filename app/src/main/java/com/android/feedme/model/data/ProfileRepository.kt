@@ -72,7 +72,15 @@ class ProfileRepository(private val db: FirebaseFirestore) {
         }
         .addOnFailureListener { exception -> onFailure(exception) }
   }
-  /** Fetch all the profiles of the given List of Ids */
+
+  /**
+   * Fetch all the profiles of the given List of Ids
+   *
+   * @param ids The list of profile IDs to fetch.
+   * @param onSuccess A callback function invoked with the list of profiles on success.
+   * @param onFailure A callback function invoked on failure to fetch the profiles, with an
+   *   exception.
+   */
   fun getProfiles(
       ids: List<String>,
       onSuccess: (List<Profile>) -> Unit,
@@ -89,8 +97,14 @@ class ProfileRepository(private val db: FirebaseFirestore) {
   }
 
   /**
-   * Follows another user, updating both the current user's following list and the other user's
-   * followers list.
+   * follow a user, adding the target user from the current user's following list and the current
+   * user from the target user's followers list. This method is transactional, ensuring that both
+   * operations succeed or fail together.
+   *
+   * @param currentUserId The ID of the user who is following.
+   * @param toFollowId The ID of the user to follow.
+   * @param onSuccess A callback function invoked on successful following.
+   * @param onFailure A callback function invoked on failure to follow, with an exception.
    */
   fun followUser(
       currentUserId: String,
@@ -188,66 +202,6 @@ class ProfileRepository(private val db: FirebaseFirestore) {
           set(targetUserRef, targetUser)
 
           Pair(currentUser, targetUser) // Returning the Pair of updated profiles
-        },
-        {
-          it as Pair<Profile, Profile> // Cast result to Pair<Profile, Profile>
-          onSuccess(it.first, it.second) // Call onSuccess with the updated profiles
-        },
-        onFailure)
-  }
-
-  /**
-   * Removes a follower from the specified user's followers list and updates the following list of
-   * the follower. This method is transactional, ensuring that both operations succeed or fail
-   * together.
-   *
-   * @param userId The ID of the user who will lose a follower.
-   * @param followerId The ID of the follower to remove.
-   * @param onSuccess A callback function invoked on successful removal of the follower.
-   * @param onFailure A callback function invoked on failure to remove the follower, with an
-   *   exception.
-   */
-  fun removeFollower(
-      userId: String,
-      followerId: String,
-      onSuccess: (Profile, Profile) -> Unit,
-      onFailure: (Exception) -> Unit
-  ) {
-    handleFirestoreTransaction(
-        {
-          // Define Firestore document references for the user and the follower
-          val userDocRef = db.collection(collectionPath).document(userId)
-          val followerDocRef = db.collection(collectionPath).document(followerId)
-
-          // Attempt to fetch the current state of the user and the follower from Firestore
-          val user =
-              get(userDocRef).toObject(Profile::class.java)
-                  ?: return@handleFirestoreTransaction null
-          val follower =
-              get(followerDocRef).toObject(Profile::class.java)
-                  ?: return@handleFirestoreTransaction null
-
-          // Remove the followerId from the user's followers list if it exists
-          val userFollowers = user.followers.toMutableList()
-          if (userFollowers.contains(followerId)) {
-            userFollowers.remove(followerId)
-            user.followers = userFollowers
-            update(userDocRef, "followers", userFollowers) // Update the user document in Firestore
-          }
-
-          // Remove the userId from the follower's following list if it exists
-          val followerFollowing = follower.following.toMutableList()
-          if (followerFollowing.contains(userId)) {
-            followerFollowing.remove(userId)
-            follower.following = followerFollowing
-            update(
-                followerDocRef,
-                "following",
-                followerFollowing) // Update the follower document in Firestore
-          }
-
-          // Return the updated profiles as a Pair to be passed to onSuccess
-          Pair(user, follower)
         },
         {
           it as Pair<Profile, Profile> // Cast result to Pair<Profile, Profile>

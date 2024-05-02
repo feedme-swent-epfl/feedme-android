@@ -220,8 +220,14 @@ class ProfileRepositoryTest {
     `when`(mockTransaction.get(currentUserRef)).thenReturn(currentUserSnapshot)
     `when`(mockTransaction.get(targetUserRef)).thenReturn(targetUserSnapshot)
 
-    val currentUser = Profile(currentUserID) // Populate with appropriate constructor arguments
-    val targetUser = Profile(targetUserID) // Populate with appropriate constructor arguments
+    val currentUser =
+        Profile(
+            currentUserID,
+            following = listOf("2")) // Populate with appropriate constructor arguments
+    val targetUser =
+        Profile(
+            targetUserID,
+            followers = listOf("1")) // Populate with appropriate constructor arguments
     `when`(currentUserSnapshot.toObject(Profile::class.java)).thenReturn(currentUser)
     `when`(targetUserSnapshot.toObject(Profile::class.java)).thenReturn(targetUser)
 
@@ -236,60 +242,17 @@ class ProfileRepositoryTest {
     profileRepository.unfollowUser(
         currentUserID,
         targetUserID,
-        { user1, user2 -> successCalled = true },
+        { user1, user2 ->
+          successCalled = true
+          assertEquals("Following list should be empty", 0, user1.following.size)
+          assertEquals("Followers list should be empty", 0, user2.followers.size)
+        },
         { fail("Failure should not be called") })
 
     shadowOf(Looper.getMainLooper()).idle()
 
     verify(mockTransaction).get(currentUserRef)
     verify(mockTransaction).get(targetUserRef)
-    assertTrue("Success callback was not called", successCalled)
-  }
-
-  @Test
-  fun removeFollower_Success() {
-    val userID = "1"
-    val followerID = "2"
-    val mockTransaction = mock(Transaction::class.java)
-
-    val userRef = mock(DocumentReference::class.java)
-    val followerRef = mock(DocumentReference::class.java)
-
-    val userSnapshot = mock(DocumentSnapshot::class.java)
-    val followerSnapshot = mock(DocumentSnapshot::class.java)
-
-    // Setup document references
-    `when`(mockFirestore.collection("profiles")).thenReturn(mockCollectionReference)
-    `when`(mockCollectionReference.document(userID)).thenReturn(userRef)
-    `when`(mockCollectionReference.document(followerID)).thenReturn(followerRef)
-
-    // Setup direct returns for document snapshots from the transaction
-    `when`(mockTransaction.get(userRef)).thenReturn(userSnapshot)
-    `when`(mockTransaction.get(followerRef)).thenReturn(followerSnapshot)
-
-    val user = Profile(userID) // Populate with appropriate constructor arguments
-    val follower = Profile(followerID) // Populate with appropriate constructor arguments
-    `when`(userSnapshot.toObject(Profile::class.java)).thenReturn(user)
-    `when`(followerSnapshot.toObject(Profile::class.java)).thenReturn(follower)
-
-    // Mock the transaction function to execute and use a mock result
-    `when`(mockFirestore.runTransaction<Any>(any())).thenAnswer { invocation ->
-      val transactionFunction = invocation.arguments[0] as Transaction.Function<*>
-      transactionFunction.apply(mockTransaction) // Simulates the transaction being executed
-      Tasks.forResult(Pair(user, follower)) // Correctly return a Task wrapping the Pair
-    }
-
-    var successCalled = false
-    profileRepository.removeFollower(
-        userID,
-        followerID,
-        { user, follower -> successCalled = true },
-        { fail("Failure should not be called") })
-
-    shadowOf(Looper.getMainLooper()).idle()
-
-    verify(mockTransaction).get(userRef)
-    verify(mockTransaction).get(followerRef)
     assertTrue("Success callback was not called", successCalled)
   }
 }

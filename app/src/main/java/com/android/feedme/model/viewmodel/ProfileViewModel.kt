@@ -221,13 +221,7 @@ class ProfileViewModel : ViewModel() {
    * user's followers list. This method is transactional, ensuring that both operations succeed or
    * fail together.
    *
-   * @param currentUserId The ID of the user doing the following.
-   * @param targetUserId The ID of the user being followed.
-   * @throws Exception If the current user ID is null. Should never happen.
-   * @throws Exception If the current user ID is the same as the target user ID. Should never
-   *   happen.
-   *     @throws Exception If the target user is already a follower of the current user. Should
-   *       never
+   * @param targetUser The Profile of the user being followed.
    */
   fun followUser(targetUser: Profile) {
     if (currentUserId == null) {
@@ -275,11 +269,7 @@ class ProfileViewModel : ViewModel() {
    * followers list. This method is transactional, ensuring that both operations succeed or fail
    * together.
    *
-   * @param targetUserId The ID of the user being unfollowed.
-   * @throws Exception If the current user ID is null. Should never happen.
-   * @throws Exception If the current user ID is the same as the target user ID. Should never
-   *   happen.
-   *     @throws Exception If the target user is not a follower of the current user. Should never
+   * @param targetUser The Profile of the user being unfollowed.
    */
   fun unfollowUser(targetUser: Profile) {
     if (currentUserId == null) {
@@ -326,21 +316,17 @@ class ProfileViewModel : ViewModel() {
    * Removes a follower from the user's followers list and the user from the follower's following
    * list. This method is transactional, ensuring that both operations succeed or fail together.
    *
-   * @param requestFromUserId The ID of the user whose followers list will be updated.
-   * @param followerId The ID of the follower to remove.
-   * @throws Exception If the current user ID is null. Should never happen.
-   * @throws Exception If the current user ID is the same as the follower ID. Should never happen.
-   * @throws Exception If the follower is not in the current user's following list. Should never
+   * @param follower The Profile of the follower to remove.
    */
   fun removeFollower(follower: Profile) {
     if (currentUserId == null) {
       return
     }
     viewModelScope.launch {
-      repository.removeFollower(
-          currentUserId!!,
+      repository.unfollowUser(
           follower.id,
-          onSuccess = { curr, target ->
+          currentUserId!!,
+          onSuccess = { target, curr ->
             Log.d("ProfileViewModel", "Successfully removed follower and following")
             _currentUserProfile.value = curr
             _currentUserFollowers.value = _currentUserFollowers.value.filter { it.id != target.id }

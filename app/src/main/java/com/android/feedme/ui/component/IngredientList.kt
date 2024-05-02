@@ -58,13 +58,15 @@ fun IngredientList(
     modifier: Modifier = Modifier,
 ) {
 
-  val totalIngredients by inputViewModel.totalIngredients.collectAsState()
+  val totalIngredients by inputViewModel.totalIngredientMetadatas.collectAsState()
   LazyColumn(modifier = modifier.testTag("LazyList")) {
     this.items(totalIngredients) { index ->
       val movableContent = movableContentOf {
-        IngredientInput(inputViewModel.listOfIngredients.value[index]) { before, now, newIngredient
-          ->
-          inputViewModel.setUpdate(index, before, now, newIngredient)
+        IngredientInput(inputViewModel.listOfIngredientMetadatas.value[index]) {
+            before,
+            now,
+            newIngredient ->
+          inputViewModel.updateListElementBehaviour(index, before, now, newIngredient)
         }
       }
       movableContent()

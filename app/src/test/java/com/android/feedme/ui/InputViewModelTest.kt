@@ -29,9 +29,9 @@ class InputViewModelTest {
             IngredientMetaData(
                 200.0, MeasureUnit.G, Ingredient("Ingredient 1", "TEST_TYPE", "ID_TYPE")))
     viewModel.setNewList(newList)
-    assertEquals(2, viewModel.totalIngredients.first())
-    assertEquals(newList, viewModel.listOfIngredients.first())
-    assertEquals(1, viewModel.totalCompleteIngredients.first())
+    assertEquals(2, viewModel.totalIngredientMetadatas.first())
+    assertEquals(newList, viewModel.listOfIngredientMetadatas.first())
+    assertEquals(1, viewModel.totalCompleteIngredientMetadatas.first())
   }
 
   @Test
@@ -41,9 +41,9 @@ class InputViewModelTest {
             IngredientMetaData(
                 0.0, MeasureUnit.G, Ingredient("Ingredient 1", "TEST_TYPE", "ID_TYPE")))
     viewModel.setNewList(newList)
-    assertEquals(2, viewModel.totalIngredients.first())
-    assertEquals(newList, viewModel.listOfIngredients.first())
-    assertEquals(0, viewModel.totalCompleteIngredients.first())
+    assertEquals(2, viewModel.totalIngredientMetadatas.first())
+    assertEquals(newList, viewModel.listOfIngredientMetadatas.first())
+    assertEquals(0, viewModel.totalCompleteIngredientMetadatas.first())
   }
 
   @Test
@@ -61,9 +61,9 @@ class InputViewModelTest {
                 1.0, MeasureUnit.G, Ingredient("Ingredient 3", "TEST_TYPE", "ID_TYPE")))
     viewModel.addToList(newList2)
 
-    assertEquals(4, viewModel.totalIngredients.first())
-    assertEquals(newList2 + newList, viewModel.listOfIngredients.first())
-    assertEquals(3, viewModel.totalCompleteIngredients.first())
+    assertEquals(4, viewModel.totalIngredientMetadatas.first())
+    assertEquals(newList2 + newList, viewModel.listOfIngredientMetadatas.first())
+    assertEquals(3, viewModel.totalCompleteIngredientMetadatas.first())
   }
 
   @Test
@@ -75,9 +75,9 @@ class InputViewModelTest {
     viewModel.setNewList(newList)
     viewModel.resetList()
 
-    assertEquals(1, viewModel.totalIngredients.first())
-    assertEquals(mutableListOf(null), viewModel.listOfIngredients.first())
-    assertEquals(0, viewModel.totalCompleteIngredients.first())
+    assertEquals(1, viewModel.totalIngredientMetadatas.first())
+    assertEquals(mutableListOf(null), viewModel.listOfIngredientMetadatas.first())
+    assertEquals(0, viewModel.totalCompleteIngredientMetadatas.first())
   }
 
   @Test

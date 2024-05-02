@@ -170,7 +170,10 @@ fun CameraScreen(navigationActions: NavigationActions) {
                 if (textRecognitionMode.value) {
                   IconButton(
                       onClick = { displayText.value = true },
-                      modifier = Modifier.testTag("MLButton")) {
+                      modifier = Modifier.size(56.dp)
+                          .background(CameraButtonsBackground, shape = CircleShape)
+                          .padding(10.dp)
+                          .testTag("MLButton")) {
                         Icon(
                             imageVector = Icons.TwoTone.TextFields,
                             contentDescription = "Display text after ML")
@@ -179,11 +182,16 @@ fun CameraScreen(navigationActions: NavigationActions) {
               // Button for barcode scanner
                 if (barcodeRecognition.value) {
                     val barcodeScannerPainter = painterResource(id = R.drawable.barcode_scanner)
-                    IconButton(onClick = { /*TODO*/ },
-                        modifier = Modifier.testTag("BarcodeButton")) {
+                    IconButton(onClick = { /*TODO scan barcode and display result*/ },
+                        modifier = Modifier.size(56.dp)
+                            .background(CameraButtonsBackground, shape = CircleShape)
+                            .padding(10.dp)
+                            .testTag("BarcodeButton")) {
                         Icon(
                             painter = barcodeScannerPainter,
-                            contentDescription = "Barcode Scanner"
+                            contentDescription = "Barcode Scanner",
+                            modifier = Modifier.size(25.dp),
+                            tint = Color.Black
                         )
                     }
                 }

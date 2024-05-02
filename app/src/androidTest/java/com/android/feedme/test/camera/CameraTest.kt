@@ -125,7 +125,7 @@ class CameraTest : TestCase() {
         composeTestRule.onNodeWithText("Photo saved", useUnmergedTree = true).isDisplayed()
       }
 
-      MLButton {
+      MLTextButton {
         assertIsDisplayed()
         performClick()
       }
@@ -144,7 +144,7 @@ class CameraTest : TestCase() {
 
       photoButton { assertIsDisplayed() }
 
-      MLButton {
+      MLTextButton {
         assertIsDisplayed()
         performClick()
       }

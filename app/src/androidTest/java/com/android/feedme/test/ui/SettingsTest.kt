@@ -37,6 +37,21 @@ class SettingsTest {
   }
 
   @Test
+  fun alertDisplayedWhenSignoutIsClickedAndThenClose() {
+    goToSettingsScreen()
+
+    ComposeScreen.onComposeScreen<SettingsScreen>(composeTestRule) {
+      signOutButton {
+        assertIsDisplayed()
+        assertHasClickAction()
+        performClick()
+      }
+
+      composeTestRule.waitForIdle()
+    }
+  }
+
+  @Test
   fun alertDisplayedWhenDeleteIsClickedAndThenClose() {
     goToSettingsScreen()
 

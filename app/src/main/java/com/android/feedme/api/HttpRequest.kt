@@ -3,39 +3,48 @@ package com.android.feedme.api
 import java.net.HttpURLConnection
 import java.net.URL
 
+const val OPEN_FOOD_FACTS_URL_END_POINT = "https://world.openfoodfacts.net/api/v2/product/"
 
-fun httpRequestBarcode(requestMethod: HttpMethod, urlEndPoint: String, barcodeNb: String): String {
-    //val url = "https://world.openfoodfacts.net/api/v2/product/7640150491001?fields=product_name"
-    val url = "$urlEndPoint$barcodeNb?fields=product_name"
-    var response = ""
-    try {
-        val urlObj = URL(url)
-        val connection = urlObj.openConnection() as HttpURLConnection
-        connection.requestMethod = requestMethod.stringValue()
+/**
+ * Makes an HTTP request to retrieve product name (only) information based on a barcode number. The
+ * request is made to world.openfoodfacts.net.
+ *
+ * @param requestMethod The HTTP method to use for the request (e.g., HttpMethod.GET).
+ * @param barcodeNb The barcode number used to retrieve product information.
+ * @param urlFields Additional fields to include in the URL query string.
+ * @return A string containing the response from the HTTP request.
+ */
+fun httpRequestBarcode(requestMethod: HttpMethod, barcodeNb: String, urlFields: String): String {
+  val url = "$OPEN_FOOD_FACTS_URL_END_POINT$barcodeNb?$urlFields"
+  var response = ""
+  try {
+    val urlObj = URL(url)
+    val connection = urlObj.openConnection() as HttpURLConnection
+    connection.requestMethod = requestMethod.stringValue()
 
-        response = connection.inputStream.bufferedReader().use { it.readText()}
-
-    } catch (e: Exception) {
-        println("HTTP request failed with url : $url")
-        println("Error: ${e.message}")
-    }
-    return response
+    response = connection.inputStream.bufferedReader().use { it.readText() }
+  } catch (e: Exception) {
+    println("HTTP request failed with url : $url")
+    println("Error: ${e.message}")
+  }
+  return response
 }
 
+/** Represents possible HTTP methods for making requests. */
 enum class HttpMethod {
-    GET,
-    POST,
-    PUT,
-    DELETE,
-    PATCH;
+  GET,
+  POST,
+  PUT,
+  DELETE,
+  PATCH;
 
-    fun stringValue(): String {
-        return when (this) {
-            GET -> "GET"
-            POST -> "POST"
-            PUT -> "PUT"
-            DELETE -> "DELETE"
-            PATCH -> "PATCH"
-        }
+  fun stringValue(): String {
+    return when (this) {
+      GET -> "GET"
+      POST -> "POST"
+      PUT -> "PUT"
+      DELETE -> "DELETE"
+      PATCH -> "PATCH"
     }
+  }
 }

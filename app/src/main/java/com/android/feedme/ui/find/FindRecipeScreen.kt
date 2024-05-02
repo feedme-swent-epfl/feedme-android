@@ -34,6 +34,7 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.android.feedme.R
+import com.android.feedme.model.viewmodel.InputViewModel
 import com.android.feedme.ui.component.IngredientList
 import com.android.feedme.ui.navigation.BottomNavigationMenu
 import com.android.feedme.ui.navigation.NavigationActions
@@ -49,7 +50,7 @@ import com.android.feedme.ui.theme.FindRecipeIcons
  * @param navigationActions actions for navigating to different screens.
  */
 @Composable
-fun FindRecipeScreen(navigationActions: NavigationActions) {
+fun FindRecipeScreen(navigationActions: NavigationActions, inputViewModel: InputViewModel) {
 
   Scaffold(
       modifier = Modifier.testTag("FindRecipeScreen"),
@@ -146,7 +147,7 @@ fun FindRecipeScreen(navigationActions: NavigationActions) {
                   contentScale = ContentScale.None)
 
               // List Of Ingredients
-              IngredientList()
+              IngredientList(inputViewModel)
             }
       }
 }

@@ -25,7 +25,6 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableIntStateOf
-import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
@@ -167,7 +166,11 @@ fun FriendsList(
  * A card representation for a user profile, displaying the user's picture, name, and username. It
  * also provides a 'Remove' button and an options menu for further actions.
  *
- * @param profile The profile data of the user.
+ * @param profile The profile data of the user to display.
+ * @param navigationActions Provides navigation actions for handling user interactions with the
+ *   navigation bar.
+ *     @param profileViewModel The view model that provides the profile data.
+ *     @param isFollowerList A boolean value that determines if the user is in the follower list.
  */
 @Composable
 fun FriendsCard(
@@ -211,48 +214,36 @@ fun FriendsCard(
                 Row(
                     modifier = Modifier.padding(8.dp),
                 ) {
-                  FollowUnfollowButton(
-                      profile = profile, profileViewModel = profileViewModel, isFollowerList)
+                  if (profile.id != profileViewModel.currentUserId) {
+                    FollowUnfollowButton(
+                        profile = profile, profileViewModel = profileViewModel, isFollowerList)
+                  }
                 }
               }
             }
       }
 }
 
+/**
+ * A button that allows the user to follow or unfollow another user.
+ *
+ * @param profile The profile data of the user to follow or unfollow.
+ * @param profileViewModel The view model that provides the profile data.
+ * @param isFollowerList A boolean value that determines if the user is in the follower list.
+ */
 @Composable
 fun FollowUnfollowButton(
     profile: Profile,
     profileViewModel: ProfileViewModel,
     isFollowerList: Boolean
 ) {
-  val currentUser = profileViewModel.currentUserProfile.collectAsState().value
-  val isFollowing = remember {
-    mutableStateOf(currentUser?.following?.contains(profile.id) ?: false)
-  }
-  if (profile.id == currentUser?.id) {
-    return
-  }
-  if (isFollowing.value) {
-    Button(
-        onClick = {
-          isFollowing.value = false
-          if (currentUser != null) {
-            if (isFollowerList) profileViewModel.removeFollower(profile)
-            else profileViewModel.unfollowUser(profile)
-          }
-        }) {
-          Text(if (isFollowerList) "Remove" else "Unfollow")
+  Button(
+      onClick = {
+        if (profileViewModel.currentUserId != null) {
+          if (isFollowerList) profileViewModel.removeFollower(profile)
+          else profileViewModel.unfollowUser(profile)
         }
-  } else {
-    // should not appear
-    Button(
-        onClick = {
-          isFollowing.value = true
-          if (currentUser != null) {
-            profileViewModel.followUser(profile)
-          }
-        }) {
-          Text("Follow")
-        }
-  }
+      }) {
+        Text(if (isFollowerList) "Remove" else "Unfollow")
+      }
 }

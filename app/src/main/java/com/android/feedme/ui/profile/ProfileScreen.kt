@@ -235,7 +235,6 @@ fun ProfileButtons(
     profile: Profile,
     profileViewModel: ProfileViewModel
 ) {
-  val currentUserProfile = profileViewModel.currentUserProfile.collectAsState().value ?: Profile()
   val isFollowing = remember {
     mutableStateOf(profile.followers.contains(profileViewModel.currentUserId))
   }

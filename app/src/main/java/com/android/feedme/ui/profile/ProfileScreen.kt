@@ -122,10 +122,7 @@ fun ProfileBox(
             verticalAlignment = Alignment.CenterVertically) {
               UserProfilePicture()
               Spacer(modifier = Modifier.width(20.dp))
-              UserNameBox(
-                  profile
-                      ?: throw NullPointerException(
-                          "No profile was showed because profile is Null and should never be, because maybe the currentUserId: ${profileViewModel.currentUserId} doesn't have a valid profile in the database"))
+              UserNameBox(profile ?: Profile())
               Spacer(modifier = Modifier.width(5.dp))
               Row(
                   horizontalArrangement = Arrangement.Center,

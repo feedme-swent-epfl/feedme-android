@@ -140,6 +140,7 @@ fun DeleteAccountButton(navigationActions: NavigationActions, profileViewModel: 
   // Confirmation dialog
   if (showDialog) {
     AlertDialog(
+        modifier = Modifier.testTag("AlertDialogBox"),
         onDismissRequest = {
           // Dismiss the dialog if the user cancels
           showDialog = false
@@ -148,6 +149,7 @@ fun DeleteAccountButton(navigationActions: NavigationActions, profileViewModel: 
         text = { Text(text = "Are you sure you want to delete your account?") },
         confirmButton = {
           Button(
+              modifier = Modifier.testTag("ConfirmButton"),
               onClick = {
                 showDialog = false
                 // Proceed with account deletion
@@ -174,6 +176,7 @@ fun DeleteAccountButton(navigationActions: NavigationActions, profileViewModel: 
         },
         dismissButton = {
           Button(
+              modifier = Modifier.testTag("DismissButton"),
               onClick = {
                 // Dismiss the dialog if the user cancels
                 showDialog = false

@@ -111,8 +111,10 @@ class FriendsTest {
 
   private fun goToFriendsScreen() {
     val mockNavActions = mockk<NavigationActions>(relaxed = true) // Make the mock relaxed
+    val profileViewModel = ProfileViewModel()
+    profileViewModel.updateCurrentUserProfile(Profile())
     composeTestRule.setContent {
-      com.android.feedme.ui.profile.FriendsScreen(mockNavActions, ProfileViewModel(), mode = 4242)
+      com.android.feedme.ui.profile.FriendsScreen(mockNavActions, profileViewModel, mode = 4242)
     }
     composeTestRule.waitForIdle()
   }

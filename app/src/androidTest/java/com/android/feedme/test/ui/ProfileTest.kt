@@ -4,6 +4,7 @@ import androidx.compose.ui.test.junit4.createComposeRule
 import androidx.test.ext.junit.runners.AndroidJUnit4
 import com.android.feedme.model.data.Profile
 import com.android.feedme.model.data.ProfileRepository
+import com.android.feedme.model.data.RecipeRepository
 import com.android.feedme.model.viewmodel.ProfileViewModel
 import com.android.feedme.screen.ProfileScreen
 import com.android.feedme.ui.navigation.NavigationActions
@@ -26,6 +27,7 @@ class ProfileTest {
   @Before
   fun init() {
     ProfileRepository.initialize(mockFirestore)
+    RecipeRepository.initialize(mockFirestore)
     profileViewModel = ProfileViewModel()
     profileViewModel.updateCurrentUserProfile(Profile())
   }

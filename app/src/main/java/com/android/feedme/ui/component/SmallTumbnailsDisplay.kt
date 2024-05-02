@@ -49,7 +49,7 @@ import com.android.feedme.ui.theme.YellowStarBlackOutline
 fun SmallThumbnailsDisplay(
     listRecipe: List<Recipe>,
     navigationActions: NavigationActions,
-    recipeViewModel: RecipeViewModel
+    recipeViewModel: RecipeViewModel = RecipeViewModel()
 ) {
   // Calculate the width of each image based on the screen width, we want to display 2 images per
   // line

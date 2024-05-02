@@ -35,7 +35,7 @@ class ProfileTest {
   @Test
   fun profileBoxAndComponentsCorrectlyDisplayed() {
     ComposeScreen.onComposeScreen<ProfileScreen>(composeTestRule) {
-      composeTestRule.setContent { ProfileScreen(navAction, profileViewModel) }
+      composeTestRule.setContent { ProfileScreen(navAction, profileViewModel, emptyList()) }
 
       topBarProfile { assertIsDisplayed() }
 
@@ -75,7 +75,7 @@ class ProfileTest {
   fun viewingDisplayedProfileIsCorrectAndFollowButtonWorks() {
     ComposeScreen.onComposeScreen<ProfileScreen>(composeTestRule) {
       profileViewModel.setViewingProfile(Profile(id = "ID_DEFAULT_1"))
-      composeTestRule.setContent { ProfileScreen(navAction, profileViewModel) }
+      composeTestRule.setContent { ProfileScreen(navAction, profileViewModel, emptyList()) }
 
       topBarProfile { assertIsDisplayed() }
 

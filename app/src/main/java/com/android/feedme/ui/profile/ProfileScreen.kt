@@ -73,7 +73,7 @@ fun ProfileScreen(
     navigationActions: NavigationActions,
     profileViewModel: ProfileViewModel,
     recipeList: List<Recipe>,
-    recipeViewModel: RecipeViewModel
+    recipeViewModel: RecipeViewModel = RecipeViewModel()
 ) {
 
   val profile =

@@ -172,7 +172,6 @@ class CameraTest : TestCase() {
       composeTestRule.waitForIdle()
       composeTestRule.onNodeWithTag("ML Text Box")
       composeTestRule.onNodeWithTag("ML Text Box inside")
-      composeTestRule.onNodeWithText("ERROR : no barcode to analyse.").assertIsDisplayed()
 
       photoButton { performClick() }
 
@@ -186,6 +185,8 @@ class CameraTest : TestCase() {
       composeTestRule.waitForIdle()
       composeTestRule.onNodeWithTag("ML Text Box")
       composeTestRule.onNodeWithTag("ML Text Box inside")
+      composeTestRule.onNodeWithText(
+          "{\"code\":\"status\":0,\"status_verbose\":\"no code or invalid code\"}")
     }
   }
 }

@@ -2,6 +2,8 @@ package com.android.feedme.api
 
 import java.net.HttpURLConnection
 import java.net.URL
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.withContext
 
 const val OPEN_FOOD_FACTS_URL_END_POINT = "https://world.openfoodfacts.net/api/v2/product/"
 
@@ -14,7 +16,33 @@ const val OPEN_FOOD_FACTS_URL_END_POINT = "https://world.openfoodfacts.net/api/v
  * @param urlFields Additional fields to include in the URL query string.
  * @return A string containing the response from the HTTP request.
  */
-fun httpRequestBarcode(requestMethod: HttpMethod, barcodeNb: String, urlFields: String): String {
+suspend fun httpRequestBarcode(
+    requestMethod: HttpMethod,
+    barcodeNb: String,
+    urlFields: String
+): String {
+  return withContext(Dispatchers.IO) {
+    val url = "$OPEN_FOOD_FACTS_URL_END_POINT$barcodeNb?$urlFields"
+    var response = ""
+    try {
+      val urlObj = URL(url)
+      val connection = urlObj.openConnection() as HttpURLConnection
+      connection.requestMethod = requestMethod.stringValue()
+
+      response = connection.inputStream.bufferedReader().use { it.readText() }
+    } catch (e: Exception) {
+      println("HTTP request failed with url : $url")
+      if (e.message != null) {
+        println("Error http: ${e.message}")
+      } else {
+        println("Error http: ${e.javaClass.simpleName}")
+      }
+      e.printStackTrace() // Print stack trace for detailed error information
+    }
+    response
+  }
+}
+/*fun httpRequestBarcode(requestMethod: HttpMethod, barcodeNb: String, urlFields: String): String {
   val url = "$OPEN_FOOD_FACTS_URL_END_POINT$barcodeNb?$urlFields"
   var response = ""
   try {
@@ -25,10 +53,13 @@ fun httpRequestBarcode(requestMethod: HttpMethod, barcodeNb: String, urlFields: 
     response = connection.inputStream.bufferedReader().use { it.readText() }
   } catch (e: Exception) {
     println("HTTP request failed with url : $url")
-    println("Error: ${e.message}")
+    println("Error http: ${e.message}")
+    println("hop")
+    e.printStackTrace()
+    println("hop")
   }
   return response
-}
+}*/
 
 /** Represents possible HTTP methods for making requests. */
 enum class HttpMethod {

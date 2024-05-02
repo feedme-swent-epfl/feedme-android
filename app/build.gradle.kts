@@ -9,6 +9,7 @@ plugins {
     alias(libs.plugins.ktfmt)
     alias(libs.plugins.sonar)
     alias(libs.plugins.gms)
+    id("org.jetbrains.kotlin.plugin.serialization") version "1.5.21"
 }
 
 android {
@@ -188,6 +189,8 @@ dependencies {
     //ML kit barcode
     implementation(libs.mlkit.barcode)
     implementation(libs.gson)
+    implementation(libs.kotlinx.serialization.json)
+    implementation(libs.kotlinx.serialization.json)
 
     // ---------------- CameraX --------------------
     implementation(libs.camera.core)

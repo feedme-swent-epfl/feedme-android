@@ -15,7 +15,7 @@ import org.junit.Test
 class HttpRequestBarcodeTest {
 
   @Test
-  fun testHttpRequestBarcode() {
+  suspend fun testHttpRequestBarcode() {
     val barcodeNb = "7640150491001"
     val urlFields = "fields=product_name"
 
@@ -26,7 +26,7 @@ class HttpRequestBarcodeTest {
     // Mocking the response for the given test
     val expectedResponse =
         "{\"code\":\"7640150491001\",\"product\":{\"product_name\":\"El Tony Mate\"}," +
-                "\"status\":1,\"status_verbose\":\"product found\"}"
+            "\"status\":1,\"status_verbose\":\"product found\"}"
 
     // Mocking the HTTP method for the test
     val requestMethod = HttpMethod.GET

@@ -214,7 +214,8 @@ fun FriendsCard(
                 Row(
                     modifier = Modifier.padding(8.dp),
                 ) {
-                  if (profile.id != profileViewModel.currentUserId) {
+                  if (profile.id != profileViewModel.currentUserId &&
+                      !profileViewModel.isViewingProfile()) {
                     FollowUnfollowButton(
                         profile = profile, profileViewModel = profileViewModel, isFollowerList)
                   }

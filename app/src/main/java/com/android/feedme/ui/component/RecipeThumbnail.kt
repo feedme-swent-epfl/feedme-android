@@ -1,37 +1,14 @@
 package com.android.feedme.ui.component
 
-import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.outlined.Timer
-import androidx.compose.material.icons.twotone.Bookmark
-import androidx.compose.material.icons.twotone.Star
-import androidx.compose.material3.Card
-import androidx.compose.material3.Icon
-import androidx.compose.material3.IconButton
-import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.Text
-import androidx.compose.runtime.Composable
-import androidx.compose.ui.Alignment
-import androidx.compose.ui.Modifier
-import androidx.compose.ui.draw.clip
-import androidx.compose.ui.platform.testTag
-import androidx.compose.ui.tooling.preview.Preview
-import androidx.compose.ui.unit.dp
-import com.android.feedme.model.data.Ingredient
-import com.android.feedme.model.data.IngredientMetaData
-import com.android.feedme.model.data.MeasureUnit
-import com.android.feedme.model.data.Recipe
-import com.android.feedme.model.data.Step
-import com.android.feedme.model.viewmodel.RecipeViewModel
-import com.android.feedme.ui.theme.CardBackground
+
 
 /**
  * A card that displays a recipe.
  *
  * @param recipe The recipe to display.
  */
-@Composable
+/*@Composable
 fun RecipeSmallCard(recipe: Recipe, recipeViewModel: RecipeViewModel = RecipeViewModel()) {
 
   Card(
@@ -115,3 +92,4 @@ fun RecipeSmallCardPreview() {
           "https://external-content.duckduckgo.com/iu/?u=https%3A%2F%2Fwww.mamablip.com%2Fstorage%2FLasagna%2520with%2520Meat%2520and%2520Tomato%2520Sauce_3481612355355.jpg&f=1&nofb=1&ipt=8e887ba99ce20a85fb867dabbe0206c1146ebf2f13548b5653a2778e3ea18c54&ipo=images")
   RecipeSmallCard(recipe)
 }
+*/

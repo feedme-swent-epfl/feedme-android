@@ -119,6 +119,7 @@ class AuthViewModel : ViewModel() {
 
       // Add the newly created profile to the Firestore database.
       ProfileRepository.instance.addProfile(newProfile, onSuccess, onFailure)
+      onSuccess()
     }
   }
 }

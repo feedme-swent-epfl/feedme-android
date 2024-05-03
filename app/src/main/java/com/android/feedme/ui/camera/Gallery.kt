@@ -83,7 +83,7 @@ fun GalleryScreen(navigationActions: NavigationActions, maxItems: Int) {
             Box(
                 modifier = Modifier.fillMaxSize().padding(innerPadding),
                 contentAlignment = Alignment.Center) {
-                  Text(text = "There are no photos yet")
+                  Text(text = "There are no photos yet", modifier = Modifier.testTag("NoPhotos"))
                 }
           } else {
             // Display the photos in a grid

@@ -48,7 +48,7 @@ class GalleryViewModel : ViewModel() {
         onResult = { uris ->
           uris.let {
             for (uri in it) {
-              // Duplication protection and setting max of uploadable images to 15
+              // Duplication protection and setting max of loadable images to 15
               if (_uris.value.size < 15 && !_uris.value.contains(uri)) {
                 _uris.value += uri
                 val source = ImageDecoder.createSource(context.contentResolver, uri)

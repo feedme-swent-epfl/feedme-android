@@ -11,4 +11,5 @@ class GalleryScreen(semanticsProvider: SemanticsNodeInteractionsProvider) :
 
   // Structural elements of the UI
   val addPhotoButton: KNode = child { hasTestTag("AddPhotoButton") }
+  val placeholderText: KNode = child { hasTestTag("NoPhotos") }
 }

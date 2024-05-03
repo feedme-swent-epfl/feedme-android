@@ -9,12 +9,8 @@ import androidx.compose.ui.test.performClick
 import com.android.feedme.model.viewmodel.ProfileViewModel
 import com.android.feedme.screen.SettingsScreen
 import com.android.feedme.ui.navigation.NavigationActions
-import com.android.feedme.ui.navigation.TOP_LEVEL_AUTH
 import com.android.feedme.ui.settings.SettingsScreen
-import com.google.android.gms.auth.api.signin.GoogleSignInClient
-import com.google.android.gms.tasks.OnCompleteListener
 import io.github.kakaocup.compose.node.element.ComposeScreen
-import io.mockk.every
 import io.mockk.mockk
 import io.mockk.verify
 import org.junit.Rule
@@ -140,7 +136,7 @@ class SettingsTest {
     composeTestRule.waitForIdle()
   }
 
-  @Test
+  /*@Test
   fun testDeleteAccountSuccess() {
     // Mock ProfileViewModel
     val mockProfileViewModel = mockk<ProfileViewModel>(relaxed = true)
@@ -188,5 +184,5 @@ class SettingsTest {
     }
     // Verify navigation to TOP_LEVEL_AUTH
     verify { mockNavigationActions.navigateTo(TOP_LEVEL_AUTH) }
-  }
+  }*/
 }

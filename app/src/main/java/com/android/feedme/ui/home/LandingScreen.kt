@@ -45,11 +45,11 @@ import coil.compose.AsyncImage
 import com.android.feedme.model.data.Recipe
 import com.android.feedme.model.viewmodel.LandingPageViewModel
 import com.android.feedme.model.viewmodel.RecipeViewModel
+import com.android.feedme.resources.recipe
 import com.android.feedme.ui.component.SearchBarFun
 import com.android.feedme.ui.navigation.BottomNavigationMenu
 import com.android.feedme.ui.navigation.NavigationActions
 import com.android.feedme.ui.navigation.Route
-import com.android.feedme.ui.navigation.Screen
 import com.android.feedme.ui.navigation.TOP_LEVEL_DESTINATIONS
 import com.android.feedme.ui.navigation.TopBarNavigation
 import com.android.feedme.ui.theme.TemplateColor
@@ -70,36 +70,7 @@ fun LandingPage(
     recipeViewModel: RecipeViewModel = RecipeViewModel(),
     landingPageViewModel: LandingPageViewModel // = LandingPageViewModel()
 ) {
-  /* Note that this val is temporary for this sprint, we're awaiting the implementation of the
-   * ViewModels to properly do this part.
-  val testRecipes: List<Recipe> =
-      listOf(
-          Recipe(
-              recipeId = "lasagna1",
-              title = "Tasty Lasagna",
-              description =
-                  "Description of the recipe, writing a longer one to see if it fills up the whole space available. Still writing with no particular aim lol",
-              ingredients =
-                  listOf(
-                      IngredientMetaData(
-                          quantity = 2.0,
-                          measure = MeasureUnit.ML,
-                          ingredient = Ingredient("Tomato", "Vegetables", "tomatoID"))),
-              steps =
-                  listOf(
-                      Step(
-                          1,
-                          "In a large, heavy pot, put the olive oil, garlic and parsley over medium high heat. When the garlic begins to brown, increase the heat and add the ground beef. Break up the beef, but keep it rather chunky. Sprinkle with about 1/2 tsp of salt. \n" +
-                              "\n" +
-                              "When the beef is beginning to dry up, add the tomatoes and stir well. Add more salt, then lower the heat and allow to simmer for about an hour, stirring from time to time. Taste for salt and add pepper.",
-                          "Make the Meat Sauce")),
-              tags = listOf("Meat"),
-              time = 45.0,
-              rating = 4.5,
-              userid = "username",
-              difficulty = "Intermediate",
-              "https://external-content.duckduckgo.com/iu/?u=https%3A%2F%2Fwww.mamablip.com%2Fstorage%2FLasagna%2520with%2520Meat%2520and%2520Tomato%2520Sauce_3481612355355.jpg&f=1&nofb=1&ipt=8e887ba99ce20a85fb867dabbe0206c1146ebf2f13548b5653a2778e3ea18c54&ipo=images"),
-      )*/
+
   landingPageViewModel.fetchRecipe("lasagna1")
   val recipes = landingPageViewModel.recipes.value
 
@@ -146,7 +117,7 @@ fun RecipeDisplay(
                                   // Set the selected recipe in the view model and navigate to the
                                   // recipe screen
                                   recipeViewModel.selectRecipe(recipe)
-                                  navigationActions.navigateTo(Screen.RECIPE)
+                                  navigationActions.navigateTo("Recipe/${Route.HOME}")
                                 })
                             .testTag("RecipeCard"),
                     elevation = CardDefaults.elevatedCardElevation()) {

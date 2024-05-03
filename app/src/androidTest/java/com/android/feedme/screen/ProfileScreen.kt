@@ -24,4 +24,6 @@ class ProfileScreen(semanticsProvider: SemanticsNodeInteractionsProvider) :
   val shareButton: KNode = child { hasTestTag("ShareButton") }
   val followerButton: KNode = child { hasTestTag("FollowButton") }
   val followingButton: KNode = child { hasTestTag("FollowingButton") }
+  val tabRow: KNode = child { hasTestTag("TabRow") }
+  val recipeSmall: KNode = child { hasTestTag("RecipeSmallCard") }
 }

@@ -10,8 +10,13 @@ import com.android.feedme.model.data.Ingredient
 import com.android.feedme.model.data.IngredientMetaData
 import com.android.feedme.model.data.MeasureUnit
 import com.android.feedme.model.data.Recipe
+import com.android.feedme.model.data.RecipeRepository
 import com.android.feedme.model.data.Step
 import com.android.feedme.ui.component.SmallThumbnailsDisplay
+import com.android.feedme.ui.navigation.NavigationActions
+import com.google.firebase.firestore.FirebaseFirestore
+import io.mockk.mockk
+import org.junit.Before
 import org.junit.Rule
 import org.junit.Test
 import org.junit.runner.RunWith
@@ -20,6 +25,14 @@ import org.junit.runner.RunWith
 class SmallThumbnailsDisplayTest {
 
   @get:Rule val composeTestRule = createComposeRule()
+
+  private val navMock = mockk<NavigationActions>()
+  private val mockFirestore = mockk<FirebaseFirestore>(relaxed = true)
+
+  @Before
+  fun init() {
+    RecipeRepository.initialize(mockFirestore)
+  }
 
   @Test
   fun checkThumbnailsDisplay() {
@@ -42,8 +55,10 @@ class SmallThumbnailsDisplayTest {
             difficulty = "Intermediate",
             "https://external-content.duckduckgo.com/iu/?u=https%3A%2F%2Fwww.mamablip.com%2Fstorage%2FLasagna%2520with%2520Meat%2520and%2520Tomato%2520Sauce_3481612355355.jpg&f=1&nofb=1&ipt=8e887ba99ce20a85fb867dabbe0206c1146ebf2f13548b5653a2778e3ea18c54&ipo=images")
 
-    composeTestRule.setContent { SmallThumbnailsDisplay(listRecipe = listOf(recipe1)) }
+    composeTestRule.setContent { SmallThumbnailsDisplay(listOf(recipe1), navMock) }
     composeTestRule.waitForIdle()
+
+    composeTestRule.onNodeWithTag("RecipeSmallCard").assertIsDisplayed()
 
     // Check whether the Image or the warning message is displayed
     try {
@@ -55,17 +70,17 @@ class SmallThumbnailsDisplayTest {
     composeTestRule
         .onNodeWithContentDescription("Star Icon", useUnmergedTree = true)
         .assertIsDisplayed()
-    composeTestRule.onNodeWithTag("Text Rating").assertIsDisplayed()
+    composeTestRule.onNodeWithTag("Text Rating", useUnmergedTree = true).assertIsDisplayed()
 
     composeTestRule
         .onNodeWithContentDescription("Timer Icon", useUnmergedTree = true)
         .assertIsDisplayed()
-    composeTestRule.onNodeWithTag("Text Time").assertIsDisplayed()
+    composeTestRule.onNodeWithTag("Text Time", useUnmergedTree = true).assertIsDisplayed()
 
     composeTestRule
         .onNodeWithContentDescription("Save Icon", useUnmergedTree = true)
         .assertIsDisplayed()
 
-    composeTestRule.onNodeWithTag("Text Title").assertIsDisplayed()
+    composeTestRule.onNodeWithTag("Text Title", useUnmergedTree = true).assertIsDisplayed()
   }
 }

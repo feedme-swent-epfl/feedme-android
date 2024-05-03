@@ -14,12 +14,18 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material3.AlertDialog
+import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.OutlinedButton
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
@@ -30,6 +36,7 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.android.feedme.R
+import com.android.feedme.model.viewmodel.ProfileViewModel
 import com.android.feedme.ui.navigation.BottomNavigationMenu
 import com.android.feedme.ui.navigation.NavigationActions
 import com.android.feedme.ui.navigation.Route
@@ -49,7 +56,7 @@ import kotlinx.coroutines.launch
  * @param navigationActions : the nav actions given in the MainActivity
  */
 @Composable
-fun SettingsScreen(navigationActions: NavigationActions) {
+fun SettingsScreen(navigationActions: NavigationActions, profileViewModel: ProfileViewModel) {
   Scaffold(
       modifier = Modifier.testTag("SettingsScreen"),
       topBar = { TopBarNavigation(title = "Settings") },
@@ -58,7 +65,9 @@ fun SettingsScreen(navigationActions: NavigationActions) {
       },
       content = { padding ->
         // TODO: modify the content of the settings screen adapting it to the desired UI screen
-        Box(modifier = Modifier.fillMaxSize().padding(padding)) { SettingsPage(navigationActions) }
+        Box(modifier = Modifier.fillMaxSize().padding(padding)) {
+          SettingsPage(navigationActions, profileViewModel)
+        }
       })
 }
 
@@ -68,7 +77,7 @@ fun SettingsScreen(navigationActions: NavigationActions) {
  * @param navigationActions : the [NavigationActions] given in the MainActivity
  */
 @Composable
-fun SettingsPage(navigationActions: NavigationActions) {
+fun SettingsPage(navigationActions: NavigationActions, profileViewModel: ProfileViewModel) {
   val context = LocalContext.current
   val coroutineScope = rememberCoroutineScope()
   val gso =
@@ -79,10 +88,12 @@ fun SettingsPage(navigationActions: NavigationActions) {
 
   val googleSignInClient = GoogleSignIn.getClient(context, gso)
 
+  var showDialog by remember { mutableStateOf(false) }
+
   Column(
       modifier = Modifier.fillMaxSize().padding(4.dp).background(Color.White),
       horizontalAlignment = Alignment.CenterHorizontally) {
-        Spacer(modifier = Modifier.height(100.dp))
+        Spacer(modifier = Modifier.height(50.dp))
 
         // Profile icon
         Image(
@@ -139,7 +150,7 @@ fun SettingsPage(navigationActions: NavigationActions) {
 
         // Delete account button
         OutlinedButton(
-            onClick = { /* TODO: Add action to delete the account */},
+            onClick = { showDialog = true },
             colors = ButtonDefaults.buttonColors(Color.White),
             modifier =
                 Modifier.width(250.dp)
@@ -153,5 +164,53 @@ fun SettingsPage(navigationActions: NavigationActions) {
                   fontWeight = FontWeight.Medium,
                   fontSize = 16.sp)
             }
+        // Confirmation dialog
+        if (showDialog) {
+          AlertDialog(
+              modifier = Modifier.testTag("AlertDialogBox"),
+              onDismissRequest = {
+                // Dismiss the dialog if the user cancels
+                showDialog = false
+              },
+              title = { Text(text = "Confirm Deletion") },
+              text = { Text(text = "Are you sure you want to delete your account?") },
+              confirmButton = {
+                Button(
+                    modifier = Modifier.testTag("ConfirmButton"),
+                    onClick = {
+                      showDialog = false
+                      // Proceed with account deletion
+                      profileViewModel.fetchCurrentUserProfile()
+                      coroutineScope.launch {
+                        profileViewModel.deleteCurrentUserProfile(
+                            {
+                              Log.d("DeleteAccount", "Account deletion successful")
+                              googleSignInClient.signOut().addOnCompleteListener {
+                                if (it.isSuccessful) {
+                                  navigationActions.navigateTo(TOP_LEVEL_AUTH)
+                                  Log.d("Sign-out", "Sign-out successful")
+                                } else {
+                                  navigationActions.navigateTo(TOP_LEVEL_AUTH)
+                                  Log.e("Sign-out", "Sign-out failed", it.exception)
+                                }
+                              }
+                            },
+                            { e -> Log.e("DeleteAccount", "Account deletion failed", e) })
+                      }
+                    }) {
+                      Text(text = "Confirm")
+                    }
+              },
+              dismissButton = {
+                Button(
+                    modifier = Modifier.testTag("DismissButton"),
+                    onClick = {
+                      // Dismiss the dialog if the user cancels
+                      showDialog = false
+                    }) {
+                      Text(text = "Cancel")
+                    }
+              })
+        }
       }
 }

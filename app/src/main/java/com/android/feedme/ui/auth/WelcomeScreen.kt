@@ -33,11 +33,8 @@ import androidx.lifecycle.viewmodel.compose.viewModel
 import com.android.feedme.R
 import com.android.feedme.model.viewmodel.AuthViewModel
 import com.android.feedme.model.viewmodel.ProfileViewModel
-import com.android.feedme.ui.navigation.BottomNavigationMenu
 import com.android.feedme.ui.navigation.NavigationActions
-import com.android.feedme.ui.navigation.Route
 import com.android.feedme.ui.navigation.Screen
-import com.android.feedme.ui.navigation.TOP_LEVEL_DESTINATIONS
 import com.android.feedme.ui.navigation.TopBarNavigation
 import com.android.feedme.ui.theme.BackgroundColor
 import com.android.feedme.ui.theme.Cyan
@@ -60,10 +57,6 @@ fun WelcomeScreen(
   Scaffold(
       modifier = Modifier.fillMaxSize().testTag("CreateProfileScreen"),
       topBar = { TopBarNavigation(title = "FeedMe") },
-      bottomBar = {
-        BottomNavigationMenu(
-            Route.PROFILE, { top -> navigationActions.navigateTo(top) }, TOP_LEVEL_DESTINATIONS)
-      },
       content = { padding ->
         WelcomeScreenContent(padding, profileViewModel, navigationActions, authViewModel)
       })

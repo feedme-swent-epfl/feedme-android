@@ -42,6 +42,7 @@ import com.android.feedme.ui.theme.feedmeAppTheme
 import com.google.firebase.firestore.FirebaseFirestore
 
 class MainActivity : ComponentActivity() {
+
   @SuppressLint("UnrememberedGetBackStackEntry")
   override fun onCreate(savedInstanceState: Bundle?) {
     super.onCreate(savedInstanceState)
@@ -84,12 +85,6 @@ class MainActivity : ComponentActivity() {
                     val recipeViewModel = viewModel<RecipeViewModel>()
                     LandingPage(navigationActions, recipeViewModel, landingPageViewModel)
                   }
-                  composable(Screen.RECIPE) {
-                    // Link the shared view model to the composable
-                    val navBackStackEntry = navController.getBackStackEntry(Screen.HOME)
-                    val recipeViewModel = viewModel<RecipeViewModel>(navBackStackEntry)
-                    RecipeFullDisplay(navigationActions, recipeViewModel)
-                  }
                 }
 
                 navigation(startDestination = Screen.SAVED, route = Route.SAVED) {
@@ -105,7 +100,10 @@ class MainActivity : ComponentActivity() {
                 }
 
                 navigation(startDestination = Screen.PROFILE, route = Route.PROFILE) {
-                  composable(Screen.PROFILE) { ProfileScreen(navigationActions, profileViewModel) }
+                  composable(Screen.PROFILE) {
+                    val recipeViewModel = viewModel<RecipeViewModel>()
+                    ProfileScreen(navigationActions, profileViewModel, recipeViewModel)
+                  }
                   composable(Screen.EDIT_PROFILE) {
                     EditProfileScreen(navigationActions, profileViewModel)
                   }
@@ -116,7 +114,26 @@ class MainActivity : ComponentActivity() {
                   }
                 }
                 navigation(startDestination = Screen.SETTINGS, route = Route.SETTINGS) {
-                  composable(Screen.SETTINGS) { SettingsScreen(navigationActions) }
+                  composable(Screen.SETTINGS) {
+                    SettingsScreen(navigationActions, profileViewModel)
+                  }
+                }
+
+                composable(Screen.RECIPE) { backStackEntry ->
+                  backStackEntry.arguments?.getString("sourceRoute")?.let {
+                    val backScreen =
+                        when (it) {
+                          Route.HOME -> Screen.HOME
+                          Route.PROFILE -> Screen.PROFILE
+                          else -> {
+                            ""
+                          }
+                        }
+                    // Link the shared view model to the composable
+                    val navBackStackEntry = navController.getBackStackEntry(backScreen)
+                    val recipeViewModel = viewModel<RecipeViewModel>(navBackStackEntry)
+                    RecipeFullDisplay(it, navigationActions, recipeViewModel)
+                  }
                 }
               }
             }

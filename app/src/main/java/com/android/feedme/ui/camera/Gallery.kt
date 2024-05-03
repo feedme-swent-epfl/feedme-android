@@ -51,7 +51,7 @@ import com.android.feedme.ui.theme.FindRecipeIcons
 fun GalleryScreen(navigationActions: NavigationActions, maxItems: Int) {
   val galleryViewModel = viewModel<GalleryViewModel>()
   val pickImage = galleryViewModel.galleryLauncher(null, maxItems)
-
+  val bitmaps by galleryViewModel.bitmaps.collectAsState()
   // Creating an intermediate screen with a button to add a level of indirection, needed to launch
   // the PickImage activity
   Scaffold(

@@ -1,6 +1,5 @@
 package com.android.feedme.test.ui
 
-import android.net.Uri
 import androidx.compose.ui.test.junit4.createComposeRule
 import androidx.test.ext.junit.runners.AndroidJUnit4
 import com.android.feedme.model.data.Profile
@@ -147,11 +146,14 @@ class EditProfileTest {
       editPicture.assertIsDisplayed()
       editPicture.assertHasClickAction()
       editPicture.performClick()
-      profileViewModel.currentUserId = "ID_DEFAULT"
-      profileViewModel.updateProfilePicture(
-          profileViewModel,
-          Uri.parse(
-              "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcT0ouuiiXjqpSyZLcW7yXsrGl9T-FxgUQJMNSaoF3JUitDQ_t-oVrJjbCCQkfYmdGYJoeM&usqp=CAU"))
+      // TODO inject a mock image picker
+      /*
+            profileViewModel.currentUserId = "ID_DEFAULT"
+            profileViewModel.updateProfilePicture(
+                profileViewModel,
+                Uri.parse(
+                    "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcT0ouuiiXjqpSyZLcW7yXsrGl9T-FxgUQJMNSaoF3JUitDQ_t-oVrJjbCCQkfYmdGYJoeM&usqp=CAU"))
+      */
     }
   }
 

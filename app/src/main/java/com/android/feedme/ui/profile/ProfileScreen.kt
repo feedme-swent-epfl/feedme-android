@@ -144,7 +144,7 @@ fun ProfileBox(
 fun UserProfilePicture(profileViewModel: ProfileViewModel) {
   AsyncImage(
       modifier = Modifier.width(100.dp).height(100.dp).clip(CircleShape).testTag("ProfileIcon"),
-      model = profileViewModel.currentUserProfile.value?.imageUrl,
+      model = profileViewModel._imageUrl.collectAsState().value,
       contentDescription = "User Profile Image",
       contentScale = ContentScale.FillBounds)
 }

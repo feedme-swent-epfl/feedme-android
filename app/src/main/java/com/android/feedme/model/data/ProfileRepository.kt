@@ -1,6 +1,7 @@
 package com.android.feedme.model.data
 
 import android.net.Uri
+import com.android.feedme.model.viewmodel.ProfileViewModel
 import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.firestore.Transaction
 import com.google.firebase.storage.FirebaseStorage
@@ -63,23 +64,28 @@ class ProfileRepository(private val db: FirebaseFirestore) {
    * @param onFailure A callback function invoked on failure to update the profile, with an
    *   exception.
    */
-  fun uploadProfilePicture(profile: Profile?, uri: Uri, onFailure: (Exception) -> Unit) {
-    if (profile != null) {
-      val storageRef =
-          FirebaseStorage.getInstance().reference.child("profilePictures/${profile.id}")
-      storageRef
-          .putFile(uri)
-          .addOnSuccessListener { taskSnapshot ->
-            taskSnapshot.metadata?.reference?.downloadUrl?.addOnSuccessListener { uri ->
-              val url = uri.toString()
-              db.collection("profiles")
-                  .document(profile.id)
-                  .update("imageUrl", url)
-                  .addOnFailureListener { exception -> onFailure(exception) }
-            }
+  fun uploadProfilePicture(
+      profileViewModel: ProfileViewModel,
+      uri: Uri,
+      onFailure: (Exception) -> Unit
+  ) {
+    val storageRef =
+        FirebaseStorage.getInstance()
+            .reference
+            .child("profilePictures/${profileViewModel.currentUserId}")
+    storageRef
+        .putFile(uri)
+        .addOnSuccessListener { taskSnapshot ->
+          taskSnapshot.metadata?.reference?.downloadUrl?.addOnSuccessListener { uri ->
+            val url = uri.toString()
+            db.collection("profiles")
+                .document(profileViewModel.currentUserId!!)
+                .update("imageUrl", url)
+                .addOnFailureListener { exception -> onFailure(exception) }
+            profileViewModel._imageUrl.value = url
           }
-          .addOnFailureListener { exception -> onFailure(exception) }
-    }
+        }
+        .addOnFailureListener { exception -> onFailure(exception) }
   }
   /**
    * Retrieves a user profile from Firestore by its document ID.

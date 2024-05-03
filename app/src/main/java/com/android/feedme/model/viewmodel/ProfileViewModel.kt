@@ -29,6 +29,7 @@ class ProfileViewModel : ViewModel() {
   private val _currentUserFollowing = MutableStateFlow<List<Profile>>(listOf())
   val currentUserFollowers: StateFlow<List<Profile>> = _currentUserFollowers
   val currentUserFollowing: StateFlow<List<Profile>> = _currentUserFollowing
+  val _imageUrl = MutableStateFlow<String?>(null)
 
   // Viewing User
   var viewingUserId: String? = null
@@ -56,6 +57,8 @@ class ProfileViewModel : ViewModel() {
   init {
     // Listen to FirebaseAuth state changes
     FirebaseAuth.getInstance().addAuthStateListener(authListener)
+    // Listen to FirebaseStorage profile picture changes
+
   }
 
   override fun onCleared() {
@@ -95,6 +98,7 @@ class ProfileViewModel : ViewModel() {
             onSuccess = { profile ->
               _currentUserProfile.value = profile
               if (profile != null) {
+                _imageUrl.value = profile.imageUrl
                 fetchProfiles(profile.followers, _currentUserFollowers)
                 fetchProfiles(profile.following, _currentUserFollowing)
               }
@@ -368,7 +372,7 @@ class ProfileViewModel : ViewModel() {
    */
   fun updateProfilePicture(profileViewModel: ProfileViewModel, picture: Uri) {
     repository.uploadProfilePicture(
-        profile = profileViewModel.currentUserProfile.value!!,
+        profileViewModel = profileViewModel,
         onFailure = { throw error("Can't upload profile picture to the database") },
         uri = picture)
   }

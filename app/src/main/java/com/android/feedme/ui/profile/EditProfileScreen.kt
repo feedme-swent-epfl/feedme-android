@@ -109,7 +109,7 @@ fun EditProfileContent(
           Text(
               text = "Edit Picture",
               style = TextStyle(fontSize = 16.sp),
-              modifier = Modifier.padding(top = 8.dp))
+              modifier = Modifier.padding(top = 10.dp).align(Alignment.CenterHorizontally))
         }
 
         OutlinedTextField(

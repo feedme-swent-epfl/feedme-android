@@ -17,7 +17,21 @@ class SettingsTest {
     goToSettingsScreen()
 
     ComposeScreen.onComposeScreen<SettingsScreen>(composeTestRule) {
-      signOutButton { assertIsDisplayed() }
+      signOutButton {
+        assertIsDisplayed()
+        assertHasClickAction()
+      }
+
+      displayBox {
+        assertIsDisplayed()
+      }
+
+      deleteAccountButton {
+        assertIsDisplayed()
+        assertHasClickAction()
+      }
+
+
     }
   }
 

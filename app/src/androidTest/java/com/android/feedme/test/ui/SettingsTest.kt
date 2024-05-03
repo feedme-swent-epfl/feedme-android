@@ -22,16 +22,12 @@ class SettingsTest {
         assertHasClickAction()
       }
 
-      displayBox {
-        assertIsDisplayed()
-      }
+      displayBox { assertIsDisplayed() }
 
       deleteAccountButton {
         assertIsDisplayed()
         assertHasClickAction()
       }
-
-
     }
   }
 

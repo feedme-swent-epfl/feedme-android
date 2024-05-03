@@ -75,18 +75,18 @@ class AuthViewModelTest {
 
     var bool = false
     authViewModel.linkOrCreateProfile(
-        profileId, "johndoe", "john@example.com", "ss", { bool = true }, {})
+        profileId, "johndoe", "john@example.com", "ss", { bool = true }, {}, {})
 
     shadowOf(Looper.getMainLooper()).idle()
     authViewModel.linkOrCreateProfile(
-        "aaa", "johndoe", "john@example.com", "ss", { bool = true }, {})
+        "aaa", "johndoe", "john@example.com", "ss", { bool = true }, {}, {})
 
     shadowOf(Looper.getMainLooper()).idle()
 
     authViewModel.linkOrCreateProfile(
-        profileId, "dd", "john@example.com", "ss", { bool = true }, {})
+        profileId, "dd", "john@example.com", "ss", { bool = true }, {}, {})
 
-    authViewModel.authenticateWithGoogle("johndoe", {}, {})
+    authViewModel.authenticateWithGoogle("johndoe", {}, {}, {})
 
     shadowOf(Looper.getMainLooper()).idle()
     assertTrue(bool)

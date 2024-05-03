@@ -9,6 +9,7 @@ import com.android.feedme.screen.GalleryScreen
 import com.android.feedme.ui.camera.GalleryScreen
 import com.android.feedme.ui.navigation.NavigationActions
 import com.kaspersky.kaspresso.testcases.api.testcase.TestCase
+import io.github.kakaocup.compose.node.element.ComposeScreen
 import io.mockk.every
 import io.mockk.mockk
 import org.junit.Rule
@@ -30,13 +31,13 @@ class GalleryTest : TestCase() {
   fun buttonsAndGalleryCorrectlyDisplayed() {
     goToGalleryScreen(10)
 
-    /*ComposeScreen.onComposeScreen<GalleryScreen>(composeTestRule) {
+    ComposeScreen.onComposeScreen<GalleryScreen>(composeTestRule) {
       addPhotoButton {
         assertIsDisplayed()
         assertHasClickAction()
         performClick()
       }
-    }*/
+    }
   }
 
   private fun goToGalleryScreen(maxItems: Int) {

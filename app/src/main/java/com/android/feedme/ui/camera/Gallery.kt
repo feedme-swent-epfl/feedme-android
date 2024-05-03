@@ -64,6 +64,7 @@ fun GalleryScreen(navigationActions: NavigationActions, maxItems: Int) {
       // Floating Button to launch our photo picker activity
       floatingActionButton = {
         FloatingActionButton(
+            modifier = Modifier.testTag("AddPhotoButton"),
             containerColor = FindRecipeIcons,
             contentColor = Color.White,
             onClick = {

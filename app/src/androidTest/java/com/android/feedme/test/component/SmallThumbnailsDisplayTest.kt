@@ -10,10 +10,13 @@ import com.android.feedme.model.data.Ingredient
 import com.android.feedme.model.data.IngredientMetaData
 import com.android.feedme.model.data.MeasureUnit
 import com.android.feedme.model.data.Recipe
+import com.android.feedme.model.data.RecipeRepository
 import com.android.feedme.model.data.Step
 import com.android.feedme.ui.component.SmallThumbnailsDisplay
 import com.android.feedme.ui.navigation.NavigationActions
+import com.google.firebase.firestore.FirebaseFirestore
 import io.mockk.mockk
+import org.junit.Before
 import org.junit.Rule
 import org.junit.Test
 import org.junit.runner.RunWith
@@ -24,6 +27,12 @@ class SmallThumbnailsDisplayTest {
   @get:Rule val composeTestRule = createComposeRule()
 
   private val navMock = mockk<NavigationActions>()
+  private val mockFirestore = mockk<FirebaseFirestore>(relaxed = true)
+
+  @Before
+  fun init() {
+    RecipeRepository.initialize(mockFirestore)
+  }
 
   @Test
   fun checkThumbnailsDisplay() {
@@ -49,6 +58,8 @@ class SmallThumbnailsDisplayTest {
     composeTestRule.setContent { SmallThumbnailsDisplay(listOf(recipe1), navMock) }
     composeTestRule.waitForIdle()
 
+    composeTestRule.onNodeWithTag("RecipeSmallCard").assertIsDisplayed()
+
     // Check whether the Image or the warning message is displayed
     try {
       composeTestRule.onNodeWithTag("Recipe Image").assertIsDisplayed()
@@ -59,17 +70,17 @@ class SmallThumbnailsDisplayTest {
     composeTestRule
         .onNodeWithContentDescription("Star Icon", useUnmergedTree = true)
         .assertIsDisplayed()
-    composeTestRule.onNodeWithTag("Text Rating").assertIsDisplayed()
+    composeTestRule.onNodeWithTag("Text Rating", useUnmergedTree = true).assertIsDisplayed()
 
     composeTestRule
         .onNodeWithContentDescription("Timer Icon", useUnmergedTree = true)
         .assertIsDisplayed()
-    composeTestRule.onNodeWithTag("Text Time").assertIsDisplayed()
+    composeTestRule.onNodeWithTag("Text Time", useUnmergedTree = true).assertIsDisplayed()
 
     composeTestRule
         .onNodeWithContentDescription("Save Icon", useUnmergedTree = true)
         .assertIsDisplayed()
 
-    composeTestRule.onNodeWithTag("Text Title").assertIsDisplayed()
+    composeTestRule.onNodeWithTag("Text Title", useUnmergedTree = true).assertIsDisplayed()
   }
 }

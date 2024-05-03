@@ -34,9 +34,10 @@ class ProfileTest {
 
   @Test
   fun profileBoxAndComponentsCorrectlyDisplayed() {
-    ComposeScreen.onComposeScreen<ProfileScreen>(composeTestRule) {
-      composeTestRule.setContent { ProfileScreen(navAction, profileViewModel, emptyList()) }
+    composeTestRule.setContent { ProfileScreen(navAction, profileViewModel) }
+    composeTestRule.waitForIdle()
 
+    ComposeScreen.onComposeScreen<ProfileScreen>(composeTestRule) {
       topBarProfile { assertIsDisplayed() }
 
       bottomBarProfile { assertIsDisplayed() }
@@ -58,7 +59,11 @@ class ProfileTest {
         assertIsDisplayed()
         assertHasClickAction()
       }
+
+      tabRow { assertIsDisplayed() }
+
       recipeSmall { assertIsDisplayed() }
+
       editButton {
         assertIsDisplayed()
         assertHasClickAction()
@@ -75,7 +80,7 @@ class ProfileTest {
   fun viewingDisplayedProfileIsCorrectAndFollowButtonWorks() {
     ComposeScreen.onComposeScreen<ProfileScreen>(composeTestRule) {
       profileViewModel.setViewingProfile(Profile(id = "ID_DEFAULT_1"))
-      composeTestRule.setContent { ProfileScreen(navAction, profileViewModel, emptyList()) }
+      composeTestRule.setContent { ProfileScreen(navAction, profileViewModel) }
 
       topBarProfile { assertIsDisplayed() }
 

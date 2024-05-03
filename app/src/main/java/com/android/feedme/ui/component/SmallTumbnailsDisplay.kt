@@ -83,12 +83,7 @@ fun SmallThumbnailsDisplay(
                     onSuccess = { imageSuccessfulDownload.value = true })
                 Column(
                     horizontalAlignment = Alignment.CenterHorizontally,
-                    modifier = Modifier.background(Color.White)
-                    /*modifier = Modifier.background(color = CardColor, shape = RoundedCornerShape(20.dp)).padding(16.dp)
-                    .clickable { /*TODO*/ }
-                    .testTag("RecipeSmallCard")*/
-                    ) {
-
+                    modifier = Modifier.background(Color.White)) {
                       // Display a warning message if image couldn't be downloaded from internets
                       if (!imageSuccessfulDownload.value) {
                         Text(

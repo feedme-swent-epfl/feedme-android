@@ -9,8 +9,12 @@ import androidx.compose.ui.test.performClick
 import com.android.feedme.model.viewmodel.ProfileViewModel
 import com.android.feedme.screen.SettingsScreen
 import com.android.feedme.ui.navigation.NavigationActions
+import com.android.feedme.ui.navigation.TOP_LEVEL_AUTH
 import com.android.feedme.ui.settings.SettingsScreen
+import com.google.android.gms.auth.api.signin.GoogleSignInClient
+import com.google.android.gms.tasks.OnCompleteListener
 import io.github.kakaocup.compose.node.element.ComposeScreen
+import io.mockk.every
 import io.mockk.mockk
 import io.mockk.verify
 import org.junit.Rule
@@ -134,5 +138,55 @@ class SettingsTest {
           mockk<NavigationActions>(relaxed = true), mockk<ProfileViewModel>(relaxed = true))
     }
     composeTestRule.waitForIdle()
+  }
+
+  @Test
+  fun testDeleteAccountSuccess() {
+    // Mock ProfileViewModel
+    val mockProfileViewModel = mockk<ProfileViewModel>(relaxed = true)
+    val mockNavigationActions = mockk<NavigationActions>(relaxed = true)
+
+    composeTestRule.setContent { SettingsScreen(mockNavigationActions, mockProfileViewModel) }
+
+    // Mock GoogleSignInClient
+    val mockGoogleSignInClient = mockk<GoogleSignInClient>(relaxed = true)
+
+    // Set up the success callback for deleteCurrentUserProfile
+    every { mockProfileViewModel.deleteCurrentUserProfile(any(), any()) } answers
+        {
+          // Invoke the success callback
+          val successCallback = arg<() -> Unit>(0)
+          successCallback.invoke()
+        }
+
+    // Set up the signOut method of GoogleSignInClient
+    every { mockGoogleSignInClient.signOut().addOnCompleteListener(any()) } answers
+        {
+          // Simulate successful sign out
+          val onCompleteListener = arg<OnCompleteListener<Void>>(0)
+          onCompleteListener.onComplete(mockk { every { isSuccessful } returns true })
+          mockk()
+        }
+
+    // Perform the action
+    ComposeScreen.onComposeScreen<SettingsScreen>(composeTestRule) {
+      deleteAccountButton {
+        assertIsDisplayed()
+        assertHasClickAction()
+        performClick()
+      }
+      composeTestRule.waitForIdle()
+
+      composeTestRule.onNodeWithTag("AlertDialogBox").assertIsDisplayed()
+      composeTestRule
+          .onNodeWithTag("ConfirmButton")
+          .assertIsDisplayed()
+          .assertHasClickAction()
+          .performClick()
+
+      verify(exactly = 1) { mockProfileViewModel.deleteCurrentUserProfile(any(), any()) }
+    }
+    // Verify navigation to TOP_LEVEL_AUTH
+    verify { mockNavigationActions.navigateTo(TOP_LEVEL_AUTH) }
   }
 }

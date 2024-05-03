@@ -4,7 +4,6 @@ on:
   push:
     branches:
       - main
-      - 71-self-sign-apk
 
 permissions:
     contents: write
@@ -65,7 +64,7 @@ jobs:
       - name: Upload APK in a draft release branch
         uses: softprops/action-gh-release@v2
         with:
-          name: FeedMe v1.x.x
+          name: FeedMe
           files: ${{ steps.releaseApk.outputs.apkfile }}
           draft: true
           token: ${{ secrets.GITHUB_TOKEN }}

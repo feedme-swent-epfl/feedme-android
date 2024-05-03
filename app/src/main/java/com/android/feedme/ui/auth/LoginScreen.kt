@@ -45,8 +45,8 @@ import com.android.feedme.ui.navigation.NavigationActions
 import com.android.feedme.ui.navigation.Route
 import com.android.feedme.ui.navigation.Screen
 import com.android.feedme.ui.navigation.TOP_LEVEL_DESTINATIONS
+import com.android.feedme.ui.theme.CardColor
 import com.android.feedme.ui.theme.TemplateColor
-import com.android.feedme.ui.theme.cardColor
 import com.google.android.gms.auth.api.signin.GoogleSignIn
 import com.google.android.gms.auth.api.signin.GoogleSignInClient
 import com.google.android.gms.auth.api.signin.GoogleSignInOptions
@@ -151,7 +151,7 @@ fun LoginDisplay(
               }
             },
             modifier = Modifier.width(250.dp).height(60.dp).testTag("LoginButton"),
-            colors = ButtonDefaults.buttonColors(cardColor),
+            colors = ButtonDefaults.buttonColors(CardColor),
             shape = RoundedCornerShape(40.dp),
             border = BorderStroke(2.dp, Color.LightGray)) {
               Row(verticalAlignment = Alignment.CenterVertically) {

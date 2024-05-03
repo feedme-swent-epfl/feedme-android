@@ -4,6 +4,7 @@ import androidx.compose.ui.test.junit4.createComposeRule
 import androidx.test.ext.junit.runners.AndroidJUnit4
 import com.android.feedme.model.data.Profile
 import com.android.feedme.model.data.ProfileRepository
+import com.android.feedme.model.data.RecipeRepository
 import com.android.feedme.model.viewmodel.ProfileViewModel
 import com.android.feedme.screen.ProfileScreen
 import com.android.feedme.ui.navigation.NavigationActions
@@ -26,15 +27,17 @@ class ProfileTest {
   @Before
   fun init() {
     ProfileRepository.initialize(mockFirestore)
+    RecipeRepository.initialize(mockFirestore)
     profileViewModel = ProfileViewModel()
     profileViewModel.updateCurrentUserProfile(Profile())
   }
 
   @Test
   fun profileBoxAndComponentsCorrectlyDisplayed() {
-    ComposeScreen.onComposeScreen<ProfileScreen>(composeTestRule) {
-      composeTestRule.setContent { ProfileScreen(navAction, profileViewModel) }
+    composeTestRule.setContent { ProfileScreen(navAction, profileViewModel) }
+    composeTestRule.waitForIdle()
 
+    ComposeScreen.onComposeScreen<ProfileScreen>(composeTestRule) {
       topBarProfile { assertIsDisplayed() }
 
       bottomBarProfile { assertIsDisplayed() }
@@ -56,6 +59,10 @@ class ProfileTest {
         assertIsDisplayed()
         assertHasClickAction()
       }
+
+      tabRow { assertIsDisplayed() }
+
+      recipeSmall { assertIsDisplayed() }
 
       editButton {
         assertIsDisplayed()

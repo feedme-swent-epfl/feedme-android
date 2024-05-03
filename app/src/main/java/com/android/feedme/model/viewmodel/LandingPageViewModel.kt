@@ -1,6 +1,5 @@
 package com.android.feedme.model.viewmodel
 
-import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.android.feedme.model.data.Recipe
@@ -15,12 +14,11 @@ class LandingPageViewModel : ViewModel() {
   private val _recipes = MutableStateFlow<List<Recipe>>(emptyList())
   val recipes = _recipes.asStateFlow()
 
-
-    init {
-        fetchRecipe("lasagna1")
-        fetchRecipe("lasagna1")
-        fetchRecipe("lasagna1")
-    }
+  init {
+    fetchRecipe("lasagna1")
+    fetchRecipe("lasagna1")
+    fetchRecipe("lasagna1")
+  }
 
   /**
    * A function that fetches the recipe during Login

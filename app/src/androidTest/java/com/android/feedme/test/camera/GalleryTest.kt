@@ -42,6 +42,8 @@ class GalleryTest : TestCase() {
     goToGalleryScreen(10)
 
     ComposeScreen.onComposeScreen<GalleryScreen>(composeTestRule) {
+      placeholderText { assertIsDisplayed() }
+
       addPhotoButton {
         assertIsDisplayed()
         assertHasClickAction()

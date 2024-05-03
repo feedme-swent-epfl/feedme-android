@@ -33,32 +33,22 @@ suspend fun httpRequestBarcode(
       response = connection.inputStream.bufferedReader().use { it.readText() }
     } catch (e: Exception) {
       println("HTTP request failed with url : $url")
-      if (e.message != null) {
-        println("Error http: ${e.message}")
-      } else {
-        println("Error http: ${e.javaClass.simpleName}")
-      }
       e.printStackTrace()
     }
     response
   }
 }
 
-/** Represents possible HTTP methods for making requests. */
+/**
+ * Represents possible HTTP methods for making requests. More will be added later if we make
+ * function supporting other request method
+ */
 enum class HttpMethod {
-  GET,
-  POST,
-  PUT,
-  DELETE,
-  PATCH;
+  GET;
 
   fun stringValue(): String {
     return when (this) {
       GET -> "GET"
-      POST -> "POST"
-      PUT -> "PUT"
-      DELETE -> "DELETE"
-      PATCH -> "PATCH"
     }
   }
 }

@@ -43,6 +43,7 @@ import com.android.feedme.R
 import com.android.feedme.model.viewmodel.AuthViewModel
 import com.android.feedme.ui.navigation.NavigationActions
 import com.android.feedme.ui.navigation.Route
+import com.android.feedme.ui.navigation.Screen
 import com.android.feedme.ui.navigation.TOP_LEVEL_DESTINATIONS
 import com.android.feedme.ui.theme.CardColor
 import com.android.feedme.ui.theme.TemplateColor
@@ -85,10 +86,8 @@ fun LoginScreen(navigationActions: NavigationActions, authViewModel: AuthViewMod
                 coroutineScope.launch {
                   authViewModel.authenticateWithGoogle(
                       idToken = idToken,
-                      onSuccess = {
-                        navigationActions.navigateTo(TOP_LEVEL_DESTINATIONS[0])
-                        // Navigate to next screen or show success message
-                      },
+                      onSuccess = { navigationActions.navigateTo(TOP_LEVEL_DESTINATIONS[0]) },
+                      onDoesntExist = { navigationActions.navigateTo(Screen.WELCOME) },
                       onFailure = { exception ->
                         // Log error or show error message
                         Log.e("LoginScreen", "Authentication failed", exception)

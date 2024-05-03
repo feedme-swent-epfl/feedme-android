@@ -25,6 +25,7 @@ class AuthViewModel : ViewModel() {
   fun authenticateWithGoogle(
       idToken: String,
       onSuccess: () -> Unit,
+      onDoesntExist: () -> Unit,
       onFailure: (Exception) -> Unit
   ) {
     // Create a Google sign-in credential using the provided Google ID token.
@@ -43,7 +44,7 @@ class AuthViewModel : ViewModel() {
           val photoUrl = firebaseUser.photoUrl.toString()
 
           // Try to link or create a profile based on the Firebase User details.
-          linkOrCreateProfile(googleId, name, email, photoUrl, onSuccess, onFailure)
+          linkOrCreateProfile(googleId, name, email, photoUrl, onSuccess, onDoesntExist, onFailure)
         } ?: onFailure(Exception("Firebase User is null")) // Handle null user case.
       } catch (e: Exception) {
         // Handle exceptions during the sign-in process.
@@ -68,6 +69,7 @@ class AuthViewModel : ViewModel() {
       email: String?,
       photoUrl: String?,
       onSuccess: () -> Unit,
+      onDoesntExist: () -> Unit,
       onFailure: (Exception) -> Unit
   ) {
     viewModelScope.launch {
@@ -77,7 +79,7 @@ class AuthViewModel : ViewModel() {
             if (existingProfile != null) {
               onSuccess()
             } else {
-              makeNewProfile(googleId, name, email, photoUrl, onSuccess, onFailure)
+              onDoesntExist()
             }
           },
           onFailure = onFailure)
@@ -94,29 +96,29 @@ class AuthViewModel : ViewModel() {
    * @param onSuccess Callback to be invoked when the profile is successfully added.
    * @param onFailure Callback to be invoked when adding the profile fails with an exception.
    */
-  private fun makeNewProfile(
-      googleId: String,
-      name: String?,
-      email: String?,
-      photoUrl: String?,
-      onSuccess: () -> Unit,
-      onFailure: (Exception) -> Unit
-  ) {
-    val newProfile =
-        Profile(
-            id = googleId,
-            name = name ?: "",
-            username = name ?: "",
-            email = email ?: "",
-            description = "",
-            imageUrl = photoUrl ?: "",
-            followers = listOf(),
-            following = listOf(),
-            filter = listOf(),
-            recipeList = listOf(),
-            commentList = listOf())
+  fun makeNewProfile(onSuccess: () -> Unit = {}, onFailure: (Exception) -> Unit = {}) {
+    FirebaseAuth.getInstance().currentUser?.let { firebaseUser ->
+      val googleId = firebaseUser.uid
+      val name = firebaseUser.displayName.orEmpty()
+      val email = firebaseUser.email.orEmpty()
+      val photoUrl = firebaseUser.photoUrl.toString()
 
-    // Add the newly created profile to the Firestore database.
-    ProfileRepository.instance.addProfile(newProfile, onSuccess, onFailure)
+      val newProfile =
+          Profile(
+              id = googleId,
+              name = name ?: "",
+              username = name ?: "",
+              email = email ?: "",
+              description = "",
+              imageUrl = photoUrl ?: "",
+              followers = listOf(),
+              following = listOf(),
+              filter = listOf(),
+              recipeList = listOf(),
+              commentList = listOf())
+
+      // Add the newly created profile to the Firestore database.
+      ProfileRepository.instance.addProfile(newProfile, onSuccess, onFailure)
+    }
   }
 }

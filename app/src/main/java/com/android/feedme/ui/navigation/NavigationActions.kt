@@ -85,6 +85,7 @@ object Route {
 /** Contains sub-route constants used for navigating within the app's screens */
 object Screen {
   const val AUTHENTICATION = "Authentication Screen"
+  const val WELCOME = "Welcome Screen"
   const val HOME = "Home Screen"
   const val SAVED = "Saved Screen"
   const val FIND_RECIPE = "Find Recipe Screen"

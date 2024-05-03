@@ -23,7 +23,8 @@ class GalleryViewModel : ViewModel() {
 
   val bitmaps = MutableStateFlow<List<Bitmap>>(emptyList())
   val _uris = MutableStateFlow<List<Uri>>(emptyList())
-  var size = 0
+  val _bitmaps = MutableStateFlow<List<Bitmap>>(emptyList())
+  private val _uris = MutableStateFlow<Set<Uri>>(setOf())
 
   @Composable
   fun galleryLauncher(

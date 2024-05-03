@@ -142,6 +142,7 @@ class ProfileViewModel : ViewModel() {
         repository.deleteProfile(currentUserId!!, onSuccess, onFailure)
       }
     }
+    delete.invoke()
     _currentUserFollowers.value.forEach { followerId ->
       removeFollower(followerId, delete, onFailure)
     }

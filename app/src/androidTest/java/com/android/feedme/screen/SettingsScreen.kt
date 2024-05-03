@@ -16,5 +16,4 @@ class SettingsScreen(semanticsProvider: SemanticsNodeInteractionsProvider) :
   val alertDialogBox: KNode = child { hasText("AlertDialogBox") }
   val confirmButton: KNode = child { hasTestTag("ConfirmButton") }
   val dismissButton: KNode = child { hasTestTag("DismissButton") }
-
 }

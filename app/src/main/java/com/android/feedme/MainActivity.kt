@@ -19,6 +19,7 @@ import com.android.feedme.model.data.ProfileRepository
 import com.android.feedme.model.data.RecipeRepository
 import com.android.feedme.model.viewmodel.AuthViewModel
 import com.android.feedme.model.viewmodel.InputViewModel
+import com.android.feedme.model.viewmodel.LandingPageViewModel
 import com.android.feedme.model.viewmodel.ProfileViewModel
 import com.android.feedme.model.viewmodel.RecipeViewModel
 import com.android.feedme.resources.C
@@ -61,6 +62,7 @@ class MainActivity : ComponentActivity() {
               val profileViewModel: ProfileViewModel = viewModel<ProfileViewModel>()
               val authViewModel: AuthViewModel = viewModel<AuthViewModel>()
               val inputViewModel: InputViewModel = viewModel<InputViewModel>()
+              val landingPageViewModel: LandingPageViewModel = viewModel<LandingPageViewModel>()
 
               // Set up the nested navigation graph
               NavHost(navController = navController, startDestination = Route.AUTHENTICATION) {
@@ -80,7 +82,7 @@ class MainActivity : ComponentActivity() {
                   composable(Screen.HOME) {
                     // Create a shared view model for Recipe
                     val recipeViewModel = viewModel<RecipeViewModel>()
-                    LandingPage(navigationActions, recipeViewModel)
+                    LandingPage(navigationActions, recipeViewModel, landingPageViewModel)
                   }
                   composable(Screen.RECIPE) {
                     // Link the shared view model to the composable

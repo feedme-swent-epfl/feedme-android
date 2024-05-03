@@ -1,5 +1,6 @@
 package com.android.feedme.ui.home
 
+import android.annotation.SuppressLint
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
@@ -41,11 +42,8 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import coil.compose.AsyncImage
-import com.android.feedme.model.data.Ingredient
-import com.android.feedme.model.data.IngredientMetaData
-import com.android.feedme.model.data.MeasureUnit
 import com.android.feedme.model.data.Recipe
-import com.android.feedme.model.data.Step
+import com.android.feedme.model.viewmodel.LandingPageViewModel
 import com.android.feedme.model.viewmodel.RecipeViewModel
 import com.android.feedme.ui.component.SearchBarFun
 import com.android.feedme.ui.navigation.BottomNavigationMenu
@@ -63,14 +61,17 @@ import com.android.feedme.ui.theme.YellowStarBlackOutline
  * Composable function that generates the landing page / landing screen
  *
  * @param navigationActions The [NavigationActions] instance for handling back navigation.
+ * @param recipeViewModel The [RecipeViewModel] instance of the recipe ViewModel.
  */
+@SuppressLint("StateFlowValueCalledInComposition")
 @Composable
 fun LandingPage(
     navigationActions: NavigationActions,
-    recipeViewModel: RecipeViewModel = RecipeViewModel()
+    recipeViewModel: RecipeViewModel = RecipeViewModel(),
+    landingPageViewModel: LandingPageViewModel // = LandingPageViewModel()
 ) {
   /* Note that this val is temporary for this sprint, we're awaiting the implementation of the
-   * ViewModels to properly do this part. */
+   * ViewModels to properly do this part.
   val testRecipes: List<Recipe> =
       listOf(
           Recipe(
@@ -98,14 +99,17 @@ fun LandingPage(
               userid = "username",
               difficulty = "Intermediate",
               "https://external-content.duckduckgo.com/iu/?u=https%3A%2F%2Fwww.mamablip.com%2Fstorage%2FLasagna%2520with%2520Meat%2520and%2520Tomato%2520Sauce_3481612355355.jpg&f=1&nofb=1&ipt=8e887ba99ce20a85fb867dabbe0206c1146ebf2f13548b5653a2778e3ea18c54&ipo=images"),
-      )
+      )*/
+  landingPageViewModel.fetchRecipes(listOf("lasagna1"))
+  val recipes = landingPageViewModel.recipes.value
+
   Scaffold(
       modifier = Modifier.fillMaxSize().testTag("LandingScreen"),
       topBar = { TopBarNavigation(title = "FeedMe") },
       bottomBar = {
         BottomNavigationMenu(Route.HOME, navigationActions::navigateTo, TOP_LEVEL_DESTINATIONS)
       },
-      content = { RecipeDisplay(it, navigationActions, testRecipes, recipeViewModel) })
+      content = { RecipeDisplay(it, navigationActions, recipes, recipeViewModel) })
 }
 
 /**

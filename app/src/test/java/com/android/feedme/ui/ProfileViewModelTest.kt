@@ -332,4 +332,28 @@ class ProfileViewModelTest {
       assertTrue(e is IllegalStateException)
     }
   }
+
+  @Test(expected = Exception::class)
+  fun `isViewingProfile throws Exception when currentUserId is null`() {
+    profileViewModel.currentUserId = null
+    profileViewModel.isViewingProfile()
+  }
+
+  @Test(expected = IllegalStateException::class)
+  fun `deleteCurrentUserProfile throws Exception when currentUserId is null`() {
+    profileViewModel.currentUserId = null
+    profileViewModel.deleteCurrentUserProfile({}, {})
+  }
+
+  @Test(expected = Exception::class)
+  fun `profileToShow throws Exception when both currentUserProfile and viewingUserProfile are null`() {
+    profileViewModel.currentUserId = null
+    profileViewModel.profileToShow()
+  }
+
+  @Test(expected = Exception::class)
+  fun `deleteCurrentUserProfile throws Exception when currentUserId is DEFAULT_ID`() {
+    profileViewModel.currentUserId = "DEFAULT_ID"
+    profileViewModel.deleteCurrentUserProfile({}, { throw Exception() })
+  }
 }

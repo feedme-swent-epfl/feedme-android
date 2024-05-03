@@ -12,10 +12,14 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material3.ButtonDefaults
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedButton
 import androidx.compose.material3.Scaffold
+import androidx.compose.material3.Tab
+import androidx.compose.material3.TabRow
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
@@ -37,7 +41,11 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import coil.compose.AsyncImage
 import com.android.feedme.model.data.Profile
+import com.android.feedme.model.data.Recipe
 import com.android.feedme.model.viewmodel.ProfileViewModel
+import com.android.feedme.model.viewmodel.RecipeViewModel
+import com.android.feedme.resources.recipe
+import com.android.feedme.ui.component.SmallThumbnailsDisplay
 import com.android.feedme.ui.navigation.BottomNavigationMenu
 import com.android.feedme.ui.navigation.NavigationActions
 import com.android.feedme.ui.navigation.Route
@@ -58,12 +66,16 @@ import com.android.feedme.ui.theme.TextBarColor
  *
  * @param navigationActions: NavigationActions object to handle navigation events
  * @param profileViewModel: ProfileViewModel object to interact with profile data
+ * @param recipeViewModel: RecipeViewModel object to interact with recipe data
  */
 @Composable
 fun ProfileScreen(
     navigationActions: NavigationActions,
     profileViewModel: ProfileViewModel,
+    recipeViewModel: RecipeViewModel = RecipeViewModel()
 ) {
+
+  val recipeList = listOf(recipe, recipe, recipe, recipe, recipe)
 
   val profile =
       if (profileViewModel.isViewingProfile()) profileViewModel.viewingUserProfile.collectAsState()
@@ -90,7 +102,13 @@ fun ProfileScreen(
             TOP_LEVEL_DESTINATIONS)
       },
       content = { padding ->
-        ProfileBox(padding, profile.value, navigationActions, profileViewModel)
+        ProfileBox(
+            padding,
+            profile.value,
+            recipeList,
+            navigationActions,
+            profileViewModel,
+            recipeViewModel)
       })
 }
 
@@ -109,32 +127,54 @@ fun ProfileScreen(
 fun ProfileBox(
     padding: PaddingValues,
     profile: Profile?,
+    recipeList: List<Recipe>,
     navigationActions: NavigationActions,
-    profileViewModel: ProfileViewModel
+    profileViewModel: ProfileViewModel,
+    recipeViewModel: RecipeViewModel
 ) { // TODO add font
 
-  Column(
+  val tabList = listOf("Recipes", "Comments")
+
+  LazyColumn(
       modifier = Modifier.padding(padding).testTag("ProfileBox"),
       verticalArrangement = Arrangement.Top) {
-        Row(
-            modifier = Modifier.fillMaxWidth().padding(vertical = 20.dp),
-            horizontalArrangement = Arrangement.Center,
-            verticalAlignment = Alignment.CenterVertically) {
-              UserProfilePicture(profileViewModel)
-              Spacer(modifier = Modifier.width(20.dp))
-              UserNameBox(profile ?: Profile())
-              Spacer(modifier = Modifier.width(5.dp))
-              Row(
-                  horizontalArrangement = Arrangement.Center,
-                  verticalAlignment = Alignment.CenterVertically) {
-                    FollowersButton(profile ?: Profile(), navigationActions)
-                    FollowingButton(profile ?: Profile(), navigationActions)
-                  }
-            }
-        UserBio(
-            profile ?: Profile(),
-        )
-        ProfileButtons(navigationActions, profile ?: Profile(), profileViewModel)
+        item {
+          Row(
+              modifier = Modifier.fillMaxWidth().padding(vertical = 20.dp),
+              horizontalArrangement = Arrangement.Center,
+              verticalAlignment = Alignment.CenterVertically) {
+                UserProfilePicture()
+                Spacer(modifier = Modifier.width(20.dp))
+                UserNameBox(profile ?: Profile())
+                Spacer(modifier = Modifier.width(5.dp))
+                Row(
+                    horizontalArrangement = Arrangement.Center,
+                    verticalAlignment = Alignment.CenterVertically) {
+                      FollowersButton(profile ?: Profile(), navigationActions)
+                      FollowingButton(profile ?: Profile(), navigationActions)
+                    }
+              }
+          UserBio(
+              profile ?: Profile(),
+          )
+          ProfileButtons(navigationActions, profile ?: Profile(), profileViewModel)
+
+          TabRow(
+              selectedTabIndex = 0,
+              containerColor = MaterialTheme.colorScheme.surface,
+              contentColor = MaterialTheme.colorScheme.onSurface,
+              modifier = Modifier.testTag("TabRow")) {
+                tabList.forEachIndexed { index, title ->
+                  Tab(
+                      text = { Text(title) },
+                      selected = false /*TODO(): selectedTabIndex == index*/,
+                      onClick = { /*TODO selectedTabIndex = index */},
+                      modifier = Modifier.testTag(if (index == 0) "TabRecipes" else "TabComments"))
+                }
+              }
+
+          SmallThumbnailsDisplay(recipeList, navigationActions, recipeViewModel)
+        }
       }
 }
 
@@ -226,8 +266,7 @@ fun UserBio(profile: Profile) {
  *
  * @param navigationActions: NavigationActions object to handle navigation events
  * @param profile: Extract the needed information from the user's profile in the database
- * @param isViewingProfile: Flag indicating whether the profile being viewed is the current user's
- *   or not
+ * @param profileViewModel: ProfileViewModel object to interact with profile data
  */
 @Composable
 fun ProfileButtons(

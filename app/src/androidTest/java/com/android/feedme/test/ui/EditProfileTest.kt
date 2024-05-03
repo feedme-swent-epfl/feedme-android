@@ -147,6 +147,7 @@ class EditProfileTest {
       editPicture.assertIsDisplayed()
       editPicture.assertHasClickAction()
       editPicture.performClick()
+      profileViewModel.currentUserId = "ID_DEFAULT"
       profileViewModel.updateProfilePicture(
           profileViewModel,
           Uri.parse(

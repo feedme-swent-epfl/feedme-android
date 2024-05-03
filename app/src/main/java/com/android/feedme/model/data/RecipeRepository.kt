@@ -71,7 +71,7 @@ class RecipeRepository(private val db: FirebaseFirestore) {
    * @param onFailure A callback function invoked on failure to fetch the recipes, with an
    *   exception.
    */
-  fun getRecipes(
+  /*fun getRecipes( TODO : We will use this for recommendations (maybe)
       ids: List<String>,
       onSuccess: (List<Recipe>) -> Unit,
       onFailure: (Exception) -> Unit
@@ -84,7 +84,7 @@ class RecipeRepository(private val db: FirebaseFirestore) {
           onSuccess(recipes)
         }
         .addOnFailureListener { exception -> onFailure(exception) }
-  }
+  }*/
 
   private fun recipeToMap(recipe: Recipe): Map<String, Any> {
     return mapOf(

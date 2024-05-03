@@ -71,7 +71,6 @@ fun LandingPage(
     landingPageViewModel: LandingPageViewModel = LandingPageViewModel()
 ) {
 
-  landingPageViewModel.fetchRecipe("lasagna1")
   val recipes = landingPageViewModel.recipes.value
 
   Scaffold(

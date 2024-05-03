@@ -15,6 +15,13 @@ class LandingPageViewModel : ViewModel() {
   private val _recipes = MutableStateFlow<List<Recipe>>(emptyList())
   val recipes = _recipes.asStateFlow()
 
+
+    init {
+        fetchRecipe("lasagna1")
+        fetchRecipe("lasagna1")
+        fetchRecipe("lasagna1")
+    }
+
   /**
    * A function that fetches the recipe during Login
    *
@@ -41,7 +48,7 @@ class LandingPageViewModel : ViewModel() {
    *
    * @param ids: the unique IDs of the profiles we want to fetch
    */
-  fun fetchRecipes(ids: List<String>) {
+  /*fun fetchRecipes(ids: List<String>) {
     // Check if we actually need to fetch the recipes
     val currentIds = _recipes.value.map { it.recipeId }.toSet()
     if (currentIds != ids.toSet() && ids.isNotEmpty()) {
@@ -62,6 +69,6 @@ class LandingPageViewModel : ViewModel() {
               throw error("Recipes were not fetched")
             })
       }
-    }
-  }
+    } TODO : We will use this for recommendations (maybe)
+  }*/
 }

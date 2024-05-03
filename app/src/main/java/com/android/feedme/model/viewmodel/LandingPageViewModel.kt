@@ -24,7 +24,11 @@ class LandingPageViewModel : ViewModel() {
     viewModelScope.launch {
       repository.getRecipe(
           id,
-          onSuccess = { recipe -> if (recipe != null) {} },
+          onSuccess = { recipe ->
+            if (recipe != null) {
+              _recipes.value += recipe
+            }
+          },
           onFailure = {
             // Handle failure
             throw error("Recipe was not fetched during Login")

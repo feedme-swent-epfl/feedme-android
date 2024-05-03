@@ -100,7 +100,7 @@ fun LandingPage(
               difficulty = "Intermediate",
               "https://external-content.duckduckgo.com/iu/?u=https%3A%2F%2Fwww.mamablip.com%2Fstorage%2FLasagna%2520with%2520Meat%2520and%2520Tomato%2520Sauce_3481612355355.jpg&f=1&nofb=1&ipt=8e887ba99ce20a85fb867dabbe0206c1146ebf2f13548b5653a2778e3ea18c54&ipo=images"),
       )*/
-  landingPageViewModel.fetchRecipes(listOf("lasagna1"))
+  landingPageViewModel.fetchRecipe("lasagna1")
   val recipes = landingPageViewModel.recipes.value
 
   Scaffold(

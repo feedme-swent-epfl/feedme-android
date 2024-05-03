@@ -147,7 +147,10 @@ class EditProfileTest {
       editPicture.assertIsDisplayed()
       editPicture.assertHasClickAction()
       editPicture.performClick()
-      profileViewModel.updateProfilePicture(profileViewModel, Uri.parse("https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcT0ouuiiXjqpSyZLcW7yXsrGl9T-FxgUQJMNSaoF3JUitDQ_t-oVrJjbCCQkfYmdGYJoeM&usqp=CAU"))
+      profileViewModel.updateProfilePicture(
+          profileViewModel,
+          Uri.parse(
+              "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcT0ouuiiXjqpSyZLcW7yXsrGl9T-FxgUQJMNSaoF3JUitDQ_t-oVrJjbCCQkfYmdGYJoeM&usqp=CAU"))
     }
   }
 

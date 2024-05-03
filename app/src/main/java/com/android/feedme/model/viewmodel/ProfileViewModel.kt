@@ -1,5 +1,6 @@
 package com.android.feedme.model.viewmodel
 
+import android.net.Uri
 import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
@@ -357,5 +358,18 @@ class ProfileViewModel : ViewModel() {
             Log.e("ProfileViewModel", "Failed to remove follower and following: ${error.message}")
           })
     }
+  }
+
+  /**
+   * Updates the profile picture of the current user.
+   *
+   * @param profileViewModel The ProfileViewModel of the user.
+   * @param picture The URI of the new profile picture.
+   */
+  fun updateProfilePicture(profileViewModel: ProfileViewModel, picture: Uri) {
+    repository.uploadProfilePicture(
+        profile = profileViewModel.currentUserProfile.value!!,
+        onFailure = { throw error("Can't upload profile picture to the database") },
+        uri = picture)
   }
 }

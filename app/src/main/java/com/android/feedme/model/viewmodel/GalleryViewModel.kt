@@ -4,6 +4,8 @@ import android.Manifest
 import android.app.Activity
 import android.content.Context
 import android.content.pm.PackageManager
+import android.graphics.Bitmap
+import android.graphics.ImageDecoder
 import android.net.Uri
 import android.os.Build
 import androidx.activity.compose.ManagedActivityResultLauncher
@@ -19,14 +21,16 @@ import kotlinx.coroutines.flow.MutableStateFlow
 
 class GalleryViewModel : ViewModel() {
 
-  private val _uris = MutableStateFlow<List<Uri>>(emptyList())
+  val bitmaps = MutableStateFlow<List<Bitmap>>(emptyList())
+  val _uris = MutableStateFlow<List<Uri>>(emptyList())
+  var size = 0
 
   @Composable
   fun galleryLauncher(
+      profileViewModel: ProfileViewModel?,
       maxItems: Int
-  ): ManagedActivityResultLauncher<PickVisualMediaRequest, List<@JvmSuppressWildcards Uri>> {
+  ): ManagedActivityResultLauncher<PickVisualMediaRequest, out Any?> {
     val context = LocalContext.current
-    val maxImages = if (maxItems < 1) 1 else maxItems
 
     if (!hasRequiredPermissions(context)) {
       val permission =
@@ -40,11 +44,26 @@ class GalleryViewModel : ViewModel() {
       ActivityCompat.requestPermissions(context as Activity, permission, 0)
     }
 
-    return rememberLauncherForActivityResult(
-        ActivityResultContracts.PickMultipleVisualMedia(maxItems),
-        onResult = { uris ->
-          // TODO : handling the display of the gallery pictures
-        })
+    if (maxItems <= 1) {
+      return rememberLauncherForActivityResult(
+          ActivityResultContracts.PickVisualMedia(),
+          onResult = { uri ->
+            uri?.let { profileViewModel?.updateProfilePicture(profileViewModel, uri) }
+          })
+    } else {
+      return rememberLauncherForActivityResult(
+          ActivityResultContracts.PickMultipleVisualMedia(maxItems),
+          onResult = { uris ->
+            uris.let {
+              for (uri in it) {
+                _uris.value += uri
+                val source = ImageDecoder.createSource(context.contentResolver, uri)
+                val bitmap = ImageDecoder.decodeBitmap(source)
+                bitmaps.value += bitmap
+              }
+            }
+          })
+    }
   }
 }
 

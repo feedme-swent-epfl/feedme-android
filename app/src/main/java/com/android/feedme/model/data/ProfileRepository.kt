@@ -1,7 +1,9 @@
 package com.android.feedme.model.data
 
+import android.net.Uri
 import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.firestore.Transaction
+import com.google.firebase.storage.FirebaseStorage
 
 /**
  * A repository class for managing user profiles in Firebase Firestore.
@@ -50,6 +52,35 @@ class ProfileRepository(private val db: FirebaseFirestore) {
         .addOnFailureListener { exception -> onFailure(exception) }
   }
 
+  /**
+   * Uploads a user profile picture in Firestore.
+   *
+   * This method updates the profile document in the Firestore collection specified by
+   * [collectionPath]. If an error occurs, [onFailure] is invoked with the exception.
+   *
+   * @param profile The Profile object to be updated in Firestore.
+   * @param uri The picture to upload.
+   * @param onFailure A callback function invoked on failure to update the profile, with an
+   *   exception.
+   */
+  fun uploadProfilePicture(profile: Profile?, uri: Uri, onFailure: (Exception) -> Unit) {
+    if (profile != null) {
+      val storageRef =
+          FirebaseStorage.getInstance().reference.child("profilePictures/${profile.id}")
+      storageRef
+          .putFile(uri)
+          .addOnSuccessListener { taskSnapshot ->
+            taskSnapshot.metadata?.reference?.downloadUrl?.addOnSuccessListener { uri ->
+              val url = uri.toString()
+              db.collection("profiles")
+                  .document(profile.id)
+                  .update("imageUrl", url)
+                  .addOnFailureListener { exception -> onFailure(exception) }
+            }
+          }
+          .addOnFailureListener { exception -> onFailure(exception) }
+    }
+  }
   /**
    * Retrieves a user profile from Firestore by its document ID.
    *

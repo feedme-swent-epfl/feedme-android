@@ -31,7 +31,7 @@ import com.android.feedme.ui.navigation.TopBarNavigation
 @Composable
 fun GalleryScreen(navigationActions: NavigationActions, maxItems: Int) {
   val galleryViewModel = viewModel<GalleryViewModel>()
-  val pickImage = galleryViewModel.galleryLauncher(maxItems)
+  val pickImage = galleryViewModel.galleryLauncher(null, maxItems)
 
   // Creating an intermediate screen with a button to add a level of indirection, needed to launch
   // the PickImage activity

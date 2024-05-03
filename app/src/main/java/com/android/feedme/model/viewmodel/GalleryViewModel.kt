@@ -31,17 +31,7 @@ class GalleryViewModel : ViewModel() {
   ): ManagedActivityResultLauncher<PickVisualMediaRequest, out Any?> {
     val context = LocalContext.current
 
-    if (!hasRequiredPermissions(context)) {
-      val permission =
-          if (Build.VERSION.SDK_INT >= 34)
-              arrayOf(
-                  Manifest.permission.READ_MEDIA_IMAGES,
-                  Manifest.permission.READ_MEDIA_VISUAL_USER_SELECTED)
-          else if (Build.VERSION.SDK_INT < 33) arrayOf((Manifest.permission.READ_EXTERNAL_STORAGE))
-          else arrayOf(Manifest.permission.READ_MEDIA_IMAGES)
-
-      ActivityCompat.requestPermissions(context as Activity, permission, 0)
-    }
+    if (!hasRequiredPermissions(context)) askForPermission(context)
 
     if (maxItems <= 1) {
       return rememberLauncherForActivityResult(
@@ -57,12 +47,7 @@ class GalleryViewModel : ViewModel() {
               for (uri in it) {
                 // Duplication protection and setting max of loadable images to 15
                 if (_uris.value.size < 15 && !_uris.value.contains(uri)) {
-                  _uris.value += uri
-                  val source = ImageDecoder.createSource(context.contentResolver, uri)
-                  val bitmap = ImageDecoder.decodeBitmap(source)
-                  if (bitmaps.value.size < 15) {
-                    bitmaps.value += bitmap
-                  }
+                  decodeUriToBitmap(context, uri, _uris, bitmaps)
                 }
               }
             }
@@ -84,4 +69,30 @@ private fun hasRequiredPermissions(context: Context): Boolean {
   else
       ContextCompat.checkSelfPermission(context, Manifest.permission.READ_MEDIA_IMAGES) ==
           PackageManager.PERMISSION_GRANTED
+}
+
+private fun askForPermission(context: Context) {
+  val permission =
+      if (Build.VERSION.SDK_INT >= 34)
+          arrayOf(
+              Manifest.permission.READ_MEDIA_IMAGES,
+              Manifest.permission.READ_MEDIA_VISUAL_USER_SELECTED)
+      else if (Build.VERSION.SDK_INT < 33) arrayOf((Manifest.permission.READ_EXTERNAL_STORAGE))
+      else arrayOf(Manifest.permission.READ_MEDIA_IMAGES)
+
+  return ActivityCompat.requestPermissions(context as Activity, permission, 0)
+}
+
+private fun decodeUriToBitmap(
+    context: Context,
+    uri: Uri,
+    uris: MutableStateFlow<List<Uri>>,
+    bitmaps: MutableStateFlow<List<Bitmap>>
+) {
+  uris.value += uri
+  val source = ImageDecoder.createSource(context.contentResolver, uri)
+  val bitmap = ImageDecoder.decodeBitmap(source)
+  if (bitmaps.value.size < 15) {
+    bitmaps.value += bitmap
+  }
 }

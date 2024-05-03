@@ -4,6 +4,7 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.android.feedme.model.data.Recipe
 import com.android.feedme.model.data.RecipeRepository
+import com.google.firebase.auth.FirebaseAuth
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.launch
@@ -15,9 +16,11 @@ class LandingPageViewModel : ViewModel() {
   val recipes = _recipes.asStateFlow()
 
   init {
-    fetchRecipe("lasagna1")
-    fetchRecipe("lasagna1")
-    fetchRecipe("lasagna1")
+    FirebaseAuth.getInstance().uid?.let {
+      fetchRecipe("lasagna1")
+      fetchRecipe("lasagna1")
+      fetchRecipe("lasagna1")
+    }
   }
 
   /**
@@ -69,4 +72,8 @@ class LandingPageViewModel : ViewModel() {
       }
     } TODO : We will use this for recommendations (maybe)
   }*/
+
+  fun setRecipes(recipes: List<Recipe>) {
+    _recipes.value = recipes
+  }
 }

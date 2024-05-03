@@ -63,6 +63,29 @@ class RecipeRepository(private val db: FirebaseFirestore) {
         .addOnFailureListener { onFailure(it) }
   }
 
+  /**
+   * Fetch all the recipes of the given List of Ids
+   *
+   * @param ids The list of recipe IDs to fetch.
+   * @param onSuccess A callback function invoked with the list of recipes on success.
+   * @param onFailure A callback function invoked on failure to fetch the recipes, with an
+   *   exception.
+   */
+  /*fun getRecipes( TODO : We will use this for recommendations (maybe)
+      ids: List<String>,
+      onSuccess: (List<Recipe>) -> Unit,
+      onFailure: (Exception) -> Unit
+  ) {
+    db.collection(collectionPath)
+        .whereIn("id", ids)
+        .get()
+        .addOnSuccessListener { querySnapshot ->
+          val recipes = querySnapshot.toObjects(Recipe::class.java)
+          onSuccess(recipes)
+        }
+        .addOnFailureListener { exception -> onFailure(exception) }
+  }*/
+
   private fun recipeToMap(recipe: Recipe): Map<String, Any> {
     return mapOf(
         "recipeId" to recipe.recipeId,

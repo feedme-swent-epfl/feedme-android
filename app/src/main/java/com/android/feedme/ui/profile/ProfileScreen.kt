@@ -112,8 +112,7 @@ fun ProfileBox(
     profile: Profile?,
     navigationActions: NavigationActions,
     profileViewModel: ProfileViewModel
-) { // TODO add font
-
+) {
   Column(
       modifier = Modifier.padding(padding).testTag("ProfileBox"),
       verticalArrangement = Arrangement.Top) {

@@ -114,7 +114,9 @@ class MainActivity : ComponentActivity() {
                   }
                 }
                 navigation(startDestination = Screen.SETTINGS, route = Route.SETTINGS) {
-                  composable(Screen.SETTINGS) { SettingsScreen(navigationActions) }
+                  composable(Screen.SETTINGS) {
+                    SettingsScreen(navigationActions, profileViewModel)
+                  }
                 }
               }
             }

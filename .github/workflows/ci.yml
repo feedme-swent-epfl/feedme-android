@@ -29,18 +29,19 @@ jobs:
       - name: Free Disk Space (U
         uses: jlumbroso/free-disk-space@main
         with:
-          # this might remove to
-          # if set to "true" but
           tool-cache: false
-          # all of these default
-          # "false" if necessary
-          android: true
+          android: false
           dotnet: true
           haskell: true
           large-packages: true
           docker-images: true
           swap-storage: true
 
+      - name: Remove old artifacts
+        uses: c-hive/gha-remove-artifacts@v1
+        with:
+          age: '3 days' 
+          skip-recent: 3
 
       # Kernel-based Virtual Machine (KVM) is an open source virtualization technology built into Linux. Enabling it allows the Android emulator to run faster.
       - name: Enable KVM group perms

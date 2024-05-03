@@ -68,7 +68,7 @@ import com.android.feedme.ui.theme.YellowStarBlackOutline
 fun LandingPage(
     navigationActions: NavigationActions,
     recipeViewModel: RecipeViewModel = RecipeViewModel(),
-    landingPageViewModel: LandingPageViewModel // = LandingPageViewModel()
+    landingPageViewModel: LandingPageViewModel = LandingPageViewModel()
 ) {
 
   landingPageViewModel.fetchRecipe("lasagna1")

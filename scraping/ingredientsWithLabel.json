@@ -1,0 +1,6122 @@
+{
+    "Abacha": {
+        "vegan": true,
+        "vegetarian": true
+    },
+    "Achara": {
+        "vegan": false,
+        "vegetarian": false
+    },
+    "Achi": {
+        "vegan": true,
+        "vegetarian": true
+    },
+    "Achi seed": {
+        "vegan": true,
+        "vegetarian": true
+    },
+    "Achicha": {
+        "vegan": false,
+        "vegetarian": false
+    },
+    "Active dry yeast": {
+        "vegan": true,
+        "vegetarian": true
+    },
+    "Adobo seasoning": {
+        "vegan": false,
+        "vegetarian": true
+    },
+    "Afang leaves": {
+        "vegan": true,
+        "vegetarian": true
+    },
+    "African breadfruit seed": {
+        "vegan": true,
+        "vegetarian": true
+    },
+    "African nut": {
+        "vegan": true,
+        "vegetarian": true
+    },
+    "African pear": {
+        "vegan": true,
+        "vegetarian": true
+    },
+    "African spinach": {
+        "vegan": true,
+        "vegetarian": true
+    },
+    "African star apple": {
+        "vegan": true,
+        "vegetarian": true
+    },
+    "Agar powder": {
+        "vegan": true,
+        "vegetarian": true
+    },
+    "Agave syrup": {
+        "vegan": true,
+        "vegetarian": true
+    },
+    "Ager": {
+        "vegan": true,
+        "vegetarian": true
+    },
+    "Akamu paste": {
+        "vegan": true,
+        "vegetarian": true
+    },
+    "Akidi": {
+        "vegan": true,
+        "vegetarian": true
+    },
+    "Akparata powder": {
+        "vegan": false,
+        "vegetarian": false
+    },
+    "Alayyahu": {
+        "vegan": true,
+        "vegetarian": true
+    },
+    "Ale": {
+        "vegan": true,
+        "vegetarian": true
+    },
+    "All-purpose bleached flour": {
+        "vegan": true,
+        "vegetarian": true
+    },
+    "All-purpose flour": {
+        "vegan": true,
+        "vegetarian": true
+    },
+    "All-purpose wheat flour": {
+        "vegan": true,
+        "vegetarian": true
+    },
+    "All-spice powder": {
+        "vegan": true,
+        "vegetarian": true
+    },
+    "Alligator pepper": {
+        "vegan": true,
+        "vegetarian": true
+    },
+    "Allspice": {
+        "vegan": true,
+        "vegetarian": true
+    },
+    "Almond flour": {
+        "vegan": true,
+        "vegetarian": true
+    },
+    "Almond meal": {
+        "vegan": true,
+        "vegetarian": true
+    },
+    "Almond milk": {
+        "vegan": true,
+        "vegetarian": true
+    },
+    "Almond oil": {
+        "vegan": true,
+        "vegetarian": true
+    },
+    "Almonds": {
+        "vegan": true,
+        "vegetarian": true
+    },
+    "Alubosa": {
+        "vegan": true,
+        "vegetarian": true
+    },
+    "Amala flour": {
+        "vegan": true,
+        "vegetarian": true
+    },
+    "Amaranth leaves": {
+        "vegan": true,
+        "vegetarian": true
+    },
+    "American cheese slices": {
+        "vegan": false,
+        "vegetarian": true
+    },
+    "American-style baking powder": {
+        "vegan": true,
+        "vegetarian": true
+    },
+    "Amunututu": {
+        "vegan": true,
+        "vegetarian": true
+    },
+    "Ancho": {
+        "vegan": false,
+        "vegetarian": false
+    },
+    "Anchovy": {
+        "vegan": false,
+        "vegetarian": false
+    },
+    "Anchovy fillet": {
+        "vegan": false,
+        "vegetarian": false
+    },
+    "Anchovy paste": {
+        "vegan": false,
+        "vegetarian": false
+    },
+    "Angel hair pasta": {
+        "vegan": true,
+        "vegetarian": true
+    },
+    "Anise seed": {
+        "vegan": true,
+        "vegetarian": true
+    },
+    "Anko filling": {
+        "vegan": false,
+        "vegetarian": false
+    },
+    "Annatto": {
+        "vegan": false,
+        "vegetarian": false
+    },
+    "Any topping": {
+        "vegan": true,
+        "vegetarian": true
+    },
+    "Apple": {
+        "vegan": true,
+        "vegetarian": true
+    },
+    "Apple cider vinegar": {
+        "vegan": true,
+        "vegetarian": true
+    },
+    "Apple comp\u00f4te": {
+        "vegan": true,
+        "vegetarian": true
+    },
+    "Apple wood chunks": {
+        "vegan": true,
+        "vegetarian": true
+    },
+    "Applesauce": {
+        "vegan": true,
+        "vegetarian": true
+    },
+    "Apricots": {
+        "vegan": true,
+        "vegetarian": true
+    },
+    "Arborio": {
+        "vegan": false,
+        "vegetarian": false
+    },
+    "Aromatics": {
+        "vegan": true,
+        "vegetarian": true
+    },
+    "Artichoke": {
+        "vegan": true,
+        "vegetarian": true
+    },
+    "Artichoke hearts": {
+        "vegan": true,
+        "vegetarian": true
+    },
+    "Arugula lettuce": {
+        "vegan": true,
+        "vegetarian": true
+    },
+    "Asafetida": {
+        "vegan": false,
+        "vegetarian": true
+    },
+    "Ascorbic acid": {
+        "vegan": true,
+        "vegetarian": true
+    },
+    "Ashwe leaves": {
+        "vegan": true,
+        "vegetarian": true
+    },
+    "Asiago cheese": {
+        "vegan": false,
+        "vegetarian": true
+    },
+    "Asian greens": {
+        "vegan": true,
+        "vegetarian": true
+    },
+    "Asparagus": {
+        "vegan": true,
+        "vegetarian": true
+    },
+    "Assorted beef": {
+        "vegan": false,
+        "vegetarian": false
+    },
+    "Assorted cow parts": {
+        "vegan": false,
+        "vegetarian": true
+    },
+    "Assorted fresh fish": {
+        "vegan": false,
+        "vegetarian": false
+    },
+    "Assorted meat": {
+        "vegan": false,
+        "vegetarian": false
+    },
+    "Assorted salad greens": {
+        "vegan": true,
+        "vegetarian": true
+    },
+    "Assorted vegetables": {
+        "vegan": true,
+        "vegetarian": true
+    },
+    "Ata rodo": {
+        "vegan": true,
+        "vegetarian": true
+    },
+    "Atama leaves": {
+        "vegan": true,
+        "vegetarian": true
+    },
+    "Atarugu": {
+        "vegan": true,
+        "vegetarian": true
+    },
+    "Atyever leaves": {
+        "vegan": true,
+        "vegetarian": true
+    },
+    "Aubergine": {
+        "vegan": true,
+        "vegetarian": true
+    },
+    "Australian tomato sauce": {
+        "vegan": true,
+        "vegetarian": true
+    },
+    "Australian-style thin sausages": {
+        "vegan": false,
+        "vegetarian": false
+    },
+    "Avocado": {
+        "vegan": true,
+        "vegetarian": true
+    },
+    "Avocado oil": {
+        "vegan": true,
+        "vegetarian": true
+    },
+    "Awa leaves": {
+        "vegan": true,
+        "vegetarian": true
+    },
+    "Ayala leaf": {
+        "vegan": false,
+        "vegetarian": true
+    },
+    "Baby carrots": {
+        "vegan": true,
+        "vegetarian": true
+    },
+    "Baby milk": {
+        "vegan": true,
+        "vegetarian": true
+    },
+    "Baby mushrooms": {
+        "vegan": true,
+        "vegetarian": true
+    },
+    "Baby potatoes": {
+        "vegan": true,
+        "vegetarian": true
+    },
+    "Baby spinach": {
+        "vegan": true,
+        "vegetarian": true
+    },
+    "Bacon": {
+        "vegan": false,
+        "vegetarian": false
+    },
+    "Bacon fat": {
+        "vegan": false,
+        "vegetarian": false
+    },
+    "Bacon grease": {
+        "vegan": false,
+        "vegetarian": false
+    },
+    "Bacon runoff": {
+        "vegan": false,
+        "vegetarian": false
+    },
+    "Bacon slices": {
+        "vegan": false,
+        "vegetarian": false
+    },
+    "Bacon strips": {
+        "vegan": false,
+        "vegetarian": false
+    },
+    "Bagoong alamang": {
+        "vegan": false,
+        "vegetarian": false
+    },
+    "Baguette": {
+        "vegan": true,
+        "vegetarian": true
+    },
+    "Baharat": {
+        "vegan": false,
+        "vegetarian": false
+    },
+    "Baking apples": {
+        "vegan": true,
+        "vegetarian": true
+    },
+    "Baking mix": {
+        "vegan": true,
+        "vegetarian": true
+    },
+    "Baking powder": {
+        "vegan": true,
+        "vegetarian": true
+    },
+    "Baking soda": {
+        "vegan": true,
+        "vegetarian": true
+    },
+    "Baking sugar": {
+        "vegan": true,
+        "vegetarian": true
+    },
+    "Ball tomatoes": {
+        "vegan": true,
+        "vegetarian": true
+    },
+    "Balsamic vinegar": {
+        "vegan": true,
+        "vegetarian": true
+    },
+    "Bambara nuts": {
+        "vegan": true,
+        "vegetarian": true
+    },
+    "Bamboo shoots": {
+        "vegan": true,
+        "vegetarian": true
+    },
+    "Banana": {
+        "vegan": true,
+        "vegetarian": true
+    },
+    "Banana leaves": {
+        "vegan": true,
+        "vegetarian": true
+    },
+    "Banana peppers": {
+        "vegan": true,
+        "vegetarian": true
+    },
+    "Banga spice": {
+        "vegan": true,
+        "vegetarian": true
+    },
+    "Baobab leaf": {
+        "vegan": true,
+        "vegetarian": true
+    },
+    "Barbecue rub": {
+        "vegan": false,
+        "vegetarian": false
+    },
+    "Barbecue sauce": {
+        "vegan": true,
+        "vegetarian": true
+    },
+    "Barberries": {
+        "vegan": true,
+        "vegetarian": true
+    },
+    "Barely-sweetened whipped cream": {
+        "vegan": false,
+        "vegetarian": true
+    },
+    "Barley": {
+        "vegan": true,
+        "vegetarian": true
+    },
+    "Barley flour": {
+        "vegan": true,
+        "vegetarian": true
+    },
+    "Basil": {
+        "vegan": true,
+        "vegetarian": true
+    },
+    "Basil chiffonade": {
+        "vegan": true,
+        "vegetarian": true
+    },
+    "Basil leaves": {
+        "vegan": true,
+        "vegetarian": true
+    },
+    "Basmati rice": {
+        "vegan": true,
+        "vegetarian": true
+    },
+    "Bay leaf": {
+        "vegan": true,
+        "vegetarian": true
+    },
+    "Bay scallops": {
+        "vegan": false,
+        "vegetarian": false
+    },
+    "Bazeen dough": {
+        "vegan": true,
+        "vegetarian": true
+    },
+    "Bean flour": {
+        "vegan": true,
+        "vegetarian": true
+    },
+    "Bean sprouts": {
+        "vegan": true,
+        "vegetarian": true
+    },
+    "Beans": {
+        "vegan": true,
+        "vegetarian": true
+    },
+    "Bear's garlic": {
+        "vegan": true,
+        "vegetarian": true
+    },
+    "Bearded mussels": {
+        "vegan": false,
+        "vegetarian": false
+    },
+    "Beef": {
+        "vegan": false,
+        "vegetarian": false
+    },
+    "Beef broth": {
+        "vegan": false,
+        "vegetarian": false
+    },
+    "Beef stock": {
+        "vegan": false,
+        "vegetarian": false
+    },
+    "Beef stock cube": {
+        "vegan": false,
+        "vegetarian": false
+    },
+    "Beer": {
+        "vegan": true,
+        "vegetarian": true
+    },
+    "Beer batter": {
+        "vegan": true,
+        "vegetarian": true
+    },
+    "Beets": {
+        "vegan": true,
+        "vegetarian": true
+    },
+    "Beets.": {
+        "vegan": true,
+        "vegetarian": true
+    },
+    "Bell pepper": {
+        "vegan": true,
+        "vegetarian": true
+    },
+    "Bengal gram": {
+        "vegan": true,
+        "vegetarian": true
+    },
+    "Beni sh\u014dga": {
+        "vegan": true,
+        "vegetarian": true
+    },
+    "Berbere seasoning": {
+        "vegan": true,
+        "vegetarian": true
+    },
+    "Berbere spice": {
+        "vegan": true,
+        "vegetarian": true
+    },
+    "Berries": {
+        "vegan": true,
+        "vegetarian": true
+    },
+    "Besan": {
+        "vegan": true,
+        "vegetarian": true
+    },
+    "Birds' eye chilli": {
+        "vegan": true,
+        "vegetarian": true
+    },
+    "Biscuit mix": {
+        "vegan": true,
+        "vegetarian": true
+    },
+    "Bison meat": {
+        "vegan": false,
+        "vegetarian": false
+    },
+    "Bitter leaf": {
+        "vegan": false,
+        "vegetarian": false
+    },
+    "Bittersweet chocolate": {
+        "vegan": true,
+        "vegetarian": true
+    },
+    "Black beans": {
+        "vegan": true,
+        "vegetarian": true
+    },
+    "Black bread": {
+        "vegan": true,
+        "vegetarian": true
+    },
+    "Black gram": {
+        "vegan": true,
+        "vegetarian": true
+    },
+    "Black olives": {
+        "vegan": true,
+        "vegetarian": true
+    },
+    "Black pepper": {
+        "vegan": true,
+        "vegetarian": true
+    },
+    "Black pepper powder": {
+        "vegan": true,
+        "vegetarian": true
+    },
+    "Black peppercorns": {
+        "vegan": true,
+        "vegetarian": true
+    },
+    "Black raspberry liqueur": {
+        "vegan": true,
+        "vegetarian": true
+    },
+    "Black salt": {
+        "vegan": false,
+        "vegetarian": false
+    },
+    "Black tea": {
+        "vegan": true,
+        "vegetarian": true
+    },
+    "Black-eyed peas": {
+        "vegan": true,
+        "vegetarian": true
+    },
+    "Blackberries": {
+        "vegan": true,
+        "vegetarian": true
+    },
+    "Bleached flour": {
+        "vegan": true,
+        "vegetarian": true
+    },
+    "Blue cheese": {
+        "vegan": false,
+        "vegetarian": true
+    },
+    "Blue cheese dressing": {
+        "vegan": false,
+        "vegetarian": true
+    },
+    "Blue food coloring": {
+        "vegan": false,
+        "vegetarian": false
+    },
+    "Blueberries": {
+        "vegan": true,
+        "vegetarian": true
+    },
+    "Bok choy": {
+        "vegan": true,
+        "vegetarian": true
+    },
+    "Bokolisa seeds": {
+        "vegan": true,
+        "vegetarian": true
+    },
+    "Bomba rice": {
+        "vegan": true,
+        "vegetarian": true
+    },
+    "Bonito flakes": {
+        "vegan": false,
+        "vegetarian": false
+    },
+    "Bouillon cube": {
+        "vegan": true,
+        "vegetarian": true
+    },
+    "Bouillon powder": {
+        "vegan": true,
+        "vegetarian": true
+    },
+    "Bouye powder": {
+        "vegan": true,
+        "vegetarian": true
+    },
+    "Brackish water": {
+        "vegan": true,
+        "vegetarian": true
+    },
+    "Brandy": {
+        "vegan": true,
+        "vegetarian": true
+    },
+    "Bread": {
+        "vegan": true,
+        "vegetarian": true
+    },
+    "Bread crumbs": {
+        "vegan": true,
+        "vegetarian": true
+    },
+    "Bread flour": {
+        "vegan": true,
+        "vegetarian": true
+    },
+    "Bread roll": {
+        "vegan": true,
+        "vegetarian": true
+    },
+    "Breadcrumbs": {
+        "vegan": true,
+        "vegetarian": true
+    },
+    "Breading mix": {
+        "vegan": true,
+        "vegetarian": true
+    },
+    "Breading mixture": {
+        "vegan": true,
+        "vegetarian": true
+    },
+    "Breakfast sausage": {
+        "vegan": false,
+        "vegetarian": false
+    },
+    "Brewed black tea": {
+        "vegan": true,
+        "vegetarian": true
+    },
+    "Brewed coffee": {
+        "vegan": true,
+        "vegetarian": true
+    },
+    "Brie cheese": {
+        "vegan": false,
+        "vegetarian": true
+    },
+    "Brindsah cheese": {
+        "vegan": false,
+        "vegetarian": true
+    },
+    "Brined white cheese": {
+        "vegan": false,
+        "vegetarian": true
+    },
+    "Brioche": {
+        "vegan": true,
+        "vegetarian": true
+    },
+    "Broad beans": {
+        "vegan": true,
+        "vegetarian": true
+    },
+    "Broccoli": {
+        "vegan": true,
+        "vegetarian": true
+    },
+    "Broth": {
+        "vegan": true,
+        "vegetarian": true
+    },
+    "Brown beans": {
+        "vegan": true,
+        "vegetarian": true
+    },
+    "Brown broth": {
+        "vegan": true,
+        "vegetarian": true
+    },
+    "Brown rice": {
+        "vegan": true,
+        "vegetarian": true
+    },
+    "Brown sauce": {
+        "vegan": true,
+        "vegetarian": true
+    },
+    "Brown sugar": {
+        "vegan": true,
+        "vegetarian": true
+    },
+    "Brussels sprouts": {
+        "vegan": true,
+        "vegetarian": true
+    },
+    "Buckwheat flour": {
+        "vegan": true,
+        "vegetarian": true
+    },
+    "Bulgur": {
+        "vegan": true,
+        "vegetarian": true
+    },
+    "Bulgur wheat": {
+        "vegan": true,
+        "vegetarian": true
+    },
+    "Bush meat": {
+        "vegan": false,
+        "vegetarian": false
+    },
+    "Butter": {
+        "vegan": false,
+        "vegetarian": true
+    },
+    "Buttercream": {
+        "vegan": false,
+        "vegetarian": true
+    },
+    "Buttermilk": {
+        "vegan": false,
+        "vegetarian": true
+    },
+    "Butternut squash": {
+        "vegan": true,
+        "vegetarian": true
+    },
+    "Button mushrooms": {
+        "vegan": true,
+        "vegetarian": true
+    },
+    "Cabbage": {
+        "vegan": true,
+        "vegetarian": true
+    },
+    "Cajun seasoning": {
+        "vegan": true,
+        "vegetarian": true
+    },
+    "Cake flour": {
+        "vegan": true,
+        "vegetarian": true
+    },
+    "Calabash": {
+        "vegan": true,
+        "vegetarian": true
+    },
+    "Calabash nutmeg": {
+        "vegan": true,
+        "vegetarian": true
+    },
+    "Calasparra rice": {
+        "vegan": true,
+        "vegetarian": true
+    },
+    "Cameroon pepper": {
+        "vegan": true,
+        "vegetarian": true
+    },
+    "Can of mushroom pieces": {
+        "vegan": true,
+        "vegetarian": true
+    },
+    "Can of tomato paste": {
+        "vegan": true,
+        "vegetarian": true
+    },
+    "Can of tomatoes": {
+        "vegan": true,
+        "vegetarian": true
+    },
+    "Candied cherries": {
+        "vegan": true,
+        "vegetarian": true
+    },
+    "Candied fruit peel": {
+        "vegan": true,
+        "vegetarian": true
+    },
+    "Cannabis": {
+        "vegan": true,
+        "vegetarian": true
+    },
+    "Canned baked beans": {
+        "vegan": true,
+        "vegetarian": true
+    },
+    "Canned black beans": {
+        "vegan": true,
+        "vegetarian": true
+    },
+    "Canned cannellini beans": {
+        "vegan": true,
+        "vegetarian": true
+    },
+    "Canned clams": {
+        "vegan": false,
+        "vegetarian": false
+    },
+    "Canned coconut milk": {
+        "vegan": true,
+        "vegetarian": true
+    },
+    "Canned corn": {
+        "vegan": true,
+        "vegetarian": true
+    },
+    "Canned corned beef": {
+        "vegan": false,
+        "vegetarian": false
+    },
+    "Canned cream of mushroom soup": {
+        "vegan": true,
+        "vegetarian": true
+    },
+    "Canned diced green chiles": {
+        "vegan": true,
+        "vegetarian": true
+    },
+    "Canned diced tomatoes": {
+        "vegan": true,
+        "vegetarian": true
+    },
+    "Canned green peas": {
+        "vegan": true,
+        "vegetarian": true
+    },
+    "Canned hot dogs": {
+        "vegan": true,
+        "vegetarian": true
+    },
+    "Canned kidney beans": {
+        "vegan": true,
+        "vegetarian": true
+    },
+    "Canned mushrooms": {
+        "vegan": true,
+        "vegetarian": true
+    },
+    "Canned peas": {
+        "vegan": true,
+        "vegetarian": true
+    },
+    "Canned plum tomato": {
+        "vegan": true,
+        "vegetarian": true
+    },
+    "Canned sliced mushrooms": {
+        "vegan": true,
+        "vegetarian": true
+    },
+    "Canned tomatoes": {
+        "vegan": true,
+        "vegetarian": true
+    },
+    "Canned tuna": {
+        "vegan": false,
+        "vegetarian": false
+    },
+    "Canned whole tomatoes": {
+        "vegan": true,
+        "vegetarian": true
+    },
+    "Cannoli shells": {
+        "vegan": false,
+        "vegetarian": false
+    },
+    "Canola oil": {
+        "vegan": true,
+        "vegetarian": true
+    },
+    "Capers": {
+        "vegan": true,
+        "vegetarian": true
+    },
+    "Capsicum": {
+        "vegan": true,
+        "vegetarian": true
+    },
+    "Caramel ice cream topping": {
+        "vegan": true,
+        "vegetarian": true
+    },
+    "Caraway": {
+        "vegan": true,
+        "vegetarian": true
+    },
+    "Caraway seeds": {
+        "vegan": true,
+        "vegetarian": true
+    },
+    "Carbonated water": {
+        "vegan": true,
+        "vegetarian": true
+    },
+    "Cardamom": {
+        "vegan": true,
+        "vegetarian": true
+    },
+    "Cardamom pods": {
+        "vegan": true,
+        "vegetarian": true
+    },
+    "Carnaroli risotto rice": {
+        "vegan": true,
+        "vegetarian": true
+    },
+    "Carrot": {
+        "vegan": true,
+        "vegetarian": true
+    },
+    "Carrots": {
+        "vegan": true,
+        "vegetarian": true
+    },
+    "Cascabel": {
+        "vegan": false,
+        "vegetarian": false
+    },
+    "Cashew nut powder": {
+        "vegan": true,
+        "vegetarian": true
+    },
+    "Cashews": {
+        "vegan": true,
+        "vegetarian": true
+    },
+    "Cassava": {
+        "vegan": true,
+        "vegetarian": true
+    },
+    "Cassava flour": {
+        "vegan": true,
+        "vegetarian": true
+    },
+    "Cassava leaves": {
+        "vegan": true,
+        "vegetarian": true
+    },
+    "Cassava tuber": {
+        "vegan": true,
+        "vegetarian": true
+    },
+    "Cassava tubers": {
+        "vegan": true,
+        "vegetarian": true
+    },
+    "Cassava, peeled": {
+        "vegan": true,
+        "vegetarian": true
+    },
+    "Castor sugar": {
+        "vegan": true,
+        "vegetarian": true
+    },
+    "Catfish": {
+        "vegan": false,
+        "vegetarian": false
+    },
+    "Catsup": {
+        "vegan": true,
+        "vegetarian": true
+    },
+    "Cauliflower": {
+        "vegan": true,
+        "vegetarian": true
+    },
+    "Cayenne": {
+        "vegan": true,
+        "vegetarian": true
+    },
+    "Cayenne pepper": {
+        "vegan": true,
+        "vegetarian": true
+    },
+    "Cayenne pepper flakes": {
+        "vegan": true,
+        "vegetarian": true
+    },
+    "Cayenne pepper powder": {
+        "vegan": true,
+        "vegetarian": true
+    },
+    "Cayenne pepper sauce": {
+        "vegan": true,
+        "vegetarian": true
+    },
+    "Celery": {
+        "vegan": true,
+        "vegetarian": true
+    },
+    "Celery salt": {
+        "vegan": true,
+        "vegetarian": true
+    },
+    "Chai masala": {
+        "vegan": true,
+        "vegetarian": true
+    },
+    "Checkers custard powder": {
+        "vegan": true,
+        "vegetarian": true
+    },
+    "Cheddar cheese": {
+        "vegan": false,
+        "vegetarian": true
+    },
+    "Cheerios": {
+        "vegan": true,
+        "vegetarian": true
+    },
+    "Cheese": {
+        "vegan": false,
+        "vegetarian": true
+    },
+    "Cheese filling": {
+        "vegan": false,
+        "vegetarian": false
+    },
+    "Cheese-its": {
+        "vegan": false,
+        "vegetarian": true
+    },
+    "Cherries": {
+        "vegan": true,
+        "vegetarian": true
+    },
+    "Cherry": {
+        "vegan": true,
+        "vegetarian": true
+    },
+    "Chestnuts": {
+        "vegan": true,
+        "vegetarian": true
+    },
+    "Chicken": {
+        "vegan": false,
+        "vegetarian": false
+    },
+    "Chicken bouillon cube": {
+        "vegan": true,
+        "vegetarian": true
+    },
+    "Chicken broth": {
+        "vegan": false,
+        "vegetarian": false
+    },
+    "Chicken meat": {
+        "vegan": false,
+        "vegetarian": false
+    },
+    "Chicken seasoning powder": {
+        "vegan": false,
+        "vegetarian": false
+    },
+    "Chicken soup": {
+        "vegan": false,
+        "vegetarian": false
+    },
+    "Chicken stock": {
+        "vegan": false,
+        "vegetarian": false
+    },
+    "Chickpea flour": {
+        "vegan": true,
+        "vegetarian": true
+    },
+    "Chickpeas": {
+        "vegan": false,
+        "vegetarian": false
+    },
+    "Chile flakes": {
+        "vegan": true,
+        "vegetarian": true
+    },
+    "Chile pepper": {
+        "vegan": true,
+        "vegetarian": true
+    },
+    "Chile powder": {
+        "vegan": true,
+        "vegetarian": true
+    },
+    "Chile sauce": {
+        "vegan": true,
+        "vegetarian": true
+    },
+    "Chili": {
+        "vegan": true,
+        "vegetarian": true
+    },
+    "Chili garlic sauce": {
+        "vegan": true,
+        "vegetarian": true
+    },
+    "Chili leaves": {
+        "vegan": true,
+        "vegetarian": true
+    },
+    "Chili pepper": {
+        "vegan": true,
+        "vegetarian": true
+    },
+    "Chili powder": {
+        "vegan": true,
+        "vegetarian": true
+    },
+    "Chili-flavored kidney beans": {
+        "vegan": true,
+        "vegetarian": true
+    },
+    "Chiltepin": {
+        "vegan": true,
+        "vegetarian": true
+    },
+    "Chinese cooking wine": {
+        "vegan": true,
+        "vegetarian": true
+    },
+    "Chipotle barbecue sauce": {
+        "vegan": true,
+        "vegetarian": true
+    },
+    "Chipotle chili": {
+        "vegan": true,
+        "vegetarian": true
+    },
+    "Chipped beef": {
+        "vegan": false,
+        "vegetarian": true
+    },
+    "Chips": {
+        "vegan": false,
+        "vegetarian": false
+    },
+    "Chives": {
+        "vegan": true,
+        "vegetarian": true
+    },
+    "Chocolate": {
+        "vegan": true,
+        "vegetarian": true
+    },
+    "Chocolate bar": {
+        "vegan": true,
+        "vegetarian": true
+    },
+    "Chocolate brandy": {
+        "vegan": true,
+        "vegetarian": true
+    },
+    "Chocolate chips": {
+        "vegan": true,
+        "vegetarian": true
+    },
+    "Chocolate icing": {
+        "vegan": true,
+        "vegetarian": true
+    },
+    "Chocolate sauce": {
+        "vegan": true,
+        "vegetarian": true
+    },
+    "Chocolate sprinkles": {
+        "vegan": true,
+        "vegetarian": true
+    },
+    "Chocolate syrup": {
+        "vegan": true,
+        "vegetarian": true
+    },
+    "Chopped kale": {
+        "vegan": true,
+        "vegetarian": true
+    },
+    "Cider vinegar": {
+        "vegan": true,
+        "vegetarian": true
+    },
+    "Cilantro": {
+        "vegan": true,
+        "vegetarian": true
+    },
+    "Cinnamon": {
+        "vegan": true,
+        "vegetarian": true
+    },
+    "Cinnamon powder": {
+        "vegan": true,
+        "vegetarian": true
+    },
+    "Cinnamon stick": {
+        "vegan": true,
+        "vegetarian": true
+    },
+    "Cinnamon sugar": {
+        "vegan": true,
+        "vegetarian": true
+    },
+    "Cipollini": {
+        "vegan": true,
+        "vegetarian": true
+    },
+    "Clam broth": {
+        "vegan": false,
+        "vegetarian": false
+    },
+    "Clams": {
+        "vegan": false,
+        "vegetarian": false
+    },
+    "Clarified butter": {
+        "vegan": false,
+        "vegetarian": true
+    },
+    "Clear broth": {
+        "vegan": true,
+        "vegetarian": true
+    },
+    "Clear honey": {
+        "vegan": true,
+        "vegetarian": true
+    },
+    "Clear soup": {
+        "vegan": false,
+        "vegetarian": false
+    },
+    "Cloves": {
+        "vegan": true,
+        "vegetarian": true
+    },
+    "Club soda": {
+        "vegan": false,
+        "vegetarian": false
+    },
+    "Coagulant": {
+        "vegan": false,
+        "vegetarian": false
+    },
+    "Coarse oat bran": {
+        "vegan": true,
+        "vegetarian": true
+    },
+    "Coarse sea salt": {
+        "vegan": true,
+        "vegetarian": true
+    },
+    "Cocktail onions": {
+        "vegan": true,
+        "vegetarian": true
+    },
+    "Cocktail sauce": {
+        "vegan": true,
+        "vegetarian": true
+    },
+    "Cocktail sausage": {
+        "vegan": false,
+        "vegetarian": false
+    },
+    "Coco pops cereal": {
+        "vegan": true,
+        "vegetarian": true
+    },
+    "Cocoa": {
+        "vegan": true,
+        "vegetarian": true
+    },
+    "Cocoa powder": {
+        "vegan": true,
+        "vegetarian": true
+    },
+    "Coconut": {
+        "vegan": true,
+        "vegetarian": true
+    },
+    "Coconut flour": {
+        "vegan": true,
+        "vegetarian": true
+    },
+    "Coconut meat": {
+        "vegan": true,
+        "vegetarian": true
+    },
+    "Coconut milk": {
+        "vegan": true,
+        "vegetarian": true
+    },
+    "Coconut oil": {
+        "vegan": true,
+        "vegetarian": true
+    },
+    "Coconut sugar": {
+        "vegan": true,
+        "vegetarian": true
+    },
+    "Coconut vinegar": {
+        "vegan": true,
+        "vegetarian": true
+    },
+    "Coconut water": {
+        "vegan": true,
+        "vegetarian": true
+    },
+    "Cocoyam": {
+        "vegan": true,
+        "vegetarian": true
+    },
+    "Cocoyam leaves": {
+        "vegan": true,
+        "vegetarian": true
+    },
+    "Cod fish": {
+        "vegan": false,
+        "vegetarian": false
+    },
+    "Coffee beans": {
+        "vegan": true,
+        "vegetarian": true
+    },
+    "Coffee liqueur": {
+        "vegan": true,
+        "vegetarian": true
+    },
+    "Cognac": {
+        "vegan": true,
+        "vegetarian": true
+    },
+    "Cola": {
+        "vegan": true,
+        "vegetarian": true
+    },
+    "Colby jack cheese": {
+        "vegan": false,
+        "vegetarian": true
+    },
+    "Collard": {
+        "vegan": false,
+        "vegetarian": false
+    },
+    "Collard greens": {
+        "vegan": false,
+        "vegetarian": false
+    },
+    "Colorful sprinkles": {
+        "vegan": false,
+        "vegetarian": false
+    },
+    "Condensed milk": {
+        "vegan": true,
+        "vegetarian": true
+    },
+    "Confectioner's sugar": {
+        "vegan": true,
+        "vegetarian": true
+    },
+    "Conger eel": {
+        "vegan": false,
+        "vegetarian": false
+    },
+    "Cookies": {
+        "vegan": true,
+        "vegetarian": true
+    },
+    "Cooking oil": {
+        "vegan": true,
+        "vegetarian": true
+    },
+    "Cooking spray": {
+        "vegan": false,
+        "vegetarian": false
+    },
+    "Cool whip": {
+        "vegan": false,
+        "vegetarian": true
+    },
+    "Coriander": {
+        "vegan": true,
+        "vegetarian": true
+    },
+    "Coriander leaves": {
+        "vegan": true,
+        "vegetarian": true
+    },
+    "Coriander powder": {
+        "vegan": true,
+        "vegetarian": true
+    },
+    "Corn": {
+        "vegan": true,
+        "vegetarian": true
+    },
+    "Corn cereal": {
+        "vegan": true,
+        "vegetarian": true
+    },
+    "Corn chips": {
+        "vegan": true,
+        "vegetarian": true
+    },
+    "Corn flour": {
+        "vegan": true,
+        "vegetarian": true
+    },
+    "Corn grits": {
+        "vegan": true,
+        "vegetarian": true
+    },
+    "Corn husks": {
+        "vegan": true,
+        "vegetarian": true
+    },
+    "Corn kernels": {
+        "vegan": true,
+        "vegetarian": true
+    },
+    "Corn masa": {
+        "vegan": true,
+        "vegetarian": true
+    },
+    "Corn meal": {
+        "vegan": true,
+        "vegetarian": true
+    },
+    "Corn oil": {
+        "vegan": true,
+        "vegetarian": true
+    },
+    "Corn on the cob": {
+        "vegan": true,
+        "vegetarian": true
+    },
+    "Corn starch": {
+        "vegan": true,
+        "vegetarian": true
+    },
+    "Corn syrup": {
+        "vegan": true,
+        "vegetarian": true
+    },
+    "Cornbread": {
+        "vegan": true,
+        "vegetarian": true
+    },
+    "Cornflour": {
+        "vegan": true,
+        "vegetarian": true
+    },
+    "Cornmeal": {
+        "vegan": true,
+        "vegetarian": true
+    },
+    "Cornstarch": {
+        "vegan": true,
+        "vegetarian": true
+    },
+    "Cottage cheese": {
+        "vegan": false,
+        "vegetarian": true
+    },
+    "Cotton seeds": {
+        "vegan": true,
+        "vegetarian": true
+    },
+    "Couscous": {
+        "vegan": true,
+        "vegetarian": true
+    },
+    "Cow milk": {
+        "vegan": false,
+        "vegetarian": true
+    },
+    "Cow's milk": {
+        "vegan": false,
+        "vegetarian": true
+    },
+    "Crab": {
+        "vegan": false,
+        "vegetarian": false
+    },
+    "Crab meat": {
+        "vegan": false,
+        "vegetarian": false
+    },
+    "Crab shells": {
+        "vegan": false,
+        "vegetarian": false
+    },
+    "Crabmeat": {
+        "vegan": false,
+        "vegetarian": false
+    },
+    "Cracker crumbs": {
+        "vegan": true,
+        "vegetarian": true
+    },
+    "Crackers": {
+        "vegan": false,
+        "vegetarian": false
+    },
+    "Cranberries": {
+        "vegan": true,
+        "vegetarian": true
+    },
+    "Cranberry sauce": {
+        "vegan": true,
+        "vegetarian": true
+    },
+    "Crayfish": {
+        "vegan": false,
+        "vegetarian": false
+    },
+    "Crayfish powder": {
+        "vegan": false,
+        "vegetarian": false
+    },
+    "Cream": {
+        "vegan": false,
+        "vegetarian": false
+    },
+    "Cream cheese": {
+        "vegan": false,
+        "vegetarian": true
+    },
+    "Cream of tartar": {
+        "vegan": false,
+        "vegetarian": true
+    },
+    "Creamed corn": {
+        "vegan": false,
+        "vegetarian": true
+    },
+    "Cress": {
+        "vegan": true,
+        "vegetarian": true
+    },
+    "Croutons": {
+        "vegan": true,
+        "vegetarian": true
+    },
+    "Crushed ice": {
+        "vegan": false,
+        "vegetarian": false
+    },
+    "Crushed red pepper": {
+        "vegan": true,
+        "vegetarian": true
+    },
+    "Crystal salt": {
+        "vegan": true,
+        "vegetarian": true
+    },
+    "Cr\u00e8me chantilly": {
+        "vegan": false,
+        "vegetarian": true
+    },
+    "Cr\u00e8me fra\u00eeche": {
+        "vegan": false,
+        "vegetarian": true
+    },
+    "Cucumber": {
+        "vegan": true,
+        "vegetarian": true
+    },
+    "Cultured buttermilk": {
+        "vegan": false,
+        "vegetarian": true
+    },
+    "Cumin": {
+        "vegan": true,
+        "vegetarian": true
+    },
+    "Cumin powder": {
+        "vegan": true,
+        "vegetarian": true
+    },
+    "Cumin seeds": {
+        "vegan": true,
+        "vegetarian": true
+    },
+    "Curd": {
+        "vegan": true,
+        "vegetarian": true
+    },
+    "Curd cheese": {
+        "vegan": false,
+        "vegetarian": true
+    },
+    "Cured ham": {
+        "vegan": false,
+        "vegetarian": false
+    },
+    "Currants": {
+        "vegan": true,
+        "vegetarian": true
+    },
+    "Curry": {
+        "vegan": true,
+        "vegetarian": true
+    },
+    "Curry leaves": {
+        "vegan": true,
+        "vegetarian": true
+    },
+    "Curry powder": {
+        "vegan": true,
+        "vegetarian": true
+    },
+    "Curry spices": {
+        "vegan": true,
+        "vegetarian": true
+    },
+    "Custard": {
+        "vegan": true,
+        "vegetarian": true
+    },
+    "Custard sauce": {
+        "vegan": true,
+        "vegetarian": true
+    },
+    "Cut fruit": {
+        "vegan": true,
+        "vegetarian": true
+    },
+    "D'anjou pear": {
+        "vegan": true,
+        "vegetarian": true
+    },
+    "Daddawa": {
+        "vegan": false,
+        "vegetarian": false
+    },
+    "Daikon radish": {
+        "vegan": true,
+        "vegetarian": true
+    },
+    "Dandahu": {
+        "vegan": true,
+        "vegetarian": true
+    },
+    "Dark brown sugar": {
+        "vegan": true,
+        "vegetarian": true
+    },
+    "Dark chocolate": {
+        "vegan": true,
+        "vegetarian": true
+    },
+    "Dark roux": {
+        "vegan": true,
+        "vegetarian": true
+    },
+    "Dark rum": {
+        "vegan": true,
+        "vegetarian": true
+    },
+    "Dark soy sauce": {
+        "vegan": true,
+        "vegetarian": true
+    },
+    "Dashi": {
+        "vegan": true,
+        "vegetarian": true
+    },
+    "Dates": {
+        "vegan": true,
+        "vegetarian": true
+    },
+    "Dawadawa": {
+        "vegan": false,
+        "vegetarian": false
+    },
+    "Day-old cooked white rice": {
+        "vegan": true,
+        "vegetarian": true
+    },
+    "Desiccated coconut": {
+        "vegan": true,
+        "vegetarian": true
+    },
+    "Digestive biscuits": {
+        "vegan": true,
+        "vegetarian": true
+    },
+    "Dijon mustard": {
+        "vegan": true,
+        "vegetarian": true
+    },
+    "Dill": {
+        "vegan": true,
+        "vegetarian": true
+    },
+    "Dill pickle": {
+        "vegan": true,
+        "vegetarian": true
+    },
+    "Dill weed": {
+        "vegan": true,
+        "vegetarian": true
+    },
+    "Distilled water": {
+        "vegan": true,
+        "vegetarian": true
+    },
+    "Distilled white vinegar": {
+        "vegan": true,
+        "vegetarian": true
+    },
+    "Djansag seeds": {
+        "vegan": true,
+        "vegetarian": true
+    },
+    "Doenjang": {
+        "vegan": true,
+        "vegetarian": true
+    },
+    "Double cream": {
+        "vegan": false,
+        "vegetarian": true
+    },
+    "Dr. Pepper soda": {
+        "vegan": true,
+        "vegetarian": true
+    },
+    "Dried basil": {
+        "vegan": true,
+        "vegetarian": true
+    },
+    "Dried fruit": {
+        "vegan": true,
+        "vegetarian": true
+    },
+    "Dried pepper": {
+        "vegan": true,
+        "vegetarian": true
+    },
+    "Dry white vermouth": {
+        "vegan": true,
+        "vegetarian": true
+    },
+    "Dry white wine": {
+        "vegan": true,
+        "vegetarian": true
+    },
+    "Dry yeast": {
+        "vegan": true,
+        "vegetarian": true
+    },
+    "Dryfish": {
+        "vegan": false,
+        "vegetarian": false
+    },
+    "Duck": {
+        "vegan": false,
+        "vegetarian": false
+    },
+    "Duck fat": {
+        "vegan": false,
+        "vegetarian": false
+    },
+    "Duck giblets": {
+        "vegan": false,
+        "vegetarian": false
+    },
+    "Duck stock": {
+        "vegan": false,
+        "vegetarian": false
+    },
+    "Dulce de leche": {
+        "vegan": false,
+        "vegetarian": true
+    },
+    "Durum semolina flour": {
+        "vegan": true,
+        "vegetarian": true
+    },
+    "Durum wheat flour": {
+        "vegan": true,
+        "vegetarian": true
+    },
+    "Dutch smoked sausage": {
+        "vegan": false,
+        "vegetarian": false
+    },
+    "Easy bake yeast": {
+        "vegan": true,
+        "vegetarian": true
+    },
+    "Ede": {
+        "vegan": true,
+        "vegetarian": true
+    },
+    "Edible potash": {
+        "vegan": false,
+        "vegetarian": false
+    },
+    "Edible silver leaf": {
+        "vegan": true,
+        "vegetarian": true
+    },
+    "Editan leaves": {
+        "vegan": true,
+        "vegetarian": true
+    },
+    "Efirin": {
+        "vegan": false,
+        "vegetarian": true
+    },
+    "Efirin leaf": {
+        "vegan": false,
+        "vegetarian": true
+    },
+    "Efo igbo": {
+        "vegan": true,
+        "vegetarian": true
+    },
+    "Egg": {
+        "vegan": false,
+        "vegetarian": true
+    },
+    "Egg noodles": {
+        "vegan": true,
+        "vegetarian": true
+    },
+    "Egg roll wrappers": {
+        "vegan": true,
+        "vegetarian": true
+    },
+    "Egg wash": {
+        "vegan": false,
+        "vegetarian": false
+    },
+    "Egg white": {
+        "vegan": false,
+        "vegetarian": false
+    },
+    "Egg yolk": {
+        "vegan": false,
+        "vegetarian": true
+    },
+    "Eggplant": {
+        "vegan": true,
+        "vegetarian": true
+    },
+    "Egusi": {
+        "vegan": true,
+        "vegetarian": true
+    },
+    "Egusi powder": {
+        "vegan": true,
+        "vegetarian": true
+    },
+    "Egusi seed": {
+        "vegan": true,
+        "vegetarian": true
+    },
+    "Ehu seeds": {
+        "vegan": true,
+        "vegetarian": true
+    },
+    "Ehuru": {
+        "vegan": false,
+        "vegetarian": true
+    },
+    "Ehuru seeds": {
+        "vegan": true,
+        "vegetarian": true
+    },
+    "Elbow macaroni pasta": {
+        "vegan": true,
+        "vegetarian": true
+    },
+    "Elbow pasta": {
+        "vegan": true,
+        "vegetarian": true
+    },
+    "Emmental cheese": {
+        "vegan": false,
+        "vegetarian": true
+    },
+    "English mustard": {
+        "vegan": true,
+        "vegetarian": true
+    },
+    "English peas": {
+        "vegan": false,
+        "vegetarian": false
+    },
+    "Eru leaf": {
+        "vegan": false,
+        "vegetarian": true
+    },
+    "Escarole": {
+        "vegan": true,
+        "vegetarian": true
+    },
+    "Eulachons": {
+        "vegan": false,
+        "vegetarian": false
+    },
+    "Evaporated milk": {
+        "vegan": false,
+        "vegetarian": true
+    },
+    "Ewedu leaves": {
+        "vegan": true,
+        "vegetarian": true
+    },
+    "Extra firm tofu": {
+        "vegan": true,
+        "vegetarian": true
+    },
+    "Extra virgin olive oil": {
+        "vegan": true,
+        "vegetarian": true
+    },
+    "Fatty pork": {
+        "vegan": false,
+        "vegetarian": false
+    },
+    "Fava beans": {
+        "vegan": true,
+        "vegetarian": true
+    },
+    "Fennel": {
+        "vegan": true,
+        "vegetarian": true
+    },
+    "Fenugreek seed powder": {
+        "vegan": true,
+        "vegetarian": true
+    },
+    "Fermentation starter": {
+        "vegan": true,
+        "vegetarian": true
+    },
+    "Fermented locust beans": {
+        "vegan": false,
+        "vegetarian": true
+    },
+    "Feta cheese": {
+        "vegan": false,
+        "vegetarian": true
+    },
+    "Fettuccine": {
+        "vegan": true,
+        "vegetarian": true
+    },
+    "Fettuccine egg noodles": {
+        "vegan": true,
+        "vegetarian": true
+    },
+    "Fiddleheads": {
+        "vegan": true,
+        "vegetarian": true
+    },
+    "Fideua": {
+        "vegan": true,
+        "vegetarian": true
+    },
+    "Figs": {
+        "vegan": true,
+        "vegetarian": true
+    },
+    "Filo pastry sheets": {
+        "vegan": true,
+        "vegetarian": true
+    },
+    "Firm tofu": {
+        "vegan": true,
+        "vegetarian": true
+    },
+    "Fish": {
+        "vegan": false,
+        "vegetarian": false
+    },
+    "Fish batter": {
+        "vegan": false,
+        "vegetarian": false
+    },
+    "Fish crumbs": {
+        "vegan": true,
+        "vegetarian": true
+    },
+    "Fish fillets": {
+        "vegan": false,
+        "vegetarian": false
+    },
+    "Fish paste": {
+        "vegan": false,
+        "vegetarian": false
+    },
+    "Fish sauce": {
+        "vegan": true,
+        "vegetarian": true
+    },
+    "Fish seasonings": {
+        "vegan": false,
+        "vegetarian": false
+    },
+    "Fish stock": {
+        "vegan": false,
+        "vegetarian": false
+    },
+    "Fizzy water": {
+        "vegan": true,
+        "vegetarian": true
+    },
+    "Flaked coconut": {
+        "vegan": true,
+        "vegetarian": true
+    },
+    "Flathead fillet": {
+        "vegan": false,
+        "vegetarian": false
+    },
+    "Flavorless oil": {
+        "vegan": true,
+        "vegetarian": true
+    },
+    "Flour": {
+        "vegan": true,
+        "vegetarian": true
+    },
+    "Flour tortilla": {
+        "vegan": true,
+        "vegetarian": true
+    },
+    "Flourless cooking spray": {
+        "vegan": true,
+        "vegetarian": true
+    },
+    "Fluted pumpkin leaves": {
+        "vegan": true,
+        "vegetarian": true
+    },
+    "Focaccia genovese dough": {
+        "vegan": false,
+        "vegetarian": false
+    },
+    "Fonio": {
+        "vegan": true,
+        "vegetarian": true
+    },
+    "Fontina cheese": {
+        "vegan": false,
+        "vegetarian": true
+    },
+    "Food coloring": {
+        "vegan": false,
+        "vegetarian": false
+    },
+    "Food-grade potash": {
+        "vegan": false,
+        "vegetarian": false
+    },
+    "Foraged nettles": {
+        "vegan": true,
+        "vegetarian": true
+    },
+    "French bread": {
+        "vegan": true,
+        "vegetarian": true
+    },
+    "French bread rolls": {
+        "vegan": true,
+        "vegetarian": true
+    },
+    "French meringue": {
+        "vegan": false,
+        "vegetarian": false
+    },
+    "French roll": {
+        "vegan": true,
+        "vegetarian": true
+    },
+    "Fried egg": {
+        "vegan": true,
+        "vegetarian": true
+    },
+    "Fried rice spice": {
+        "vegan": true,
+        "vegetarian": true
+    },
+    "Frisee": {
+        "vegan": true,
+        "vegetarian": true
+    },
+    "Fritos": {
+        "vegan": true,
+        "vegetarian": true
+    },
+    "Fritos corn chips": {
+        "vegan": true,
+        "vegetarian": true
+    },
+    "Fruit": {
+        "vegan": true,
+        "vegetarian": true
+    },
+    "Fruit jam": {
+        "vegan": true,
+        "vegetarian": true
+    },
+    "Fruit mix": {
+        "vegan": true,
+        "vegetarian": true
+    },
+    "Fruit puffs": {
+        "vegan": true,
+        "vegetarian": true
+    },
+    "Galanga": {
+        "vegan": true,
+        "vegetarian": true
+    },
+    "Gambian smoked fish": {
+        "vegan": false,
+        "vegetarian": false
+    },
+    "Garam masala": {
+        "vegan": true,
+        "vegetarian": true
+    },
+    "Garam masala powder": {
+        "vegan": true,
+        "vegetarian": true
+    },
+    "Garam masala spice mixture": {
+        "vegan": true,
+        "vegetarian": true
+    },
+    "Garlic": {
+        "vegan": true,
+        "vegetarian": true
+    },
+    "Garlic croutons": {
+        "vegan": true,
+        "vegetarian": true
+    },
+    "Garlic flakes": {
+        "vegan": true,
+        "vegetarian": true
+    },
+    "Garlic paste": {
+        "vegan": true,
+        "vegetarian": true
+    },
+    "Garlic powder": {
+        "vegan": true,
+        "vegetarian": true
+    },
+    "Garlic salt": {
+        "vegan": true,
+        "vegetarian": true
+    },
+    "Gbaaye": {
+        "vegan": true,
+        "vegetarian": true
+    },
+    "Gbotemi spice blend": {
+        "vegan": true,
+        "vegetarian": true
+    },
+    "Genger powder": {
+        "vegan": false,
+        "vegetarian": false
+    },
+    "Ghee": {
+        "vegan": true,
+        "vegetarian": true
+    },
+    "Gim seaweed": {
+        "vegan": true,
+        "vegetarian": true
+    },
+    "Gin": {
+        "vegan": true,
+        "vegetarian": true
+    },
+    "Ginger": {
+        "vegan": true,
+        "vegetarian": true
+    },
+    "Ginger paste": {
+        "vegan": true,
+        "vegetarian": true
+    },
+    "Ginger powder": {
+        "vegan": true,
+        "vegetarian": true
+    },
+    "Ginger root": {
+        "vegan": true,
+        "vegetarian": true
+    },
+    "Gingerbread wafers": {
+        "vegan": true,
+        "vegetarian": true
+    },
+    "Gingernut biscuits": {
+        "vegan": true,
+        "vegetarian": true
+    },
+    "Gizzard": {
+        "vegan": false,
+        "vegetarian": false
+    },
+    "Glutinous rice flour": {
+        "vegan": true,
+        "vegetarian": true
+    },
+    "Goat": {
+        "vegan": false,
+        "vegetarian": false
+    },
+    "Goat cheese": {
+        "vegan": false,
+        "vegetarian": true
+    },
+    "Goat meat": {
+        "vegan": false,
+        "vegetarian": false
+    },
+    "Gochujang": {
+        "vegan": false,
+        "vegetarian": false
+    },
+    "Golden potatoes": {
+        "vegan": true,
+        "vegetarian": true
+    },
+    "Golden syrup": {
+        "vegan": true,
+        "vegetarian": true
+    },
+    "Goose fat": {
+        "vegan": false,
+        "vegetarian": false
+    },
+    "Gouda cheese": {
+        "vegan": false,
+        "vegetarian": true
+    },
+    "Graham cracker crumbs": {
+        "vegan": true,
+        "vegetarian": true
+    },
+    "Grain alcohol": {
+        "vegan": true,
+        "vegetarian": true
+    },
+    "Grana padano cheese": {
+        "vegan": false,
+        "vegetarian": true
+    },
+    "Grandma's pie crust": {
+        "vegan": true,
+        "vegetarian": true
+    },
+    "Granola": {
+        "vegan": true,
+        "vegetarian": true
+    },
+    "Granulated sugar": {
+        "vegan": true,
+        "vegetarian": true
+    },
+    "Granulated white sugar": {
+        "vegan": true,
+        "vegetarian": true
+    },
+    "Grape leaves": {
+        "vegan": true,
+        "vegetarian": true
+    },
+    "Grapeseed oil": {
+        "vegan": true,
+        "vegetarian": true
+    },
+    "Grappa": {
+        "vegan": true,
+        "vegetarian": true
+    },
+    "Gravy": {
+        "vegan": true,
+        "vegetarian": true
+    },
+    "Gravy powder": {
+        "vegan": true,
+        "vegetarian": true
+    },
+    "Gravy spices": {
+        "vegan": true,
+        "vegetarian": true
+    },
+    "Great northern beans": {
+        "vegan": true,
+        "vegetarian": true
+    },
+    "Greek yogurt": {
+        "vegan": false,
+        "vegetarian": true
+    },
+    "Green amaranth leaves": {
+        "vegan": true,
+        "vegetarian": true
+    },
+    "Green apple": {
+        "vegan": true,
+        "vegetarian": true
+    },
+    "Green beans": {
+        "vegan": true,
+        "vegetarian": true
+    },
+    "Green bell pepper": {
+        "vegan": true,
+        "vegetarian": true
+    },
+    "Green cabbage": {
+        "vegan": true,
+        "vegetarian": true
+    },
+    "Green chili": {
+        "vegan": true,
+        "vegetarian": true
+    },
+    "Green chili paste": {
+        "vegan": true,
+        "vegetarian": true
+    },
+    "Green chili peppers": {
+        "vegan": true,
+        "vegetarian": true
+    },
+    "Green food coloring": {
+        "vegan": true,
+        "vegetarian": true
+    },
+    "Green herbs": {
+        "vegan": true,
+        "vegetarian": true
+    },
+    "Green leaf": {
+        "vegan": true,
+        "vegetarian": true
+    },
+    "Green mung beans": {
+        "vegan": true,
+        "vegetarian": true
+    },
+    "Green olives": {
+        "vegan": true,
+        "vegetarian": true
+    },
+    "Green onion": {
+        "vegan": true,
+        "vegetarian": true
+    },
+    "Green onions": {
+        "vegan": true,
+        "vegetarian": true
+    },
+    "Green peas": {
+        "vegan": true,
+        "vegetarian": true
+    },
+    "Green pepper": {
+        "vegan": true,
+        "vegetarian": true
+    },
+    "Green runner beans": {
+        "vegan": true,
+        "vegetarian": true
+    },
+    "Green spice": {
+        "vegan": true,
+        "vegetarian": true
+    },
+    "Green split peas": {
+        "vegan": true,
+        "vegetarian": true
+    },
+    "Green vegetables": {
+        "vegan": true,
+        "vegetarian": true
+    },
+    "Grelot onions": {
+        "vegan": true,
+        "vegetarian": true
+    },
+    "Grill seasoning": {
+        "vegan": true,
+        "vegetarian": true
+    },
+    "Groundnut oil": {
+        "vegan": true,
+        "vegetarian": true
+    },
+    "Groundnuts": {
+        "vegan": true,
+        "vegetarian": true
+    },
+    "Gruyere cheese": {
+        "vegan": false,
+        "vegetarian": true
+    },
+    "Guacamole": {
+        "vegan": true,
+        "vegetarian": true
+    },
+    "Guinea corn": {
+        "vegan": false,
+        "vegetarian": false
+    },
+    "Gyoza wrappers": {
+        "vegan": true,
+        "vegetarian": true
+    },
+    "Gyro spice": {
+        "vegan": true,
+        "vegetarian": true
+    },
+    "Habanero chili pepper": {
+        "vegan": true,
+        "vegetarian": true
+    },
+    "Haddock": {
+        "vegan": false,
+        "vegetarian": false
+    },
+    "Half and half cream": {
+        "vegan": false,
+        "vegetarian": true
+    },
+    "Halibut cheeks": {
+        "vegan": false,
+        "vegetarian": false
+    },
+    "Ham": {
+        "vegan": false,
+        "vegetarian": false
+    },
+    "Hamburger buns": {
+        "vegan": true,
+        "vegetarian": true
+    },
+    "Hard blue cheese": {
+        "vegan": false,
+        "vegetarian": true
+    },
+    "Hard cheese": {
+        "vegan": false,
+        "vegetarian": true
+    },
+    "Hardwood of grape vine": {
+        "vegan": true,
+        "vegetarian": true
+    },
+    "Hare": {
+        "vegan": false,
+        "vegetarian": false
+    },
+    "Haricot beans": {
+        "vegan": true,
+        "vegetarian": true
+    },
+    "Harissa": {
+        "vegan": true,
+        "vegetarian": true
+    },
+    "Hash browns": {
+        "vegan": true,
+        "vegetarian": true
+    },
+    "Hazelnut": {
+        "vegan": true,
+        "vegetarian": true
+    },
+    "Hazelnut liqueur": {
+        "vegan": true,
+        "vegetarian": true
+    },
+    "Hazelnut meal": {
+        "vegan": true,
+        "vegetarian": true
+    },
+    "Hazelnut oil": {
+        "vegan": true,
+        "vegetarian": true
+    },
+    "Heavy cream": {
+        "vegan": false,
+        "vegetarian": true
+    },
+    "Heavy whipping cream": {
+        "vegan": false,
+        "vegetarian": true
+    },
+    "Henderson's relish": {
+        "vegan": true,
+        "vegetarian": true
+    },
+    "Herb bouquet": {
+        "vegan": true,
+        "vegetarian": true
+    },
+    "Herbatka podlaska dereni\u00f3wka": {
+        "vegan": true,
+        "vegetarian": true
+    },
+    "Herbes de provence": {
+        "vegan": true,
+        "vegetarian": true
+    },
+    "Herbs": {
+        "vegan": true,
+        "vegetarian": true
+    },
+    "Herbs and spices": {
+        "vegan": true,
+        "vegetarian": true
+    },
+    "Herring": {
+        "vegan": false,
+        "vegetarian": false
+    },
+    "Hickory chunks": {
+        "vegan": false,
+        "vegetarian": false
+    },
+    "Hickory wood": {
+        "vegan": false,
+        "vegetarian": false
+    },
+    "High-gluten wheat flour": {
+        "vegan": true,
+        "vegetarian": true
+    },
+    "High-protein flour": {
+        "vegan": true,
+        "vegetarian": true
+    },
+    "Hoagie rolls": {
+        "vegan": true,
+        "vegetarian": true
+    },
+    "Hoisin sauce": {
+        "vegan": true,
+        "vegetarian": true
+    },
+    "Hollandaise sauce": {
+        "vegan": true,
+        "vegetarian": true
+    },
+    "Homi": {
+        "vegan": false,
+        "vegetarian": false
+    },
+    "Homogenized milk": {
+        "vegan": true,
+        "vegetarian": true
+    },
+    "Honey": {
+        "vegan": true,
+        "vegetarian": true
+    },
+    "Honey beans": {
+        "vegan": true,
+        "vegetarian": true
+    },
+    "Honey dijon salad dressing": {
+        "vegan": true,
+        "vegetarian": true
+    },
+    "Hoppy beer": {
+        "vegan": true,
+        "vegetarian": true
+    },
+    "Horseradish": {
+        "vegan": true,
+        "vegetarian": true
+    },
+    "Hot chiles": {
+        "vegan": true,
+        "vegetarian": true
+    },
+    "Hot green chiles": {
+        "vegan": true,
+        "vegetarian": true
+    },
+    "Hot italian sausage meat": {
+        "vegan": false,
+        "vegetarian": false
+    },
+    "Hot paprika": {
+        "vegan": true,
+        "vegetarian": true
+    },
+    "Hot paprika powder": {
+        "vegan": true,
+        "vegetarian": true
+    },
+    "Hot pepper sauce": {
+        "vegan": true,
+        "vegetarian": true
+    },
+    "Hot pork sausage": {
+        "vegan": false,
+        "vegetarian": false
+    },
+    "Hot sauce": {
+        "vegan": true,
+        "vegetarian": true
+    },
+    "Hung curd": {
+        "vegan": true,
+        "vegetarian": true
+    },
+    "Ibaba seeds": {
+        "vegan": true,
+        "vegetarian": true
+    },
+    "Ice": {
+        "vegan": true,
+        "vegetarian": true
+    },
+    "Ice cream": {
+        "vegan": false,
+        "vegetarian": true
+    },
+    "Ice cubes": {
+        "vegan": true,
+        "vegetarian": true
+    },
+    "Iceberg lettuce": {
+        "vegan": true,
+        "vegetarian": true
+    },
+    "Icing sugar": {
+        "vegan": true,
+        "vegetarian": true
+    },
+    "Ikong ubong": {
+        "vegan": true,
+        "vegetarian": true
+    },
+    "Imitation crabmeat": {
+        "vegan": false,
+        "vegetarian": false
+    },
+    "Injera": {
+        "vegan": true,
+        "vegetarian": true
+    },
+    "Instant couscous": {
+        "vegan": true,
+        "vegetarian": true
+    },
+    "Instant dried yeast": {
+        "vegan": true,
+        "vegetarian": true
+    },
+    "Instant dry yeast": {
+        "vegan": true,
+        "vegetarian": true
+    },
+    "Instant noodles": {
+        "vegan": true,
+        "vegetarian": true
+    },
+    "Instant yeast": {
+        "vegan": true,
+        "vegetarian": true
+    },
+    "Intestines of fish": {
+        "vegan": false,
+        "vegetarian": false
+    },
+    "Inulin powder": {
+        "vegan": true,
+        "vegetarian": true
+    },
+    "Iodized salt": {
+        "vegan": true,
+        "vegetarian": true
+    },
+    "Iodized water": {
+        "vegan": true,
+        "vegetarian": true
+    },
+    "Irish potato": {
+        "vegan": true,
+        "vegetarian": true
+    },
+    "Iru": {
+        "vegan": true,
+        "vegetarian": true
+    },
+    "Ishapa leaf": {
+        "vegan": true,
+        "vegetarian": true
+    },
+    "Ispanakl\u0131 b\u00f6rek": {
+        "vegan": true,
+        "vegetarian": true
+    },
+    "Italian herbs": {
+        "vegan": true,
+        "vegetarian": true
+    },
+    "Italian olive oil": {
+        "vegan": true,
+        "vegetarian": true
+    },
+    "Italian seasoning": {
+        "vegan": false,
+        "vegetarian": true
+    },
+    "Jackfruit": {
+        "vegan": true,
+        "vegetarian": true
+    },
+    "Jaggery": {
+        "vegan": true,
+        "vegetarian": true
+    },
+    "Jalape\u00f1o peppers": {
+        "vegan": true,
+        "vegetarian": true
+    },
+    "Jam": {
+        "vegan": true,
+        "vegetarian": true
+    },
+    "Japanese plums": {
+        "vegan": true,
+        "vegetarian": true
+    },
+    "Japanese sweet potatoes": {
+        "vegan": true,
+        "vegetarian": true
+    },
+    "Japanese-style short grain rice": {
+        "vegan": true,
+        "vegetarian": true
+    },
+    "Jeerakasala rice": {
+        "vegan": true,
+        "vegetarian": true
+    },
+    "Jelly": {
+        "vegan": true,
+        "vegetarian": true
+    },
+    "Jerked beef": {
+        "vegan": false,
+        "vegetarian": false
+    },
+    "Juice": {
+        "vegan": true,
+        "vegetarian": true
+    },
+    "Juniper berries": {
+        "vegan": true,
+        "vegetarian": true
+    },
+    "Juniper seeds": {
+        "vegan": true,
+        "vegetarian": true
+    },
+    "Jute leaves": {
+        "vegan": true,
+        "vegetarian": true
+    },
+    "Kalamata olives": {
+        "vegan": true,
+        "vegetarian": true
+    },
+    "Kale": {
+        "vegan": true,
+        "vegetarian": true
+    },
+    "Kanda": {
+        "vegan": true,
+        "vegetarian": true
+    },
+    "Karkashi leaves": {
+        "vegan": true,
+        "vegetarian": true
+    },
+    "Katsuobushi": {
+        "vegan": true,
+        "vegetarian": true
+    },
+    "Kefir grains": {
+        "vegan": false,
+        "vegetarian": true
+    },
+    "Kernel corn": {
+        "vegan": true,
+        "vegetarian": true
+    },
+    "Ketchup": {
+        "vegan": true,
+        "vegetarian": true
+    },
+    "Khaima rice": {
+        "vegan": true,
+        "vegetarian": true
+    },
+    "Kidney": {
+        "vegan": true,
+        "vegetarian": true
+    },
+    "Kidney beans": {
+        "vegan": true,
+        "vegetarian": true
+    },
+    "Kirsch": {
+        "vegan": true,
+        "vegetarian": true
+    },
+    "Kirschwasser": {
+        "vegan": true,
+        "vegetarian": true
+    },
+    "Knoephla": {
+        "vegan": false,
+        "vegetarian": true
+    },
+    "Konbu seaweed": {
+        "vegan": false,
+        "vegetarian": true
+    },
+    "Kosher salt": {
+        "vegan": true,
+        "vegetarian": true
+    },
+    "Kpomo": {
+        "vegan": true,
+        "vegetarian": true
+    },
+    "Kudampuli": {
+        "vegan": false,
+        "vegetarian": false
+    },
+    "Kuli kuli": {
+        "vegan": true,
+        "vegetarian": true
+    },
+    "K\u00e4sekrainer sausage": {
+        "vegan": false,
+        "vegetarian": false
+    },
+    "K\u0131ymal\u0131 b\u00f6rek": {
+        "vegan": true,
+        "vegetarian": true
+    },
+    "Lalo leaves": {
+        "vegan": true,
+        "vegetarian": true
+    },
+    "Lamb": {
+        "vegan": false,
+        "vegetarian": false
+    },
+    "Lard": {
+        "vegan": false,
+        "vegetarian": false
+    },
+    "Lasagna pasta": {
+        "vegan": true,
+        "vegetarian": true
+    },
+    "Leafy green vegetables": {
+        "vegan": true,
+        "vegetarian": true
+    },
+    "Lebanese cucumber": {
+        "vegan": true,
+        "vegetarian": true
+    },
+    "Leek": {
+        "vegan": true,
+        "vegetarian": true
+    },
+    "Leek greens": {
+        "vegan": true,
+        "vegetarian": true
+    },
+    "Lemon": {
+        "vegan": true,
+        "vegetarian": true
+    },
+    "Lemon balm": {
+        "vegan": true,
+        "vegetarian": true
+    },
+    "Lemon basil": {
+        "vegan": true,
+        "vegetarian": true
+    },
+    "Lemon extract": {
+        "vegan": true,
+        "vegetarian": true
+    },
+    "Lemon juice": {
+        "vegan": true,
+        "vegetarian": true
+    },
+    "Lemon pepper": {
+        "vegan": true,
+        "vegetarian": true
+    },
+    "Lemon rind": {
+        "vegan": true,
+        "vegetarian": true
+    },
+    "Lemon zest": {
+        "vegan": true,
+        "vegetarian": true
+    },
+    "Lemongrass leaves": {
+        "vegan": true,
+        "vegetarian": true
+    },
+    "Lemongrass stalks": {
+        "vegan": true,
+        "vegetarian": true
+    },
+    "Lentils": {
+        "vegan": true,
+        "vegetarian": true
+    },
+    "Lettuce": {
+        "vegan": true,
+        "vegetarian": true
+    },
+    "Light brown sugar": {
+        "vegan": true,
+        "vegetarian": true
+    },
+    "Light soy sauce": {
+        "vegan": true,
+        "vegetarian": true
+    },
+    "Lima beans": {
+        "vegan": true,
+        "vegetarian": true
+    },
+    "Lime": {
+        "vegan": true,
+        "vegetarian": true
+    },
+    "Lime juice": {
+        "vegan": true,
+        "vegetarian": true
+    },
+    "Lime peel": {
+        "vegan": true,
+        "vegetarian": true
+    },
+    "Lime soda": {
+        "vegan": true,
+        "vegetarian": true
+    },
+    "Linguine": {
+        "vegan": false,
+        "vegetarian": false
+    },
+    "Liqueur": {
+        "vegan": false,
+        "vegetarian": false
+    },
+    "Liquid food coloring": {
+        "vegan": false,
+        "vegetarian": true
+    },
+    "Liquid honey": {
+        "vegan": true,
+        "vegetarian": true
+    },
+    "Liquid smoke": {
+        "vegan": false,
+        "vegetarian": true
+    },
+    "Live clams": {
+        "vegan": false,
+        "vegetarian": false
+    },
+    "Liver": {
+        "vegan": false,
+        "vegetarian": false
+    },
+    "Loaf of bread": {
+        "vegan": true,
+        "vegetarian": true
+    },
+    "Loaf of sliced sandwich bread": {
+        "vegan": true,
+        "vegetarian": true
+    },
+    "Locust beans": {
+        "vegan": true,
+        "vegetarian": true
+    },
+    "Long grain rice": {
+        "vegan": true,
+        "vegetarian": true
+    },
+    "Long grain white rice": {
+        "vegan": true,
+        "vegetarian": true
+    },
+    "Loose-leaf tea": {
+        "vegan": false,
+        "vegetarian": false
+    },
+    "Lovage": {
+        "vegan": true,
+        "vegetarian": true
+    },
+    "Macaroni noodles": {
+        "vegan": true,
+        "vegetarian": true
+    },
+    "Macaroni pasta": {
+        "vegan": true,
+        "vegetarian": true
+    },
+    "Mace": {
+        "vegan": true,
+        "vegetarian": true
+    },
+    "Mackerel fish": {
+        "vegan": false,
+        "vegetarian": false
+    },
+    "Mackerel flakes": {
+        "vegan": false,
+        "vegetarian": false
+    },
+    "Madeira wine": {
+        "vegan": true,
+        "vegetarian": true
+    },
+    "Malt beer": {
+        "vegan": true,
+        "vegetarian": true
+    },
+    "Malt biscuits": {
+        "vegan": true,
+        "vegetarian": true
+    },
+    "Malt vinegar": {
+        "vegan": true,
+        "vegetarian": true
+    },
+    "Mango": {
+        "vegan": true,
+        "vegetarian": true
+    },
+    "Manteca": {
+        "vegan": false,
+        "vegetarian": false
+    },
+    "Maple barbecue sauce": {
+        "vegan": true,
+        "vegetarian": true
+    },
+    "Maple syrup": {
+        "vegan": true,
+        "vegetarian": true
+    },
+    "Maraschino cherries": {
+        "vegan": true,
+        "vegetarian": true
+    },
+    "Margarine": {
+        "vegan": true,
+        "vegetarian": true
+    },
+    "Marinara sauce": {
+        "vegan": true,
+        "vegetarian": true
+    },
+    "Marinated mushrooms": {
+        "vegan": true,
+        "vegetarian": true
+    },
+    "Maris piper potatoes": {
+        "vegan": true,
+        "vegetarian": true
+    },
+    "Marjoram": {
+        "vegan": true,
+        "vegetarian": true
+    },
+    "Marmalade": {
+        "vegan": true,
+        "vegetarian": true
+    },
+    "Marrowfat peas": {
+        "vegan": false,
+        "vegetarian": false
+    },
+    "Marshmallows": {
+        "vegan": false,
+        "vegetarian": false
+    },
+    "Marugbo leaves": {
+        "vegan": true,
+        "vegetarian": true
+    },
+    "Mascarpone cheese": {
+        "vegan": false,
+        "vegetarian": true
+    },
+    "Matzo meal": {
+        "vegan": true,
+        "vegetarian": true
+    },
+    "Mayonnaise": {
+        "vegan": true,
+        "vegetarian": true
+    },
+    "Meat": {
+        "vegan": false,
+        "vegetarian": false
+    },
+    "Medium grain rice": {
+        "vegan": true,
+        "vegetarian": true
+    },
+    "Melon seeds": {
+        "vegan": true,
+        "vegetarian": true
+    },
+    "Meringue": {
+        "vegan": false,
+        "vegetarian": false
+    },
+    "Mesquite": {
+        "vegan": false,
+        "vegetarian": false
+    },
+    "Methi leaves": {
+        "vegan": true,
+        "vegetarian": true
+    },
+    "Milk": {
+        "vegan": false,
+        "vegetarian": true
+    },
+    "Milk chocolate": {
+        "vegan": true,
+        "vegetarian": true
+    },
+    "Milk powder": {
+        "vegan": false,
+        "vegetarian": true
+    },
+    "Millet": {
+        "vegan": true,
+        "vegetarian": true
+    },
+    "Millet flour": {
+        "vegan": true,
+        "vegetarian": true
+    },
+    "Millet grains": {
+        "vegan": true,
+        "vegetarian": true
+    },
+    "Mineral water": {
+        "vegan": true,
+        "vegetarian": true
+    },
+    "Mini marshmallows": {
+        "vegan": false,
+        "vegetarian": false
+    },
+    "Mint": {
+        "vegan": true,
+        "vegetarian": true
+    },
+    "Miso paste": {
+        "vegan": true,
+        "vegetarian": true
+    },
+    "Miso soup broth": {
+        "vegan": true,
+        "vegetarian": true
+    },
+    "Mitmita spice": {
+        "vegan": true,
+        "vegetarian": true
+    },
+    "Mixed beans": {
+        "vegan": true,
+        "vegetarian": true
+    },
+    "Mixed herbs": {
+        "vegan": true,
+        "vegetarian": true
+    },
+    "Mixed nuts": {
+        "vegan": true,
+        "vegetarian": true
+    },
+    "Mixed spices": {
+        "vegan": true,
+        "vegetarian": true
+    },
+    "Mixed vegetables": {
+        "vegan": true,
+        "vegetarian": true
+    },
+    "Mocha buttercream": {
+        "vegan": false,
+        "vegetarian": true
+    },
+    "Moi-moi leaves": {
+        "vegan": true,
+        "vegetarian": true
+    },
+    "Moist sugar": {
+        "vegan": true,
+        "vegetarian": true
+    },
+    "Molasses": {
+        "vegan": true,
+        "vegetarian": true
+    },
+    "Monkfish": {
+        "vegan": false,
+        "vegetarian": false
+    },
+    "Monosodium glutamate": {
+        "vegan": true,
+        "vegetarian": true
+    },
+    "Monterey jack cheese": {
+        "vegan": false,
+        "vegetarian": true
+    },
+    "Monterey jack cheeses": {
+        "vegan": false,
+        "vegetarian": true
+    },
+    "Montreal steak seasoning": {
+        "vegan": false,
+        "vegetarian": false
+    },
+    "Morel mushrooms": {
+        "vegan": true,
+        "vegetarian": true
+    },
+    "Moringa leaves": {
+        "vegan": true,
+        "vegetarian": true
+    },
+    "Mortadella": {
+        "vegan": false,
+        "vegetarian": false
+    },
+    "Mozzarella": {
+        "vegan": false,
+        "vegetarian": true
+    },
+    "Mozzarella cheese": {
+        "vegan": false,
+        "vegetarian": true
+    },
+    "Mudu palm fruit": {
+        "vegan": true,
+        "vegetarian": true
+    },
+    "Muenster": {
+        "vegan": false,
+        "vegetarian": false
+    },
+    "Mulato chili": {
+        "vegan": true,
+        "vegetarian": true
+    },
+    "Muscovado sugar": {
+        "vegan": true,
+        "vegetarian": true
+    },
+    "Mushrooms": {
+        "vegan": true,
+        "vegetarian": true
+    },
+    "Mussels": {
+        "vegan": false,
+        "vegetarian": false
+    },
+    "Mustard": {
+        "vegan": true,
+        "vegetarian": true
+    },
+    "Mustard greens": {
+        "vegan": true,
+        "vegetarian": true
+    },
+    "Mustard oil": {
+        "vegan": true,
+        "vegetarian": true
+    },
+    "Mustard powder": {
+        "vegan": true,
+        "vegetarian": true
+    },
+    "Mustard seeds": {
+        "vegan": true,
+        "vegetarian": true
+    },
+    "Mutton": {
+        "vegan": false,
+        "vegetarian": false
+    },
+    "Naga sauce": {
+        "vegan": true,
+        "vegetarian": true
+    },
+    "Nappa cabbage": {
+        "vegan": true,
+        "vegetarian": true
+    },
+    "Natural wheat bran": {
+        "vegan": true,
+        "vegetarian": true
+    },
+    "Navy beans": {
+        "vegan": true,
+        "vegetarian": true
+    },
+    "Nchu anwu": {
+        "vegan": true,
+        "vegetarian": true
+    },
+    "Negro pepper": {
+        "vegan": true,
+        "vegetarian": true
+    },
+    "Neutral oil": {
+        "vegan": true,
+        "vegetarian": true
+    },
+    "Ngolo": {
+        "vegan": true,
+        "vegetarian": true
+    },
+    "Nigella seeds": {
+        "vegan": true,
+        "vegetarian": true
+    },
+    "Nigerian beans": {
+        "vegan": true,
+        "vegetarian": true
+    },
+    "Nigerian curry powder": {
+        "vegan": true,
+        "vegetarian": true
+    },
+    "Nigerian dryfish": {
+        "vegan": false,
+        "vegetarian": false
+    },
+    "Nigerian pumpkin": {
+        "vegan": true,
+        "vegetarian": true
+    },
+    "Nigerian smoked dryfish": {
+        "vegan": false,
+        "vegetarian": false
+    },
+    "Nigerian smoked fish": {
+        "vegan": false,
+        "vegetarian": false
+    },
+    "Nigerian smoked titus fish": {
+        "vegan": false,
+        "vegetarian": false
+    },
+    "Nigerian tomato stew": {
+        "vegan": true,
+        "vegetarian": true
+    },
+    "Non-skim milk": {
+        "vegan": false,
+        "vegetarian": true
+    },
+    "Non-stick cooking spray": {
+        "vegan": false,
+        "vegetarian": false
+    },
+    "Noodles": {
+        "vegan": true,
+        "vegetarian": true
+    },
+    "Nori sheets": {
+        "vegan": true,
+        "vegetarian": true
+    },
+    "Nuoc mam": {
+        "vegan": true,
+        "vegetarian": true
+    },
+    "Nutella": {
+        "vegan": false,
+        "vegetarian": false
+    },
+    "Nutmeg": {
+        "vegan": true,
+        "vegetarian": true
+    },
+    "Nutmeg powder": {
+        "vegan": true,
+        "vegetarian": true
+    },
+    "Nutritional yeast flakes": {
+        "vegan": true,
+        "vegetarian": true
+    },
+    "Nuts": {
+        "vegan": true,
+        "vegetarian": true
+    },
+    "Oat flakes": {
+        "vegan": true,
+        "vegetarian": true
+    },
+    "Oat flour": {
+        "vegan": true,
+        "vegetarian": true
+    },
+    "Oatmeal": {
+        "vegan": true,
+        "vegetarian": true
+    },
+    "Oats": {
+        "vegan": true,
+        "vegetarian": true
+    },
+    "Oburunbebe": {
+        "vegan": false,
+        "vegetarian": true
+    },
+    "Ofada rice": {
+        "vegan": true,
+        "vegetarian": true
+    },
+    "Ogbono seeds": {
+        "vegan": true,
+        "vegetarian": true
+    },
+    "Ogi water": {
+        "vegan": true,
+        "vegetarian": true
+    },
+    "Ogili": {
+        "vegan": true,
+        "vegetarian": true
+    },
+    "Ogiri": {
+        "vegan": true,
+        "vegetarian": true
+    },
+    "Ogiri igbo": {
+        "vegan": true,
+        "vegetarian": true
+    },
+    "Ogiri okpei": {
+        "vegan": true,
+        "vegetarian": true
+    },
+    "Oha leaves": {
+        "vegan": true,
+        "vegetarian": true
+    },
+    "Oil": {
+        "vegan": true,
+        "vegetarian": true
+    },
+    "Okazi leaves": {
+        "vegan": true,
+        "vegetarian": true
+    },
+    "Okoho stick": {
+        "vegan": true,
+        "vegetarian": true
+    },
+    "Okra": {
+        "vegan": true,
+        "vegetarian": true
+    },
+    "Okro": {
+        "vegan": true,
+        "vegetarian": true
+    },
+    "Old bay": {
+        "vegan": true,
+        "vegetarian": true
+    },
+    "Olive": {
+        "vegan": true,
+        "vegetarian": true
+    },
+    "Olive oil": {
+        "vegan": true,
+        "vegetarian": true
+    },
+    "Olive spread": {
+        "vegan": true,
+        "vegetarian": true
+    },
+    "Ona": {
+        "vegan": true,
+        "vegetarian": true
+    },
+    "Onion": {
+        "vegan": true,
+        "vegetarian": true
+    },
+    "Onion powder": {
+        "vegan": true,
+        "vegetarian": true
+    },
+    "Onion salt": {
+        "vegan": true,
+        "vegetarian": true
+    },
+    "Orange": {
+        "vegan": true,
+        "vegetarian": true
+    },
+    "Orange blossom water": {
+        "vegan": true,
+        "vegetarian": true
+    },
+    "Orange extract": {
+        "vegan": true,
+        "vegetarian": true
+    },
+    "Orange food coloring": {
+        "vegan": true,
+        "vegetarian": true
+    },
+    "Orange juice": {
+        "vegan": true,
+        "vegetarian": true
+    },
+    "Orange marmalade": {
+        "vegan": true,
+        "vegetarian": true
+    },
+    "Orange peels": {
+        "vegan": true,
+        "vegetarian": true
+    },
+    "Orange rind": {
+        "vegan": true,
+        "vegetarian": true
+    },
+    "Orange syrup concentrate": {
+        "vegan": false,
+        "vegetarian": true
+    },
+    "Orange zest": {
+        "vegan": true,
+        "vegetarian": true
+    },
+    "Orange-guava juice": {
+        "vegan": true,
+        "vegetarian": true
+    },
+    "Oregano": {
+        "vegan": true,
+        "vegetarian": true
+    },
+    "Oyster": {
+        "vegan": false,
+        "vegetarian": false
+    },
+    "Oyster juice": {
+        "vegan": false,
+        "vegetarian": false
+    },
+    "Oyster liquor": {
+        "vegan": false,
+        "vegetarian": false
+    },
+    "Oyster mushrooms": {
+        "vegan": true,
+        "vegetarian": true
+    },
+    "Packed brown sugar": {
+        "vegan": true,
+        "vegetarian": true
+    },
+    "Packed light brown sugar": {
+        "vegan": true,
+        "vegetarian": true
+    },
+    "Pallares": {
+        "vegan": false,
+        "vegetarian": false
+    },
+    "Palm kernel": {
+        "vegan": true,
+        "vegetarian": true
+    },
+    "Palm nut concentrate": {
+        "vegan": false,
+        "vegetarian": true
+    },
+    "Palm oil": {
+        "vegan": true,
+        "vegetarian": true
+    },
+    "Palm sugar": {
+        "vegan": true,
+        "vegetarian": true
+    },
+    "Paneer": {
+        "vegan": true,
+        "vegetarian": true
+    },
+    "Pan drippings": {
+        "vegan": false,
+        "vegetarian": false
+    },
+    "Pancetta": {
+        "vegan": false,
+        "vegetarian": false
+    },
+    "Panch puran": {
+        "vegan": true,
+        "vegetarian": true
+    },
+    "Pandan paste": {
+        "vegan": true,
+        "vegetarian": true
+    },
+    "Panko breadcrumbs": {
+        "vegan": true,
+        "vegetarian": true
+    },
+    "Panla fish": {
+        "vegan": false,
+        "vegetarian": false
+    },
+    "Papayas": {
+        "vegan": true,
+        "vegetarian": true
+    },
+    "Paprika": {
+        "vegan": true,
+        "vegetarian": true
+    },
+    "Parmesan cheese": {
+        "vegan": false,
+        "vegetarian": true
+    },
+    "Parmigiano reggiano": {
+        "vegan": false,
+        "vegetarian": true
+    },
+    "Parsley": {
+        "vegan": true,
+        "vegetarian": true
+    },
+    "Parsnip": {
+        "vegan": true,
+        "vegetarian": true
+    },
+    "Pasilla": {
+        "vegan": true,
+        "vegetarian": true
+    },
+    "Passion fruit": {
+        "vegan": true,
+        "vegetarian": true
+    },
+    "Passion fruit ice cream": {
+        "vegan": true,
+        "vegetarian": true
+    },
+    "Pasta": {
+        "vegan": true,
+        "vegetarian": true
+    },
+    "Pasta spirals": {
+        "vegan": true,
+        "vegetarian": true
+    },
+    "Paste food coloring": {
+        "vegan": true,
+        "vegetarian": true
+    },
+    "Pastry cream": {
+        "vegan": true,
+        "vegetarian": true
+    },
+    "Pastry dough": {
+        "vegan": true,
+        "vegetarian": true
+    },
+    "Pastry flour": {
+        "vegan": true,
+        "vegetarian": true
+    },
+    "Pawpaw flakes": {
+        "vegan": true,
+        "vegetarian": true
+    },
+    "Pea beans": {
+        "vegan": true,
+        "vegetarian": true
+    },
+    "Peach": {
+        "vegan": true,
+        "vegetarian": true
+    },
+    "Peanut butter": {
+        "vegan": true,
+        "vegetarian": true
+    },
+    "Peanut oil": {
+        "vegan": true,
+        "vegetarian": true
+    },
+    "Peanut paste": {
+        "vegan": true,
+        "vegetarian": true
+    },
+    "Peanuts": {
+        "vegan": true,
+        "vegetarian": true
+    },
+    "Pear": {
+        "vegan": true,
+        "vegetarian": true
+    },
+    "Pear juice": {
+        "vegan": true,
+        "vegetarian": true
+    },
+    "Pearl rice": {
+        "vegan": true,
+        "vegetarian": true
+    },
+    "Pearl sugar": {
+        "vegan": true,
+        "vegetarian": true
+    },
+    "Peas": {
+        "vegan": true,
+        "vegetarian": true
+    },
+    "Pebe seeds": {
+        "vegan": true,
+        "vegetarian": true
+    },
+    "Pecan": {
+        "vegan": true,
+        "vegetarian": true
+    },
+    "Pecan crumbs": {
+        "vegan": true,
+        "vegetarian": true
+    },
+    "Pecans": {
+        "vegan": true,
+        "vegetarian": true
+    },
+    "Pecorino romano cheese": {
+        "vegan": false,
+        "vegetarian": true
+    },
+    "Pectin": {
+        "vegan": true,
+        "vegetarian": true
+    },
+    "Penne pasta": {
+        "vegan": true,
+        "vegetarian": true
+    },
+    "Pennyroyal": {
+        "vegan": true,
+        "vegetarian": true
+    },
+    "Peperoncino": {
+        "vegan": true,
+        "vegetarian": true
+    },
+    "Pepper": {
+        "vegan": true,
+        "vegetarian": true
+    },
+    "Pepper powder": {
+        "vegan": true,
+        "vegetarian": true
+    },
+    "Pepper soup spices": {
+        "vegan": true,
+        "vegetarian": true
+    },
+    "Pepper stew": {
+        "vegan": true,
+        "vegetarian": true
+    },
+    "Peppercorns": {
+        "vegan": true,
+        "vegetarian": true
+    },
+    "Periwinkles": {
+        "vegan": false,
+        "vegetarian": false
+    },
+    "Permento": {
+        "vegan": true,
+        "vegetarian": true
+    },
+    "Pernil": {
+        "vegan": false,
+        "vegetarian": false
+    },
+    "Pesto": {
+        "vegan": true,
+        "vegetarian": true
+    },
+    "Pesto sauce": {
+        "vegan": true,
+        "vegetarian": true
+    },
+    "Petits pois": {
+        "vegan": true,
+        "vegetarian": true
+    },
+    "Peynirli b\u00f6rek": {
+        "vegan": true,
+        "vegetarian": true
+    },
+    "Phyllo dough": {
+        "vegan": true,
+        "vegetarian": true
+    },
+    "Pickled cucumber": {
+        "vegan": true,
+        "vegetarian": true
+    },
+    "Pickled jalapenos": {
+        "vegan": true,
+        "vegetarian": true
+    },
+    "Pickled onions": {
+        "vegan": true,
+        "vegetarian": true
+    },
+    "Pickled peppers": {
+        "vegan": true,
+        "vegetarian": true
+    },
+    "Pickles": {
+        "vegan": true,
+        "vegetarian": true
+    },
+    "Pickling spices": {
+        "vegan": true,
+        "vegetarian": true
+    },
+    "Pie dough": {
+        "vegan": true,
+        "vegetarian": true
+    },
+    "Pierogi filling": {
+        "vegan": false,
+        "vegetarian": false
+    },
+    "Pigeon peas": {
+        "vegan": true,
+        "vegetarian": true
+    },
+    "Pilchard": {
+        "vegan": true,
+        "vegetarian": true
+    },
+    "Pine nuts": {
+        "vegan": true,
+        "vegetarian": true
+    },
+    "Pineapple": {
+        "vegan": true,
+        "vegetarian": true
+    },
+    "Pinipig": {
+        "vegan": true,
+        "vegetarian": true
+    },
+    "Pink food colouring": {
+        "vegan": true,
+        "vegetarian": true
+    },
+    "Pinto beans": {
+        "vegan": true,
+        "vegetarian": true
+    },
+    "Pistachio nuts": {
+        "vegan": true,
+        "vegetarian": true
+    },
+    "Pita bread": {
+        "vegan": true,
+        "vegetarian": true
+    },
+    "Pizza dough": {
+        "vegan": true,
+        "vegetarian": true
+    },
+    "Plain kefir": {
+        "vegan": false,
+        "vegetarian": true
+    },
+    "Plain yogurt": {
+        "vegan": false,
+        "vegetarian": true
+    },
+    "Plantain": {
+        "vegan": true,
+        "vegetarian": true
+    },
+    "Plantain flour": {
+        "vegan": true,
+        "vegetarian": true
+    },
+    "Plantain leaves": {
+        "vegan": true,
+        "vegetarian": true
+    },
+    "Plum": {
+        "vegan": true,
+        "vegetarian": true
+    },
+    "Plum compote": {
+        "vegan": true,
+        "vegetarian": true
+    },
+    "Plum jam": {
+        "vegan": true,
+        "vegetarian": true
+    },
+    "Polenta": {
+        "vegan": true,
+        "vegetarian": true
+    },
+    "Polynesian arrowroot starch": {
+        "vegan": true,
+        "vegetarian": true
+    },
+    "Ponmo": {
+        "vegan": false,
+        "vegetarian": false
+    },
+    "Poppy seeds": {
+        "vegan": true,
+        "vegetarian": true
+    },
+    "Pork": {
+        "vegan": false,
+        "vegetarian": false
+    },
+    "Potash": {
+        "vegan": false,
+        "vegetarian": false
+    },
+    "Potato chips": {
+        "vegan": true,
+        "vegetarian": true
+    },
+    "Potato flour": {
+        "vegan": true,
+        "vegetarian": true
+    },
+    "Potato starch": {
+        "vegan": true,
+        "vegetarian": true
+    },
+    "Powder": {
+        "vegan": true,
+        "vegetarian": true
+    },
+    "Powdered cinnamon": {
+        "vegan": true,
+        "vegetarian": true
+    },
+    "Powdered coriander": {
+        "vegan": true,
+        "vegetarian": true
+    },
+    "Powdered ginger": {
+        "vegan": true,
+        "vegetarian": true
+    },
+    "Powdered milk": {
+        "vegan": true,
+        "vegetarian": true
+    },
+    "Powdered soup bouillon": {
+        "vegan": true,
+        "vegetarian": true
+    },
+    "Powdered sugar": {
+        "vegan": true,
+        "vegetarian": true
+    },
+    "Powdered turmeric": {
+        "vegan": true,
+        "vegetarian": true
+    },
+    "Powdery breadcrumbs": {
+        "vegan": true,
+        "vegetarian": true
+    },
+    "Powdery old potatoes": {
+        "vegan": true,
+        "vegetarian": true
+    },
+    "Prawns": {
+        "vegan": false,
+        "vegetarian": false
+    },
+    "Premade farofa mix": {
+        "vegan": false,
+        "vegetarian": true
+    },
+    "Pretzels": {
+        "vegan": true,
+        "vegetarian": true
+    },
+    "Prime rib seasoning": {
+        "vegan": false,
+        "vegetarian": true
+    },
+    "Processed fatty meat": {
+        "vegan": false,
+        "vegetarian": false
+    },
+    "Prok-chop rub": {
+        "vegan": true,
+        "vegetarian": true
+    },
+    "Provolone cheese": {
+        "vegan": false,
+        "vegetarian": true
+    },
+    "Psyllium husk": {
+        "vegan": true,
+        "vegetarian": true
+    },
+    "Puff pastry": {
+        "vegan": true,
+        "vegetarian": true
+    },
+    "Puffed rice": {
+        "vegan": true,
+        "vegetarian": true
+    },
+    "Puffed rice cereal": {
+        "vegan": true,
+        "vegetarian": true
+    },
+    "Pumpkin": {
+        "vegan": true,
+        "vegetarian": true
+    },
+    "Pumpkin leaves": {
+        "vegan": true,
+        "vegetarian": true
+    },
+    "Pumpkin pie spice": {
+        "vegan": true,
+        "vegetarian": true
+    },
+    "Pumpkin pur\u00e9e": {
+        "vegan": true,
+        "vegetarian": true
+    },
+    "Pure cannabis": {
+        "vegan": true,
+        "vegetarian": true
+    },
+    "Pure lard": {
+        "vegan": false,
+        "vegetarian": false
+    },
+    "Pure maple syrup": {
+        "vegan": true,
+        "vegetarian": true
+    },
+    "Purple basil": {
+        "vegan": true,
+        "vegetarian": true
+    },
+    "Quail eggs": {
+        "vegan": false,
+        "vegetarian": false
+    },
+    "Quick rolled oats": {
+        "vegan": true,
+        "vegetarian": true
+    },
+    "Quick-cooking oats": {
+        "vegan": true,
+        "vegetarian": true
+    },
+    "Quinces": {
+        "vegan": true,
+        "vegetarian": true
+    },
+    "Rabbit": {
+        "vegan": false,
+        "vegetarian": false
+    },
+    "Radishes": {
+        "vegan": true,
+        "vegetarian": true
+    },
+    "Rainbow chard": {
+        "vegan": true,
+        "vegetarian": true
+    },
+    "Raisins": {
+        "vegan": true,
+        "vegetarian": true
+    },
+    "Ram meat": {
+        "vegan": false,
+        "vegetarian": false
+    },
+    "Ranch dressing": {
+        "vegan": true,
+        "vegetarian": true
+    },
+    "Rapeseed oil": {
+        "vegan": true,
+        "vegetarian": true
+    },
+    "Raspberry": {
+        "vegan": true,
+        "vegetarian": true
+    },
+    "Raspberry coulis": {
+        "vegan": true,
+        "vegetarian": true
+    },
+    "Raspberry jam": {
+        "vegan": true,
+        "vegetarian": true
+    },
+    "Ravioli pasta": {
+        "vegan": true,
+        "vegetarian": true
+    },
+    "Raw turkey": {
+        "vegan": false,
+        "vegetarian": false
+    },
+    "Ready-made puff pastry": {
+        "vegan": true,
+        "vegetarian": true
+    },
+    "Ready-to-use tamarind paste": {
+        "vegan": true,
+        "vegetarian": true
+    },
+    "Red bell pepper": {
+        "vegan": true,
+        "vegetarian": true
+    },
+    "Red bell peppers": {
+        "vegan": true,
+        "vegetarian": true
+    },
+    "Red cabbage": {
+        "vegan": true,
+        "vegetarian": true
+    },
+    "Red chili flakes": {
+        "vegan": true,
+        "vegetarian": true
+    },
+    "Red chili pepper": {
+        "vegan": true,
+        "vegetarian": true
+    },
+    "Red chili powder": {
+        "vegan": true,
+        "vegetarian": true
+    },
+    "Red curry paste": {
+        "vegan": true,
+        "vegetarian": true
+    },
+    "Red habanero pepper": {
+        "vegan": true,
+        "vegetarian": true
+    },
+    "Red kidney beans": {
+        "vegan": true,
+        "vegetarian": true
+    },
+    "Red lentils": {
+        "vegan": true,
+        "vegetarian": true
+    },
+    "Red onion": {
+        "vegan": true,
+        "vegetarian": true
+    },
+    "Red palm oil": {
+        "vegan": true,
+        "vegetarian": true
+    },
+    "Red pepper": {
+        "vegan": true,
+        "vegetarian": true
+    },
+    "Red pepper flakes": {
+        "vegan": true,
+        "vegetarian": true
+    },
+    "Red pepper paste": {
+        "vegan": true,
+        "vegetarian": true
+    },
+    "Red pigment powder": {
+        "vegan": true,
+        "vegetarian": true
+    },
+    "Red potatoes": {
+        "vegan": true,
+        "vegetarian": true
+    },
+    "Red shiso": {
+        "vegan": true,
+        "vegetarian": true
+    },
+    "Red wine": {
+        "vegan": true,
+        "vegetarian": true
+    },
+    "Red wine vinegar": {
+        "vegan": true,
+        "vegetarian": true
+    },
+    "Relish": {
+        "vegan": true,
+        "vegetarian": true
+    },
+    "Rendered bacon fat": {
+        "vegan": false,
+        "vegetarian": false
+    },
+    "Rhubarb": {
+        "vegan": true,
+        "vegetarian": true
+    },
+    "Rib rub": {
+        "vegan": true,
+        "vegetarian": true
+    },
+    "Rice": {
+        "vegan": true,
+        "vegetarian": true
+    },
+    "Rice bran oil": {
+        "vegan": true,
+        "vegetarian": true
+    },
+    "Rice cereal squares": {
+        "vegan": true,
+        "vegetarian": true
+    },
+    "Rice flour": {
+        "vegan": true,
+        "vegetarian": true
+    },
+    "Rice milk": {
+        "vegan": false,
+        "vegetarian": true
+    },
+    "Rice noodles": {
+        "vegan": true,
+        "vegetarian": true
+    },
+    "Rice paper": {
+        "vegan": true,
+        "vegetarian": true
+    },
+    "Ricotta cheese": {
+        "vegan": false,
+        "vegetarian": true
+    },
+    "Rigatoni pasta": {
+        "vegan": true,
+        "vegetarian": true
+    },
+    "Risotto rice": {
+        "vegan": true,
+        "vegetarian": true
+    },
+    "Ritz crackers": {
+        "vegan": false,
+        "vegetarian": false
+    },
+    "Rock salt": {
+        "vegan": true,
+        "vegetarian": true
+    },
+    "Rodo": {
+        "vegan": true,
+        "vegetarian": true
+    },
+    "Rolled egusi": {
+        "vegan": true,
+        "vegetarian": true
+    },
+    "Rolled oats": {
+        "vegan": true,
+        "vegetarian": true
+    },
+    "Romaine lettuce leaves": {
+        "vegan": true,
+        "vegetarian": true
+    },
+    "Romano cheese": {
+        "vegan": false,
+        "vegetarian": true
+    },
+    "Rondelles": {
+        "vegan": true,
+        "vegetarian": true
+    },
+    "Rooibos teabags": {
+        "vegan": true,
+        "vegetarian": true
+    },
+    "Roquefort cheese": {
+        "vegan": false,
+        "vegetarian": true
+    },
+    "Rose water": {
+        "vegan": true,
+        "vegetarian": true
+    },
+    "Rosehips": {
+        "vegan": true,
+        "vegetarian": true
+    },
+    "Roselle leaves": {
+        "vegan": true,
+        "vegetarian": true
+    },
+    "Rosemary": {
+        "vegan": true,
+        "vegetarian": true
+    },
+    "Rotini pasta": {
+        "vegan": true,
+        "vegetarian": true
+    },
+    "Rougag": {
+        "vegan": true,
+        "vegetarian": true
+    },
+    "Round rice": {
+        "vegan": true,
+        "vegetarian": true
+    },
+    "Royal icing": {
+        "vegan": true,
+        "vegetarian": true
+    },
+    "Rubbed sage": {
+        "vegan": true,
+        "vegetarian": true
+    },
+    "Rum": {
+        "vegan": true,
+        "vegetarian": true
+    },
+    "Rump steak": {
+        "vegan": false,
+        "vegetarian": false
+    },
+    "Runner beans": {
+        "vegan": true,
+        "vegetarian": true
+    },
+    "Russet potatoes": {
+        "vegan": true,
+        "vegetarian": true
+    },
+    "Rye bread": {
+        "vegan": true,
+        "vegetarian": true
+    },
+    "Rye flour": {
+        "vegan": true,
+        "vegetarian": true
+    },
+    "Saffron": {
+        "vegan": true,
+        "vegetarian": true
+    },
+    "Sage": {
+        "vegan": true,
+        "vegetarian": true
+    },
+    "Sake": {
+        "vegan": false,
+        "vegetarian": false
+    },
+    "Salad": {
+        "vegan": true,
+        "vegetarian": true
+    },
+    "Salad oil": {
+        "vegan": true,
+        "vegetarian": true
+    },
+    "Salami": {
+        "vegan": false,
+        "vegetarian": false
+    },
+    "Salmon": {
+        "vegan": false,
+        "vegetarian": false
+    },
+    "Salsa": {
+        "vegan": true,
+        "vegetarian": true
+    },
+    "Salsa verde": {
+        "vegan": true,
+        "vegetarian": true
+    },
+    "Salt": {
+        "vegan": true,
+        "vegetarian": true
+    },
+    "Salt cod": {
+        "vegan": true,
+        "vegetarian": true
+    },
+    "Salt mackerel": {
+        "vegan": false,
+        "vegetarian": false
+    },
+    "Salted butter": {
+        "vegan": false,
+        "vegetarian": true
+    },
+    "Salted capers": {
+        "vegan": true,
+        "vegetarian": true
+    },
+    "Saltines": {
+        "vegan": true,
+        "vegetarian": true
+    },
+    "Saltwater fish": {
+        "vegan": true,
+        "vegetarian": true
+    },
+    "Salty soy sauce": {
+        "vegan": true,
+        "vegetarian": true
+    },
+    "Sambal oelek": {
+        "vegan": false,
+        "vegetarian": false
+    },
+    "Samp and beans mix": {
+        "vegan": true,
+        "vegetarian": true
+    },
+    "Sampaloc  fruits": {
+        "vegan": true,
+        "vegetarian": true
+    },
+    "Sandwich bread": {
+        "vegan": true,
+        "vegetarian": true
+    },
+    "Sandwich spread": {
+        "vegan": true,
+        "vegetarian": true
+    },
+    "Sardine oil": {
+        "vegan": false,
+        "vegetarian": false
+    },
+    "Sardines": {
+        "vegan": false,
+        "vegetarian": false
+    },
+    "Sarza criolla": {
+        "vegan": true,
+        "vegetarian": true
+    },
+    "Sauerkraut": {
+        "vegan": true,
+        "vegetarian": true
+    },
+    "Sauerkraut filling": {
+        "vegan": false,
+        "vegetarian": false
+    },
+    "Sausage": {
+        "vegan": false,
+        "vegetarian": false
+    },
+    "Sausage meat": {
+        "vegan": false,
+        "vegetarian": false
+    },
+    "Savoury custard": {
+        "vegan": true,
+        "vegetarian": true
+    },
+    "Saz\u00f3n": {
+        "vegan": true,
+        "vegetarian": true
+    },
+    "Scalded milk": {
+        "vegan": true,
+        "vegetarian": true
+    },
+    "Scallion": {
+        "vegan": true,
+        "vegetarian": true
+    },
+    "Scallop shells": {
+        "vegan": false,
+        "vegetarian": false
+    },
+    "Scallops": {
+        "vegan": false,
+        "vegetarian": false
+    },
+    "Scent leaf": {
+        "vegan": true,
+        "vegetarian": true
+    },
+    "Scent leaves": {
+        "vegan": true,
+        "vegetarian": true
+    },
+    "Scotch bonnet chili pepper": {
+        "vegan": true,
+        "vegetarian": true
+    },
+    "Sea salt": {
+        "vegan": true,
+        "vegetarian": true
+    },
+    "Seafood": {
+        "vegan": true,
+        "vegetarian": true
+    },
+    "Seafood bouillon powder": {
+        "vegan": true,
+        "vegetarian": true
+    },
+    "Seafood mix": {
+        "vegan": true,
+        "vegetarian": true
+    },
+    "Seafood seasoning": {
+        "vegan": false,
+        "vegetarian": true
+    },
+    "Seasoned dry bread crumbs": {
+        "vegan": true,
+        "vegetarian": true
+    },
+    "Seasoned flour": {
+        "vegan": true,
+        "vegetarian": true
+    },
+    "Seasoning cube": {
+        "vegan": true,
+        "vegetarian": true
+    },
+    "Seasoning mix": {
+        "vegan": true,
+        "vegetarian": true
+    },
+    "Seasoning salt": {
+        "vegan": true,
+        "vegetarian": true
+    },
+    "Seaweed": {
+        "vegan": true,
+        "vegetarian": true
+    },
+    "Seeded raisins": {
+        "vegan": true,
+        "vegetarian": true
+    },
+    "Seedless black raisins": {
+        "vegan": true,
+        "vegetarian": true
+    },
+    "Seeds": {
+        "vegan": true,
+        "vegetarian": true
+    },
+    "Self-rising corn meal": {
+        "vegan": true,
+        "vegetarian": true
+    },
+    "Self-rising flour": {
+        "vegan": true,
+        "vegetarian": true
+    },
+    "Seltzer water": {
+        "vegan": true,
+        "vegetarian": true
+    },
+    "Semi-sweet chocolate": {
+        "vegan": true,
+        "vegetarian": true
+    },
+    "Semi-sweet chocolate chips": {
+        "vegan": true,
+        "vegetarian": true
+    },
+    "Semi-sweet chocolate curls": {
+        "vegan": true,
+        "vegetarian": true
+    },
+    "Semi-sweet chocolate morsels": {
+        "vegan": true,
+        "vegetarian": true
+    },
+    "Semi-sweet dark chocolate": {
+        "vegan": true,
+        "vegetarian": true
+    },
+    "Semisweet chocolate chips": {
+        "vegan": true,
+        "vegetarian": true
+    },
+    "Semolina": {
+        "vegan": true,
+        "vegetarian": true
+    },
+    "Semolina flour": {
+        "vegan": true,
+        "vegetarian": true
+    },
+    "Semovita": {
+        "vegan": true,
+        "vegetarian": true
+    },
+    "Sesame crackers": {
+        "vegan": true,
+        "vegetarian": true
+    },
+    "Sesame oil": {
+        "vegan": true,
+        "vegetarian": true
+    },
+    "Sesame seeds": {
+        "vegan": true,
+        "vegetarian": true
+    },
+    "Shaki": {
+        "vegan": false,
+        "vegetarian": false
+    },
+    "Shallot": {
+        "vegan": true,
+        "vegetarian": true
+    },
+    "Sharp cheddar cheese": {
+        "vegan": false,
+        "vegetarian": true
+    },
+    "Shea butter oil": {
+        "vegan": false,
+        "vegetarian": true
+    },
+    "Shellfish": {
+        "vegan": false,
+        "vegetarian": false
+    },
+    "Sherry vinegar": {
+        "vegan": true,
+        "vegetarian": true
+    },
+    "Shichimi seasoning": {
+        "vegan": true,
+        "vegetarian": true
+    },
+    "Shiitake mushrooms": {
+        "vegan": true,
+        "vegetarian": true
+    },
+    "Shiittake mushrooms": {
+        "vegan": true,
+        "vegetarian": true
+    },
+    "Shirataki noodles": {
+        "vegan": true,
+        "vegetarian": true
+    },
+    "Shombo": {
+        "vegan": false,
+        "vegetarian": false
+    },
+    "Shombo red pepper": {
+        "vegan": true,
+        "vegetarian": true
+    },
+    "Short pasta": {
+        "vegan": true,
+        "vegetarian": true
+    },
+    "Short-grain brown rice": {
+        "vegan": true,
+        "vegetarian": true
+    },
+    "Short-grain japanese rice": {
+        "vegan": true,
+        "vegetarian": true
+    },
+    "Short-grain non-parboiled rice": {
+        "vegan": true,
+        "vegetarian": true
+    },
+    "Short-grain parboiled rice": {
+        "vegan": true,
+        "vegetarian": true
+    },
+    "Short-grain rice": {
+        "vegan": true,
+        "vegetarian": true
+    },
+    "Short-ribs": {
+        "vegan": false,
+        "vegetarian": true
+    },
+    "Shortcrust pastry": {
+        "vegan": true,
+        "vegetarian": true
+    },
+    "Shortcrust pastry dough": {
+        "vegan": true,
+        "vegetarian": true
+    },
+    "Shortening": {
+        "vegan": true,
+        "vegetarian": true
+    },
+    "Shoyu soy sauce": {
+        "vegan": true,
+        "vegetarian": true
+    },
+    "Shredded coconut": {
+        "vegan": true,
+        "vegetarian": true
+    },
+    "Shrimp": {
+        "vegan": false,
+        "vegetarian": false
+    },
+    "Shrimp paste": {
+        "vegan": false,
+        "vegetarian": false
+    },
+    "Shrimp powder": {
+        "vegan": false,
+        "vegetarian": false
+    },
+    "Shrimp seasoning powder": {
+        "vegan": false,
+        "vegetarian": false
+    },
+    "Silken tofu": {
+        "vegan": true,
+        "vegetarian": true
+    },
+    "Single cream": {
+        "vegan": false,
+        "vegetarian": true
+    },
+    "Smoked Skipjack tuna": {
+        "vegan": false,
+        "vegetarian": false
+    },
+    "Smoked dried fish": {
+        "vegan": false,
+        "vegetarian": false
+    },
+    "Smoked fish": {
+        "vegan": false,
+        "vegetarian": false
+    },
+    "Smoked haddock": {
+        "vegan": false,
+        "vegetarian": false
+    },
+    "Smoked mackerel": {
+        "vegan": false,
+        "vegetarian": false
+    },
+    "Smoked panla": {
+        "vegan": true,
+        "vegetarian": true
+    },
+    "Smoked paprika": {
+        "vegan": true,
+        "vegetarian": true
+    },
+    "Smoked prawns": {
+        "vegan": true,
+        "vegetarian": true
+    },
+    "Smoked salmon": {
+        "vegan": false,
+        "vegetarian": false
+    },
+    "Smoked titus fish": {
+        "vegan": false,
+        "vegetarian": false
+    },
+    "Snail meat": {
+        "vegan": false,
+        "vegetarian": false
+    },
+    "Snails": {
+        "vegan": false,
+        "vegetarian": false
+    },
+    "Soft cheese": {
+        "vegan": false,
+        "vegetarian": true
+    },
+    "Sorghum flour": {
+        "vegan": true,
+        "vegetarian": true
+    },
+    "Soup mix": {
+        "vegan": false,
+        "vegetarian": false
+    },
+    "Soup stock": {
+        "vegan": false,
+        "vegetarian": false
+    },
+    "Sour cream": {
+        "vegan": false,
+        "vegetarian": true
+    },
+    "Sour cream chili sauce": {
+        "vegan": false,
+        "vegetarian": true
+    },
+    "Soy beans": {
+        "vegan": true,
+        "vegetarian": true
+    },
+    "Soy leaves": {
+        "vegan": true,
+        "vegetarian": true
+    },
+    "Soy lecithin powder": {
+        "vegan": true,
+        "vegetarian": true
+    },
+    "Soy milk": {
+        "vegan": true,
+        "vegetarian": true
+    },
+    "Soy oil": {
+        "vegan": true,
+        "vegetarian": true
+    },
+    "Soy sauce": {
+        "vegan": true,
+        "vegetarian": true
+    },
+    "Soybeans": {
+        "vegan": true,
+        "vegetarian": true
+    },
+    "Spaetzle": {
+        "vegan": true,
+        "vegetarian": true
+    },
+    "Spaghetti": {
+        "vegan": true,
+        "vegetarian": true
+    },
+    "Spanish onion": {
+        "vegan": true,
+        "vegetarian": true
+    },
+    "Spanish rice": {
+        "vegan": true,
+        "vegetarian": true
+    },
+    "Spanish sausage": {
+        "vegan": false,
+        "vegetarian": false
+    },
+    "Spearmint": {
+        "vegan": true,
+        "vegetarian": true
+    },
+    "Spelding": {
+        "vegan": true,
+        "vegetarian": true
+    },
+    "Spelt": {
+        "vegan": true,
+        "vegetarian": true
+    },
+    "Spelt flour": {
+        "vegan": true,
+        "vegetarian": true
+    },
+    "Spiced falafel mix": {
+        "vegan": true,
+        "vegetarian": true
+    },
+    "Spices": {
+        "vegan": true,
+        "vegetarian": true
+    },
+    "Spicy chili peppers": {
+        "vegan": true,
+        "vegetarian": true
+    },
+    "Spicy garlic oil": {
+        "vegan": true,
+        "vegetarian": true
+    },
+    "Spicy paprika": {
+        "vegan": true,
+        "vegetarian": true
+    },
+    "Spinach": {
+        "vegan": true,
+        "vegetarian": true
+    },
+    "Sponge cake": {
+        "vegan": false,
+        "vegetarian": false
+    },
+    "Spring roll wrappers": {
+        "vegan": true,
+        "vegetarian": true
+    },
+    "Spring water": {
+        "vegan": false,
+        "vegetarian": false
+    },
+    "Sprinkles": {
+        "vegan": false,
+        "vegetarian": false
+    },
+    "Star anise": {
+        "vegan": true,
+        "vegetarian": true
+    },
+    "Starch": {
+        "vegan": true,
+        "vegetarian": true
+    },
+    "Steak rub": {
+        "vegan": false,
+        "vegetarian": false
+    },
+    "Steamed rice": {
+        "vegan": true,
+        "vegetarian": true
+    },
+    "Stock": {
+        "vegan": false,
+        "vegetarian": false
+    },
+    "Stock cube": {
+        "vegan": false,
+        "vegetarian": false
+    },
+    "Stock cubes": {
+        "vegan": false,
+        "vegetarian": false
+    },
+    "Stock fish": {
+        "vegan": false,
+        "vegetarian": false
+    },
+    "Stockfish": {
+        "vegan": false,
+        "vegetarian": false
+    },
+    "Stoned raisins": {
+        "vegan": true,
+        "vegetarian": true
+    },
+    "Straw mushrooms": {
+        "vegan": true,
+        "vegetarian": true
+    },
+    "Strawberry": {
+        "vegan": true,
+        "vegetarian": true
+    },
+    "Strawberry juice": {
+        "vegan": true,
+        "vegetarian": true
+    },
+    "String beans": {
+        "vegan": true,
+        "vegetarian": true
+    },
+    "Suet": {
+        "vegan": true,
+        "vegetarian": true
+    },
+    "Sugar": {
+        "vegan": true,
+        "vegetarian": true
+    },
+    "Sultanas": {
+        "vegan": true,
+        "vegetarian": true
+    },
+    "Sumac powder": {
+        "vegan": true,
+        "vegetarian": true
+    },
+    "Sumak": {
+        "vegan": true,
+        "vegetarian": true
+    },
+    "Sun-dried maize kernels": {
+        "vegan": true,
+        "vegetarian": true
+    },
+    "Sun-dried tomatoes": {
+        "vegan": true,
+        "vegetarian": true
+    },
+    "Sunflower oil": {
+        "vegan": true,
+        "vegetarian": true
+    },
+    "Sunflower seeds": {
+        "vegan": true,
+        "vegetarian": true
+    },
+    "Superfine sugar": {
+        "vegan": true,
+        "vegetarian": true
+    },
+    "Sushi rice": {
+        "vegan": true,
+        "vegetarian": true
+    },
+    "Suya spice": {
+        "vegan": true,
+        "vegetarian": true
+    },
+    "Sweet and sour sauce": {
+        "vegan": true,
+        "vegetarian": true
+    },
+    "Sweet black vinegar": {
+        "vegan": true,
+        "vegetarian": true
+    },
+    "Sweet butter": {
+        "vegan": false,
+        "vegetarian": true
+    },
+    "Sweet chilli sauce": {
+        "vegan": true,
+        "vegetarian": true
+    },
+    "Sweet corn": {
+        "vegan": true,
+        "vegetarian": true
+    },
+    "Sweet corn kernels": {
+        "vegan": true,
+        "vegetarian": true
+    },
+    "Sweet glutinous rice flour": {
+        "vegan": true,
+        "vegetarian": true
+    },
+    "Sweet paprika": {
+        "vegan": true,
+        "vegetarian": true
+    },
+    "Sweet italian sausage": {
+        "vegan": false,
+        "vegetarian": false
+    },
+    "Sweet marjoram": {
+        "vegan": true,
+        "vegetarian": true
+    },
+    "Sweet pepper": {
+        "vegan": true,
+        "vegetarian": true
+    },
+    "Sweet pickle": {
+        "vegan": true,
+        "vegetarian": true
+    },
+    "Sweet pickle relish": {
+        "vegan": true,
+        "vegetarian": true
+    },
+    "Sweet potato": {
+        "vegan": true,
+        "vegetarian": true
+    },
+    "Sweet red wine": {
+        "vegan": true,
+        "vegetarian": true
+    },
+    "Sweet soy sauce": {
+        "vegan": true,
+        "vegetarian": true
+    },
+    "Sweet topping": {
+        "vegan": true,
+        "vegetarian": true
+    },
+    "Sweet whey powder": {
+        "vegan": true,
+        "vegetarian": true
+    },
+    "Sweet wine": {
+        "vegan": true,
+        "vegetarian": true
+    },
+    "Sweetcorn kernels": {
+        "vegan": true,
+        "vegetarian": true
+    },
+    "Sweetened whipped cream": {
+        "vegan": false,
+        "vegetarian": true
+    },
+    "Sweetener": {
+        "vegan": true,
+        "vegetarian": true
+    },
+    "Swiss chard": {
+        "vegan": true,
+        "vegetarian": true
+    },
+    "Swiss cheese": {
+        "vegan": false,
+        "vegetarian": true
+    },
+    "Swiss meringue": {
+        "vegan": false,
+        "vegetarian": false
+    },
+    "Syrup": {
+        "vegan": true,
+        "vegetarian": true
+    },
+    "Tabasco": {
+        "vegan": true,
+        "vegetarian": true
+    },
+    "Tabasco sauce": {
+        "vegan": true,
+        "vegetarian": true
+    },
+    "Taco seasoning mix": {
+        "vegan": true,
+        "vegetarian": true
+    },
+    "Taco shells": {
+        "vegan": false,
+        "vegetarian": false
+    },
+    "Tagliatelle pasta": {
+        "vegan": false,
+        "vegetarian": false
+    },
+    "Tahini": {
+        "vegan": true,
+        "vegetarian": true
+    },
+    "Tamari": {
+        "vegan": true,
+        "vegetarian": true
+    },
+    "Tamarind": {
+        "vegan": true,
+        "vegetarian": true
+    },
+    "Tamarind juice": {
+        "vegan": true,
+        "vegetarian": true
+    },
+    "Tamarind pulp concentrate": {
+        "vegan": false,
+        "vegetarian": true
+    },
+    "Tandoori powder": {
+        "vegan": true,
+        "vegetarian": true
+    },
+    "Tapioca flour": {
+        "vegan": true,
+        "vegetarian": true
+    },
+    "Tapioca granules": {
+        "vegan": true,
+        "vegetarian": true
+    },
+    "Tapioca starch": {
+        "vegan": true,
+        "vegetarian": true
+    },
+    "Tarragon": {
+        "vegan": true,
+        "vegetarian": true
+    },
+    "Tarragon vinegar": {
+        "vegan": true,
+        "vegetarian": true
+    },
+    "Tartar sauce": {
+        "vegan": true,
+        "vegetarian": true
+    },
+    "Tatashe": {
+        "vegan": true,
+        "vegetarian": true
+    },
+    "Tatashe pepper": {
+        "vegan": true,
+        "vegetarian": true
+    },
+    "Tavuklu b\u00f6rek": {
+        "vegan": true,
+        "vegetarian": true
+    },
+    "Tenderizer": {
+        "vegan": false,
+        "vegetarian": false
+    },
+    "Tennis biscuits": {
+        "vegan": true,
+        "vegetarian": true
+    },
+    "Teriyaki marinade": {
+        "vegan": true,
+        "vegetarian": true
+    },
+    "Textured vegetable protein": {
+        "vegan": true,
+        "vegetarian": true
+    },
+    "Thai chili paste": {
+        "vegan": true,
+        "vegetarian": true
+    },
+    "Thai fish sauce": {
+        "vegan": true,
+        "vegetarian": true
+    },
+    "Thick custard": {
+        "vegan": true,
+        "vegetarian": true
+    },
+    "Thousand island dressing": {
+        "vegan": true,
+        "vegetarian": true
+    },
+    "Thyme": {
+        "vegan": true,
+        "vegetarian": true
+    },
+    "Tiger nut flour": {
+        "vegan": true,
+        "vegetarian": true
+    },
+    "Tiger nuts": {
+        "vegan": true,
+        "vegetarian": true
+    },
+    "Tilapia fillets": {
+        "vegan": false,
+        "vegetarian": false
+    },
+    "Tilapia fish": {
+        "vegan": false,
+        "vegetarian": false
+    },
+    "Tinned chopped tomatoes": {
+        "vegan": true,
+        "vegetarian": true
+    },
+    "Tinned sardines": {
+        "vegan": false,
+        "vegetarian": false
+    },
+    "Tinned sweetened condensed milk": {
+        "vegan": false,
+        "vegetarian": true
+    },
+    "Tinned tomatoes": {
+        "vegan": true,
+        "vegetarian": true
+    },
+    "Tiny pinch of salt": {
+        "vegan": true,
+        "vegetarian": true
+    },
+    "Titus fish": {
+        "vegan": false,
+        "vegetarian": false
+    },
+    "Toast": {
+        "vegan": true,
+        "vegetarian": true
+    },
+    "Tofu": {
+        "vegan": true,
+        "vegetarian": true
+    },
+    "Tomato": {
+        "vegan": true,
+        "vegetarian": true
+    },
+    "Tomato ketchup": {
+        "vegan": true,
+        "vegetarian": true
+    },
+    "Tomato paste": {
+        "vegan": true,
+        "vegetarian": true
+    },
+    "Tomato powder": {
+        "vegan": true,
+        "vegetarian": true
+    },
+    "Tomato salsa": {
+        "vegan": true,
+        "vegetarian": true
+    },
+    "Tomato sauce": {
+        "vegan": true,
+        "vegetarian": true
+    },
+    "Tomato stew": {
+        "vegan": true,
+        "vegetarian": true
+    },
+    "Toor daal": {
+        "vegan": false,
+        "vegetarian": false
+    },
+    "Tortilla chips": {
+        "vegan": true,
+        "vegetarian": true
+    },
+    "Tortillas": {
+        "vegan": true,
+        "vegetarian": true
+    },
+    "Tree spinach leaves": {
+        "vegan": true,
+        "vegetarian": true
+    },
+    "Tripe": {
+        "vegan": false,
+        "vegetarian": false
+    },
+    "Trotters": {
+        "vegan": true,
+        "vegetarian": true
+    },
+    "Tsamiya": {
+        "vegan": true,
+        "vegetarian": true
+    },
+    "Tuna": {
+        "vegan": false,
+        "vegetarian": false
+    },
+    "Turbinado sugar": {
+        "vegan": true,
+        "vegetarian": true
+    },
+    "Turkey": {
+        "vegan": false,
+        "vegetarian": false
+    },
+    "Turmeric": {
+        "vegan": true,
+        "vegetarian": true
+    },
+    "Turmeric powder": {
+        "vegan": true,
+        "vegetarian": true
+    },
+    "Turnip": {
+        "vegan": true,
+        "vegetarian": true
+    },
+    "Turtle meat": {
+        "vegan": true,
+        "vegetarian": true
+    },
+    "Twisted macaroni pasta": {
+        "vegan": true,
+        "vegetarian": true
+    },
+    "Uda": {
+        "vegan": false,
+        "vegetarian": true
+    },
+    "Ugwu leaves": {
+        "vegan": true,
+        "vegetarian": true
+    },
+    "Ujuju leaves": {
+        "vegan": true,
+        "vegetarian": true
+    },
+    "Ukpaka": {
+        "vegan": true,
+        "vegetarian": true
+    },
+    "Umeboshi": {
+        "vegan": true,
+        "vegetarian": true
+    },
+    "Unbleached all-purpose flour": {
+        "vegan": true,
+        "vegetarian": true
+    },
+    "Unbleached white flour": {
+        "vegan": true,
+        "vegetarian": true
+    },
+    "Unrefined sugar": {
+        "vegan": true,
+        "vegetarian": true
+    },
+    "Unsalted butter": {
+        "vegan": false,
+        "vegetarian": true
+    },
+    "Unsweetened baking chocolate": {
+        "vegan": true,
+        "vegetarian": true
+    },
+    "Unsweetened chocolate": {
+        "vegan": true,
+        "vegetarian": true
+    },
+    "Unsweetened cocoa": {
+        "vegan": true,
+        "vegetarian": true
+    },
+    "Unsweetened cocoa powder": {
+        "vegan": true,
+        "vegetarian": true
+    },
+    "Unsweetened peanut butter": {
+        "vegan": true,
+        "vegetarian": true
+    },
+    "Utazi": {
+        "vegan": true,
+        "vegetarian": true
+    },
+    "Utazi leaves": {
+        "vegan": true,
+        "vegetarian": true
+    },
+    "Uyayak": {
+        "vegan": true,
+        "vegetarian": true
+    },
+    "Uziza": {
+        "vegan": false,
+        "vegetarian": false
+    },
+    "Uziza leaves": {
+        "vegan": true,
+        "vegetarian": true
+    },
+    "Uziza powder": {
+        "vegan": true,
+        "vegetarian": true
+    },
+    "Uziza seed": {
+        "vegan": true,
+        "vegetarian": true
+    },
+    "Uziza seed powder": {
+        "vegan": true,
+        "vegetarian": true
+    },
+    "Uziza seeds": {
+        "vegan": true,
+        "vegetarian": true
+    },
+    "Vanilla": {
+        "vegan": true,
+        "vegetarian": true
+    },
+    "Vanilla cookies": {
+        "vegan": true,
+        "vegetarian": true
+    },
+    "Vanilla essence": {
+        "vegan": true,
+        "vegetarian": true
+    },
+    "Vanilla extract": {
+        "vegan": true,
+        "vegetarian": true
+    },
+    "Vanilla ice cream": {
+        "vegan": true,
+        "vegetarian": true
+    },
+    "Vanilla pastry cream": {
+        "vegan": true,
+        "vegetarian": true
+    },
+    "Vanilla powder": {
+        "vegan": true,
+        "vegetarian": true
+    },
+    "Vanilla sugar": {
+        "vegan": true,
+        "vegetarian": true
+    },
+    "Vanilla yogurt": {
+        "vegan": false,
+        "vegetarian": true
+    },
+    "Veal": {
+        "vegan": false,
+        "vegetarian": false
+    },
+    "Veal stock": {
+        "vegan": false,
+        "vegetarian": false
+    },
+    "Vegemite": {
+        "vegan": true,
+        "vegetarian": true
+    },
+    "Vegetable confetti": {
+        "vegan": true,
+        "vegetarian": true
+    },
+    "Vegetable oil": {
+        "vegan": true,
+        "vegetarian": true
+    },
+    "Vegetable pickle": {
+        "vegan": true,
+        "vegetarian": true
+    },
+    "Vegetable shortening": {
+        "vegan": true,
+        "vegetarian": true
+    },
+    "Vegetable soup": {
+        "vegan": true,
+        "vegetarian": true
+    },
+    "Vegetable spray": {
+        "vegan": true,
+        "vegetarian": true
+    },
+    "Vegetable stock": {
+        "vegan": true,
+        "vegetarian": true
+    },
+    "Vegetables": {
+        "vegan": true,
+        "vegetarian": true
+    },
+    "Velveeta cheese": {
+        "vegan": false,
+        "vegetarian": true
+    },
+    "Venison": {
+        "vegan": true,
+        "vegetarian": true
+    },
+    "Verbena leaves": {
+        "vegan": true,
+        "vegetarian": true
+    },
+    "Vialone nano rice": {
+        "vegan": true,
+        "vegetarian": true
+    },
+    "Vinegar": {
+        "vegan": true,
+        "vegetarian": true
+    },
+    "Virgin olive oil": {
+        "vegan": true,
+        "vegetarian": true
+    },
+    "Vodka": {
+        "vegan": true,
+        "vegetarian": true
+    },
+    "Wagon wheels pasta": {
+        "vegan": true,
+        "vegetarian": true
+    },
+    "Walnut oil": {
+        "vegan": true,
+        "vegetarian": true
+    },
+    "Walnuts": {
+        "vegan": true,
+        "vegetarian": true
+    },
+    "Wasabi": {
+        "vegan": true,
+        "vegetarian": true
+    },
+    "Wasabi paste": {
+        "vegan": true,
+        "vegetarian": true
+    },
+    "Washed rice": {
+        "vegan": true,
+        "vegetarian": true
+    },
+    "Water": {
+        "vegan": true,
+        "vegetarian": true
+    },
+    "Water yam": {
+        "vegan": true,
+        "vegetarian": true
+    },
+    "Watercress": {
+        "vegan": true,
+        "vegetarian": true
+    },
+    "Waterleaf": {
+        "vegan": true,
+        "vegetarian": true
+    },
+    "Watermelon": {
+        "vegan": true,
+        "vegetarian": true
+    },
+    "Waxy potatoes": {
+        "vegan": true,
+        "vegetarian": true
+    },
+    "Wheat": {
+        "vegan": true,
+        "vegetarian": true
+    },
+    "Wheat bran": {
+        "vegan": true,
+        "vegetarian": true
+    },
+    "Wheat bread": {
+        "vegan": true,
+        "vegetarian": true
+    },
+    "Wheat cereal squares": {
+        "vegan": true,
+        "vegetarian": true
+    },
+    "Wheat crackers": {
+        "vegan": true,
+        "vegetarian": true
+    },
+    "Wheat flour": {
+        "vegan": true,
+        "vegetarian": true
+    },
+    "Wheat semolina flour": {
+        "vegan": true,
+        "vegetarian": true
+    },
+    "Wheat spaghetti": {
+        "vegan": true,
+        "vegetarian": true
+    },
+    "Whipped cream": {
+        "vegan": false,
+        "vegetarian": true
+    },
+    "Whipped double cream": {
+        "vegan": false,
+        "vegetarian": true
+    },
+    "Whipping cream": {
+        "vegan": false,
+        "vegetarian": true
+    },
+    "Whiskey": {
+        "vegan": true,
+        "vegetarian": true
+    },
+    "White all-purpose flour": {
+        "vegan": true,
+        "vegetarian": true
+    },
+    "White balsalmic vinegar": {
+        "vegan": true,
+        "vegetarian": true
+    },
+    "White beans": {
+        "vegan": true,
+        "vegetarian": true
+    },
+    "White bread": {
+        "vegan": true,
+        "vegetarian": true
+    },
+    "White bread flour": {
+        "vegan": true,
+        "vegetarian": true
+    },
+    "White breadcrumbs": {
+        "vegan": true,
+        "vegetarian": true
+    },
+    "White button mushroom": {
+        "vegan": true,
+        "vegetarian": true
+    },
+    "White cauliflower": {
+        "vegan": true,
+        "vegetarian": true
+    },
+    "White cheese": {
+        "vegan": false,
+        "vegetarian": true
+    },
+    "White chocolate chips": {
+        "vegan": true,
+        "vegetarian": true
+    },
+    "White corn grits": {
+        "vegan": true,
+        "vegetarian": true
+    },
+    "White fish": {
+        "vegan": false,
+        "vegetarian": false
+    },
+    "White flour": {
+        "vegan": true,
+        "vegetarian": true
+    },
+    "White granulated sugar": {
+        "vegan": true,
+        "vegetarian": true
+    },
+    "White haricot": {
+        "vegan": true,
+        "vegetarian": true
+    },
+    "White liquor": {
+        "vegan": false,
+        "vegetarian": false
+    },
+    "White lump crab meat": {
+        "vegan": false,
+        "vegetarian": false
+    },
+    "White mushrooms": {
+        "vegan": true,
+        "vegetarian": true
+    },
+    "White onion": {
+        "vegan": true,
+        "vegetarian": true
+    },
+    "White penja pepper seeds": {
+        "vegan": true,
+        "vegetarian": true
+    },
+    "White pepper": {
+        "vegan": true,
+        "vegetarian": true
+    },
+    "White potatoes": {
+        "vegan": true,
+        "vegetarian": true
+    },
+    "White rice": {
+        "vegan": true,
+        "vegetarian": true
+    },
+    "White sandwich bread": {
+        "vegan": true,
+        "vegetarian": true
+    },
+    "White sauce": {
+        "vegan": false,
+        "vegetarian": false
+    },
+    "White sesame seeds": {
+        "vegan": true,
+        "vegetarian": true
+    },
+    "White stock": {
+        "vegan": false,
+        "vegetarian": false
+    },
+    "White sugar": {
+        "vegan": true,
+        "vegetarian": true
+    },
+    "White vermouth": {
+        "vegan": true,
+        "vegetarian": true
+    },
+    "White vinegar": {
+        "vegan": true,
+        "vegetarian": true
+    },
+    "White wheat flour": {
+        "vegan": true,
+        "vegetarian": true
+    },
+    "White wine": {
+        "vegan": true,
+        "vegetarian": true
+    },
+    "White wine vinegar": {
+        "vegan": true,
+        "vegetarian": true
+    },
+    "White yam": {
+        "vegan": false,
+        "vegetarian": false
+    },
+    "Whole milk": {
+        "vegan": true,
+        "vegetarian": true
+    },
+    "Whole wheat flour": {
+        "vegan": true,
+        "vegetarian": true
+    },
+    "Whole wheat pastry flour": {
+        "vegan": true,
+        "vegetarian": true
+    },
+    "Wholemeal flour": {
+        "vegan": true,
+        "vegetarian": true
+    },
+    "Wild mushrooms": {
+        "vegan": true,
+        "vegetarian": true
+    },
+    "Wine": {
+        "vegan": true,
+        "vegetarian": true
+    },
+    "Wine vinegar": {
+        "vegan": true,
+        "vegetarian": true
+    },
+    "Wisconsin ackawi cheese": {
+        "vegan": false,
+        "vegetarian": true
+    },
+    "Wonton wrappers": {
+        "vegan": false,
+        "vegetarian": false
+    },
+    "Wood chips": {
+        "vegan": false,
+        "vegetarian": false
+    },
+    "Wood chunks": {
+        "vegan": false,
+        "vegetarian": false
+    },
+    "Worcestershire sauce": {
+        "vegan": true,
+        "vegetarian": true
+    },
+    "Wrapping leaves": {
+        "vegan": true,
+        "vegetarian": true
+    },
+    "Xanthan gum": {
+        "vegan": true,
+        "vegetarian": true
+    },
+    "Yaji": {
+        "vegan": true,
+        "vegetarian": true
+    },
+    "Yakuwa": {
+        "vegan": true,
+        "vegetarian": true
+    },
+    "Yakwa": {
+        "vegan": true,
+        "vegetarian": true
+    },
+    "Yam": {
+        "vegan": true,
+        "vegetarian": true
+    },
+    "Yam flour": {
+        "vegan": true,
+        "vegetarian": true
+    },
+    "Yeast": {
+        "vegan": true,
+        "vegetarian": true
+    },
+    "Yellow bell pepper": {
+        "vegan": true,
+        "vegetarian": true
+    },
+    "Yellow cornmeal": {
+        "vegan": true,
+        "vegetarian": true
+    },
+    "Yellow deli mustard": {
+        "vegan": true,
+        "vegetarian": true
+    },
+    "Yellow habanero pepper": {
+        "vegan": true,
+        "vegetarian": true
+    },
+    "Yellow lentils": {
+        "vegan": true,
+        "vegetarian": true
+    },
+    "Yellow mustard": {
+        "vegan": true,
+        "vegetarian": true
+    },
+    "Yellow onion": {
+        "vegan": true,
+        "vegetarian": true
+    },
+    "Yellow pepper": {
+        "vegan": true,
+        "vegetarian": true
+    },
+    "Yellow pepper powder": {
+        "vegan": true,
+        "vegetarian": true
+    },
+    "Yellow pickled daikon radish": {
+        "vegan": true,
+        "vegetarian": true
+    },
+    "Yellow prepared mustard": {
+        "vegan": true,
+        "vegetarian": true
+    },
+    "Yellow split peas": {
+        "vegan": true,
+        "vegetarian": true
+    },
+    "Yellow watermelon": {
+        "vegan": true,
+        "vegetarian": true
+    },
+    "Yogurt": {
+        "vegan": false,
+        "vegetarian": true
+    },
+    "Yuca root": {
+        "vegan": true,
+        "vegetarian": true
+    },
+    "Za'atar": {
+        "vegan": true,
+        "vegetarian": true
+    },
+    "Ziti pasta": {
+        "vegan": true,
+        "vegetarian": true
+    },
+    "Zobo leaves": {
+        "vegan": true,
+        "vegetarian": true
+    },
+    "Zogale leaves": {
+        "vegan": true,
+        "vegetarian": true
+    },
+    "Zucchini": {
+        "vegan": true,
+        "vegetarian": true
+    }
+}

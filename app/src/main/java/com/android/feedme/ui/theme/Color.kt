@@ -12,12 +12,16 @@ val PurpleGrey40 = Color(0xFF625b71)
 val Pink40 = Color(0xFF7D5260)
 val DarkGrey = Color(0xFF191C1E)
 
+val OffWhite = Color(0xFFF2F2F2)
+val BackgroundColor = Color(0xFF032028)
+val Cyan = Color(0xFF317693)
+
 val FindRecipeIcons = Color(0xFF4E5FFB)
 
 val YellowStar = Color(0xFFFFE600)
 val YellowStarBlackOutline = Color(0xFF000000)
 val TemplateColor = Color(0xFF002C47)
-private val cardColor = Color(0xC9C2E1EE)
+val cardColor = Color(0xFF356E94)
 val CardBackground = CardColors(cardColor, cardColor, cardColor, cardColor)
 val TextBarColor = Color(0xFFFFFFFF)
 val BottomIconColor = Color(0xFFFFFFFF)

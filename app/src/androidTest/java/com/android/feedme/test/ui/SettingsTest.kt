@@ -101,6 +101,33 @@ class SettingsTest {
     }
   }
 
+  @Test
+  fun alertDisplayedWhenDeleteIsClickedAndThenCallDeleteCheckSignOut() {
+    val mockProfileViewModel = mockk<ProfileViewModel>(relaxed = true)
+    composeTestRule.setContent {
+      SettingsScreen(mockk<NavigationActions>(relaxed = true), mockProfileViewModel)
+    }
+    composeTestRule.waitForIdle()
+
+    ComposeScreen.onComposeScreen<SettingsScreen>(composeTestRule) {
+      deleteAccountButton {
+        assertIsDisplayed()
+        assertHasClickAction()
+        performClick()
+      }
+      composeTestRule.waitForIdle()
+
+      composeTestRule.onNodeWithTag("AlertDialogBox").assertIsDisplayed()
+      composeTestRule
+          .onNodeWithTag("ConfirmButton")
+          .assertIsDisplayed()
+          .assertHasClickAction()
+          .performClick()
+
+      verify(exactly = 1) { mockProfileViewModel.deleteCurrentUserProfile(any(), any()) }
+    }
+  }
+
   private fun goToSettingsScreen() {
     composeTestRule.setContent {
       SettingsScreen(

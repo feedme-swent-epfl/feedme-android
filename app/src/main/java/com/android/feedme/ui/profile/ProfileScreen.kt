@@ -143,7 +143,7 @@ fun ProfileBox(
               modifier = Modifier.fillMaxWidth().padding(vertical = 20.dp),
               horizontalArrangement = Arrangement.Center,
               verticalAlignment = Alignment.CenterVertically) {
-                UserProfilePicture()
+                UserProfilePicture(profileViewModel)
                 Spacer(modifier = Modifier.width(20.dp))
                 UserNameBox(profile ?: Profile())
                 Spacer(modifier = Modifier.width(5.dp))

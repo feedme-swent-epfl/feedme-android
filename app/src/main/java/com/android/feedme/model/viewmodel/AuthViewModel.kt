@@ -107,7 +107,9 @@ class AuthViewModel : ViewModel() {
           Profile(
               id = googleId,
               name = name ?: "",
-              username = name ?: "",
+              username =
+                  if (name.length <= 15) name.replace("[^\\w]".toRegex(), "_").lowercase()
+                  else name.replace("[^\\w]".toRegex(), "_").take(15).lowercase() ?: "",
               email = email ?: "",
               description = "",
               imageUrl = photoUrl ?: "",

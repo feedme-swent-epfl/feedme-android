@@ -4,6 +4,8 @@ import android.Manifest
 import android.app.Activity
 import android.content.Context
 import android.content.pm.PackageManager
+import android.graphics.Bitmap
+import android.graphics.ImageDecoder
 import android.net.Uri
 import android.os.Build
 import androidx.activity.compose.ManagedActivityResultLauncher
@@ -19,7 +21,8 @@ import kotlinx.coroutines.flow.MutableStateFlow
 
 class GalleryViewModel : ViewModel() {
 
-  private val _uris = MutableStateFlow<List<Uri>>(emptyList())
+  val _bitmaps = MutableStateFlow<List<Bitmap>>(emptyList())
+  private val _uris = MutableStateFlow<Set<Uri>>(setOf())
 
   @Composable
   fun galleryLauncher(
@@ -41,9 +44,21 @@ class GalleryViewModel : ViewModel() {
     }
 
     return rememberLauncherForActivityResult(
-        ActivityResultContracts.PickMultipleVisualMedia(maxItems),
+        ActivityResultContracts.PickMultipleVisualMedia(maxImages),
         onResult = { uris ->
-          // TODO : handling the display of the gallery pictures
+          uris.let {
+            for (uri in it) {
+              // Duplication protection and setting max of loadable images to 15
+              if (_uris.value.size < 15 && !_uris.value.contains(uri)) {
+                _uris.value += uri
+                val source = ImageDecoder.createSource(context.contentResolver, uri)
+                val bitmap = ImageDecoder.decodeBitmap(source)
+                if (_bitmaps.value.size < 15) {
+                  _bitmaps.value += bitmap
+                }
+              }
+            }
+          }
         })
   }
 }

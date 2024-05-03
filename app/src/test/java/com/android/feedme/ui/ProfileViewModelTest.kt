@@ -351,7 +351,7 @@ class ProfileViewModelTest {
     profileViewModel.profileToShow()
   }
 
-  @Test
+  @Test(expected = Exception::class)
   fun `deleteCurrentUserProfile throws Exception when currentUserId is DEFAULT_ID`() {
     profileViewModel.currentUserId = "DEFAULT_ID"
     profileViewModel.deleteCurrentUserProfile({}, { throw Exception() })

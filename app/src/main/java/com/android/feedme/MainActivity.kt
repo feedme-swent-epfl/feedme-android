@@ -63,7 +63,6 @@ class MainActivity : ComponentActivity() {
               val profileViewModel: ProfileViewModel = viewModel<ProfileViewModel>()
               val authViewModel: AuthViewModel = viewModel<AuthViewModel>()
               val inputViewModel: InputViewModel = viewModel<InputViewModel>()
-              val landingPageViewModel: LandingPageViewModel = viewModel<LandingPageViewModel>()
 
               // Set up the nested navigation graph
               NavHost(navController = navController, startDestination = Route.AUTHENTICATION) {
@@ -83,6 +82,8 @@ class MainActivity : ComponentActivity() {
                   composable(Screen.HOME) {
                     // Create a shared view model for Recipe
                     val recipeViewModel = viewModel<RecipeViewModel>()
+                    val landingPageViewModel: LandingPageViewModel =
+                        viewModel<LandingPageViewModel>()
                     LandingPage(navigationActions, recipeViewModel, landingPageViewModel)
                   }
                 }

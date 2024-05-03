@@ -61,6 +61,8 @@ jobs:
           name: feedme-apk
           path: ${{ steps.releaseApk.outputs.apkfile }}
           if-no-files-found: error
+          retention-days: 7
+
 
       - name: Upload APK in a draft release branch
         uses: softprops/action-gh-release@v2

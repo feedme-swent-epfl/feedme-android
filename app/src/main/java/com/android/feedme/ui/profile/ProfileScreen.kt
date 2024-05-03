@@ -1,7 +1,7 @@
 package com.android.feedme.ui.profile
 
+import android.annotation.SuppressLint
 import androidx.compose.foundation.BorderStroke
-import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
@@ -33,14 +33,13 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.testTag
-import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import com.android.feedme.R
+import coil.compose.AsyncImage
 import com.android.feedme.model.data.Profile
 import com.android.feedme.model.data.Recipe
 import com.android.feedme.model.viewmodel.ProfileViewModel
@@ -144,7 +143,7 @@ fun ProfileBox(
               modifier = Modifier.fillMaxWidth().padding(vertical = 20.dp),
               horizontalArrangement = Arrangement.Center,
               verticalAlignment = Alignment.CenterVertically) {
-                UserProfilePicture()
+                UserProfilePicture(profileViewModel)
                 Spacer(modifier = Modifier.width(20.dp))
                 UserNameBox(profile ?: Profile())
                 Spacer(modifier = Modifier.width(5.dp))
@@ -180,11 +179,12 @@ fun ProfileBox(
 }
 
 /** A composable function that generates the user's profile picture. */
+@SuppressLint("StateFlowValueCalledInComposition")
 @Composable
-fun UserProfilePicture() {
-  Image(
+fun UserProfilePicture(profileViewModel: ProfileViewModel) {
+  AsyncImage(
       modifier = Modifier.width(100.dp).height(100.dp).clip(CircleShape).testTag("ProfileIcon"),
-      painter = painterResource(id = R.drawable.user_logo),
+      model = profileViewModel._imageUrl.collectAsState().value,
       contentDescription = "User Profile Image",
       contentScale = ContentScale.FillBounds)
 }

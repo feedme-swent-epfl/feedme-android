@@ -153,6 +153,7 @@ dependencies {
     implementation(libs.firebase.firestore.ktx)
     implementation(libs.androidx.navigation.runtime.ktx)
     implementation(libs.androidx.navigation.compose)
+    implementation(libs.firebase.storage.ktx)
 
     testImplementation(libs.junit)
     testImplementation("org.testng:testng:6.9.6")

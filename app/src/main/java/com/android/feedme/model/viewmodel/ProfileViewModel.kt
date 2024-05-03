@@ -1,5 +1,6 @@
 package com.android.feedme.model.viewmodel
 
+import android.net.Uri
 import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
@@ -28,6 +29,7 @@ class ProfileViewModel : ViewModel() {
   val currentUserProfile: StateFlow<Profile?> = _currentUserProfile
   val currentUserFollowers: StateFlow<List<Profile>> = _currentUserFollowers
   val currentUserFollowing: StateFlow<List<Profile>> = _currentUserFollowing
+  val _imageUrl = MutableStateFlow<String?>(null)
 
   // Viewing User
   var viewingUserId: String? = null
@@ -55,6 +57,8 @@ class ProfileViewModel : ViewModel() {
   init {
     // Listen to FirebaseAuth state changes
     FirebaseAuth.getInstance().addAuthStateListener(authListener)
+    // Listen to FirebaseStorage profile picture changes
+
   }
 
   override fun onCleared() {
@@ -94,6 +98,7 @@ class ProfileViewModel : ViewModel() {
             onSuccess = { profile ->
               _currentUserProfile.value = profile
               if (profile != null) {
+                _imageUrl.value = profile.imageUrl
                 fetchProfiles(profile.followers, _currentUserFollowers)
                 fetchProfiles(profile.following, _currentUserFollowing)
               }
@@ -395,5 +400,18 @@ class ProfileViewModel : ViewModel() {
             onFailure(error)
           })
     }
+  }
+
+  /**
+   * Updates the profile picture of the current user.
+   *
+   * @param profileViewModel The ProfileViewModel of the user.
+   * @param picture The URI of the new profile picture.
+   */
+  fun updateProfilePicture(profileViewModel: ProfileViewModel, picture: Uri) {
+    repository.uploadProfilePicture(
+        profileViewModel = profileViewModel,
+        onFailure = { throw error("Can't upload profile picture to the database") },
+        uri = picture)
   }
 }

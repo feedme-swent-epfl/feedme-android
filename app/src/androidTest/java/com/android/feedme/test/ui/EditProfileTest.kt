@@ -146,6 +146,14 @@ class EditProfileTest {
       editPicture.assertIsDisplayed()
       editPicture.assertHasClickAction()
       editPicture.performClick()
+      // TODO inject a mock image picker
+      /*
+            profileViewModel.currentUserId = "ID_DEFAULT"
+            profileViewModel.updateProfilePicture(
+                profileViewModel,
+                Uri.parse(
+                    "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcT0ouuiiXjqpSyZLcW7yXsrGl9T-FxgUQJMNSaoF3JUitDQ_t-oVrJjbCCQkfYmdGYJoeM&usqp=CAU"))
+      */
     }
   }
 

@@ -50,10 +50,10 @@ import com.android.feedme.ui.theme.FindRecipeIcons
 @Composable
 fun GalleryScreen(navigationActions: NavigationActions, maxItems: Int) {
   val galleryViewModel = viewModel<GalleryViewModel>()
-  val pickImage = galleryViewModel.galleryLauncher(maxItems)
-  val bitmaps by galleryViewModel._bitmaps.collectAsState()
-  // Creating an intermediate screen with a button to add a level of indirection (needed to launch
-  // the PickImage activity) and display the pictures
+  val pickImage = galleryViewModel.galleryLauncher(null, maxItems)
+  val bitmaps by galleryViewModel.bitmaps.collectAsState()
+  // Creating an intermediate screen with a button to add a level of indirection, needed to launch
+  // the PickImage activity
   Scaffold(
       modifier = Modifier.fillMaxSize().testTag("GalleryScreen"),
       topBar = { TopBarNavigation(title = "Select from Gallery", navAction = navigationActions) },

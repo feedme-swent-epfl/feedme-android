@@ -1,5 +1,7 @@
 package com.android.feedme.ui.profile
 
+import androidx.activity.result.PickVisualMediaRequest
+import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
@@ -24,7 +26,9 @@ import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.lifecycle.viewmodel.compose.viewModel
 import com.android.feedme.model.data.Profile
+import com.android.feedme.model.viewmodel.GalleryViewModel
 import com.android.feedme.model.viewmodel.ProfileViewModel
 import com.android.feedme.ui.navigation.BottomNavigationMenu
 import com.android.feedme.ui.navigation.NavigationActions
@@ -75,9 +79,13 @@ fun EditProfileContent(
 ) {
   val profile = profileViewModel.currentUserProfile.collectAsState().value ?: Profile()
 
+  val galleryViewModel = viewModel<GalleryViewModel>()
+  val pickImage = galleryViewModel.galleryLauncher(profileViewModel, 1)
+
   var name by remember { mutableStateOf(profile.name) }
   var username by remember { mutableStateOf(profile.username) }
   var bio by remember { mutableStateOf(profile.description) }
+  var profilePic by remember { mutableStateOf(profile.imageUrl) }
   var nameError by remember { mutableStateOf<String?>(null) }
   var usernameError by remember { mutableStateOf<String?>(null) }
   var bioError by remember { mutableStateOf<String?>(null) }
@@ -93,14 +101,15 @@ fun EditProfileContent(
         Column(
             modifier =
                 Modifier.padding(bottom = 20.dp, top = 20.dp).testTag("Edit_Picture").clickable {
-                  // TODO: Implement image picker
+                  pickImage.launch(
+                      PickVisualMediaRequest(ActivityResultContracts.PickVisualMedia.ImageOnly))
                 },
         ) {
-          UserProfilePicture()
+          UserProfilePicture(profileViewModel)
           Text(
               text = "Edit Picture",
               style = TextStyle(fontSize = 16.sp),
-              modifier = Modifier.padding(top = 8.dp))
+              modifier = Modifier.padding(top = 10.dp).align(Alignment.CenterHorizontally))
         }
 
         OutlinedTextField(

@@ -21,15 +21,15 @@ import kotlinx.coroutines.flow.MutableStateFlow
 
 class GalleryViewModel : ViewModel() {
 
-  val _bitmaps = MutableStateFlow<List<Bitmap>>(emptyList())
-  private val _uris = MutableStateFlow<Set<Uri>>(setOf())
+  val bitmaps = MutableStateFlow<List<Bitmap>>(emptyList())
+  val _uris = MutableStateFlow<List<Uri>>(emptyList())
 
   @Composable
   fun galleryLauncher(
+      profileViewModel: ProfileViewModel?,
       maxItems: Int
-  ): ManagedActivityResultLauncher<PickVisualMediaRequest, List<@JvmSuppressWildcards Uri>> {
+  ): ManagedActivityResultLauncher<PickVisualMediaRequest, out Any?> {
     val context = LocalContext.current
-    val maxImages = if (maxItems < 1) 1 else maxItems
 
     if (!hasRequiredPermissions(context)) {
       val permission =
@@ -43,23 +43,26 @@ class GalleryViewModel : ViewModel() {
       ActivityCompat.requestPermissions(context as Activity, permission, 0)
     }
 
-    return rememberLauncherForActivityResult(
-        ActivityResultContracts.PickMultipleVisualMedia(maxImages),
-        onResult = { uris ->
-          uris.let {
-            for (uri in it) {
-              // Duplication protection and setting max of loadable images to 15
-              if (_uris.value.size < 15 && !_uris.value.contains(uri)) {
+    if (maxItems <= 1) {
+      return rememberLauncherForActivityResult(
+          ActivityResultContracts.PickVisualMedia(),
+          onResult = { uri ->
+            uri?.let { profileViewModel?.updateProfilePicture(profileViewModel, uri) }
+          })
+    } else {
+      return rememberLauncherForActivityResult(
+          ActivityResultContracts.PickMultipleVisualMedia(maxItems),
+          onResult = { uris ->
+            uris.let {
+              for (uri in it) {
                 _uris.value += uri
                 val source = ImageDecoder.createSource(context.contentResolver, uri)
                 val bitmap = ImageDecoder.decodeBitmap(source)
-                if (_bitmaps.value.size < 15) {
-                  _bitmaps.value += bitmap
-                }
+                bitmaps.value += bitmap
               }
             }
-          }
-        })
+          })
+    }
   }
 }
 

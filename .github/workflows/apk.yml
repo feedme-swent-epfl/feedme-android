@@ -61,7 +61,7 @@ jobs:
           name: feedme-apk
           path: ${{ steps.releaseApk.outputs.apkfile }}
           if-no-files-found: error
-          retention-days: 7
+          retention-days: 4
 
 
       - name: Upload APK in a draft release branch

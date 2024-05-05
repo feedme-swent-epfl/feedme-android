@@ -59,6 +59,9 @@ class RecipeStepInputTest {
 
       addStepButton.performClick()
       assert(recipeStepViewModel.steps.value.size == 2)
+
+      recipeStepViewModel.resetSteps()
+      assert(recipeStepViewModel.steps.value.isEmpty())
     }
   }
 

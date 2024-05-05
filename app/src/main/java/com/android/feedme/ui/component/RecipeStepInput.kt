@@ -35,9 +35,8 @@ fun StepList(
 ) {
 
   val steps by recipeStepViewModel.steps.collectAsState()
-  val draggingIndex = remember { mutableIntStateOf(-1) }
 
-  Column {
+  Column(modifier = Modifier.fillMaxWidth().testTag("StepList")) {
 
     // Title for the list of steps with an icon to add a new step at the top
     Row(
@@ -80,11 +79,11 @@ fun StepList(
  */
 @Composable
 fun StepInput(step: Step, onStepChanged: (Step) -> Unit, onDeleteStep: (Step) -> Unit) {
-  var expanded by remember { mutableStateOf(false) }
   var title by remember { mutableStateOf(step.title) }
   var description by remember { mutableStateOf(step.description) }
-  var titleError by remember { mutableStateOf(false) }
-  var descriptionError by remember { mutableStateOf(false) }
+  var titleError by remember { mutableStateOf(step.title.isBlank()) }
+  var descriptionError by remember { mutableStateOf(step.description.isBlank()) }
+  var expanded by remember { mutableStateOf(descriptionError) }
 
   Column(modifier = Modifier.padding(horizontal = 20.dp, vertical = 8.dp).testTag("stepInput")) {
     Row(
@@ -99,6 +98,7 @@ fun StepInput(step: Step, onStepChanged: (Step) -> Unit, onDeleteStep: (Step) ->
                 titleError = it.isBlank() // Validate title input
                 onStepChanged(Step(step.stepNumber, description, title))
               },
+              singleLine = true,
               isError = titleError,
               label = { Text("Title") },
               modifier =

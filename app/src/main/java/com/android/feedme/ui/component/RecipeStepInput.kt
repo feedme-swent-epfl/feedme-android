@@ -1,9 +1,12 @@
 package com.android.feedme.ui.component
 
+import android.util.Log
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.itemsIndexed
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Add
 import androidx.compose.material.icons.filled.DeleteForever
 import androidx.compose.material.icons.filled.ExpandLess
 import androidx.compose.material.icons.filled.ExpandMore
@@ -12,31 +15,58 @@ import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.testTag
+import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import androidx.lifecycle.viewmodel.compose.viewModel
 import com.android.feedme.model.data.Step
+import com.android.feedme.model.viewmodel.RecipeStepViewModel
 
 /**
  * This composable is used to display a list of steps in a recipe.
  *
  * @param modifier Modifier to apply to this layout node.
- * @param stepViewModel ViewModel to manage the steps in the recipe.
+ * @param recipeStepViewModel ViewModel to manage the steps in the recipe.
  */
+@Preview
 @Composable
 fun StepList(
     modifier: Modifier = Modifier,
+    recipeStepViewModel: RecipeStepViewModel = viewModel()
 ) {
-  val totalSteps = 4
-  LazyColumn(modifier = modifier) {
-    items(totalSteps) { index ->
-      val step = Step(1, "woah", "woa")
-      StepInput(
-          step = step,
-          onStepChanged = { newStep ->
-            // stepViewModel.updateStep(index, newStep)
-          },
-          onDeleteStep = {
-            // stepViewModel.deleteStep(index)
-          })
+
+  val steps by recipeStepViewModel.steps.collectAsState()
+  val draggingIndex = remember { mutableIntStateOf(-1) }
+
+  Column {
+
+    // Title for the list of steps with an icon to add a new step at the top
+    Row(
+        verticalAlignment = Alignment.CenterVertically,
+        modifier = Modifier.padding(8.dp).testTag("StepListTitle")) {
+          Text("Steps", style = MaterialTheme.typography.titleMedium)
+          Spacer(modifier = Modifier.weight(1f))
+          IconButton(
+              onClick = { recipeStepViewModel.addStep(Step(steps.size + 1, "", "")) },
+              modifier = Modifier.testTag("AddStepButton")) {
+                Icon(imageVector = Icons.Default.Add, contentDescription = "Add step")
+              }
+        }
+    LazyColumn(modifier = modifier) {
+      // Important to unsure the UI updates when the list of steps changes
+      // Surprisingly hard to understand why this is needed but without it, does not update
+      // correctly
+      itemsIndexed(steps, key = { _, step -> step.hashCode() }) { index, step ->
+        StepInput(
+            step = step,
+            onStepChanged = { newStep ->
+              recipeStepViewModel.updateStep(index, newStep)
+              Log.d("StepList", "Step changed: $newStep")
+            },
+            onDeleteStep = {
+              recipeStepViewModel.deleteStep(step) // Pass index instead of step number or object
+              Log.d("StepList", "Step deleted: $it")
+            })
+      }
     }
   }
 }
@@ -49,7 +79,7 @@ fun StepList(
  * @param onDeleteStep Callback to call when the step is deleted.
  */
 @Composable
-fun StepInput(step: Step, onStepChanged: (Step) -> Unit, onDeleteStep: () -> Unit) {
+fun StepInput(step: Step, onStepChanged: (Step) -> Unit, onDeleteStep: (Step) -> Unit) {
   var expanded by remember { mutableStateOf(false) }
   var title by remember { mutableStateOf(step.title) }
   var description by remember { mutableStateOf(step.description) }
@@ -67,6 +97,7 @@ fun StepInput(step: Step, onStepChanged: (Step) -> Unit, onDeleteStep: () -> Uni
               onValueChange = {
                 title = it
                 titleError = it.isBlank() // Validate title input
+                onStepChanged(Step(step.stepNumber, description, title))
               },
               isError = titleError,
               label = { Text("Title") },
@@ -83,7 +114,8 @@ fun StepInput(step: Step, onStepChanged: (Step) -> Unit, onDeleteStep: () -> Uni
                     contentDescription = if (expanded) "Collapse" else "Expand")
               }
           IconButton(
-              onClick = onDeleteStep, modifier = Modifier.size(24.dp).testTag("StepInputDelete")) {
+              onClick = { onDeleteStep(step) },
+              modifier = Modifier.size(24.dp).testTag("StepInputDelete")) {
                 Icon(imageVector = Icons.Default.DeleteForever, contentDescription = "Delete step")
               }
         }

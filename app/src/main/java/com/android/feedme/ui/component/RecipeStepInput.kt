@@ -16,7 +16,12 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.android.feedme.model.data.Step
 
-@Preview
+/**
+ * This composable is used to display a list of steps in a recipe.
+ * @param modifier Modifier to apply to this layout node.
+ * @param stepViewModel ViewModel to manage the steps in the recipe.
+ *
+ */
 @Composable
 fun StepList(
     modifier: Modifier = Modifier,
@@ -37,6 +42,12 @@ fun StepList(
   }
 }
 
+/**
+ * This composable is used to display a single step in a recipe.
+ * @param step The step to display.
+ * @param onStepChanged Callback to call when the step is changed.
+ * @param onDeleteStep Callback to call when the step is deleted.
+ */
 @Composable
 fun StepInput(step: Step, onStepChanged: (Step) -> Unit, onDeleteStep: () -> Unit) {
   var expanded by remember { mutableStateOf(false) }

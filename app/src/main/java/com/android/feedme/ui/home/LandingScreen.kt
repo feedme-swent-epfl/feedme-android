@@ -43,9 +43,8 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import coil.compose.AsyncImage
 import com.android.feedme.model.data.Recipe
-import com.android.feedme.model.viewmodel.LandingPageViewModel
+import com.android.feedme.model.viewmodel.HomeViewModel
 import com.android.feedme.model.viewmodel.RecipeViewModel
-import com.android.feedme.resources.recipe
 import com.android.feedme.ui.component.SearchBarFun
 import com.android.feedme.ui.navigation.BottomNavigationMenu
 import com.android.feedme.ui.navigation.NavigationActions
@@ -68,10 +67,10 @@ import com.android.feedme.ui.theme.YellowStarBlackOutline
 fun LandingPage(
     navigationActions: NavigationActions,
     recipeViewModel: RecipeViewModel = RecipeViewModel(),
-    landingPageViewModel: LandingPageViewModel = LandingPageViewModel()
+    homeViewModel: HomeViewModel = HomeViewModel()
 ) {
 
-  val recipes = landingPageViewModel.recipes.value
+  val recipes = homeViewModel.recipes.value
 
   Scaffold(
       modifier = Modifier.fillMaxSize().testTag("LandingScreen"),

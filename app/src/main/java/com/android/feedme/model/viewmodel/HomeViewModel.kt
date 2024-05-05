@@ -7,9 +7,10 @@ import com.android.feedme.model.data.RecipeRepository
 import com.google.firebase.auth.FirebaseAuth
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
+import kotlinx.coroutines.flow.filter
 import kotlinx.coroutines.launch
 
-class LandingPageViewModel : ViewModel() {
+class HomeViewModel : ViewModel() {
 
   private val repository = RecipeRepository.instance
   private val _recipes = MutableStateFlow<List<Recipe>>(emptyList())
@@ -72,6 +73,18 @@ class LandingPageViewModel : ViewModel() {
       }
     } TODO : We will use this for recommendations (maybe)
   }*/
+
+
+  fun searchRecipe(query: String) {
+    viewModelScope.launch {
+      val matchingRecipes = recipes.value.filter { it.title.contains(query, ignoreCase = true) }
+      _recipes.value = matchingRecipes
+    }
+  }
+
+  fun searchProfile(query: String) {
+
+  }
 
   fun setRecipes(recipes: List<Recipe>) {
     _recipes.value = recipes

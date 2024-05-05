@@ -4,7 +4,7 @@ import android.os.Looper
 import androidx.test.core.app.ApplicationProvider
 import com.android.feedme.model.data.MeasureUnit
 import com.android.feedme.model.data.RecipeRepository
-import com.android.feedme.model.viewmodel.LandingPageViewModel
+import com.android.feedme.model.viewmodel.HomeViewModel
 import com.google.android.gms.tasks.Tasks
 import com.google.firebase.FirebaseApp
 import com.google.firebase.firestore.CollectionReference
@@ -38,7 +38,7 @@ class LandingViewModelTest {
 
   @Mock private lateinit var mockIngredientDocumentSnapshot: DocumentSnapshot
 
-  @Mock private lateinit var landingViewModel: LandingPageViewModel
+  @Mock private lateinit var landingViewModel: HomeViewModel
   private lateinit var recipeRepository: RecipeRepository
 
   @Before
@@ -117,7 +117,7 @@ class LandingViewModelTest {
     `when`(mockDocumentSnapshot.exists()).thenReturn(true)
     `when`(mockDocumentSnapshot.data).thenReturn(recipeMap)
 
-    landingViewModel = LandingPageViewModel()
+    landingViewModel = HomeViewModel()
     landingViewModel.fetchRecipe("lasagna1")
     shadowOf(Looper.getMainLooper()).idle()
 

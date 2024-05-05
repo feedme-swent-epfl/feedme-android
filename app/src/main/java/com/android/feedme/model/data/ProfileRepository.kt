@@ -133,6 +133,30 @@ class ProfileRepository(private val db: FirebaseFirestore) {
         .addOnFailureListener { exception -> onFailure(exception) }
   }
 
+    /**
+     * Fetch all the profiles that contain the given query in their name.
+     *
+     * @param query The search query to filter the profiles.
+     * @param onSuccess A callback function invoked with the list of profiles on success.
+     * @param onFailure A callback function invoked on failure to fetch the profiles, with an
+     *  exception.
+     */
+    fun getFilteredProfiles(
+        query: String,
+        onSuccess: (List<Profile>) -> Unit,
+        onFailure: (Exception) -> Unit
+    ) {
+        db.collection(collectionPath)
+            .whereArrayContains("name", query)
+            .get()
+            .addOnSuccessListener { querySnapshot ->
+                val profiles = querySnapshot.toObjects(Profile::class.java)
+                onSuccess(profiles)
+            }
+            .addOnFailureListener { exception -> onFailure(exception) }
+    }
+
+
   /**
    * Deletes a user profile from Firestore.
    *

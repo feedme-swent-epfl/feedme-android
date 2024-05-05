@@ -86,6 +86,21 @@ class RecipeRepository(private val db: FirebaseFirestore) {
         .addOnFailureListener { exception -> onFailure(exception) }
   }*/
 
+  fun getFilteredRecipes(
+      query: String,
+      onSuccess: (List<Recipe>) -> Unit,
+      onFailure: (Exception) -> Unit) {
+    db.collection(collectionPath)
+        .whereArrayContains("title", query)
+        .get()
+        .addOnSuccessListener { querySnapshot ->
+          val recipes = querySnapshot.toObjects(Recipe::class.java)
+          onSuccess(recipes)
+        }
+        .addOnFailureListener { onFailure(it) }
+  }
+
+
   private fun recipeToMap(recipe: Recipe): Map<String, Any> {
     return mapOf(
         "recipeId" to recipe.recipeId,

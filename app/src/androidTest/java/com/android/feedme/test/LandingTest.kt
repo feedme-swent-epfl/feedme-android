@@ -8,7 +8,7 @@ import com.android.feedme.model.data.MeasureUnit
 import com.android.feedme.model.data.Recipe
 import com.android.feedme.model.data.RecipeRepository
 import com.android.feedme.model.data.Step
-import com.android.feedme.model.viewmodel.LandingPageViewModel
+import com.android.feedme.model.viewmodel.HomeViewModel
 import com.android.feedme.model.viewmodel.RecipeViewModel
 import com.android.feedme.screen.LandingScreen
 import com.android.feedme.ui.home.LandingPage
@@ -101,7 +101,7 @@ class LandingTest : TestCase() {
   }
 
   private fun goToLandingScreen() {
-    val landingViewModel = LandingPageViewModel()
+    val landingViewModel = HomeViewModel()
     landingViewModel.setRecipes(listOf(recipe, recipe, recipe))
     composeTestRule.setContent {
       LandingPage(mockk<NavigationActions>(relaxed = true), RecipeViewModel(), landingViewModel)

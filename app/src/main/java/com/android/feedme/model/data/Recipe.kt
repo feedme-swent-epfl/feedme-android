@@ -15,7 +15,7 @@ data class Recipe(
 )
 
 data class Step(
-    val stepNumber: Int,
+    var stepNumber: Int,
     val description: String, // description of the step
     val title: String // title of the step
 )

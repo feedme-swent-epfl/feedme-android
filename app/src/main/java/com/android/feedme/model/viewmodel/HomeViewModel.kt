@@ -2,19 +2,23 @@ package com.android.feedme.model.viewmodel
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.android.feedme.model.data.Profile
+import com.android.feedme.model.data.ProfileRepository
 import com.android.feedme.model.data.Recipe
 import com.android.feedme.model.data.RecipeRepository
 import com.google.firebase.auth.FirebaseAuth
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
-import kotlinx.coroutines.flow.filter
 import kotlinx.coroutines.launch
 
 class HomeViewModel : ViewModel() {
 
-  private val repository = RecipeRepository.instance
+  private val recipeRepository = RecipeRepository.instance
+  private val profileRepository = ProfileRepository.instance
   private val _recipes = MutableStateFlow<List<Recipe>>(emptyList())
+  private val _profiles = MutableStateFlow<List<Profile>>(emptyList())
   val recipes = _recipes.asStateFlow()
+  val profiles = _profiles.asStateFlow()
 
   init {
     FirebaseAuth.getInstance().uid?.let {
@@ -31,7 +35,7 @@ class HomeViewModel : ViewModel() {
    */
   fun fetchRecipe(id: String) {
     viewModelScope.launch {
-      repository.getRecipe(
+      recipeRepository.getRecipe(
           id,
           onSuccess = { recipe ->
             if (recipe != null) {
@@ -74,16 +78,38 @@ class HomeViewModel : ViewModel() {
     } TODO : We will use this for recommendations (maybe)
   }*/
 
-
-  fun searchRecipe(query: String) {
+  /**
+   * A function that fetches the recipes given a query
+   *
+   * @param query: the query to search for in the recipes
+   */
+  fun searchRecipes(query: String) {
     viewModelScope.launch {
-      val matchingRecipes = recipes.value.filter { it.title.contains(query, ignoreCase = true) }
-      _recipes.value = matchingRecipes
+      recipeRepository.getFilteredRecipes(
+          query,
+          onSuccess = { recipes -> _recipes.value = recipes },
+          onFailure = {
+            // Handle failure
+            throw error("Filtered recipes could not be fetched")
+          })
     }
   }
 
-  fun searchProfile(query: String) {
-
+  /**
+   * A function that fetches the profiles given a query
+   *
+   * @param query: the query to search for in the profiles
+   */
+  fun searchProfiles(query: String) {
+    viewModelScope.launch {
+      profileRepository.getFilteredProfiles(
+          query,
+          onSuccess = { profiles -> _profiles.value = profiles },
+          onFailure = {
+            // Handle failure
+            throw error("Filtered profiles could not be fetched")
+          })
+    }
   }
 
   fun setRecipes(recipes: List<Recipe>) {

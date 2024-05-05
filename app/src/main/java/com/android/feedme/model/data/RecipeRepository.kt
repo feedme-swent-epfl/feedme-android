@@ -86,10 +86,19 @@ class RecipeRepository(private val db: FirebaseFirestore) {
         .addOnFailureListener { exception -> onFailure(exception) }
   }*/
 
+  /**
+   * Fetches all the recipes that contain the given query in their title.
+   *
+   * @param query The query string to search for in the recipe titles.
+   * @param onSuccess A callback function invoked with the list of recipes on success.
+   * @param onFailure A callback function invoked on failure to fetch the recipes, with an
+   *   exception.
+   */
   fun getFilteredRecipes(
       query: String,
       onSuccess: (List<Recipe>) -> Unit,
-      onFailure: (Exception) -> Unit) {
+      onFailure: (Exception) -> Unit
+  ) {
     db.collection(collectionPath)
         .whereArrayContains("title", query)
         .get()
@@ -99,7 +108,6 @@ class RecipeRepository(private val db: FirebaseFirestore) {
         }
         .addOnFailureListener { onFailure(it) }
   }
-
 
   private fun recipeToMap(recipe: Recipe): Map<String, Any> {
     return mapOf(

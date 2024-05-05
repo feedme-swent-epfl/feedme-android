@@ -27,6 +27,8 @@ import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.text.font.FontStyle
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.lifecycle.viewmodel.compose.viewModel
+import com.android.feedme.model.viewmodel.HomeViewModel
 
 /**
  * Composable function for the Search Bar.
@@ -35,8 +37,7 @@ import androidx.compose.ui.unit.sp
  */
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun SearchBarFun() {
-
+fun SearchBarFun(viewModel: HomeViewModel) {
   var query by remember { mutableStateOf("") }
   var active by remember { mutableStateOf(false) }
 
@@ -51,6 +52,7 @@ fun SearchBarFun() {
         onSearch = {
           active = false
           /* TODO: add search filtering logic here */
+          viewModel.searchProfiles(query)
         },
         leadingIcon = {
           IconButton(onClick = { /*TODO: add manual filtering logic*/}) {
@@ -66,7 +68,9 @@ fun SearchBarFun() {
                 onClick = {
                   query = ""
                   active = false
-                /* TODO: add search filtering logic here */ }) {
+                  /* TODO: add search filtering logic here */
+                  viewModel.searchProfiles(query)
+                }) {
                   Icon(
                       imageVector = Icons.Default.Close,
                       contentDescription = "Close Icon",

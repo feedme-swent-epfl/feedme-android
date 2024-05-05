@@ -78,19 +78,24 @@ fun LandingPage(
       bottomBar = {
         BottomNavigationMenu(Route.HOME, navigationActions::navigateTo, TOP_LEVEL_DESTINATIONS)
       },
-      content = { RecipeDisplay(it, navigationActions, recipes, recipeViewModel) })
+      content = { RecipeDisplay(it, navigationActions, recipes, homeViewModel, recipeViewModel) })
 }
 
 /**
  * A function that iterates over the list of recipes and generates a card for each one
  *
+ * @param paddingValues : the padding values for the screen
+ * @param navigationActions : the navigation actions for the screen
  * @param recipes : the list of [Recipe] to be displayed
+ * @param homeViewModel : the [HomeViewModel] instance
+ * @param recipeViewModel : the [RecipeViewModel] instance
  */
 @Composable
 fun RecipeDisplay(
     paddingValues: PaddingValues,
     navigationActions: NavigationActions,
     recipes: List<Recipe>,
+    homeViewModel: HomeViewModel,
     recipeViewModel: RecipeViewModel
 ) {
 
@@ -99,7 +104,7 @@ fun RecipeDisplay(
           Modifier.testTag("CompleteScreen").padding(paddingValues).background(Color.White)) {
 
         // Search bar + filters icon
-        SearchBarFun()
+        SearchBarFun(homeViewModel)
 
         // Scrollable list of recipes
         LazyColumn(

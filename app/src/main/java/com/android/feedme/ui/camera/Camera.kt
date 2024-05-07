@@ -218,7 +218,7 @@ fun CameraScreen(navigationActions: NavigationActions) {
             OverlayTextField(
                 isVisible = true,
                 onDismiss = { displayText.value = false },
-                text = viewModel.InformationToDisplay.collectAsState().value)
+                text = viewModel.informationToDisplay.collectAsState().value)
           }
 
           // If barcode scanner button is pressed

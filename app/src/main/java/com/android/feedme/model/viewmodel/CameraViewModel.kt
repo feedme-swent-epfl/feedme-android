@@ -1,7 +1,6 @@
 package com.android.feedme.model.viewmodel
 
 import android.graphics.Bitmap
-import androidx.compose.runtime.setValue
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.android.feedme.ml.textExtraction
@@ -32,8 +31,9 @@ class CameraViewModel : ViewModel() {
   private val _lastPhoto = MutableStateFlow<PhotoState>(PhotoState.NoPhoto)
   val lastPhoto = _lastPhoto.asStateFlow()
 
-  private val _InformationToDisplay = MutableStateFlow<String>("")
-  val InformationToDisplay = _InformationToDisplay.asStateFlow()
+  // String that will be displayed to user after clicking on one ML Button
+  private val _informationToDisplay = MutableStateFlow<String>("")
+  val informationToDisplay = _informationToDisplay.asStateFlow()
 
   /**
    * This function is called when the user taps the photo button in the CameraScreen. It adds the
@@ -61,17 +61,17 @@ class CameraViewModel : ViewModel() {
   /**
    * This function is called when user clicks on text recognition button. Then depending on the
    * state of [_lastPhoto] it will call the [performTextRecognition] function in an other thread to
-   * not block UI. Then it will update accordingly the value of [_InformationToDisplay].
+   * not block UI. Then it will update accordingly the value of [_informationToDisplay].
    */
   fun textRecognitionButtonPressed() =
       viewModelScope.launch {
         when (val photoState = _lastPhoto.value) {
           is PhotoState.NoPhoto -> {
-            _InformationToDisplay.value = "ERROR : No photo to analyse, please take a picture."
+            _informationToDisplay.value = "ERROR : No photo to analyse, please take a picture."
           }
           is PhotoState.Photo -> {
             val result = performTextRecognition(photoState.bitmap)
-            _InformationToDisplay.value = result
+            _informationToDisplay.value = result
           }
         }
       }

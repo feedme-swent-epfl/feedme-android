@@ -83,7 +83,7 @@ import kotlinx.coroutines.launch
  * images and viewing them in a gallery. Utilizes CameraX for camera operations and Jetpack Compose
  * for the UI components.
  */
-@SuppressLint("UnrememberedMutableState", "StateFlowValueCalledInComposition")
+
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun CameraScreen(navigationActions: NavigationActions) {
@@ -130,22 +130,26 @@ fun CameraScreen(navigationActions: NavigationActions) {
       sheetContent = {
         PhotoBottomSheetContent(bitmaps = bitmaps, modifier = Modifier.fillMaxWidth())
       }) { padding ->
-        Box(modifier = Modifier.fillMaxSize().padding(padding)) {
+        Box(modifier = Modifier
+            .fillMaxSize()
+            .padding(padding)) {
           CameraPreview(controller = controller, modifier = Modifier.fillMaxSize())
 
           Row(
               modifier =
-                  Modifier.fillMaxWidth()
-                      .align(Alignment.BottomCenter)
-                      .padding(16.dp)
-                      .padding(bottom = 32.dp),
+              Modifier
+                  .fillMaxWidth()
+                  .align(Alignment.BottomCenter)
+                  .padding(16.dp)
+                  .padding(bottom = 32.dp),
               horizontalArrangement = Arrangement.SpaceAround) {
                 IconButton(
                     modifier =
-                        Modifier.size(56.dp)
-                            .background(CameraButtonsBackground, shape = CircleShape)
-                            .padding(10.dp)
-                            .testTag("GalleryButton"),
+                    Modifier
+                        .size(56.dp)
+                        .background(CameraButtonsBackground, shape = CircleShape)
+                        .padding(10.dp)
+                        .testTag("GalleryButton"),
                     // Open the local gallery when the gallery button is clicked
                     onClick = { scope.launch { scaffoldState.bottomSheetState.expand() } }) {
                       Icon(imageVector = Icons.Default.Photo, contentDescription = "Open gallery")
@@ -153,10 +157,11 @@ fun CameraScreen(navigationActions: NavigationActions) {
 
                 IconButton(
                     modifier =
-                        Modifier.size(56.dp)
-                            .background(CameraButtonsBackground, shape = CircleShape)
-                            .padding(10.dp)
-                            .testTag("PhotoButton"),
+                    Modifier
+                        .size(56.dp)
+                        .background(CameraButtonsBackground, shape = CircleShape)
+                        .padding(10.dp)
+                        .testTag("PhotoButton"),
                     // Take a photo when the photo button is clicked
                     onClick = {
                       takePhoto(
@@ -175,10 +180,11 @@ fun CameraScreen(navigationActions: NavigationActions) {
                   IconButton(
                       onClick = { displayText.value = true },
                       modifier =
-                          Modifier.size(56.dp)
-                              .background(CameraButtonsBackground, shape = CircleShape)
-                              .padding(10.dp)
-                              .testTag("MLTextButton")) {
+                      Modifier
+                          .size(56.dp)
+                          .background(CameraButtonsBackground, shape = CircleShape)
+                          .padding(10.dp)
+                          .testTag("MLTextButton")) {
                         Icon(
                             imageVector = Icons.TwoTone.TextFields,
                             contentDescription = "Display text after ML")
@@ -190,10 +196,11 @@ fun CameraScreen(navigationActions: NavigationActions) {
                   IconButton(
                       onClick = { displayBarcode.value = true },
                       modifier =
-                          Modifier.size(56.dp)
-                              .background(CameraButtonsBackground, shape = CircleShape)
-                              .padding(10.dp)
-                              .testTag("MLBarcodeButton")) {
+                      Modifier
+                          .size(56.dp)
+                          .background(CameraButtonsBackground, shape = CircleShape)
+                          .padding(10.dp)
+                          .testTag("MLBarcodeButton")) {
                         Icon(
                             painter = barcodeScannerPainter,
                             contentDescription = "Barcode Scanner",
@@ -208,11 +215,13 @@ fun CameraScreen(navigationActions: NavigationActions) {
             // Show the message box
             Box(
                 modifier =
-                    Modifier.padding(16.dp)
-                        .background(
-                            Color.Black.copy(alpha = 0.7f), shape = RoundedCornerShape(8.dp))
-                        .padding(horizontal = 24.dp, vertical = 16.dp)
-                        .align(Alignment.BottomCenter)) {
+                Modifier
+                    .padding(16.dp)
+                    .background(
+                        Color.Black.copy(alpha = 0.7f), shape = RoundedCornerShape(8.dp)
+                    )
+                    .padding(horizontal = 24.dp, vertical = 16.dp)
+                    .align(Alignment.BottomCenter)) {
                   Text(
                       text = "Photo saved",
                       color = Color.White,
@@ -221,32 +230,10 @@ fun CameraScreen(navigationActions: NavigationActions) {
           }
           // If text recognition button is pressed
           if (displayText.value) {
+              viewModel.TextRecognitionButtonPressed()
               OverlayTextField(isVisible = true,
                   onDismiss = { displayText.value = false },
-                  text = viewModel.InformationToDisplay.value)
-            /*if (viewModel.lastPhoto != null) {
-              // If there is a photo in the app gallery we launch text recognition
-              TextRecognition(
-                  viewModel.lastPhoto, { rec -> text.value = rec }, { text.value = null })
-            } else {
-              // If there is no photo in app gallery we show an OverlayTextField saying "ERROR : no
-              // photo to analyse"
-              OverlayTextField(
-                  isVisible = true,
-                  onDismiss = { displayText.value = false },
-                  text = "ERROR : no photo to analyse.")
-            }
-
-            if (text.value != null) {
-              // If text recognition succeeded and produced text, we launch text processing and
-              // display the result in an OverlayTextField
-              text.value
-                  ?.let { TextProcessing(it) }
-                  ?.let {
-                    OverlayTextField(
-                        isVisible = true, onDismiss = { displayText.value = false }, text = it)
-                  }
-            }*/
+                  text = viewModel.InformationToDisplay.collectAsState().value)
           }
 
           // If barcode scanner button is pressed

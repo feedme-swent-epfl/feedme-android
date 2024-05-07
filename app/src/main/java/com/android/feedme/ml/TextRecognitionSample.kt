@@ -31,23 +31,18 @@ import com.google.mlkit.vision.text.latin.TextRecognizerOptions
 
 //,
 //    onFailure: (Exception) -> Unit = {}
-fun TextRecognition(
-    bitmap: Bitmap?,
-    onSuccess: (Text) -> Unit = {}
+fun textRecognition(
+    bitmap: Bitmap,
+    onSuccess: (Text) -> Unit = {},
+    onFailure: () -> Unit = {}
 ) {
-  val visionTextState = mutableStateOf<Text?>(null)
   val recognizer = TextRecognition.getClient(TextRecognizerOptions.DEFAULT_OPTIONS)
-  val image = bitmap?.let { InputImage.fromBitmap(it, 0) }
-  if (image != null) {
-    recognizer
-        .process(image)
-        .addOnSuccessListener { visionText ->
-          // Task completed successfully
-          visionTextState.value = visionText
-          onSuccess(visionText)
-        }
+  val image = bitmap.let { InputImage.fromBitmap(it, 0) }
+    recognizer.process(image)
+        .addOnSuccessListener { visionText -> onSuccess(visionText) }
+        .addOnFailureListener { onFailure() }
   }
-}
+
 
 /**
  * Processes the provided [Text] object and returns a concatenated string containing the text of

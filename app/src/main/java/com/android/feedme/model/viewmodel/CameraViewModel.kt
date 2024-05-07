@@ -7,13 +7,17 @@ import androidx.compose.runtime.setValue
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.android.feedme.ml.TextProcessing
-import com.android.feedme.ml.TextRecognition
+import com.android.feedme.ml.textRecognition
 import com.google.common.base.Optional
 import com.google.mlkit.vision.text.Text
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
+import kotlin.coroutines.resume
+import kotlin.coroutines.suspendCoroutine
 
 
 class CameraViewModel : ViewModel() {
@@ -61,7 +65,7 @@ class CameraViewModel : ViewModel() {
     }
   }
 
-  fun TextRecognitionButtonPressed() {
+  fun TextRecognitionButtonPressed() = viewModelScope.launch  {
     when (val photoState = _lastPhoto.value) {
       is PhotoState.NoPhoto -> {
         // Handle the case where there is no photo available
@@ -69,14 +73,24 @@ class CameraViewModel : ViewModel() {
       }
       is PhotoState.Photo -> {
         // Handle the case where a photo is available
-        var extractedText : Text? = null
-        TextRecognition(photoState.bitmap) { t -> extractedText = t }
-        if (extractedText != null) {
-          _InformationToDisplay.value = TextProcessing(text = extractedText!!)
-        } else {
-          _InformationToDisplay.value = "ERROR : Failed to identify text, please try again."
-        }
+        val result = performTextRecognition(photoState.bitmap) ?: "ERROR: Failed to identify text, please try again."
+        _InformationToDisplay.value = result
       }
     }
   }
+  private suspend fun performTextRecognition(bitmap: Bitmap): String {
+    return suspendCoroutine { continuation ->
+      textRecognition(
+        bitmap,
+        { text ->
+          continuation.resume(TextProcessing(text = text))
+        },
+        {
+          continuation.resume("ERROR : Failed to identify text, please try again.")
+        }
+      )
+    }
+  }
 }
+
+

@@ -1,28 +1,22 @@
 package com.android.feedme.model.viewmodel
 
 import android.graphics.Bitmap
-import androidx.compose.runtime.collectAsState
-import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.android.feedme.ml.TextProcessing
-import com.android.feedme.ml.textRecognition
-import com.google.common.base.Optional
-import com.google.mlkit.vision.text.Text
-import kotlinx.coroutines.Dispatchers
+import com.android.feedme.ml.textExtraction
+import com.android.feedme.ml.textProcessing
+import kotlin.coroutines.resume
+import kotlin.coroutines.suspendCoroutine
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.launch
-import kotlinx.coroutines.withContext
-import kotlin.coroutines.resume
-import kotlin.coroutines.suspendCoroutine
-
 
 class CameraViewModel : ViewModel() {
   sealed class PhotoState() {
     object NoPhoto : PhotoState()
+
     data class Photo(val bitmap: Bitmap) : PhotoState()
   }
 
@@ -64,33 +58,36 @@ class CameraViewModel : ViewModel() {
       _photoSavedMessageVisible.value = false
     }
   }
-
-  fun TextRecognitionButtonPressed() = viewModelScope.launch  {
-    when (val photoState = _lastPhoto.value) {
-      is PhotoState.NoPhoto -> {
-        // Handle the case where there is no photo available
-        _InformationToDisplay.value = "ERROR : No photo to analyse, please take a picture."
+  /**
+   * This function is called when user clicks on text recognition button. Then depending on the
+   * state of [_lastPhoto] it will call the [performTextRecognition] function in an other thread to
+   * not block UI. Then it will update accordingly the value of [_InformationToDisplay].
+   */
+  fun textRecognitionButtonPressed() =
+      viewModelScope.launch {
+        when (val photoState = _lastPhoto.value) {
+          is PhotoState.NoPhoto -> {
+            _InformationToDisplay.value = "ERROR : No photo to analyse, please take a picture."
+          }
+          is PhotoState.Photo -> {
+            val result = performTextRecognition(photoState.bitmap)
+            _InformationToDisplay.value = result
+          }
+        }
       }
-      is PhotoState.Photo -> {
-        // Handle the case where a photo is available
-        val result = performTextRecognition(photoState.bitmap) ?: "ERROR: Failed to identify text, please try again."
-        _InformationToDisplay.value = result
-      }
-    }
-  }
+  /**
+   * Performs [textExtraction] and [textProcessing] on the provided bitmap image. This function
+   * suspends the current coroutine. This function can only be called by the view model itself.
+   *
+   * @param bitmap The bitmap image on which text recognition will be performed.
+   * @return The recognized text if successful; otherwise, an error message.
+   */
   private suspend fun performTextRecognition(bitmap: Bitmap): String {
     return suspendCoroutine { continuation ->
-      textRecognition(
-        bitmap,
-        { text ->
-          continuation.resume(TextProcessing(text = text))
-        },
-        {
-          continuation.resume("ERROR : Failed to identify text, please try again.")
-        }
-      )
+      textExtraction(
+          bitmap,
+          { text -> continuation.resume(textProcessing(text = text)) },
+          { continuation.resume("ERROR : Failed to identify text, please try again.") })
     }
   }
 }
-
-

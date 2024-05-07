@@ -83,7 +83,7 @@ import kotlinx.coroutines.launch
  * images and viewing them in a gallery. Utilizes CameraX for camera operations and Jetpack Compose
  * for the UI components.
  */
-@SuppressLint("UnrememberedMutableState")
+@SuppressLint("UnrememberedMutableState", "StateFlowValueCalledInComposition")
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun CameraScreen(navigationActions: NavigationActions) {
@@ -221,7 +221,10 @@ fun CameraScreen(navigationActions: NavigationActions) {
           }
           // If text recognition button is pressed
           if (displayText.value) {
-            if (viewModel.lastPhoto != null) {
+              OverlayTextField(isVisible = true,
+                  onDismiss = { displayText.value = false },
+                  text = viewModel.InformationToDisplay.value)
+            /*if (viewModel.lastPhoto != null) {
               // If there is a photo in the app gallery we launch text recognition
               TextRecognition(
                   viewModel.lastPhoto, { rec -> text.value = rec }, { text.value = null })
@@ -243,13 +246,13 @@ fun CameraScreen(navigationActions: NavigationActions) {
                     OverlayTextField(
                         isVisible = true, onDismiss = { displayText.value = false }, text = it)
                   }
-            }
+            }*/
           }
 
           // If barcode scanner button is pressed
           if (displayBarcode.value) {
             // If there is a photo in the app gallery we launch barcode scanner
-            if (viewModel.lastPhoto != null) {
+            /*if (viewModel.lastPhoto != null) {
               barcodeScanner(
                   viewModel.lastPhoto,
                   { rec -> barcode.value = rec },
@@ -267,7 +270,7 @@ fun CameraScreen(navigationActions: NavigationActions) {
             OverlayTextField(
                 isVisible = true,
                 onDismiss = { displayBarcode.value = false },
-                text = barcodeDetails.value)
+                text = barcodeDetails.value)*/
           }
         }
       }

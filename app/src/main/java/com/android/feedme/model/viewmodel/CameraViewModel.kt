@@ -1,17 +1,25 @@
 package com.android.feedme.model.viewmodel
 
 import android.graphics.Bitmap
-import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.android.feedme.ml.TextProcessing
+import com.android.feedme.ml.TextRecognition
+import com.google.common.base.Optional
+import com.google.mlkit.vision.text.Text
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.launch
 
+
 class CameraViewModel : ViewModel() {
+  sealed class PhotoState() {
+    object NoPhoto : PhotoState()
+    data class Photo(val bitmap: Bitmap) : PhotoState()
+  }
 
   // Keep a list of bitmaps taken by the user
   private val _bitmaps = MutableStateFlow<List<Bitmap>>(emptyList())
@@ -22,9 +30,11 @@ class CameraViewModel : ViewModel() {
   val photoSavedMessageVisible = _photoSavedMessageVisible.asStateFlow()
 
   // Contains the last photo taken by user
-  var lastPhoto: Bitmap? by mutableStateOf(null)
+  private val _lastPhoto = MutableStateFlow<PhotoState>(PhotoState.NoPhoto)
+  val lastPhoto = _lastPhoto.asStateFlow()
 
-  // Observe changes in bitmaps and update lastPhoto
+  private val _InformationToDisplay = MutableStateFlow<String>("")
+  val InformationToDisplay = _InformationToDisplay.asStateFlow()
 
   /**
    * This function is called when the user taps the photo button in the CameraScreen. It adds the
@@ -32,7 +42,7 @@ class CameraViewModel : ViewModel() {
    */
   fun onTakePhoto(bitmap: Bitmap) {
     _bitmaps.value += bitmap
-    lastPhoto = bitmap
+    _lastPhoto.value = PhotoState.Photo(bitmap)
   }
 
   /**
@@ -47,6 +57,25 @@ class CameraViewModel : ViewModel() {
     viewModelScope.launch {
       delay(3000)
       _photoSavedMessageVisible.value = false
+    }
+  }
+
+  fun TextRecognitionButtonPressed() {
+    when (val photoState = _lastPhoto.value) {
+      is PhotoState.NoPhoto -> {
+        // Handle the case where there is no photo available
+        _InformationToDisplay.value = "ERROR : No photo to analyse, please take a picture."
+      }
+      is PhotoState.Photo -> {
+        // Handle the case where a photo is available
+        var extractedText : Text? = null
+        TextRecognition(photoState.bitmap) { t -> extractedText = t }
+        if (extractedText != null) {
+          _InformationToDisplay.value = TextProcessing(text = extractedText!!)
+        } else {
+          _InformationToDisplay.value = "ERROR : Failed to identify text, please try again."
+        }
+      }
     }
   }
 }

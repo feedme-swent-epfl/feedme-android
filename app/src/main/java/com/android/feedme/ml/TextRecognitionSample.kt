@@ -28,10 +28,12 @@ import com.google.mlkit.vision.text.latin.TextRecognizerOptions
  * @param onFailure A lambda function to be called when text recognition fails. It receives an
  *   Exception as a parameter.
  */
+
+//,
+//    onFailure: (Exception) -> Unit = {}
 fun TextRecognition(
     bitmap: Bitmap?,
-    onSuccess: (Text) -> Unit = {},
-    onFailure: (Exception) -> Unit = {}
+    onSuccess: (Text) -> Unit = {}
 ) {
   val visionTextState = mutableStateOf<Text?>(null)
   val recognizer = TextRecognition.getClient(TextRecognizerOptions.DEFAULT_OPTIONS)
@@ -44,7 +46,6 @@ fun TextRecognition(
           visionTextState.value = visionText
           onSuccess(visionText)
         }
-        .addOnFailureListener { e -> onFailure(e) }
   }
 }
 
@@ -62,7 +63,7 @@ fun TextRecognition(
  * TODO("A lot of work on exact image processing an display of the relevant information's in a smart
  *   way")
  */
-@Composable
+
 fun TextProcessing(text: Text): String {
   var blockText = ""
   for (block in text.textBlocks) {

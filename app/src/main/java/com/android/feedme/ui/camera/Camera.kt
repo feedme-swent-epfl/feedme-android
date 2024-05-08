@@ -1,7 +1,6 @@
 package com.android.feedme.ui.camera
 
 import android.Manifest
-import android.annotation.SuppressLint
 import android.app.Activity
 import android.content.Context
 import android.content.pm.PackageManager
@@ -40,8 +39,6 @@ import androidx.compose.material3.IconButton
 import androidx.compose.material3.Text
 import androidx.compose.material3.rememberBottomSheetScaffoldState
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.LaunchedEffect
-import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -63,10 +60,6 @@ import androidx.core.content.ContextCompat
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.android.feedme.R
 import com.android.feedme.ml.OverlayTextField
-import com.android.feedme.ml.TextProcessing
-import com.android.feedme.ml.TextRecognition
-import com.android.feedme.ml.barcodeScanner
-import com.android.feedme.ml.extractProductNameFromBarcode
 import com.android.feedme.model.viewmodel.CameraViewModel
 import com.android.feedme.ui.navigation.NavigationActions
 import com.android.feedme.ui.navigation.TopBarNavigation
@@ -83,7 +76,6 @@ import kotlinx.coroutines.launch
  * images and viewing them in a gallery. Utilizes CameraX for camera operations and Jetpack Compose
  * for the UI components.
  */
-@SuppressLint("UnrememberedMutableState")
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun CameraScreen(navigationActions: NavigationActions) {
@@ -93,13 +85,8 @@ fun CameraScreen(navigationActions: NavigationActions) {
   val barcodeRecognition = remember { mutableStateOf(true) }
   // Display the text box with the recognised text
   val displayText = remember { mutableStateOf(false) }
+  // Display the text box with the barcode scanned information's
   val displayBarcode = remember { mutableStateOf(false) }
-  // Text extract by [TextRecognition] function
-  val text: MutableState<Text?> = remember { mutableStateOf(null) }
-  // Barcode raw value extract by [barcodeScanner]
-  val barcode: MutableState<String> = remember { mutableStateOf("") }
-  // Barcode product information's extract by [extractProductNameFromBarCode]
-  val barcodeDetails: MutableState<String> = remember { mutableStateOf("") }
 
   ///// Machine Learning Part /////
 
@@ -221,53 +208,20 @@ fun CameraScreen(navigationActions: NavigationActions) {
           }
           // If text recognition button is pressed
           if (displayText.value) {
-            if (viewModel.lastPhoto != null) {
-              // If there is a photo in the app gallery we launch text recognition
-              TextRecognition(
-                  viewModel.lastPhoto, { rec -> text.value = rec }, { text.value = null })
-            } else {
-              // If there is no photo in app gallery we show an OverlayTextField saying "ERROR : no
-              // photo to analyse"
-              OverlayTextField(
-                  isVisible = true,
-                  onDismiss = { displayText.value = false },
-                  text = "ERROR : no photo to analyse.")
-            }
-
-            if (text.value != null) {
-              // If text recognition succeeded and produced text, we launch text processing and
-              // display the result in an OverlayTextField
-              text.value
-                  ?.let { TextProcessing(it) }
-                  ?.let {
-                    OverlayTextField(
-                        isVisible = true, onDismiss = { displayText.value = false }, text = it)
-                  }
-            }
+            viewModel.textRecognitionButtonPressed()
+            OverlayTextField(
+                isVisible = true,
+                onDismiss = { displayText.value = false },
+                text = viewModel.informationToDisplay.collectAsState().value)
           }
 
           // If barcode scanner button is pressed
           if (displayBarcode.value) {
-            // If there is a photo in the app gallery we launch barcode scanner
-            if (viewModel.lastPhoto != null) {
-              barcodeScanner(
-                  viewModel.lastPhoto,
-                  { rec -> barcode.value = rec },
-                  { barcode.value = "ERROR : no barcode detected" })
-              // Each time the value of the barcode changes, product information's are recomputed
-              LaunchedEffect(barcode.value) {
-                extractProductNameFromBarcode(
-                    barcode.value,
-                    onSuccess = { rec -> barcodeDetails.value = rec },
-                    { barcodeDetails.value = "ERROR : product not identified" })
-              }
-            } else {
-              barcode.value = "ERROR : no barcode to analyse."
-            }
+            viewModel.barcodeScanButtonPressed()
             OverlayTextField(
                 isVisible = true,
                 onDismiss = { displayBarcode.value = false },
-                text = barcodeDetails.value)
+                text = viewModel.informationToDisplay.collectAsState().value)
           }
         }
       }

@@ -152,7 +152,9 @@ class CameraTest : TestCase() {
       composeTestRule.waitForIdle()
       composeTestRule.onNodeWithTag("ML Text Box")
       composeTestRule.onNodeWithTag("ML Text Box inside")
-      composeTestRule.onNodeWithText("ERROR : no photo to analyse.").assertIsDisplayed()
+      composeTestRule
+          .onNodeWithText("ERROR : No photo to analyse, please take a picture.")
+          .assertIsDisplayed()
     }
   }
 

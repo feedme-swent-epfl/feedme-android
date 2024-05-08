@@ -39,7 +39,6 @@ import androidx.compose.material3.IconButton
 import androidx.compose.material3.Text
 import androidx.compose.material3.rememberBottomSheetScaffoldState
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -86,13 +85,8 @@ fun CameraScreen(navigationActions: NavigationActions) {
   val barcodeRecognition = remember { mutableStateOf(true) }
   // Display the text box with the recognised text
   val displayText = remember { mutableStateOf(false) }
+  // Display the text box with the barcode scanned information's
   val displayBarcode = remember { mutableStateOf(false) }
-  // Text extract by [TextRecognition] function
-  val text: MutableState<Text?> = remember { mutableStateOf(null) }
-  // Barcode raw value extract by [barcodeScanner]
-  val barcode: MutableState<String> = remember { mutableStateOf("") }
-  // Barcode product information's extract by [extractProductNameFromBarCode]
-  val barcodeDetails: MutableState<String> = remember { mutableStateOf("") }
 
   ///// Machine Learning Part /////
 
@@ -223,26 +217,11 @@ fun CameraScreen(navigationActions: NavigationActions) {
 
           // If barcode scanner button is pressed
           if (displayBarcode.value) {
-            // If there is a photo in the app gallery we launch barcode scanner
-            /*if (viewModel.lastPhoto != null) {
-              barcodeScanner(
-                  viewModel.lastPhoto,
-                  { rec -> barcode.value = rec },
-                  { barcode.value = "ERROR : no barcode detected" })
-              // Each time the value of the barcode changes, product information's are recomputed
-              LaunchedEffect(barcode.value) {
-                extractProductNameFromBarcode(
-                    barcode.value,
-                    onSuccess = { rec -> barcodeDetails.value = rec },
-                    { barcodeDetails.value = "ERROR : product not identified" })
-              }
-            } else {
-              barcode.value = "ERROR : no barcode to analyse."
-            }
+            viewModel.barcodeScanButtonPressed()
             OverlayTextField(
                 isVisible = true,
                 onDismiss = { displayBarcode.value = false },
-                text = barcodeDetails.value)*/
+                text = viewModel.informationToDisplay.collectAsState().value)
           }
         }
       }

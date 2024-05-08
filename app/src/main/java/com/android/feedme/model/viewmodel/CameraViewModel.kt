@@ -30,7 +30,6 @@ class CameraViewModel : ViewModel() {
     data class Photo(val bitmap: Bitmap) : PhotoState()
   }
 
-
   /** Keep a list of bitmaps taken by user */
   private val _bitmaps = MutableStateFlow<List<Bitmap>>(emptyList())
   val bitmaps = _bitmaps.asStateFlow()
@@ -48,7 +47,6 @@ class CameraViewModel : ViewModel() {
   private val _informationToDisplay = MutableStateFlow<String>("")
   val informationToDisplay = _informationToDisplay.asStateFlow()
 
-
   /**
    * This function is called when the user taps the photo button in the CameraScreen. It adds the
    * bitmap to the list of bitmaps in the [_bitmaps] state and updates the [_lastPhoto].
@@ -58,11 +56,10 @@ class CameraViewModel : ViewModel() {
     _lastPhoto.value = PhotoState.Photo(bitmap)
   }
 
-
   /**
    * This function is called when the user taps the save button in the CameraScreen. It sets the
-   * [_photoSavedMessageVisible] state to true, which triggers a message to be shown to the user. The
-   * message is hidden after 3 seconds.
+   * [_photoSavedMessageVisible] state to true, which triggers a message to be shown to the user.
+   * The message is hidden after 3 seconds.
    */
   fun onPhotoSaved() {
     _photoSavedMessageVisible.value = true
@@ -73,12 +70,11 @@ class CameraViewModel : ViewModel() {
     }
   }
 
-
   /**
    * This function is called when user clicks on text recognition button. Then depending on the
    * state of [_lastPhoto] it will call the [performTextRecognition] function in an other thread to
-   * not block UI. Then it will update accordingly the value of [_informationToDisplay].
-   * If no photo was taken before an error message is displayed.
+   * not block UI. Then it will update accordingly the value of [_informationToDisplay]. If no photo
+   * was taken before an error message is displayed.
    */
   fun textRecognitionButtonPressed() =
       viewModelScope.launch {
@@ -93,12 +89,11 @@ class CameraViewModel : ViewModel() {
         }
       }
 
-
   /**
    * This function is called when user clicks on barcode scanning button. Then depending on the
    * state of [_lastPhoto] it will call the [performBarCodeScanning] function in an other thread to
-   * not block UI. Then it will update accordingly the value of [_informationToDisplay].
-   * If no photo was taken before an error message is displayed.
+   * not block UI. Then it will update accordingly the value of [_informationToDisplay]. If no photo
+   * was taken before an error message is displayed.
    */
   fun barcodeScanButtonPressed() =
       viewModelScope.launch {
@@ -113,11 +108,10 @@ class CameraViewModel : ViewModel() {
         }
       }
 
-
   /**
-   * Performs [barcodeScan] and [extractProductNameFromBarcode] on the provided bitmap image.
-   * This function suspends the current coroutine.
-   * This function can only be called by the view model itself.
+   * Performs [barcodeScan] and [extractProductNameFromBarcode] on the provided bitmap image. This
+   * function suspends the current coroutine. This function can only be called by the view model
+   * itself.
    *
    * @param bitmap The bitmap image on which barcode scanning will be performed.
    * @return The extracted product name from the barcode as string if successful, a relevant error
@@ -132,19 +126,19 @@ class CameraViewModel : ViewModel() {
               extractProductNameFromBarcode(
                   barcodeNumber,
                   { productName -> continuation.resume(productName) },
-                  { continuation.resume(
+                  {
+                    continuation.resume(
                         "ERROR: Failed to extract product name from barcode, please try again.")
                   })
             }
-          }, { continuation.resume("ERROR: Failed to identify barcode, please try again.") })
+          },
+          { continuation.resume("ERROR: Failed to identify barcode, please try again.") })
     }
   }
 
-
   /**
-   * Performs [textExtraction] and [textProcessing] on the provided bitmap image.
-   * This function suspends the current coroutine.
-   * This function can only be called by the view model itself.
+   * Performs [textExtraction] and [textProcessing] on the provided bitmap image. This function
+   * suspends the current coroutine. This function can only be called by the view model itself.
    *
    * @param bitmap The bitmap image on which text recognition will be performed.
    * @return The recognized text if successful; otherwise, an error message.

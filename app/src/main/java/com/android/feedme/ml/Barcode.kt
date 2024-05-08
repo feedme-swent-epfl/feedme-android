@@ -1,6 +1,7 @@
 package com.android.feedme.ml
 
 import android.graphics.Bitmap
+import android.util.Log
 import androidx.compose.runtime.mutableStateOf
 import com.android.feedme.api.HttpMethod
 import com.android.feedme.api.httpRequestBarcode
@@ -58,12 +59,12 @@ fun barcodeScan(
 suspend fun extractProductNameFromBarcode(
     barcodeNB: String,
     onSuccess: (String) -> Unit = {},
-    onFailure: () -> Unit = {}
+    onFailure: (Exception) -> Unit = {}
 ) {
   try {
     onSuccess(httpRequestBarcode(HttpMethod.GET, barcodeNB, "fields=product_name"))
   } catch (e: Exception) {
-    println(e.message)
-    onFailure()
+    e.message?.let { Log.i(e.message, it) }
+    onFailure(e)
   }
 }

@@ -26,13 +26,17 @@ import com.google.mlkit.vision.text.latin.TextRecognizerOptions
  *   extracted text as a parameter.
  * @param onFailure A callback function invoked when text extraction fails.
  */
-fun textExtraction(bitmap: Bitmap, onSuccess: (Text) -> Unit = {}, onFailure: () -> Unit = {}) {
+fun textExtraction(
+    bitmap: Bitmap,
+    onSuccess: (Text) -> Unit = {},
+    onFailure: (Exception) -> Unit = {}
+) {
   val recognizer = TextRecognition.getClient(TextRecognizerOptions.DEFAULT_OPTIONS)
   val image = bitmap.let { InputImage.fromBitmap(it, 0) }
   recognizer
       .process(image)
       .addOnSuccessListener { visionText -> onSuccess(visionText) }
-      .addOnFailureListener { onFailure() }
+      .addOnFailureListener { e -> onFailure(e) }
 }
 
 /**

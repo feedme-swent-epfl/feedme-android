@@ -53,6 +53,7 @@ fun SearchBarFun(viewModel: HomeViewModel) {
           active = false
           /* TODO: add search filtering logic here */
           viewModel.searchProfiles(query)
+          viewModel.searchRecipes(query)
         },
         leadingIcon = {
           IconButton(onClick = { /*TODO: add manual filtering logic*/}) {
@@ -70,6 +71,7 @@ fun SearchBarFun(viewModel: HomeViewModel) {
                   active = false
                   /* TODO: add search filtering logic here */
                   viewModel.searchProfiles(query)
+                  viewModel.searchRecipes(query)
                 }) {
                   Icon(
                       imageVector = Icons.Default.Close,

@@ -6,7 +6,6 @@ import com.android.feedme.model.data.Profile
 import com.android.feedme.model.data.ProfileRepository
 import com.android.feedme.model.data.Recipe
 import com.android.feedme.model.data.RecipeRepository
-import com.google.firebase.auth.FirebaseAuth
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.launch
@@ -21,11 +20,11 @@ class HomeViewModel : ViewModel() {
   val profiles = _profiles.asStateFlow()
 
   init {
-    FirebaseAuth.getInstance().uid?.let {
+    /*FirebaseAuth.getInstance().uid?.let {
       fetchRecipe("lasagna1")
       fetchRecipe("lasagna1")
       fetchRecipe("lasagna1")
-    }
+    }*/
   }
 
   /**
@@ -87,7 +86,7 @@ class HomeViewModel : ViewModel() {
     viewModelScope.launch {
       recipeRepository.getFilteredRecipes(
           query,
-          onSuccess = { recipes -> _recipes.value = recipes },
+          onSuccess = { filteredRecipes -> _recipes.value = filteredRecipes },
           onFailure = {
             // Handle failure
             throw error("Filtered recipes could not be fetched")
@@ -104,7 +103,7 @@ class HomeViewModel : ViewModel() {
     viewModelScope.launch {
       profileRepository.getFilteredProfiles(
           query,
-          onSuccess = { profiles -> _profiles.value = profiles },
+          onSuccess = { filteredProfiles -> _profiles.value = filteredProfiles },
           onFailure = {
             // Handle failure
             throw error("Filtered profiles could not be fetched")

@@ -33,6 +33,7 @@ import androidx.compose.material3.OutlinedButton
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.collectAsState
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
@@ -70,7 +71,8 @@ fun LandingPage(
     homeViewModel: HomeViewModel = HomeViewModel()
 ) {
 
-  val recipes = homeViewModel.recipes.value
+  val recipes = homeViewModel.recipes.collectAsState()
+  val filteredProfiles = homeViewModel.profiles.collectAsState()
 
   Scaffold(
       modifier = Modifier.fillMaxSize().testTag("LandingScreen"),
@@ -78,7 +80,9 @@ fun LandingPage(
       bottomBar = {
         BottomNavigationMenu(Route.HOME, navigationActions::navigateTo, TOP_LEVEL_DESTINATIONS)
       },
-      content = { RecipeDisplay(it, navigationActions, recipes, homeViewModel, recipeViewModel) })
+      content = {
+        RecipeDisplay(it, navigationActions, recipes.value, homeViewModel, recipeViewModel)
+      })
 }
 
 /**

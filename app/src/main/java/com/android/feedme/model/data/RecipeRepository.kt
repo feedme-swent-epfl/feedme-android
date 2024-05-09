@@ -100,7 +100,8 @@ class RecipeRepository(private val db: FirebaseFirestore) {
       onFailure: (Exception) -> Unit
   ) {
     db.collection(collectionPath)
-        .whereEqualTo("title", query)
+        .whereGreaterThanOrEqualTo("title", query)
+        // .whereLessThan("title", query + "\uf8ff")
         .get()
         .addOnSuccessListener {
           it.documents.map { recipeMap ->

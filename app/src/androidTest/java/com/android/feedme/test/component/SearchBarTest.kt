@@ -6,6 +6,7 @@ import androidx.compose.ui.test.onNodeWithContentDescription
 import androidx.compose.ui.test.onNodeWithTag
 import androidx.compose.ui.test.performClick
 import androidx.test.ext.junit.runners.AndroidJUnit4
+import com.android.feedme.model.viewmodel.HomeViewModel
 import com.android.feedme.ui.component.SearchBarFun
 import com.kaspersky.kaspresso.testcases.api.testcase.TestCase
 import org.junit.Rule
@@ -19,7 +20,7 @@ class SearchBarTest : TestCase() {
   @Test
   fun checkSearchBarDisplayed() {
 
-    composeTestRule.setContent { SearchBarFun() }
+    composeTestRule.setContent { SearchBarFun(HomeViewModel()) }
     composeTestRule.waitForIdle()
 
     composeTestRule.onNodeWithTag("SearchBar").assertIsDisplayed()

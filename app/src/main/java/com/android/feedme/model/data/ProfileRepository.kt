@@ -147,7 +147,7 @@ class ProfileRepository(private val db: FirebaseFirestore) {
       onFailure: (Exception) -> Unit
   ) {
     db.collection(collectionPath)
-        .whereArrayContains("username", query)
+        .whereGreaterThanOrEqualTo("username", query)
         .get()
         .addOnSuccessListener {
           it.documents.map { recipeMap ->

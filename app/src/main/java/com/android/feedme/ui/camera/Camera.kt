@@ -7,6 +7,7 @@ import android.content.pm.PackageManager
 import android.graphics.Bitmap
 import android.graphics.Matrix
 import android.util.Log
+import android.view.ViewGroup
 import androidx.camera.core.ImageCapture
 import androidx.camera.core.ImageCaptureException
 import androidx.camera.core.ImageProxy
@@ -51,6 +52,7 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.asImageBitmap
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalLifecycleOwner
+import androidx.compose.ui.platform.LocalView
 import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
@@ -65,6 +67,7 @@ import com.android.feedme.ui.navigation.NavigationActions
 import com.android.feedme.ui.navigation.TopBarNavigation
 import com.android.feedme.ui.theme.BottomIconColorSelected
 import com.android.feedme.ui.theme.CameraButtonsBackground
+import com.google.android.material.snackbar.Snackbar
 import com.google.mlkit.vision.text.Text
 import kotlinx.coroutines.launch
 
@@ -79,6 +82,7 @@ import kotlinx.coroutines.launch
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun CameraScreen(navigationActions: NavigationActions) {
+    val rootView = LocalView.current
   ///// Machine Learning Part /////
   // Switch off and on the text recognition functionality
   val textRecognitionMode = remember { mutableStateOf(true) }
@@ -209,6 +213,7 @@ fun CameraScreen(navigationActions: NavigationActions) {
           // If text recognition button is pressed
           if (displayText.value) {
             viewModel.textRecognitionButtonPressed()
+              Snackbar.make(rootView, "This is a snackbar message", Snackbar.LENGTH_LONG).show()
             OverlayTextField(
                 isVisible = true,
                 onDismiss = { displayText.value = false },

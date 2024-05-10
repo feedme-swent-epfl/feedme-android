@@ -1,6 +1,7 @@
 package com.android.feedme.ml
 
 import android.graphics.Bitmap
+import android.util.Log
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
@@ -35,8 +36,18 @@ fun textExtraction(
   val image = bitmap.let { InputImage.fromBitmap(it, 0) }
   recognizer
       .process(image)
-      .addOnSuccessListener { visionText -> onSuccess(visionText) }
-      .addOnFailureListener { e -> onFailure(e) }
+      .addOnFailureListener { e ->
+        Log.e("TextExtraction", "Failure: ${e.message}")
+        onFailure(e)
+      }
+      .addOnSuccessListener { visionText ->
+        if (visionText.textBlocks.isEmpty()) {
+          Log.e("TextExtraction", "No text found in the image")
+          onFailure(Exception("No text found in the image"))
+        } else {
+          onSuccess(visionText)
+        }
+      }
 }
 
 /**

@@ -63,7 +63,6 @@ import androidx.core.content.ContextCompat
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.android.feedme.R
 import com.android.feedme.ml.OverlayTextField
-import com.android.feedme.ml.TextProcessing
 import com.android.feedme.ml.TextRecognition
 import com.android.feedme.ml.barcodeScanner
 import com.android.feedme.ml.extractProductNameFromBarcode
@@ -118,9 +117,11 @@ fun CameraScreen(navigationActions: NavigationActions) {
       setEnabledUseCases(CameraController.IMAGE_CAPTURE)
     }
   }
-  val viewModel = viewModel<CameraViewModel>()
-  val bitmaps by viewModel.bitmaps.collectAsState()
-  val photoSavedMessageVisible by viewModel.photoSavedMessageVisible.collectAsState()
+  val cameraViewModel = viewModel<CameraViewModel>()
+  val bitmaps by cameraViewModel.bitmaps.collectAsState()
+  val photoSavedMessageVisible by cameraViewModel.photoSavedMessageVisible.collectAsState()
+
+  val listOfIngredientToInput = cameraViewModel.listOfIngredientToInput.collectAsState()
 
   BottomSheetScaffold(
       modifier = Modifier.testTag("CameraScreen"),
@@ -161,8 +162,8 @@ fun CameraScreen(navigationActions: NavigationActions) {
                     onClick = {
                       takePhoto(
                           controller = controller,
-                          onPhotoTaken = viewModel::onTakePhoto,
-                          showText = viewModel::onPhotoSaved,
+                          onPhotoTaken = cameraViewModel::onTakePhoto,
+                          showText = cameraViewModel::onPhotoSaved,
                           context = applicationContext,
                       )
                     }) {
@@ -221,10 +222,18 @@ fun CameraScreen(navigationActions: NavigationActions) {
           }
           // If text recognition button is pressed
           if (displayText.value) {
-            if (viewModel.lastPhoto != null) {
+            if (cameraViewModel.lastPhoto != null) {
               // If there is a photo in the app gallery we launch text recognition
               TextRecognition(
-                  viewModel.lastPhoto, { rec -> text.value = rec }, { text.value = null })
+                  cameraViewModel.lastPhoto,
+                  { rec ->
+                    println("Loop with MLkit : ${rec.text}")
+                    if ((text.value?.text ?: "") != rec.text) {
+                      cameraViewModel.analyzeTextForIngredients(rec, { text.value = rec })
+                      println("Message with MLkit : ${rec.text}")
+                    }
+                  },
+                  { text.value = null })
             } else {
               // If there is no photo in app gallery we show an OverlayTextField saying "ERROR : no
               // photo to analyse"
@@ -237,21 +246,26 @@ fun CameraScreen(navigationActions: NavigationActions) {
             if (text.value != null) {
               // If text recognition succeeded and produced text, we launch text processing and
               // display the result in an OverlayTextField
-              text.value
-                  ?.let { TextProcessing(it) }
-                  ?.let {
-                    OverlayTextField(
-                        isVisible = true, onDismiss = { displayText.value = false }, text = it)
-                  }
+              OverlayTextField(
+                  isVisible = true,
+                  onDismiss = { displayText.value = false },
+                  text = listOfIngredientToInput.value.toString())
+              /*text.value
+                 ?.let { TextProcessing(it) }
+                 ?.let {
+                   OverlayTextField(
+                       isVisible = true, onDismiss = { displayText.value = false }, text = it)
+                 }
+              */
             }
           }
 
           // If barcode scanner button is pressed
           if (displayBarcode.value) {
             // If there is a photo in the app gallery we launch barcode scanner
-            if (viewModel.lastPhoto != null) {
+            if (cameraViewModel.lastPhoto != null) {
               barcodeScanner(
-                  viewModel.lastPhoto,
+                  cameraViewModel.lastPhoto,
                   { rec -> barcode.value = rec },
                   { barcode.value = "ERROR : no barcode detected" })
               // Each time the value of the barcode changes, product information's are recomputed

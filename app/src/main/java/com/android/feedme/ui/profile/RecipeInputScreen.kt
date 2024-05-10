@@ -132,7 +132,7 @@ fun RecipeInputTopContent() {
 fun RecipePicture() {
   // TODO integrate with gallery
   Image(
-      painter = painterResource(id = R.drawable.user_logo),
+      painter = painterResource(id = R.drawable.add_image),
       contentDescription = "Recipe Picture",
       modifier = Modifier
           .padding(20.dp)

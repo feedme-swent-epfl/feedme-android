@@ -1,8 +1,6 @@
 package com.android.feedme.ui.profile
 
 import android.annotation.SuppressLint
-import androidx.activity.result.PickVisualMediaRequest
-import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
@@ -18,7 +16,6 @@ import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Add
-import androidx.compose.material.icons.filled.AddPhotoAlternate
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.FloatingActionButton
 import androidx.compose.material3.Icon
@@ -111,17 +108,13 @@ fun ProfileScreen(
       },
       // Floating Button to create a recipe
       floatingActionButton = {
-          FloatingActionButton(
-              modifier = Modifier.testTag("AddRecipeButton"),
-              containerColor = FindRecipeIcons,
-              contentColor = Color.White,
-              onClick = {
-                  // TODO : redirect to create recipe screen
-              }) {
-              Icon(
-                  imageVector = Icons.Default.Add,
-                  contentDescription = "Add recipe Icon")
-          }
+        FloatingActionButton(
+            modifier = Modifier.testTag("AddRecipeButton"),
+            containerColor = FindRecipeIcons,
+            contentColor = Color.White,
+            onClick = { navigationActions.navigateTo(Screen.ADD_RECIPE) }) {
+              Icon(imageVector = Icons.Default.Add, contentDescription = "Add recipe Icon")
+            }
       },
       content = { padding ->
         ProfileBox(

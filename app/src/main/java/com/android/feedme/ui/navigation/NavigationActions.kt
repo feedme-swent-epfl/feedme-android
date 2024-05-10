@@ -96,6 +96,7 @@ object Screen {
   const val EDIT_PROFILE = "Edit Profile"
   const val FRIENDS = "Friends/{showFollowers}"
   const val RECIPE = "Recipe/{sourceRoute}"
+  const val ADD_RECIPE = "Recipe Input Screen"
 }
 
 /**

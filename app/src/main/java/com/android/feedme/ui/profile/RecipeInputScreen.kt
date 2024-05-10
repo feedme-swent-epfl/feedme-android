@@ -13,10 +13,7 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.heightIn
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
-import androidx.compose.foundation.lazy.LazyColumn
-import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.CircleShape
-import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Check
 import androidx.compose.material3.FloatingActionButton
@@ -35,10 +32,8 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.res.painterResource
-import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import androidx.compose.ui.unit.sp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.android.feedme.R
 import com.android.feedme.model.viewmodel.InputViewModel
@@ -67,13 +62,11 @@ fun RecipeInputScreen(
     profileViewModel: ProfileViewModel
     // TODO: Integrate ViewModel with UI
 ) {
-    val inputViewModel: InputViewModel = viewModel()
-    val recipeStepViewModel: RecipeStepViewModel = viewModel()
+  val inputViewModel: InputViewModel = viewModel()
+  val recipeStepViewModel: RecipeStepViewModel = viewModel()
 
   Scaffold(
-      modifier = Modifier
-          .fillMaxSize()
-          .testTag("RecipeInputScreen"),
+      modifier = Modifier.fillMaxSize().testTag("RecipeInputScreen"),
       topBar = { TopBarNavigation(title = "Add Recipe", navigationActions) },
       bottomBar = {
         BottomNavigationMenu(Route.PROFILE, navigationActions::navigateTo, TOP_LEVEL_DESTINATIONS)
@@ -90,42 +83,38 @@ fun RecipeInputScreen(
               Icon(imageVector = Icons.Default.Check, contentDescription = "Validate Recipe Icon")
             }
       },
-      content = { padding ->
-          RecipeBox(padding, inputViewModel, recipeStepViewModel)
-      })
+      content = { padding -> RecipeBox(padding, inputViewModel, recipeStepViewModel) })
 }
 
 @Composable
-fun RecipeBox(paddingValues: PaddingValues, inputViewModel: InputViewModel,recipeStepViewModel: RecipeStepViewModel) {
-    Column(
-        modifier = Modifier
-            .padding(paddingValues)
-            .testTag("RecipeInputBox"),
-        verticalArrangement = Arrangement.Top) {
-                RecipeInputTopContent()
-                IngredientList(inputViewModel, Modifier.heightIn(max = 150.dp))
-                StepList(recipeStepViewModel = recipeStepViewModel)
-    }
+fun RecipeBox(
+    paddingValues: PaddingValues,
+    inputViewModel: InputViewModel,
+    recipeStepViewModel: RecipeStepViewModel
+) {
+  Column(
+      modifier = Modifier.padding(paddingValues).testTag("RecipeInputBox"),
+      verticalArrangement = Arrangement.Top) {
+        RecipeInputTopContent()
+        IngredientList(inputViewModel, Modifier.heightIn(max = 150.dp))
+        StepList(recipeStepViewModel = recipeStepViewModel)
+      }
 }
 
 @Preview
 @Composable
 fun RecipeInputTopContent() {
   Column(
-      modifier = Modifier
-          .testTag("RecipeInputBox")
-          .heightIn(max = 150.dp),
+      modifier = Modifier.testTag("RecipeInputBox").heightIn(max = 150.dp),
       verticalArrangement = Arrangement.Top) {
-          Row(
-              modifier = Modifier
-                  .fillMaxWidth()
-                  .padding(vertical = 5.dp),
-              horizontalArrangement = Arrangement.Center,
-              verticalAlignment = Alignment.CenterVertically) {
-                RecipePicture()
-                TitleBox()
-              }
-        }
+        Row(
+            modifier = Modifier.fillMaxWidth().padding(vertical = 5.dp),
+            horizontalArrangement = Arrangement.Center,
+            verticalAlignment = Alignment.CenterVertically) {
+              RecipePicture()
+              TitleBox()
+            }
+      }
 }
 
 @Composable
@@ -134,25 +123,20 @@ fun RecipePicture() {
   Image(
       painter = painterResource(id = R.drawable.add_image),
       contentDescription = "Recipe Picture",
-      modifier = Modifier
-          .padding(20.dp)
-          .width(70.dp)
-          .height(70.dp)
-          .clip(CircleShape)
-          .testTag("RecipePicture"))
+      modifier =
+          Modifier.padding(20.dp)
+              .width(70.dp)
+              .height(70.dp)
+              .clip(CircleShape)
+              .testTag("RecipePicture"))
 }
 
 @Composable
 fun TitleBox() {
-    val mod = Modifier
-        .fillMaxWidth()
-        .height(56.dp)
+  val mod = Modifier.fillMaxWidth().height(56.dp)
   Column(
       modifier =
-      Modifier
-          .fillMaxWidth()
-          .padding(horizontal = 10.dp, vertical = 5.dp)
-          .height(120.dp)) {
+          Modifier.fillMaxWidth().padding(horizontal = 10.dp, vertical = 5.dp).height(120.dp)) {
         var title by remember { mutableStateOf("") }
         var description by remember { mutableStateOf("") }
 
@@ -165,11 +149,11 @@ fun TitleBox() {
               Text(text = "Title", modifier = Modifier.background(color = Color.Transparent))
             })
         Spacer(modifier = Modifier.height(10.dp))
-      OutlinedTextField(
+        OutlinedTextField(
             value = description,
             onValueChange = { description = it },
             modifier = mod.testTag("RecipeDescriptionInput"),
-          label = {
+            label = {
               Text(
                   text = "Description (optional)",
                   modifier = Modifier.background(color = Color.Transparent))

@@ -22,11 +22,14 @@ import androidx.compose.material.icons.filled.Star
 import androidx.compose.material.icons.outlined.Timer
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
+import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Slider
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextField
+import androidx.compose.material3.TextFieldColors
+import androidx.compose.material3.TextFieldDefaults
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableFloatStateOf
@@ -37,6 +40,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.modifier.modifierLocalConsumer
+import androidx.compose.material3.OutlinedTextFieldDefaults
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
@@ -120,6 +124,7 @@ fun CreateComment() {
     }
 }
 
+@OptIn(ExperimentalMaterial3Api::class)
 @Preview
 @Composable
 fun Test() {
@@ -164,7 +169,7 @@ fun Test() {
                 Spacer(modifier = Modifier.padding(end = 10.dp))
 
                 Column (
-                    verticalArrangement = Arrangement.spacedBy(30.dp),
+                    verticalArrangement = Arrangement.spacedBy(20.dp),
                     horizontalAlignment = Alignment.CenterHorizontally
                 ) {
 
@@ -177,22 +182,24 @@ fun Test() {
                         shape = RoundedCornerShape(16.dp)
                     )
 
+                    // Rating input
                     Row(
                         modifier = Modifier.fillMaxWidth(),
-                        horizontalArrangement = Arrangement.spacedBy(20.dp),
+                        horizontalArrangement = Arrangement.Absolute.Center,
                         verticalAlignment = Alignment.CenterVertically
-                    ) {
+                    ) {}
 
-                        // Estimated Time input
+                        /* Estimated Time input -- not needed ?
                         Row(
-                            modifier = Modifier.padding(horizontal = 40.dp).background(),
-                            verticalAlignment = Layout.Alignment.CenterVertically
+                            modifier = Modifier.padding(horizontal = 40.dp),
+                            verticalAlignment = Alignment.CenterVertically
                         ) {
                             // the input
                             TextField(
                                 value = estimatedTime,
                                 onValueChange = { estimatedTime = it },
-                                modifier = Modifier.width(20.dp).height(10.dp).background(color = Color.LightGray)
+                                modifier = Modifier.width(20.dp).height(30.dp).background(color = Color.LightGray),
+                                colors = OutlinedTextFieldDefaults.colors(cursorColor = Color.Gray)
                             )
                             // time icon
                             Icon(
@@ -200,26 +207,9 @@ fun Test() {
                                 contentDescription = null,
                                 modifier = Modifier.size(34.dp).padding(start = 4.dp))
 
-                        }
+                        } */
 
-                        Spacer(modifier = Modifier.width(12.dp))
 
-                        // Rating input
-                        Column(
-                            modifier = Modifier
-                                .width(10.dp)
-                                .height(10.dp)
-                        ) {
-                            Text("Rating: %.1f".format(rating), fontSize = 16.sp)
-                            Slider(
-                                value = rating,
-                                onValueChange = { rating = it },
-                                valueRange = 0f..5f,
-                                steps = 4, // Divide into 0.5-star increments
-                                modifier = Modifier.fillMaxWidth()
-                            )
-                        }
-                    }
                 }
 
             }

@@ -19,11 +19,13 @@ import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Star
+import androidx.compose.material.icons.outlined.StarRate
 import androidx.compose.material.icons.outlined.Timer
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
+import androidx.compose.material3.OutlinedButton
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Slider
 import androidx.compose.material3.Text
@@ -41,6 +43,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.modifier.modifierLocalConsumer
 import androidx.compose.material3.OutlinedTextFieldDefaults
+import androidx.compose.ui.graphics.RectangleShape
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
@@ -51,7 +54,6 @@ import androidx.compose.ui.unit.sp
 fun CreateComment() {
     var commentTitle by remember { mutableStateOf("") }
     var description by remember { mutableStateOf("") }
-    var estimatedTime by remember { mutableStateOf("") }
     var rating by remember { mutableFloatStateOf(4.0f) }
 
     Box(
@@ -130,8 +132,8 @@ fun CreateComment() {
 fun Test() {
 
     var commentTitle by remember { mutableStateOf("") }
-    var estimatedTime by remember { mutableStateOf("") }
-    var rating by remember { mutableFloatStateOf(4.0f) }
+    var rating by remember { mutableStateOf("") }
+    var description by remember { mutableStateOf("") }
 
     Box(
         Modifier
@@ -159,12 +161,12 @@ fun Test() {
                 // Clickable plus icon -- temporary until i implement the picture uploading process
                 Box(
                     Modifier
-                        .size(40.dp)
+                        .size(50.dp)
                         .background(Color.LightGray, CircleShape)
-                        .clickable { /* TODO() onImageUpload()*/ }, // Trigger the image upload function
+                        .clickable { /* TODO() onImageUpload() */ }, // Trigger the image upload function
                     contentAlignment = Alignment.Center
                 ) {
-                    Text("+", fontSize = 24.sp, fontWeight = FontWeight.Bold)
+                    Text("+", fontSize = 30.sp, fontWeight = FontWeight.Bold)
                 }
                 Spacer(modifier = Modifier.padding(end = 10.dp))
 
@@ -184,36 +186,66 @@ fun Test() {
 
                     // Rating input
                     Row(
-                        modifier = Modifier.fillMaxWidth(),
-                        horizontalArrangement = Arrangement.Absolute.Center,
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .padding(end = 15.dp),
+                        horizontalArrangement = Arrangement.Absolute.Right,
                         verticalAlignment = Alignment.CenterVertically
-                    ) {}
+                    ) {
+                        // the input
+                        TextField(
+                            value = rating,
+                            onValueChange = { rating = it },
+                            modifier = Modifier
+                                .width(20.dp)
+                                .height(30.dp)
+                                .background(color = Color.LightGray),
+                            shape = RoundedCornerShape(16.dp),
+                            colors = OutlinedTextFieldDefaults.colors(cursorColor = Color.Gray))
+                        // rating icon
+                        Icon(
+                            imageVector = Icons.Outlined.StarRate,
+                            contentDescription = "RatingIcon",
+                            modifier = Modifier
+                                .size(34.dp)
+                                .padding(start = 6.dp))
 
-                        /* Estimated Time input -- not needed ?
-                        Row(
-                            modifier = Modifier.padding(horizontal = 40.dp),
-                            verticalAlignment = Alignment.CenterVertically
-                        ) {
-                            // the input
-                            TextField(
-                                value = estimatedTime,
-                                onValueChange = { estimatedTime = it },
-                                modifier = Modifier.width(20.dp).height(30.dp).background(color = Color.LightGray),
-                                colors = OutlinedTextFieldDefaults.colors(cursorColor = Color.Gray)
-                            )
-                            // time icon
-                            Icon(
-                                imageVector = Icons.Outlined.Timer,
-                                contentDescription = null,
-                                modifier = Modifier.size(34.dp).padding(start = 4.dp))
+                    }
+                }
+            }
 
-                        } */
+            // Description input
+            OutlinedTextField(
+                value = description,
+                onValueChange = { description = it },
+                label = { Text("Description") },
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .height(200.dp),
+                shape = RoundedCornerShape(16.dp)
+            )
 
+            // Delete and Publish buttons
+            Row(
+                modifier = Modifier
+                    .fillMaxWidth(),
+                horizontalArrangement = Arrangement.Absolute.Center,
+                verticalAlignment = Alignment.CenterVertically
+            ) {
 
+                // delete button
+                OutlinedButton(
+                    modifier = Modifier.border(2.dp, Color.Red, RoundedCornerShape(16.dp)),
+                    colors = ButtonDefaults.buttonColors(Color.White),
+                    shape = RoundedCornerShape(16.dp),
+                    onClick = { /*TODO() implement deleting button functionality */ }
+                ) {
+                    Text(text = "Delete", color = Color.Red, fontWeight = FontWeight.Bold)
                 }
 
             }
+
+
         }
     }
-
 }

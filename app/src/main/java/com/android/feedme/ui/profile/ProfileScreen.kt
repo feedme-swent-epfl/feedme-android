@@ -1,6 +1,8 @@
 package com.android.feedme.ui.profile
 
 import android.annotation.SuppressLint
+import androidx.activity.result.PickVisualMediaRequest
+import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
@@ -14,7 +16,12 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.shape.CircleShape
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Add
+import androidx.compose.material.icons.filled.AddPhotoAlternate
 import androidx.compose.material3.ButtonDefaults
+import androidx.compose.material3.FloatingActionButton
+import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedButton
 import androidx.compose.material3.Scaffold
@@ -53,6 +60,7 @@ import com.android.feedme.ui.navigation.Screen
 import com.android.feedme.ui.navigation.TOP_LEVEL_DESTINATIONS
 import com.android.feedme.ui.navigation.TopBarNavigation
 import com.android.feedme.ui.theme.DarkGrey
+import com.android.feedme.ui.theme.FindRecipeIcons
 import com.android.feedme.ui.theme.FollowButton
 import com.android.feedme.ui.theme.FollowButtonBorder
 import com.android.feedme.ui.theme.FollowingButton
@@ -100,6 +108,20 @@ fun ProfileScreen(
               navigationActions.navigateTo(top)
             },
             TOP_LEVEL_DESTINATIONS)
+      },
+      // Floating Button to create a recipe
+      floatingActionButton = {
+          FloatingActionButton(
+              modifier = Modifier.testTag("AddRecipeButton"),
+              containerColor = FindRecipeIcons,
+              contentColor = Color.White,
+              onClick = {
+                  // TODO : redirect to create recipe screen
+              }) {
+              Icon(
+                  imageVector = Icons.Default.Add,
+                  contentDescription = "Add recipe Icon")
+          }
       },
       content = { padding ->
         ProfileBox(

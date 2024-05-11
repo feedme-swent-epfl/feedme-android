@@ -82,7 +82,7 @@ fun LandingPage(
         BottomNavigationMenu(Route.HOME, navigationActions::navigateTo, TOP_LEVEL_DESTINATIONS)
       },
       content = {
-        RecipeDisplay(it, navigationActions, filteredRecipes.value , homeViewModel, recipeViewModel)
+        RecipeDisplay(it, navigationActions, filteredRecipes.value, homeViewModel, recipeViewModel)
       })
 }
 

@@ -2,9 +2,7 @@ package com.android.feedme.test
 
 import androidx.compose.ui.test.junit4.createComposeRule
 import androidx.compose.ui.test.onNodeWithContentDescription
-import androidx.compose.ui.test.onNodeWithTag
 import androidx.compose.ui.test.performClick
-import androidx.compose.ui.test.performImeAction
 import androidx.test.ext.junit.runners.AndroidJUnit4
 import com.android.feedme.model.data.Ingredient
 import com.android.feedme.model.data.IngredientMetaData
@@ -115,8 +113,8 @@ class LandingTest : TestCase() {
         assertIsDisplayed()
         performClick()
       }
-        composeTestRule.waitForIdle()
-        composeTestRule.onNodeWithContentDescription("Search Icon Button").performClick()
+      composeTestRule.waitForIdle()
+      composeTestRule.onNodeWithContentDescription("Search Icon Button").performClick()
     }
   }
 

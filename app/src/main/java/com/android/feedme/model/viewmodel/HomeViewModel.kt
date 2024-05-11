@@ -26,7 +26,7 @@ class HomeViewModel : ViewModel() {
 
   var initialSearchQuery = ""
 
-    var isFiltered: Boolean = false
+  var isFiltered: Boolean = false
 
   init {
     /*FirebaseAuth.getInstance().uid?.let {
@@ -125,8 +125,7 @@ class HomeViewModel : ViewModel() {
     _filteredProfiles.value = emptyList()
   }
 
-  fun setRecipes(recipes: List<Recipe>, filtered: Boolean = false) {
+  fun setRecipes(recipes: List<Recipe>) {
     _recipes.value = recipes
   }
-
 }

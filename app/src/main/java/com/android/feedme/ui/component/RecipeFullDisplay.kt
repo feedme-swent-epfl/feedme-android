@@ -1,5 +1,6 @@
 package com.android.feedme.ui.component
 
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -38,11 +39,14 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import coil.compose.AsyncImage
 import com.android.feedme.model.data.IngredientMetaData
+import com.android.feedme.model.data.Profile
 import com.android.feedme.model.data.Recipe
 import com.android.feedme.model.data.Step
+import com.android.feedme.model.viewmodel.ProfileViewModel
 import com.android.feedme.model.viewmodel.RecipeViewModel
 import com.android.feedme.ui.navigation.BottomNavigationMenu
 import com.android.feedme.ui.navigation.NavigationActions
+import com.android.feedme.ui.navigation.Screen
 import com.android.feedme.ui.navigation.TOP_LEVEL_DESTINATIONS
 import com.android.feedme.ui.navigation.TopBarNavigation
 import com.android.feedme.ui.theme.BlueUsername
@@ -55,16 +59,24 @@ import com.android.feedme.ui.theme.YellowStarBlackOutline
  * information's (time, userId of the creator and rating), list of ingredients and list of steps to
  * prepare the recipe.
  *
+ * @param route The current route of the screen.
  * @param navigationActions Gives access to the navigation actions.
  * @param recipeViewModel The [RecipeViewModel] to get the recipe from.
+ * @param profileViewModel The [ProfileViewModel] to get the profile of the recipe creator.
  */
 @Composable
 fun RecipeFullDisplay(
     route: String,
     navigationActions: NavigationActions,
-    recipeViewModel: RecipeViewModel = RecipeViewModel()
+    recipeViewModel: RecipeViewModel,
+    profileViewModel: ProfileViewModel
 ) {
   val recipe = recipeViewModel.recipe.collectAsState().value
+
+  // Fetch the profile of the user who created the recipe
+  recipe?.let { profileViewModel.fetchProfile(it.userid) }
+  val profile = profileViewModel.viewingUserProfile.collectAsState().value
+
   Scaffold(
       modifier = Modifier.fillMaxSize(),
       topBar = {
@@ -80,8 +92,8 @@ fun RecipeFullDisplay(
       content = { padding ->
         if (recipe != null) {
           LazyColumn(modifier = Modifier.padding(padding)) {
-            item { ImageDisplay(recipe = recipe) }
-            item { GeneralInfoDisplay(recipe = recipe) }
+            item { ImageDisplay(recipe) }
+            item { GeneralInfoDisplay(recipe, profile, navigationActions, profileViewModel) }
             item { IngredientTitleDisplay() }
             items(recipe.ingredients) { ingredient -> IngredientDisplay(ingredient = ingredient) }
             item { IngredientStepsDividerDisplay() }
@@ -115,10 +127,19 @@ fun ImageDisplay(recipe: Recipe, modifier: Modifier = Modifier) {
  * Displays general information about a recipe : time, userId of the creator and rating.
  *
  * @param recipe The [Recipe] to display information for.
+ * @param profile The [Profile] of the recipe creator.
+ * @param navigationActions The [NavigationActions] to navigate to other screens.
+ * @param profileViewModel The [ProfileViewModel] to get the profile of the recipe creator.
  * @param modifier The [Modifier] for the layout of the row wrapping the content.
  */
 @Composable
-fun GeneralInfoDisplay(recipe: Recipe, modifier: Modifier = Modifier) {
+fun GeneralInfoDisplay(
+    recipe: Recipe,
+    profile: Profile?,
+    navigationActions: NavigationActions,
+    profileViewModel: ProfileViewModel,
+    modifier: Modifier = Modifier
+) {
   Row(
       horizontalArrangement = Arrangement.SpaceAround,
       verticalAlignment = Alignment.CenterVertically,
@@ -137,15 +158,23 @@ fun GeneralInfoDisplay(recipe: Recipe, modifier: Modifier = Modifier) {
 
         // Recipe creator's userId
         Spacer(modifier = Modifier.weight(1f))
-        Text(
-            text = "By user ",
-            textAlign = TextAlign.Center,
-            style = TextStyle(fontSize = 16.sp, fontWeight = FontWeight.Medium))
-        Text(
-            text = recipe.userid,
-            textAlign = TextAlign.Center,
-            color = BlueUsername,
-            style = TextStyle(fontSize = 16.sp, fontWeight = FontWeight.Medium))
+        if (profile != null) {
+          Text(
+              text = "By user ",
+              textAlign = TextAlign.Center,
+              style = TextStyle(fontSize = 16.sp, fontWeight = FontWeight.Medium))
+          Text(
+              modifier =
+                  Modifier.clickable(
+                      onClick = {
+                        profileViewModel.setViewingProfile(profile)
+                        navigationActions.navigateTo(Screen.PROFILE)
+                      }),
+              text = profile.username,
+              textAlign = TextAlign.Center,
+              color = BlueUsername,
+              style = TextStyle(fontSize = 16.sp, fontWeight = FontWeight.Medium))
+        }
         Spacer(modifier = Modifier.weight(1f))
 
         // Recipe ratings

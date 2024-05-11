@@ -99,7 +99,6 @@ class RecipeRepository(private val db: FirebaseFirestore) {
       onSuccess: (List<Recipe>) -> Unit,
       onFailure: (Exception) -> Unit
   ) {
-    println("RecipeRepository: Querying for recipes with title containing: $query")
     db.collection(collectionPath)
         .whereGreaterThanOrEqualTo("title", query)
         .whereLessThan("title", query + "\uf8ff")

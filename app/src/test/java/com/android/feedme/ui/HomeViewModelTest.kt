@@ -22,14 +22,13 @@ import org.mockito.ArgumentMatchers.any
 import org.mockito.Mock
 import org.mockito.Mockito
 import org.mockito.Mockito.anyString
-import org.mockito.Mockito.mock
 import org.mockito.Mockito.`when`
 import org.mockito.MockitoAnnotations
 import org.robolectric.RobolectricTestRunner
 import org.robolectric.Shadows.shadowOf
 
 @RunWith(RobolectricTestRunner::class)
-class LandingViewModelTest {
+class HomeViewModelTest {
 
   @Mock private lateinit var mockFirestore: FirebaseFirestore
 
@@ -43,10 +42,14 @@ class LandingViewModelTest {
 
   @Mock private lateinit var mockIngredientDocumentSnapshot: DocumentSnapshot
 
-  @Mock private lateinit var landingViewModel: HomeViewModel
+  @Mock private lateinit var homeViewModel: HomeViewModel
   private lateinit var recipeRepository: RecipeRepository
   private lateinit var profileRepository: ProfileRepository
 
+  @Mock private lateinit var mockQuery: Query
+  @Mock private lateinit var mockQuerySnapshot: QuerySnapshot
+
+  private val query = "Chocolate"
   private val recipeId = "lasagna1"
   private val recipeMap: Map<String, Any> =
       mapOf(
@@ -110,53 +113,37 @@ class LandingViewModelTest {
         .thenReturn(mockDocumentReference)
     `when`(mockDocumentReference.get()).thenReturn(Tasks.forResult(mockIngredientDocumentSnapshot))
 
-    `when`(mockFirestore.collection("recipes"))
-        .thenReturn(Mockito.mock(CollectionReference::class.java))
-    `when`(mockFirestore.collection("recipes").document(anyString()))
-        .thenReturn(mockDocumentReference)
-
     // Here's the critical part: ensure a Task<Void> is returned
     `when`(mockDocumentReference.set(Mockito.any())).thenReturn(Tasks.forResult(null))
+
+    `when`(mockDocumentReference.get()).thenReturn(Tasks.forResult(mockDocumentSnapshot))
+    `when`(mockDocumentSnapshot.exists()).thenReturn(true)
+    `when`(mockDocumentSnapshot.data).thenReturn(recipeMap)
+
+    `when`(mockCollectionReference.whereGreaterThanOrEqualTo("title", query)).thenReturn(mockQuery)
+    `when`(mockQuery.whereLessThan("title", query + "\uf8ff")).thenReturn(mockQuery)
+    `when`(mockQuery.get()).thenReturn(Tasks.forResult(mockQuerySnapshot))
+
+    `when`(mockQuerySnapshot.documents).thenReturn(listOf(mockDocumentSnapshot))
+
+    homeViewModel = HomeViewModel()
   }
 
   @Test
   fun getRecipe_Success() {
-
-    `when`(mockDocumentReference.get()).thenReturn(Tasks.forResult(mockDocumentSnapshot))
-    `when`(mockDocumentSnapshot.exists()).thenReturn(true)
-    `when`(mockDocumentSnapshot.data).thenReturn(recipeMap)
-
-    landingViewModel = HomeViewModel()
-    landingViewModel.fetchRecipe("lasagna1")
+    homeViewModel.fetchRecipe("lasagna1")
     shadowOf(Looper.getMainLooper()).idle()
 
-    println(landingViewModel.recipes.value)
-    assertTrue(landingViewModel.recipes.value.first().recipeId == recipeId)
+    println(homeViewModel.recipes.value)
+    assertTrue(homeViewModel.recipes.value.first().recipeId == recipeId)
   }
 
   @Test
   fun searchRecipes_Success() {
-    // Setup to return a mock Query object when querying
-    val mockQuery: Query = mock(Query::class.java)
-    `when`(mockCollectionReference.whereGreaterThanOrEqualTo(anyString(), any()))
-        .thenReturn(mockQuery)
-    `when`(mockQuery.whereLessThan(anyString(), any())).thenReturn(mockQuery)
-
-    // Mock a QuerySnapshot to return from get()
-    val mockQuerySnapshot: QuerySnapshot = mock(QuerySnapshot::class.java)
-    val mockDocumentSnapshots: List<DocumentSnapshot> = listOf(mockDocumentSnapshot)
-    `when`(mockQuery.get()).thenReturn(Tasks.forResult(mockQuerySnapshot))
-    `when`(mockQuerySnapshot.documents).thenReturn(mockDocumentSnapshots)
-
-    `when`(mockDocumentReference.get()).thenReturn(Tasks.forResult(mockDocumentSnapshot))
-    `when`(mockDocumentSnapshot.exists()).thenReturn(true)
-    `when`(mockDocumentSnapshot.data).thenReturn(recipeMap)
-
-    landingViewModel = HomeViewModel()
-    landingViewModel.searchRecipes("Chocolate")
+    homeViewModel.searchRecipes(query)
     shadowOf(Looper.getMainLooper()).idle()
 
-    println(landingViewModel.filteredRecipes.value)
-    assertTrue(landingViewModel.filteredRecipes.value.first().recipeId == recipeId)
+    println(homeViewModel.filteredRecipes.value)
+    assertTrue(homeViewModel.filteredRecipes.value.first().recipeId == recipeId)
   }
 }

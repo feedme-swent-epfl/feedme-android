@@ -141,9 +141,10 @@ class HomeViewModelTest {
   @Test
   fun searchRecipes_Success() {
     homeViewModel.searchRecipes(query)
+    homeViewModel.setShowedRecipes(true)
     shadowOf(Looper.getMainLooper()).idle()
 
-    println(homeViewModel.filteredRecipes.value)
-    assertTrue(homeViewModel.filteredRecipes.value.first().recipeId == recipeId)
+    println(homeViewModel.recipes.value)
+    assertTrue(homeViewModel.recipes.value.first().recipeId == recipeId)
   }
 }

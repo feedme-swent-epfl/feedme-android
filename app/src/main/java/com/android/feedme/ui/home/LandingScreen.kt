@@ -72,7 +72,8 @@ fun LandingPage(
 ) {
 
   val recipes = homeViewModel.recipes.collectAsState()
-  val filteredProfiles = homeViewModel.profiles.collectAsState()
+  val filteredRecipes = homeViewModel.filteredRecipes.collectAsState()
+  val filteredProfiles = homeViewModel.filteredProfiles.collectAsState()
 
   Scaffold(
       modifier = Modifier.fillMaxSize().testTag("LandingScreen"),
@@ -81,7 +82,7 @@ fun LandingPage(
         BottomNavigationMenu(Route.HOME, navigationActions::navigateTo, TOP_LEVEL_DESTINATIONS)
       },
       content = {
-        RecipeDisplay(it, navigationActions, recipes.value, homeViewModel, recipeViewModel)
+        RecipeDisplay(it, navigationActions, filteredRecipes.value , homeViewModel, recipeViewModel)
       })
 }
 

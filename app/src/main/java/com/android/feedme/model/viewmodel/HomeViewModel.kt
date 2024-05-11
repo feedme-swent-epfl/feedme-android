@@ -14,10 +14,19 @@ class HomeViewModel : ViewModel() {
 
   private val recipeRepository = RecipeRepository.instance
   private val profileRepository = ProfileRepository.instance
+
   private val _recipes = MutableStateFlow<List<Recipe>>(emptyList())
-  private val _profiles = MutableStateFlow<List<Profile>>(emptyList())
   val recipes = _recipes.asStateFlow()
-  val profiles = _profiles.asStateFlow()
+
+  private val _filteredRecipes = MutableStateFlow<List<Recipe>>(emptyList())
+  val filteredRecipes = _filteredRecipes.asStateFlow()
+
+  private val _filteredProfiles = MutableStateFlow<List<Profile>>(emptyList())
+  val filteredProfiles = _filteredProfiles.asStateFlow()
+
+  var initialSearchQuery = ""
+
+    var isFiltered: Boolean = false
 
   init {
     /*FirebaseAuth.getInstance().uid?.let {
@@ -86,7 +95,7 @@ class HomeViewModel : ViewModel() {
     viewModelScope.launch {
       recipeRepository.getFilteredRecipes(
           query,
-          onSuccess = { filteredRecipes -> _recipes.value = filteredRecipes },
+          onSuccess = { filteredRecipes -> _filteredRecipes.value = filteredRecipes },
           onFailure = {
             // Handle failure
             throw error("Filtered recipes could not be fetched")
@@ -103,7 +112,7 @@ class HomeViewModel : ViewModel() {
     viewModelScope.launch {
       profileRepository.getFilteredProfiles(
           query,
-          onSuccess = { filteredProfiles -> _profiles.value = filteredProfiles },
+          onSuccess = { filteredProfiles -> _filteredProfiles.value = filteredProfiles },
           onFailure = {
             // Handle failure
             throw error("Filtered profiles could not be fetched")
@@ -111,7 +120,13 @@ class HomeViewModel : ViewModel() {
     }
   }
 
-  fun setRecipes(recipes: List<Recipe>) {
+  fun resetSearch() {
+    _filteredRecipes.value = emptyList()
+    _filteredProfiles.value = emptyList()
+  }
+
+  fun setRecipes(recipes: List<Recipe>, filtered: Boolean = false) {
     _recipes.value = recipes
   }
+
 }

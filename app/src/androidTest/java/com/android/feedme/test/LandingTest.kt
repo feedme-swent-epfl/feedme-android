@@ -1,6 +1,10 @@
 package com.android.feedme.test
 
 import androidx.compose.ui.test.junit4.createComposeRule
+import androidx.compose.ui.test.onNodeWithContentDescription
+import androidx.compose.ui.test.onNodeWithTag
+import androidx.compose.ui.test.performClick
+import androidx.compose.ui.test.performImeAction
 import androidx.test.ext.junit.runners.AndroidJUnit4
 import com.android.feedme.model.data.Ingredient
 import com.android.feedme.model.data.IngredientMetaData
@@ -28,7 +32,7 @@ class LandingTest : TestCase() {
   @get:Rule val composeTestRule = createComposeRule()
   private val mockFirestore = mockk<FirebaseFirestore>(relaxed = true)
 
-  val recipe =
+  private val recipe =
       Recipe(
           recipeId = "lasagna1",
           title = "Tasty Lasagna",
@@ -102,9 +106,27 @@ class LandingTest : TestCase() {
     }
   }
 
-  private fun goToLandingScreen() {
+  @Test
+  fun searchBarFunctionality() {
+    goToLandingScreen(false)
+
+    ComposeScreen.onComposeScreen<LandingScreen>(composeTestRule) {
+      searchBar {
+        assertIsDisplayed()
+        performClick()
+      }
+        composeTestRule.waitForIdle()
+        composeTestRule.onNodeWithContentDescription("Search Icon Button").performClick()
+    }
+  }
+
+  private fun goToLandingScreen(fetchRecipes: Boolean = true) {
     val landingViewModel = HomeViewModel()
-    landingViewModel.setRecipes(listOf(recipe, recipe, recipe))
+    if (fetchRecipes) {
+      landingViewModel.setRecipes(listOf(recipe, recipe, recipe))
+    } else {
+      landingViewModel.initialSearchQuery = "Tasty"
+    }
     composeTestRule.setContent {
       LandingPage(mockk<NavigationActions>(relaxed = true), RecipeViewModel(), landingViewModel)
     }

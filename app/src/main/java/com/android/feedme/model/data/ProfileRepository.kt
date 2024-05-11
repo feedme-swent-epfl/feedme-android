@@ -148,6 +148,7 @@ class ProfileRepository(private val db: FirebaseFirestore) {
   ) {
     db.collection(collectionPath)
         .whereGreaterThanOrEqualTo("username", query)
+        .whereLessThan("username", query + "\uf8ff")
         .get()
         .addOnSuccessListener {
           it.documents.map { recipeMap ->

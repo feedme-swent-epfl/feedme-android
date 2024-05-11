@@ -36,12 +36,13 @@ class SearchBarTest : TestCase() {
     composeTestRule.waitForIdle()
 
     composeTestRule.onNodeWithTag("SearchBar").assertIsDisplayed()
-    // composeTestRule.onNodeWithTag("Placeholder Text").assertIsDisplayed()
+    composeTestRule.onNodeWithTag("Placeholder Text", useUnmergedTree = true).assertIsDisplayed()
     composeTestRule.onNodeWithContentDescription("Filter Icon").assertIsDisplayed()
     composeTestRule.onNodeWithContentDescription("Search Icon").assertIsDisplayed().performClick()
 
     // Wait for the search bar to be active
     composeTestRule.waitForIdle()
+    composeTestRule.onNodeWithContentDescription("Search Icon Button").assertIsDisplayed()
     composeTestRule.onNodeWithContentDescription("Close Icon").assertIsDisplayed().performClick()
   }
 }

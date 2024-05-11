@@ -5,6 +5,7 @@ import androidx.test.ext.junit.runners.AndroidJUnit4
 import com.android.feedme.model.data.Ingredient
 import com.android.feedme.model.data.IngredientMetaData
 import com.android.feedme.model.data.MeasureUnit
+import com.android.feedme.model.data.ProfileRepository
 import com.android.feedme.model.data.Recipe
 import com.android.feedme.model.data.RecipeRepository
 import com.android.feedme.model.data.Step
@@ -57,6 +58,7 @@ class LandingTest : TestCase() {
   @Before
   fun init() {
     RecipeRepository.initialize(mockFirestore)
+    ProfileRepository.initialize(mockFirestore)
   }
 
   @Test

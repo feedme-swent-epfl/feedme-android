@@ -69,9 +69,6 @@ fun SearchBarFun(viewModel: HomeViewModel) {
                 onClick = {
                   query = ""
                   active = false
-                  /* TODO: add search filtering logic here */
-                  viewModel.searchProfiles(query)
-                  viewModel.searchRecipes(query)
                 }) {
                   Icon(
                       imageVector = Icons.Default.Close,

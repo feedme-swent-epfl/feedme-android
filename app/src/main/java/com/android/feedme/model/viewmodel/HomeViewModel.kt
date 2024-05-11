@@ -1,11 +1,13 @@
 package com.android.feedme.model.viewmodel
 
+import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.android.feedme.model.data.Profile
 import com.android.feedme.model.data.ProfileRepository
 import com.android.feedme.model.data.Recipe
 import com.android.feedme.model.data.RecipeRepository
+import com.google.firebase.auth.FirebaseAuth
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.launch
@@ -15,25 +17,23 @@ class HomeViewModel : ViewModel() {
   private val recipeRepository = RecipeRepository.instance
   private val profileRepository = ProfileRepository.instance
 
+  private val _recommendedRecipes = MutableStateFlow<List<Recipe>>(emptyList())
+  private val _filteredRecipes = MutableStateFlow<List<Recipe>>(emptyList())
+
   private val _recipes = MutableStateFlow<List<Recipe>>(emptyList())
   val recipes = _recipes.asStateFlow()
-
-  private val _filteredRecipes = MutableStateFlow<List<Recipe>>(emptyList())
-  val filteredRecipes = _filteredRecipes.asStateFlow()
 
   private val _filteredProfiles = MutableStateFlow<List<Profile>>(emptyList())
   val filteredProfiles = _filteredProfiles.asStateFlow()
 
   var initialSearchQuery = ""
 
-  var isFiltered: Boolean = false
-
   init {
-    /*FirebaseAuth.getInstance().uid?.let {
+    FirebaseAuth.getInstance().uid?.let {
       fetchRecipe("lasagna1")
       fetchRecipe("lasagna1")
       fetchRecipe("lasagna1")
-    }*/
+    }
   }
 
   /**
@@ -47,7 +47,8 @@ class HomeViewModel : ViewModel() {
           id,
           onSuccess = { recipe ->
             if (recipe != null) {
-              _recipes.value += recipe
+              _recommendedRecipes.value += recipe
+              _recipes.value = _recommendedRecipes.value
             }
           },
           onFailure = {
@@ -92,10 +93,16 @@ class HomeViewModel : ViewModel() {
    * @param query: the query to search for in the recipes
    */
   fun searchRecipes(query: String) {
+    Log.d("HomeViewModel", "Filtered recipes: ${_filteredRecipes.value}")
+    Log.d("HomeViewModel", "Recommended recipes: ${_recommendedRecipes.value}")
+    Log.d("HomeViewModel", "Recipes: ${recipes.value}")
     viewModelScope.launch {
       recipeRepository.getFilteredRecipes(
           query,
-          onSuccess = { filteredRecipes -> _filteredRecipes.value = filteredRecipes },
+          onSuccess = { filteredRecipes ->
+            _filteredRecipes.value = filteredRecipes
+            _recipes.value = filteredRecipes
+          },
           onFailure = {
             // Handle failure
             throw error("Filtered recipes could not be fetched")
@@ -120,12 +127,38 @@ class HomeViewModel : ViewModel() {
     }
   }
 
+  /** A function that resets the filtered recipes and profiles lists */
   fun resetSearch() {
     _filteredRecipes.value = emptyList()
     _filteredProfiles.value = emptyList()
+    _recipes.value = _recommendedRecipes.value
   }
 
-  fun setRecipes(recipes: List<Recipe>) {
-    _recipes.value = recipes
+  /**
+   * A function that sets which recipes to show
+   *
+   * @param isFiltered: a boolean that indicates if the filtered recipes should be shown
+   */
+  fun setShowedRecipes(isFiltered: Boolean) {
+    _recipes.value =
+        if (isFiltered) {
+          _filteredRecipes.value
+        } else {
+          _recommendedRecipes.value
+        }
+  }
+
+  /**
+   * A function that forces recipes to be shown for testing purposes
+   *
+   * @param recipes: a list of recipes to show
+   * @param isFiltered: a boolean that indicates if the filtered recipes should be shown
+   */
+  fun setRecipes(recipes: List<Recipe>, isFiltered: Boolean = false) {
+    if (isFiltered) {
+      _filteredRecipes.value = recipes
+    } else {
+      _recommendedRecipes.value = recipes
+    }
   }
 }

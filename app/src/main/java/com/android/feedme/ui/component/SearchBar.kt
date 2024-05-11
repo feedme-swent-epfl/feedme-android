@@ -51,7 +51,6 @@ fun SearchBarFun(viewModel: HomeViewModel) {
       viewModel.resetSearch()
       viewModel.searchProfiles(it)
       viewModel.searchRecipes(it)
-      viewModel.isFiltered = true
     }
   }
 
@@ -88,7 +87,6 @@ fun SearchBarFun(viewModel: HomeViewModel) {
                   query = ""
                   active = false
                   viewModel.resetSearch()
-                  viewModel.isFiltered = false
                 }) {
                   Icon(
                       imageVector = Icons.Default.Close,

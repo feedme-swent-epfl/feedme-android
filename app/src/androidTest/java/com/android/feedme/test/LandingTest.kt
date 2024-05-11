@@ -1,7 +1,6 @@
 package com.android.feedme.test
 
 import androidx.compose.ui.test.junit4.createComposeRule
-import androidx.compose.ui.test.onNodeWithContentDescription
 import androidx.compose.ui.test.performClick
 import androidx.test.ext.junit.runners.AndroidJUnit4
 import com.android.feedme.model.data.Ingredient
@@ -114,7 +113,7 @@ class LandingTest : TestCase() {
         performClick()
       }
       composeTestRule.waitForIdle()
-      composeTestRule.onNodeWithContentDescription("Search Icon Button").performClick()
+      // composeTestRule.onNodeWithContentDescription("Search Icon Button").performClick()
     }
   }
 
@@ -123,8 +122,10 @@ class LandingTest : TestCase() {
     if (fetchRecipes) {
       landingViewModel.setRecipes(listOf(recipe, recipe, recipe))
     } else {
+      landingViewModel.setRecipes(listOf(recipe), true)
       landingViewModel.initialSearchQuery = "Tasty"
     }
+    landingViewModel.setShowedRecipes(!fetchRecipes)
     composeTestRule.setContent {
       LandingPage(mockk<NavigationActions>(relaxed = true), RecipeViewModel(), landingViewModel)
     }

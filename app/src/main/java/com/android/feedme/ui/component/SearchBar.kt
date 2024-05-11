@@ -1,7 +1,9 @@
 package com.android.feedme.ui.component
 
 import androidx.compose.foundation.background
+import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
@@ -27,6 +29,8 @@ import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.text.font.FontStyle
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.lifecycle.viewmodel.compose.viewModel
+import com.android.feedme.model.viewmodel.HomeViewModel
 
 /**
  * Composable function for the Search Bar.
@@ -35,10 +39,20 @@ import androidx.compose.ui.unit.sp
  */
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun SearchBarFun() {
-
-  var query by remember { mutableStateOf("") }
+fun SearchBarFun(viewModel: HomeViewModel) {
+  var query by remember { mutableStateOf(viewModel.initialSearchQuery) }
   var active by remember { mutableStateOf(false) }
+
+  // Action to be performed when searching
+  val onSearch: (String) -> Unit = {
+    active = false
+    // Execute search logic only if the query is not empty
+    if (query.isNotEmpty()) {
+      viewModel.resetSearch()
+      viewModel.searchProfiles(it)
+      viewModel.searchRecipes(it)
+    }
+  }
 
   // Search bar + filters icon
   Row(modifier = Modifier.background(Color.White), verticalAlignment = Alignment.CenterVertically) {
@@ -48,16 +62,22 @@ fun SearchBarFun() {
         active = active,
         onActiveChange = { active = it },
         onQueryChange = { query = it },
-        onSearch = {
-          active = false
-          /* TODO: add search filtering logic here */
-        },
+        onSearch = onSearch,
         leadingIcon = {
-          IconButton(onClick = { /*TODO: add manual filtering logic*/}) {
-            Icon(
-                Icons.Outlined.Tune,
-                contentDescription = "Filter Icon",
-                modifier = Modifier.size(26.dp))
+          if (active) {
+            IconButton(onClick = { onSearch(query) }) {
+              Icon(
+                  Icons.Default.Search,
+                  contentDescription = "Search Icon Button",
+                  modifier = Modifier.size(26.dp))
+            }
+          } else {
+            IconButton(onClick = { /*TODO: add manual filtering logic*/}) {
+              Icon(
+                  Icons.Outlined.Tune,
+                  contentDescription = "Filter Icon",
+                  modifier = Modifier.size(26.dp))
+            }
           }
         },
         trailingIcon = {
@@ -66,7 +86,8 @@ fun SearchBarFun() {
                 onClick = {
                   query = ""
                   active = false
-                /* TODO: add search filtering logic here */ }) {
+                  viewModel.resetSearch()
+                }) {
                   Icon(
                       imageVector = Icons.Default.Close,
                       contentDescription = "Close Icon",
@@ -85,6 +106,11 @@ fun SearchBarFun() {
               fontStyle = FontStyle.Italic,
               fontSize = 16.sp,
               modifier = Modifier.testTag("Placeholder Text"))
-        }) {}
+        },
+        content = {
+          Column(modifier = Modifier.fillMaxHeight().background(Color.Black)) {
+            Text("Hello World")
+          }
+        })
   }
 }

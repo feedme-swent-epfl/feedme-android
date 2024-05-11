@@ -1,14 +1,16 @@
 package com.android.feedme.test
 
 import androidx.compose.ui.test.junit4.createComposeRule
+import androidx.compose.ui.test.performClick
 import androidx.test.ext.junit.runners.AndroidJUnit4
 import com.android.feedme.model.data.Ingredient
 import com.android.feedme.model.data.IngredientMetaData
 import com.android.feedme.model.data.MeasureUnit
+import com.android.feedme.model.data.ProfileRepository
 import com.android.feedme.model.data.Recipe
 import com.android.feedme.model.data.RecipeRepository
 import com.android.feedme.model.data.Step
-import com.android.feedme.model.viewmodel.LandingPageViewModel
+import com.android.feedme.model.viewmodel.HomeViewModel
 import com.android.feedme.model.viewmodel.RecipeViewModel
 import com.android.feedme.screen.LandingScreen
 import com.android.feedme.ui.home.LandingPage
@@ -27,7 +29,7 @@ class LandingTest : TestCase() {
   @get:Rule val composeTestRule = createComposeRule()
   private val mockFirestore = mockk<FirebaseFirestore>(relaxed = true)
 
-  val recipe =
+  private val recipe =
       Recipe(
           recipeId = "lasagna1",
           title = "Tasty Lasagna",
@@ -57,6 +59,7 @@ class LandingTest : TestCase() {
   @Before
   fun init() {
     RecipeRepository.initialize(mockFirestore)
+    ProfileRepository.initialize(mockFirestore)
   }
 
   @Test
@@ -100,9 +103,29 @@ class LandingTest : TestCase() {
     }
   }
 
-  private fun goToLandingScreen() {
-    val landingViewModel = LandingPageViewModel()
-    landingViewModel.setRecipes(listOf(recipe, recipe, recipe))
+  @Test
+  fun searchBarFunctionality() {
+    goToLandingScreen(false)
+
+    ComposeScreen.onComposeScreen<LandingScreen>(composeTestRule) {
+      searchBar {
+        assertIsDisplayed()
+        performClick()
+      }
+      composeTestRule.waitForIdle()
+      // composeTestRule.onNodeWithContentDescription("Search Icon Button").performClick()
+    }
+  }
+
+  private fun goToLandingScreen(fetchRecipes: Boolean = true) {
+    val landingViewModel = HomeViewModel()
+    if (fetchRecipes) {
+      landingViewModel.setRecipes(listOf(recipe, recipe, recipe))
+    } else {
+      landingViewModel.setRecipes(listOf(recipe), true)
+      landingViewModel.initialSearchQuery = "Tasty"
+    }
+    landingViewModel.setShowedRecipes(!fetchRecipes)
     composeTestRule.setContent {
       LandingPage(mockk<NavigationActions>(relaxed = true), RecipeViewModel(), landingViewModel)
     }

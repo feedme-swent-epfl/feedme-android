@@ -33,6 +33,8 @@ import androidx.compose.material3.OutlinedButton
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
@@ -43,9 +45,8 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import coil.compose.AsyncImage
 import com.android.feedme.model.data.Recipe
-import com.android.feedme.model.viewmodel.LandingPageViewModel
+import com.android.feedme.model.viewmodel.HomeViewModel
 import com.android.feedme.model.viewmodel.RecipeViewModel
-import com.android.feedme.resources.recipe
 import com.android.feedme.ui.component.SearchBarFun
 import com.android.feedme.ui.navigation.BottomNavigationMenu
 import com.android.feedme.ui.navigation.NavigationActions
@@ -68,10 +69,11 @@ import com.android.feedme.ui.theme.YellowStarBlackOutline
 fun LandingPage(
     navigationActions: NavigationActions,
     recipeViewModel: RecipeViewModel = RecipeViewModel(),
-    landingPageViewModel: LandingPageViewModel = LandingPageViewModel()
+    homeViewModel: HomeViewModel = HomeViewModel()
 ) {
 
-  val recipes = landingPageViewModel.recipes.value
+  val recipes = homeViewModel.recipes.collectAsState()
+  val filteredProfiles = homeViewModel.filteredProfiles.collectAsState()
 
   Scaffold(
       modifier = Modifier.fillMaxSize().testTag("LandingScreen"),
@@ -79,19 +81,26 @@ fun LandingPage(
       bottomBar = {
         BottomNavigationMenu(Route.HOME, navigationActions::navigateTo, TOP_LEVEL_DESTINATIONS)
       },
-      content = { RecipeDisplay(it, navigationActions, recipes, recipeViewModel) })
+      content = {
+        RecipeDisplay(it, navigationActions, recipes.value, homeViewModel, recipeViewModel)
+      })
 }
 
 /**
  * A function that iterates over the list of recipes and generates a card for each one
  *
+ * @param paddingValues : the padding values for the screen
+ * @param navigationActions : the navigation actions for the screen
  * @param recipes : the list of [Recipe] to be displayed
+ * @param homeViewModel : the [HomeViewModel] instance
+ * @param recipeViewModel : the [RecipeViewModel] instance
  */
 @Composable
 fun RecipeDisplay(
     paddingValues: PaddingValues,
     navigationActions: NavigationActions,
     recipes: List<Recipe>,
+    homeViewModel: HomeViewModel,
     recipeViewModel: RecipeViewModel
 ) {
 
@@ -100,7 +109,7 @@ fun RecipeDisplay(
           Modifier.testTag("CompleteScreen").padding(paddingValues).background(Color.White)) {
 
         // Search bar + filters icon
-        SearchBarFun()
+        SearchBarFun(homeViewModel)
 
         // Scrollable list of recipes
         LazyColumn(

@@ -1,6 +1,5 @@
 package com.android.feedme.model.viewmodel
 
-import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.android.feedme.model.data.Profile
@@ -93,9 +92,6 @@ class HomeViewModel : ViewModel() {
    * @param query: the query to search for in the recipes
    */
   fun searchRecipes(query: String) {
-    Log.d("HomeViewModel", "Filtered recipes: ${_filteredRecipes.value}")
-    Log.d("HomeViewModel", "Recommended recipes: ${_recommendedRecipes.value}")
-    Log.d("HomeViewModel", "Recipes: ${recipes.value}")
     viewModelScope.launch {
       recipeRepository.getFilteredRecipes(
           query,

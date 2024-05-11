@@ -18,7 +18,6 @@ import junit.framework.TestCase.assertTrue
 import org.junit.Before
 import org.junit.Test
 import org.junit.runner.RunWith
-import org.mockito.ArgumentMatchers.any
 import org.mockito.Mock
 import org.mockito.Mockito
 import org.mockito.Mockito.anyString
@@ -50,6 +49,7 @@ class HomeViewModelTest {
   @Mock private lateinit var mockQuerySnapshot: QuerySnapshot
 
   private val query = "Chocolate"
+  private val queryUser = "user"
   private val recipeId = "lasagna1"
   private val recipeMap: Map<String, Any> =
       mapOf(
@@ -91,6 +91,17 @@ class HomeViewModelTest {
           "difficulty" to "Easy",
           "imageUrl" to "http://example.com/chocolate_cake.jpg")
 
+  private val profileMap: Map<String, Any> =
+      mapOf(
+          "username" to "user123",
+          "email" to "user@gmail.com",
+          "profileImageUrl" to "http://example.com/user123.jpg",
+          "bio" to "I love to cook!",
+          "followers" to 0,
+          "following" to 0,
+          "savedRecipes" to listOf("lasagna1"),
+          "createdRecipes" to listOf("lasagna1"))
+
   @Before
   fun setUp() {
     MockitoAnnotations.openMocks(this)
@@ -105,12 +116,13 @@ class HomeViewModelTest {
     profileRepository = ProfileRepository.instance
 
     `when`(mockFirestore.collection("recipes")).thenReturn(mockCollectionReference)
-    `when`(mockCollectionReference.document(anyString())).thenReturn(mockDocumentReference)
-
-    // Additional mocking for ingredients collection
+    `when`(mockFirestore.collection("profiles")).thenReturn(mockCollectionReference)
     `when`(mockFirestore.collection("ingredients")).thenReturn(mockIngredientsCollectionReference)
+
+    `when`(mockCollectionReference.document(anyString())).thenReturn(mockDocumentReference)
     `when`(mockIngredientsCollectionReference.document(anyString()))
         .thenReturn(mockDocumentReference)
+
     `when`(mockDocumentReference.get()).thenReturn(Tasks.forResult(mockIngredientDocumentSnapshot))
 
     // Here's the critical part: ensure a Task<Void> is returned
@@ -120,8 +132,15 @@ class HomeViewModelTest {
     `when`(mockDocumentSnapshot.exists()).thenReturn(true)
     `when`(mockDocumentSnapshot.data).thenReturn(recipeMap)
 
+    // for searchRecipes
     `when`(mockCollectionReference.whereGreaterThanOrEqualTo("title", query)).thenReturn(mockQuery)
     `when`(mockQuery.whereLessThan("title", query + "\uf8ff")).thenReturn(mockQuery)
+
+    // for searchProfiles
+    `when`(mockCollectionReference.whereGreaterThanOrEqualTo("username", queryUser))
+        .thenReturn(mockQuery)
+    `when`(mockQuery.whereLessThan("username", queryUser + "\uf8ff")).thenReturn(mockQuery)
+
     `when`(mockQuery.get()).thenReturn(Tasks.forResult(mockQuerySnapshot))
 
     `when`(mockQuerySnapshot.documents).thenReturn(listOf(mockDocumentSnapshot))
@@ -146,5 +165,15 @@ class HomeViewModelTest {
 
     println(homeViewModel.recipes.value)
     assertTrue(homeViewModel.recipes.value.first().recipeId == recipeId)
+  }
+
+  @Test
+  fun searchProfiles_Success() {
+    `when`(mockDocumentSnapshot.data).thenReturn(profileMap)
+    homeViewModel.searchProfiles(queryUser)
+    shadowOf(Looper.getMainLooper()).idle()
+
+    println(homeViewModel.filteredProfiles.value)
+    assertTrue(homeViewModel.filteredProfiles.value.first().username == "user123")
   }
 }

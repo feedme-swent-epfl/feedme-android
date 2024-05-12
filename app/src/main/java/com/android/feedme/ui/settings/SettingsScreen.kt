@@ -33,7 +33,6 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.android.feedme.R
@@ -77,7 +76,6 @@ fun SettingsScreen(navigationActions: NavigationActions, profileViewModel: Profi
  *
  * @param navigationActions : the [NavigationActions] given in the MainActivity
  */
-
 @Composable
 fun SettingsPage(navigationActions: NavigationActions, profileViewModel: ProfileViewModel) {
   val context = LocalContext.current

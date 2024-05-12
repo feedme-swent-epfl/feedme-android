@@ -155,7 +155,7 @@ fun CreateComment() {
 
                     // publish button
                     OutlinedButton(
-                        onClick = { /* TODO() implement deleting button functionality */},
+                        onClick = { /* TODO() implement publishing button functionality */},
                         colors = ButtonDefaults.buttonColors(Color.White),
                         modifier =
                             Modifier.width(150.dp)

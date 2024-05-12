@@ -19,6 +19,7 @@ import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Star
+import androidx.compose.material.icons.outlined.StarOutline
 import androidx.compose.material.icons.outlined.StarRate
 import androidx.compose.material.icons.outlined.Timer
 import androidx.compose.material3.Button
@@ -44,92 +45,19 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.modifier.modifierLocalConsumer
 import androidx.compose.material3.OutlinedTextFieldDefaults
 import androidx.compose.ui.graphics.RectangleShape
+import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import com.android.feedme.ui.theme.TemplateColor
 
-
-@Composable
-fun CreateComment() {
-    var commentTitle by remember { mutableStateOf("") }
-    var description by remember { mutableStateOf("") }
-    var rating by remember { mutableFloatStateOf(4.0f) }
-
-    Box(
-        Modifier
-            .fillMaxSize()
-            .padding(16.dp)
-            .background(Color.Gray.copy(alpha = 0.2f)),
-        contentAlignment = Alignment.Center
-    ) {
-        Column(
-            modifier = Modifier
-                .width(300.dp)
-                .background(Color.White, RoundedCornerShape(16.dp))
-                .padding(16.dp),
-            verticalArrangement = Arrangement.spacedBy(12.dp),
-            horizontalAlignment = Alignment.CenterHorizontally
-        ) {
-            // Plus icon
-            Box(
-                Modifier
-                    .size(40.dp)
-                    .background(Color.LightGray, CircleShape),
-                contentAlignment = Alignment.Center
-            ) {
-                Text("+", fontSize = 24.sp, fontWeight = FontWeight.Bold)
-            }
-
-            // Title input
-            OutlinedTextField(
-                value = commentTitle,
-                onValueChange = { commentTitle = it },
-                label = { Text("Enter the title of the Comment") },
-                modifier = Modifier.fillMaxWidth()
-            )
-
-            // Time and rating indicators
-            Row(
-                Modifier.fillMaxWidth(),
-                horizontalArrangement = Arrangement.SpaceBetween
-            ) {
-                Text("~ 15’", fontSize = 16.sp)
-                Row(verticalAlignment = Alignment.CenterVertically) {
-                    Text("4.0", fontSize = 16.sp)
-                    Spacer(modifier = Modifier.width(4.dp))
-                    Icon(Icons.Default.Star, contentDescription = null, tint = Color.Yellow)
-                }
-            }
-
-            // Description input
-            OutlinedTextField(
-                value = description,
-                onValueChange = { description = it },
-                label = { Text("Description") },
-                modifier = Modifier.fillMaxWidth()
-            )
-
-            // Buttons
-            Row(
-                Modifier.fillMaxWidth(),
-                horizontalArrangement = Arrangement.SpaceBetween
-            ) {
-                Button(onClick = { /* Handle Delete */ }, colors = ButtonDefaults.buttonColors(Color.Red)) {
-                    Text("Delete")
-                }
-                Button(onClick = { /* Handle Publish */ }, colors = ButtonDefaults.buttonColors(Color.Blue)) {
-                    Text("Publish", color = Color.White)
-                }
-            }
-        }
-    }
-}
-
-@OptIn(ExperimentalMaterial3Api::class)
+/**
+ * Composable function to enable comment creation
+ * */
 @Preview
 @Composable
-fun Test() {
+fun CreateComment() {
 
     var commentTitle by remember { mutableStateOf("") }
     var rating by remember { mutableStateOf("") }
@@ -139,14 +67,17 @@ fun Test() {
         Modifier
             .fillMaxSize()
             .padding(16.dp)
-            .background(Color.Gray.copy(alpha = 0.2f)),
+            .background(Color.Transparent)
+            .testTag("OuterBox"),
         contentAlignment = Alignment.Center
     ) {
         Column(
             modifier = Modifier
                 .width(350.dp)
                 .background(Color.White, RoundedCornerShape(16.dp))
-                .padding(16.dp),
+                .border(2.dp, TemplateColor, RoundedCornerShape(16.dp))
+                .padding(16.dp)
+                .testTag("InnerCol"),
             verticalArrangement = Arrangement.spacedBy(12.dp),
             horizontalAlignment = Alignment.CenterHorizontally
         ) {
@@ -163,7 +94,8 @@ fun Test() {
                     Modifier
                         .size(50.dp)
                         .background(Color.LightGray, CircleShape)
-                        .clickable { /* TODO() onImageUpload() */ }, // Trigger the image upload function
+                        .clickable { /* TODO() onImageUpload() */ }
+                        .testTag("PhotoIcon"),
                     contentAlignment = Alignment.Center
                 ) {
                     Text("+", fontSize = 30.sp, fontWeight = FontWeight.Bold)
@@ -180,8 +112,8 @@ fun Test() {
                         value = commentTitle,
                         onValueChange = { commentTitle = it },
                         label = { Text("Enter the title of the comment") },
-                        modifier = Modifier.fillMaxWidth(), //.padding(bottom = 12.dp),
-                        shape = RoundedCornerShape(16.dp)
+                        modifier = Modifier.fillMaxWidth().testTag("TitleField"),
+                        shape = RoundedCornerShape(20.dp)
                     )
 
                     // Rating input
@@ -199,17 +131,18 @@ fun Test() {
                             modifier = Modifier
                                 .width(20.dp)
                                 .height(30.dp)
-                                .background(color = Color.LightGray),
-                            shape = RoundedCornerShape(16.dp),
-                            colors = OutlinedTextFieldDefaults.colors(cursorColor = Color.Gray))
+                                .background(color = Color.LightGray)
+                                .testTag("RatingField"),
+                            shape = RoundedCornerShape(20.dp),
+                            colors = OutlinedTextFieldDefaults.colors(cursorColor = Color.Black))
                         // rating icon
                         Icon(
-                            imageVector = Icons.Outlined.StarRate,
+                            imageVector = Icons.Outlined.StarOutline,
                             contentDescription = "RatingIcon",
                             modifier = Modifier
                                 .size(34.dp)
-                                .padding(start = 6.dp))
-
+                                .padding(start = 6.dp)
+                                .testTag("RatingStar"))
                     }
                 }
             }
@@ -221,7 +154,8 @@ fun Test() {
                 label = { Text("Description") },
                 modifier = Modifier
                     .fillMaxWidth()
-                    .height(200.dp),
+                    .height(200.dp)
+                    .testTag("DescriptionField"),
                 shape = RoundedCornerShape(16.dp)
             )
 
@@ -235,12 +169,42 @@ fun Test() {
 
                 // delete button
                 OutlinedButton(
-                    modifier = Modifier.border(2.dp, Color.Red, RoundedCornerShape(16.dp)),
+                    onClick = { /* TODO() implement deleting button functionality */ },
                     colors = ButtonDefaults.buttonColors(Color.White),
-                    shape = RoundedCornerShape(16.dp),
-                    onClick = { /*TODO() implement deleting button functionality */ }
-                ) {
-                    Text(text = "Delete", color = Color.Red, fontWeight = FontWeight.Bold)
+                    modifier =
+                    Modifier
+                        .width(150.dp)
+                        .height(48.dp)
+                        .testTag("DeleteAccountButton")
+                        .border(2.dp, Color.Red, shape = RoundedCornerShape(20.dp))
+                        .testTag("DeleteButton"),
+                    shape = RoundedCornerShape(20.dp)) {
+                    Text(
+                        "Delete",
+                        color = Color.Red,
+                        fontWeight = FontWeight.Medium,
+                        fontSize = 16.sp)
+                }
+
+                Spacer(modifier = Modifier.width(10.dp))
+
+                // publish button
+                OutlinedButton(
+                    onClick = { /* TODO() implement deleting button functionality */ },
+                    colors = ButtonDefaults.buttonColors(Color.White),
+                    modifier =
+                    Modifier
+                        .width(150.dp)
+                        .height(48.dp)
+                        .testTag("DeleteAccountButton")
+                        .border(2.dp, TemplateColor, shape = RoundedCornerShape(20.dp))
+                        .testTag("PublishButton"),
+                    shape = RoundedCornerShape(20.dp)) {
+                    Text(
+                        "Publish",
+                        color = TemplateColor,
+                        fontWeight = FontWeight.Medium,
+                        fontSize = 16.sp)
                 }
 
             }

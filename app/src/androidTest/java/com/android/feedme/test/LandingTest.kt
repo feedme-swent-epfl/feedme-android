@@ -11,6 +11,7 @@ import com.android.feedme.model.data.Recipe
 import com.android.feedme.model.data.RecipeRepository
 import com.android.feedme.model.data.Step
 import com.android.feedme.model.viewmodel.HomeViewModel
+import com.android.feedme.model.viewmodel.ProfileViewModel
 import com.android.feedme.model.viewmodel.RecipeViewModel
 import com.android.feedme.screen.LandingScreen
 import com.android.feedme.ui.home.LandingPage
@@ -127,7 +128,11 @@ class LandingTest : TestCase() {
     }
     landingViewModel.setShowedRecipes(!fetchRecipes)
     composeTestRule.setContent {
-      LandingPage(mockk<NavigationActions>(relaxed = true), RecipeViewModel(), landingViewModel)
+      LandingPage(
+          mockk<NavigationActions>(relaxed = true),
+          RecipeViewModel(),
+          landingViewModel,
+          ProfileViewModel())
     }
     composeTestRule.waitForIdle()
   }

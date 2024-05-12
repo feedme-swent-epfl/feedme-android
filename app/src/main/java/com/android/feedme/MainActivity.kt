@@ -83,7 +83,7 @@ class MainActivity : ComponentActivity() {
                     // Create a shared view model for Recipe
                     val recipeViewModel = viewModel<RecipeViewModel>()
                     val homeViewModel: HomeViewModel = viewModel<HomeViewModel>()
-                    LandingPage(navigationActions, recipeViewModel, homeViewModel)
+                    LandingPage(navigationActions, recipeViewModel, homeViewModel, profileViewModel)
                   }
                 }
 

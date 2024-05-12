@@ -170,12 +170,3 @@ fun FilteredContent(
     }
   }
 }
-
-@Preview(showBackground = true)
-@Composable
-fun SearchScreenPreview() {
-  val navController = rememberNavController()
-  val navigationActions = NavigationActions(navController)
-  SearchScreen(
-      Route.HOME, navigationActions, SearchViewModel(), RecipeViewModel(), ProfileViewModel())
-}

@@ -110,7 +110,7 @@ fun RecipeDisplay(
           Modifier.testTag("CompleteScreen").padding(paddingValues).background(Color.White)) {
 
         // Search bar + filters icon
-        SearchBarFun(navigationActions, searchViewModel)
+        SearchBarFun(Route.HOME, navigationActions, searchViewModel)
 
         // Scrollable list of recipes
         LazyColumn(

@@ -36,6 +36,16 @@ import com.android.feedme.ui.navigation.TOP_LEVEL_DESTINATIONS
 import com.android.feedme.ui.navigation.TopBarNavigation
 import com.android.feedme.ui.profile.FriendsCard
 
+/**
+ * Composable function for the Search Screen. This function displays the search screen with the
+ * search bar and the filtered content.
+ *
+ * @param route: the current route of the app
+ * @param navigationActions: the navigation actions to be performed
+ * @param searchViewModel: the [SearchViewModel] view model for the search functionality
+ * @param recipeViewModel: the [RecipeViewModel] view model for the recipe functionality
+ * @param profileViewModel: the [ProfileViewModel] view model for the profile functionality
+ */
 @Composable
 fun SearchScreen(
     route: String,
@@ -56,6 +66,16 @@ fun SearchScreen(
       })
 }
 
+/**
+ * Composable function for the Search Screen Content. This function displays the search screen
+ * content with the option to switch between filtered recipes and accounts.
+ *
+ * @param padding: the [PaddingValues] for the content padding
+ * @param navigationActions: the navigation actions to be performed
+ * @param homeViewModel: the [SearchViewModel] view model for the search functionality
+ * @param recipeViewModel: the [RecipeViewModel] view model for the recipe functionality
+ * @param profileViewModel: the [ProfileViewModel] view model for the profile functionality
+ */
 @Composable
 fun SearchScreenContent(
     padding: PaddingValues,
@@ -105,6 +125,16 @@ fun SearchScreenContent(
   }
 }
 
+/**
+ * The filtered [List<Recipe>] or [List<Profile>] content to be displayed.
+ *
+ * @param recipes: the list of recipes to be displayed
+ * @param profiles: the list of profiles to be displayed
+ * @param navigationActions: the navigation actions to be performed
+ * @param mode: the mode to determine if the content is recipes or profiles
+ * @param recipeViewModel: the [RecipeViewModel] view model for the recipe functionality
+ * @param profileViewModel: the [ProfileViewModel] view model for the profile functionality
+ */
 @Composable
 fun FilteredContent(
     recipes: List<Recipe>,

@@ -10,6 +10,12 @@ import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.launch
 
+/**
+ * A class that generates the search view model
+ *
+ * This class is responsible for fetching the recipes and profiles based on a search query and
+ * updating the UI with the filtered recipes and profiles
+ */
 class SearchViewModel : ViewModel() {
   private val recipeRepository = RecipeRepository.instance
   private val profileRepository = ProfileRepository.instance

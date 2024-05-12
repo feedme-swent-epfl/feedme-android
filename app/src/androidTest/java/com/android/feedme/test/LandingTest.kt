@@ -1,7 +1,6 @@
 package com.android.feedme.test
 
 import androidx.compose.ui.test.junit4.createComposeRule
-import androidx.compose.ui.test.performClick
 import androidx.test.ext.junit.runners.AndroidJUnit4
 import com.android.feedme.model.data.Ingredient
 import com.android.feedme.model.data.IngredientMetaData
@@ -12,6 +11,7 @@ import com.android.feedme.model.data.RecipeRepository
 import com.android.feedme.model.data.Step
 import com.android.feedme.model.viewmodel.HomeViewModel
 import com.android.feedme.model.viewmodel.RecipeViewModel
+import com.android.feedme.model.viewmodel.SearchViewModel
 import com.android.feedme.screen.LandingScreen
 import com.android.feedme.ui.home.LandingPage
 import com.android.feedme.ui.navigation.NavigationActions
@@ -105,7 +105,7 @@ class LandingTest : TestCase() {
 
   @Test
   fun searchBarFunctionality() {
-    goToLandingScreen(false)
+    goToLandingScreen()
 
     ComposeScreen.onComposeScreen<LandingScreen>(composeTestRule) {
       searchBar {
@@ -117,17 +117,15 @@ class LandingTest : TestCase() {
     }
   }
 
-  private fun goToLandingScreen(fetchRecipes: Boolean = true) {
+  private fun goToLandingScreen() {
     val landingViewModel = HomeViewModel()
-    if (fetchRecipes) {
-      landingViewModel.setRecipes(listOf(recipe, recipe, recipe))
-    } else {
-      landingViewModel.setRecipes(listOf(recipe), true)
-      landingViewModel.initialSearchQuery = "Tasty"
-    }
-    landingViewModel.setShowedRecipes(!fetchRecipes)
+    landingViewModel.setRecipes(listOf(recipe, recipe, recipe))
     composeTestRule.setContent {
-      LandingPage(mockk<NavigationActions>(relaxed = true), RecipeViewModel(), landingViewModel)
+      LandingPage(
+          mockk<NavigationActions>(relaxed = true),
+          RecipeViewModel(),
+          landingViewModel,
+          SearchViewModel())
     }
     composeTestRule.waitForIdle()
   }

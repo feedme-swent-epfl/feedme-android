@@ -32,16 +32,18 @@ import androidx.compose.ui.unit.sp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.android.feedme.model.viewmodel.SearchViewModel
 import com.android.feedme.ui.navigation.NavigationActions
-import com.android.feedme.ui.navigation.Screen
 
 /**
- * Composable function for the Search Bar.
+ * Composable function for the Search Bar. This function displays the search bar on both the landing
+ * and saved pages.
  *
- * This function displays the search bar on both the landing and saved pages.
+ * @param route: the current route of the app
+ * @param navigationActions: the navigation actions to be performed
+ * @param viewModel: the [SearchViewModel] view model for the search functionality
  */
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun SearchBarFun(navigationActions: NavigationActions, viewModel: SearchViewModel) {
+fun SearchBarFun(route: String, navigationActions: NavigationActions, viewModel: SearchViewModel) {
   var query by remember { mutableStateOf(viewModel.initialSearchQuery) }
   var active by remember { mutableStateOf(false) }
 
@@ -53,7 +55,7 @@ fun SearchBarFun(navigationActions: NavigationActions, viewModel: SearchViewMode
       viewModel.resetSearch()
       viewModel.searchProfiles(it)
       viewModel.searchRecipes(it)
-      navigationActions.navigateTo(Screen.SEARCH)
+      navigationActions.navigateTo("Search/${route}")
     }
   }
 

@@ -12,20 +12,19 @@ import org.junit.runner.RunWith
 @RunWith(AndroidJUnit4::class)
 class CreateCommentTest : TestCase() {
 
-    @get:Rule
-    val composeTestRule = createComposeRule()
-    @Test
-    fun testCreateCommentEverythingDisplayed() {
+  @get:Rule val composeTestRule = createComposeRule()
 
-        composeTestRule.onNodeWithTag("OuterBox").assertIsDisplayed()
-        composeTestRule.onNodeWithTag("InnerCol").assertIsDisplayed()
-        composeTestRule.onNodeWithTag("PhotoIcon").assertIsDisplayed()
-        composeTestRule.onNodeWithTag("TitleField").assertIsDisplayed()
-        composeTestRule.onNodeWithTag("RatingField").assertIsDisplayed()
-        composeTestRule.onNodeWithTag("RatingStar").assertIsDisplayed()
-        composeTestRule.onNodeWithTag("DescriptionField").assertIsDisplayed()
-        composeTestRule.onNodeWithTag("DeleteButton").assertIsDisplayed()
-        composeTestRule.onNodeWithTag("PublishButton").assertIsDisplayed()
+  @Test
+  fun testCreateCommentEverythingDisplayed() {
 
-    }
+    composeTestRule.onNodeWithTag("OuterBox").assertIsDisplayed()
+    composeTestRule.onNodeWithTag("InnerCol").assertIsDisplayed()
+    composeTestRule.onNodeWithTag("PhotoIcon").assertIsDisplayed()
+    composeTestRule.onNodeWithTag("TitleField").assertIsDisplayed()
+    composeTestRule.onNodeWithTag("RatingField").assertIsDisplayed()
+    composeTestRule.onNodeWithTag("RatingStar").assertIsDisplayed()
+    composeTestRule.onNodeWithTag("DescriptionField").assertIsDisplayed()
+    composeTestRule.onNodeWithTag("DeleteButton").assertIsDisplayed()
+    composeTestRule.onNodeWithTag("PublishButton").assertIsDisplayed()
+  }
 }

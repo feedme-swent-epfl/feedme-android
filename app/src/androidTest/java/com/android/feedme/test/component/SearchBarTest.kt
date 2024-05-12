@@ -8,8 +8,10 @@ import androidx.compose.ui.test.performClick
 import androidx.test.ext.junit.runners.AndroidJUnit4
 import com.android.feedme.model.data.ProfileRepository
 import com.android.feedme.model.data.RecipeRepository
-import com.android.feedme.model.viewmodel.HomeViewModel
+import com.android.feedme.model.viewmodel.SearchViewModel
 import com.android.feedme.ui.component.SearchBarFun
+import com.android.feedme.ui.navigation.NavigationActions
+import com.android.feedme.ui.navigation.Route
 import com.google.firebase.firestore.FirebaseFirestore
 import com.kaspersky.kaspresso.testcases.api.testcase.TestCase
 import io.mockk.mockk
@@ -32,7 +34,9 @@ class SearchBarTest : TestCase() {
   @Test
   fun checkSearchBarDisplayed() {
 
-    composeTestRule.setContent { SearchBarFun(HomeViewModel()) }
+    composeTestRule.setContent {
+      SearchBarFun(Route.HOME, mockk<NavigationActions>(relaxed = true), SearchViewModel())
+    }
     composeTestRule.waitForIdle()
 
     composeTestRule.onNodeWithTag("SearchBar").assertIsDisplayed()

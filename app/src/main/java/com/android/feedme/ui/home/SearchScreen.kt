@@ -55,8 +55,8 @@ fun SearchScreen(
     profileViewModel: ProfileViewModel
 ) {
   Scaffold(
-      modifier = Modifier.fillMaxSize(),
-      topBar = { TopBarNavigation("Search", navigationActions) },
+      modifier = Modifier.fillMaxSize().testTag("SearchScreen"),
+      topBar = { TopBarNavigation("Search Results", navigationActions) },
       bottomBar = {
         BottomNavigationMenu(route, navigationActions::navigateTo, TOP_LEVEL_DESTINATIONS)
       },

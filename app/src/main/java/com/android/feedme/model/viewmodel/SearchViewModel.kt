@@ -26,8 +26,6 @@ class SearchViewModel : ViewModel() {
   private val _filteredProfiles = MutableStateFlow<List<Profile>>(emptyList())
   val filteredProfiles = _filteredProfiles.asStateFlow()
 
-  var initialSearchQuery = ""
-
   /**
    * A function that fetches the recipes given a query
    *
@@ -66,5 +64,23 @@ class SearchViewModel : ViewModel() {
   fun resetSearch() {
     _filteredRecipes.value = emptyList()
     _filteredProfiles.value = emptyList()
+  }
+
+  /**
+   * A function that sets the filtered recipes list for testing
+   *
+   * @param recipes: the list of recipes to be displayed
+   */
+  fun setFilteredRecipes(recipes: List<Recipe>) {
+    _filteredRecipes.value = recipes
+  }
+
+  /**
+   * A function that sets the filtered profiles list for testing
+   *
+   * @param profiles: the list of profiles to be displayed
+   */
+  fun setFilteredProfiles(profiles: List<Profile>) {
+    _filteredProfiles.value = profiles
   }
 }

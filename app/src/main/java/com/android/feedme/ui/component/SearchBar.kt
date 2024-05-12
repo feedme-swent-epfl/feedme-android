@@ -44,7 +44,7 @@ import com.android.feedme.ui.navigation.NavigationActions
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun SearchBarFun(route: String, navigationActions: NavigationActions, viewModel: SearchViewModel) {
-  var query by remember { mutableStateOf(viewModel.initialSearchQuery) }
+  var query by remember { mutableStateOf("") }
   var active by remember { mutableStateOf(false) }
 
   // Action to be performed when searching

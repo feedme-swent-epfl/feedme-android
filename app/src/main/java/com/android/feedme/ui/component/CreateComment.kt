@@ -175,7 +175,6 @@ fun CreateComment() {
                     Modifier
                         .width(150.dp)
                         .height(48.dp)
-                        .testTag("DeleteAccountButton")
                         .border(2.dp, Color.Red, shape = RoundedCornerShape(20.dp))
                         .testTag("DeleteButton"),
                     shape = RoundedCornerShape(20.dp)) {
@@ -196,7 +195,6 @@ fun CreateComment() {
                     Modifier
                         .width(150.dp)
                         .height(48.dp)
-                        .testTag("DeleteAccountButton")
                         .border(2.dp, TemplateColor, shape = RoundedCornerShape(20.dp))
                         .testTag("PublishButton"),
                     shape = RoundedCornerShape(20.dp)) {
@@ -204,7 +202,8 @@ fun CreateComment() {
                         "Publish",
                         color = TemplateColor,
                         fontWeight = FontWeight.Medium,
-                        fontSize = 16.sp)
+                        fontSize = 16.sp
+                    )
                 }
 
             }

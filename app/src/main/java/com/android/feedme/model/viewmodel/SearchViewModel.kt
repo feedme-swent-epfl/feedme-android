@@ -1,0 +1,64 @@
+package com.android.feedme.model.viewmodel
+
+import androidx.lifecycle.ViewModel
+import androidx.lifecycle.viewModelScope
+import com.android.feedme.model.data.Profile
+import com.android.feedme.model.data.ProfileRepository
+import com.android.feedme.model.data.Recipe
+import com.android.feedme.model.data.RecipeRepository
+import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.asStateFlow
+import kotlinx.coroutines.launch
+
+class SearchViewModel : ViewModel() {
+  private val recipeRepository = RecipeRepository.instance
+  private val profileRepository = ProfileRepository.instance
+
+  private val _filteredRecipes = MutableStateFlow<List<Recipe>>(emptyList())
+  val filteredRecipes = _filteredRecipes.asStateFlow()
+
+  private val _filteredProfiles = MutableStateFlow<List<Profile>>(emptyList())
+  val filteredProfiles = _filteredProfiles.asStateFlow()
+
+  var initialSearchQuery = ""
+
+  /**
+   * A function that fetches the recipes given a query
+   *
+   * @param query: the query to search for in the recipes
+   */
+  fun searchRecipes(query: String) {
+    viewModelScope.launch {
+      recipeRepository.getFilteredRecipes(
+          query,
+          onSuccess = { filteredRecipes -> _filteredRecipes.value = filteredRecipes },
+          onFailure = {
+            // Handle failure
+            throw error("Filtered recipes could not be fetched")
+          })
+    }
+  }
+
+  /**
+   * A function that fetches the profiles given a query
+   *
+   * @param query: the query to search for in the profiles
+   */
+  fun searchProfiles(query: String) {
+    viewModelScope.launch {
+      profileRepository.getFilteredProfiles(
+          query,
+          onSuccess = { filteredProfiles -> _filteredProfiles.value = filteredProfiles },
+          onFailure = {
+            // Handle failure
+            throw error("Filtered profiles could not be fetched")
+          })
+    }
+  }
+
+  /** A function that resets the filtered recipes and profiles lists */
+  fun resetSearch() {
+    _filteredRecipes.value = emptyList()
+    _filteredProfiles.value = emptyList()
+  }
+}

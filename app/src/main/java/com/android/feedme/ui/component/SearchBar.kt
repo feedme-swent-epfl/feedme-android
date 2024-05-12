@@ -30,7 +30,9 @@ import androidx.compose.ui.text.font.FontStyle
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.lifecycle.viewmodel.compose.viewModel
-import com.android.feedme.model.viewmodel.HomeViewModel
+import com.android.feedme.model.viewmodel.SearchViewModel
+import com.android.feedme.ui.navigation.NavigationActions
+import com.android.feedme.ui.navigation.Screen
 
 /**
  * Composable function for the Search Bar.
@@ -39,7 +41,7 @@ import com.android.feedme.model.viewmodel.HomeViewModel
  */
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun SearchBarFun(viewModel: HomeViewModel) {
+fun SearchBarFun(navigationActions: NavigationActions, viewModel: SearchViewModel) {
   var query by remember { mutableStateOf(viewModel.initialSearchQuery) }
   var active by remember { mutableStateOf(false) }
 
@@ -51,6 +53,7 @@ fun SearchBarFun(viewModel: HomeViewModel) {
       viewModel.resetSearch()
       viewModel.searchProfiles(it)
       viewModel.searchRecipes(it)
+      navigationActions.navigateTo(Screen.SEARCH)
     }
   }
 

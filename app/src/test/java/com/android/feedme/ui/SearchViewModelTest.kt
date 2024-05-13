@@ -3,29 +3,32 @@ package com.android.feedme.ui
 import android.os.Looper
 import androidx.test.core.app.ApplicationProvider
 import com.android.feedme.model.data.MeasureUnit
+import com.android.feedme.model.data.ProfileRepository
 import com.android.feedme.model.data.RecipeRepository
 import com.android.feedme.model.viewmodel.HomeViewModel
+import com.android.feedme.model.viewmodel.SearchViewModel
 import com.google.android.gms.tasks.Tasks
 import com.google.firebase.FirebaseApp
 import com.google.firebase.firestore.CollectionReference
 import com.google.firebase.firestore.DocumentReference
 import com.google.firebase.firestore.DocumentSnapshot
 import com.google.firebase.firestore.FirebaseFirestore
-import junit.framework.TestCase.assertTrue
+import com.google.firebase.firestore.Query
+import com.google.firebase.firestore.QuerySnapshot
+import junit.framework.TestCase
 import org.junit.Before
 import org.junit.Test
 import org.junit.runner.RunWith
+import org.mockito.ArgumentMatchers.anyString
 import org.mockito.Mock
 import org.mockito.Mockito
-import org.mockito.Mockito.anyString
 import org.mockito.Mockito.`when`
 import org.mockito.MockitoAnnotations
 import org.robolectric.RobolectricTestRunner
-import org.robolectric.Shadows.shadowOf
+import org.robolectric.Shadows
 
 @RunWith(RobolectricTestRunner::class)
-class HomeViewModelTest {
-
+class SearchViewModelTest {
   @Mock private lateinit var mockFirestore: FirebaseFirestore
 
   @Mock private lateinit var mockDocumentReference: DocumentReference
@@ -39,8 +42,15 @@ class HomeViewModelTest {
   @Mock private lateinit var mockIngredientDocumentSnapshot: DocumentSnapshot
 
   @Mock private lateinit var homeViewModel: HomeViewModel
+  @Mock private lateinit var searchViewModel: SearchViewModel
   private lateinit var recipeRepository: RecipeRepository
+  private lateinit var profileRepository: ProfileRepository
 
+  @Mock private lateinit var mockQuery: Query
+  @Mock private lateinit var mockQuerySnapshot: QuerySnapshot
+
+  private val query = "Chocolate"
+  private val queryUser = "user"
   private val recipeId = "lasagna1"
   private val recipeMap: Map<String, Any> =
       mapOf(
@@ -82,6 +92,17 @@ class HomeViewModelTest {
           "difficulty" to "Easy",
           "imageUrl" to "http://example.com/chocolate_cake.jpg")
 
+  private val profileMap: Map<String, Any> =
+      mapOf(
+          "username" to "user123",
+          "email" to "user@gmail.com",
+          "profileImageUrl" to "http://example.com/user123.jpg",
+          "bio" to "I love to cook!",
+          "followers" to 0,
+          "following" to 0,
+          "savedRecipes" to listOf("lasagna1"),
+          "createdRecipes" to listOf("lasagna1"))
+
   @Before
   fun setUp() {
     MockitoAnnotations.openMocks(this)
@@ -90,10 +111,13 @@ class HomeViewModelTest {
       FirebaseApp.initializeApp(ApplicationProvider.getApplicationContext())
     }
     RecipeRepository.initialize(mockFirestore)
+    ProfileRepository.initialize(mockFirestore)
 
     recipeRepository = RecipeRepository.instance
+    profileRepository = ProfileRepository.instance
 
     `when`(mockFirestore.collection("recipes")).thenReturn(mockCollectionReference)
+    `when`(mockFirestore.collection("profiles")).thenReturn(mockCollectionReference)
     `when`(mockFirestore.collection("ingredients")).thenReturn(mockIngredientsCollectionReference)
 
     `when`(mockCollectionReference.document(anyString())).thenReturn(mockDocumentReference)
@@ -109,15 +133,39 @@ class HomeViewModelTest {
     `when`(mockDocumentSnapshot.exists()).thenReturn(true)
     `when`(mockDocumentSnapshot.data).thenReturn(recipeMap)
 
+    // for searchRecipes
+    `when`(mockCollectionReference.whereGreaterThanOrEqualTo("title", query)).thenReturn(mockQuery)
+    `when`(mockQuery.whereLessThan("title", query + "\uf8ff")).thenReturn(mockQuery)
+
+    // for searchProfiles
+    `when`(mockCollectionReference.whereGreaterThanOrEqualTo("username", queryUser))
+        .thenReturn(mockQuery)
+    `when`(mockQuery.whereLessThan("username", queryUser + "\uf8ff")).thenReturn(mockQuery)
+
+    `when`(mockQuery.get()).thenReturn(Tasks.forResult(mockQuerySnapshot))
+
+    `when`(mockQuerySnapshot.documents).thenReturn(listOf(mockDocumentSnapshot))
+
     homeViewModel = HomeViewModel()
+    searchViewModel = SearchViewModel()
   }
 
   @Test
-  fun getRecipe_Success() {
-    homeViewModel.fetchRecipe("lasagna1")
-    shadowOf(Looper.getMainLooper()).idle()
+  fun searchRecipes_Success() {
+    searchViewModel.searchRecipes(query)
+    Shadows.shadowOf(Looper.getMainLooper()).idle()
 
-    println(homeViewModel.recipes.value)
-    assertTrue(homeViewModel.recipes.value.first().recipeId == recipeId)
+    println(searchViewModel.filteredRecipes.value)
+    TestCase.assertTrue(searchViewModel.filteredRecipes.value.first().recipeId == recipeId)
+  }
+
+  @Test
+  fun searchProfiles_Success() {
+    `when`(mockDocumentSnapshot.data).thenReturn(profileMap)
+    searchViewModel.searchProfiles(queryUser)
+    Shadows.shadowOf(Looper.getMainLooper()).idle()
+
+    println(searchViewModel.filteredProfiles.value)
+    TestCase.assertTrue(searchViewModel.filteredProfiles.value.first().username == "user123")
   }
 }

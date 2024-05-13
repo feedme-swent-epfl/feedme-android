@@ -1,4 +1,4 @@
-package com.android.feedme.model
+package com.android.feedme.ui
 
 import android.os.Looper
 import androidx.test.core.app.ApplicationProvider

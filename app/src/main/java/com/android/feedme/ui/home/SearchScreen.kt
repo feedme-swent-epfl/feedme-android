@@ -160,7 +160,14 @@ fun FilteredContent(
   } else {
     LazyColumn(modifier = Modifier.fillMaxSize().testTag("FilteredList")) {
       when (mode) {
-        0 -> items(recipes) { recipe -> RecipeCard(recipe, navigationActions, recipeViewModel) }
+        0 ->
+            items(recipes) { recipe ->
+              // Fetch the profile of the user who created the recipe
+              // TODO: will to be replaced with a single call to fetch all profiles if possible
+              profileViewModel.fetchProfile(recipe.userid)
+              val profile = profileViewModel.viewingUserProfile.collectAsState().value
+              RecipeCard(recipe, profile, navigationActions, recipeViewModel, profileViewModel)
+            }
         1 ->
             items(profiles) { profile -> FriendsCard(profile, navigationActions, profileViewModel) }
       }

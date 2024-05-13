@@ -17,8 +17,13 @@ import com.android.feedme.screen.SearchScreen
 import com.android.feedme.ui.home.SearchScreen
 import com.android.feedme.ui.navigation.NavigationActions
 import com.android.feedme.ui.navigation.Route
+import com.google.android.gms.tasks.Tasks
+import com.google.firebase.firestore.CollectionReference
+import com.google.firebase.firestore.DocumentReference
+import com.google.firebase.firestore.DocumentSnapshot
 import com.google.firebase.firestore.FirebaseFirestore
 import io.github.kakaocup.compose.node.element.ComposeScreen
+import io.mockk.every
 import io.mockk.mockk
 import junit.framework.TestCase
 import org.junit.Before
@@ -30,6 +35,9 @@ import org.junit.runner.RunWith
 class SearchScreenTest : TestCase() {
   @get:Rule val composeTestRule = createComposeRule()
   private val mockFirestore = mockk<FirebaseFirestore>(relaxed = true)
+  private val mockDocumentReference = mockk<DocumentReference>(relaxed = true)
+  private val mockCollectionReference = mockk<CollectionReference>(relaxed = true)
+  private var mockDocumentSnapshot = mockk<DocumentSnapshot>(relaxed = true)
 
   private lateinit var searchViewModel: SearchViewModel
   private lateinit var profileViewModel: ProfileViewModel
@@ -71,6 +79,15 @@ class SearchScreenTest : TestCase() {
     ProfileRepository.initialize(mockFirestore)
     recipeRepository = RecipeRepository.instance
     profileRepository = ProfileRepository.instance
+
+    every { mockFirestore.collection("profiles") } returns mockCollectionReference
+    every { mockCollectionReference.document(any()) } returns mockDocumentReference
+
+    every { mockDocumentReference.get() } returns Tasks.forResult(mockDocumentSnapshot)
+    every { mockDocumentSnapshot.toObject(Profile::class.java) } returns
+        Profile(id = "ID_DEFAULT_1")
+
+    every { mockDocumentReference.set(any()) } returns Tasks.forResult(null)
 
     searchViewModel = SearchViewModel()
     profileViewModel = ProfileViewModel()

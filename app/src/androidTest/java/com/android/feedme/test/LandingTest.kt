@@ -1,6 +1,8 @@
 package com.android.feedme.test
 
 import androidx.compose.ui.test.junit4.createComposeRule
+import androidx.compose.ui.test.onNodeWithContentDescription
+import androidx.compose.ui.test.performClick
 import androidx.test.ext.junit.runners.AndroidJUnit4
 import com.android.feedme.model.data.Ingredient
 import com.android.feedme.model.data.IngredientMetaData
@@ -139,11 +141,12 @@ class LandingTest : TestCase() {
         performClick()
       }
       composeTestRule.waitForIdle()
-      // composeTestRule.onNodeWithContentDescription("Search Icon Button").performClick()
+      composeTestRule.onNodeWithContentDescription("Search Icon Button").performClick()
+      composeTestRule.waitForIdle()
     }
   }
 
-  private fun goToLandingScreen(fetchRecipes: Boolean = true) {
+  private fun goToLandingScreen() {
     profileViewModel.setViewingProfile(Profile(id = "ID_DEFAULT_1"))
     val landingViewModel = HomeViewModel()
     landingViewModel.setRecipes(listOf(recipe, recipe, recipe))

@@ -34,7 +34,6 @@ import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
-import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
@@ -45,6 +44,7 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import coil.compose.AsyncImage
+import com.android.feedme.model.data.Profile
 import com.android.feedme.model.data.Recipe
 import com.android.feedme.model.viewmodel.HomeViewModel
 import com.android.feedme.model.viewmodel.ProfileViewModel
@@ -77,7 +77,7 @@ fun LandingPage(
     navigationActions: NavigationActions,
     recipeViewModel: RecipeViewModel,
     homeViewModel: HomeViewModel,
-    profileViewModel: ProfileViewModel
+    profileViewModel: ProfileViewModel,
     searchViewModel: SearchViewModel
 ) {
 
@@ -91,7 +91,12 @@ fun LandingPage(
       },
       content = {
         RecipeDisplay(
-            it, navigationActions, recipes.value, searchViewModel, recipeViewModel, profileViewModel)
+            it,
+            navigationActions,
+            recipes.value,
+            searchViewModel,
+            recipeViewModel,
+            profileViewModel)
       })
 }
 
@@ -133,7 +138,7 @@ fun RecipeDisplay(
                 val profile = profileViewModel.viewingUserProfile.collectAsState().value
 
                 // Recipe card
-                RecipeCard(recipe, navigationActions, recipeViewModel)
+                RecipeCard(recipe, profile, navigationActions, recipeViewModel, profileViewModel)
               }
             }
       }
@@ -143,14 +148,18 @@ fun RecipeDisplay(
  * Composable function for the Recipe Card. This function displays the recipe in a card format.
  *
  * @param recipe The [Recipe] to be displayed.
+ * @param profile The [Profile] of the user who created the recipe.
  * @param navigationActions The [NavigationActions] instance for handling back navigation.
  * @param recipeViewModel The [RecipeViewModel] instance of the recipe ViewModel.
+ * @param profileViewModel The [ProfileViewModel] instance of the profile ViewModel.
  */
 @Composable
 fun RecipeCard(
     recipe: Recipe,
+    profile: Profile?,
     navigationActions: NavigationActions,
-    recipeViewModel: RecipeViewModel
+    recipeViewModel: RecipeViewModel,
+    profileViewModel: ProfileViewModel
 ) {
   Card(
       modifier =
@@ -278,8 +287,7 @@ fun RecipeCard(
                             .testTag("UserName"),
                     text = "@${profile.username}",
                     color = BlueUsername,
-                    style =
-                        TextStyle(fontSize = 16.sp, fontWeight = FontWeight.Medium))
+                    style = TextStyle(fontSize = 16.sp, fontWeight = FontWeight.Medium))
               }
             }
       }

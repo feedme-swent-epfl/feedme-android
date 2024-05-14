@@ -56,6 +56,8 @@ class CameraViewModel : ViewModel() {
   private val _informationToDisplay = MutableStateFlow<String>("")
   val informationToDisplay = _informationToDisplay.asStateFlow()
 
+  private val _lastAnalyzedPhoto = MutableStateFlow<Bitmap?>(null)
+
   /**
    * This function is called when the user taps the photo button in the CameraScreen. It adds the
    * bitmap to the list of bitmaps in the [_bitmaps] state and updates the [_lastPhoto].
@@ -92,8 +94,11 @@ class CameraViewModel : ViewModel() {
             _informationToDisplay.value = "ERROR : No photo to analyse, please take a picture."
           }
           is PhotoState.Photo -> {
-            val result = performTextRecognition(photoState.bitmap)
-            _informationToDisplay.value = result
+            if (photoState.bitmap != _lastAnalyzedPhoto.value) {
+              _lastAnalyzedPhoto.value = photoState.bitmap
+              val result = performTextRecognition(photoState.bitmap)
+              _informationToDisplay.value = result
+            }
           }
         }
       }
@@ -161,18 +166,23 @@ class CameraViewModel : ViewModel() {
                 text,
                 { ing ->
                   val existingIngredient =
-                      _listOfIngredientToInput.value.find { it.ingredient.id == ing.ingredient.id }
+                      _listOfIngredientToInput.value.find {
+                        it.ingredient.name == ing.ingredient.name
+                      } // Todo change to id later
 
                   if (existingIngredient != null) {
                     // If the ingredient exists, update its quantity
                     val updatedQuantity = existingIngredient.quantity + ing.quantity
                     val updatedIngredient = existingIngredient.copy(quantity = updatedQuantity)
+                    _listOfIngredientToInput.value =
+                        _listOfIngredientToInput.value.filterNot { it == existingIngredient }
                     _listOfIngredientToInput.value += updatedIngredient
                   } else {
                     // If the ingredient doesn't exist, add it to the list
                     _listOfIngredientToInput.value += ing
                   }
                 })
+
             continuation.resume(textProcessing(text = text))
           },
           { continuation.resume("ERROR : Failed to identify text, please try again.") })

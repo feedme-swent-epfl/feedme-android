@@ -5,6 +5,8 @@ import com.android.feedme.ml.buildRequest
 import com.android.feedme.ml.buildRequestJson
 import com.android.feedme.ml.capitalizeWords
 import com.android.feedme.ml.getMeasureUnitFromString
+import com.android.feedme.ml.parseResponse
+import com.android.feedme.model.data.IngredientMetaData
 import com.android.feedme.model.data.MeasureUnit
 import com.google.mlkit.vision.text.Text
 import okhttp3.MediaType.Companion.toMediaType
@@ -84,4 +86,66 @@ class TextRecognitionTest {
     val expected = "Hello World"
     assertEquals(expected, input.capitalizeWords())
   }
+
+  @Test
+  fun parseResponseWithEmptyJson() {
+    val responseBody = "{}"
+
+    val expectedResult = emptyList<IngredientMetaData>()
+
+    val resultList = mutableListOf<IngredientMetaData>()
+
+    parseResponse(responseBody) { ingredientMetaData -> resultList.add(ingredientMetaData) }
+    assertEquals(expectedResult, resultList)
+  }
 }
+
+/*
+   @Test
+   fun testParseResponse() {
+       // Mock response body
+       val responseBody = """
+       {
+         "id": "chatcmpl-9OnXeSMyAzjRCsMxZyg8nme22zpm5",
+         "object": "chat.completion",
+         "created": 1715697338,
+         "model": "gpt-3.5-turbo-0125",
+         "choices": [
+           {
+             "index": 0,
+             "message": {
+               "role": "assistant",
+               "content": "[\n    {\n        \"ingredient\": \"Dijon mustard\",\n        \"quantity\": 2.0,\n        \"unit\": \"tsp\"\n    },\n    {\n        \"ingredient\": \"mayonnaise\",\n        \"quantity\": 2.0,\n        \"unit\": \"tsp\"\n    },\n    {\n        \"ingredient\": \"white bread\",\n        \"quantity\": 2.0,\n        \"unit\": \"slices\"\n    },\n    {\n        \"ingredient\": \"ham\",\n        \"quantity\": 2.0,\n        \"unit\": \"slices\"\n    },\n    {\n        \"ingredient\": \"turkey\",\n        \"quantity\": 2.0,\n        \"unit\": \"slices\"\n    },\n    {\n        \"ingredient\": \"Emmental cheese\",\n        \"quantity\": 50.0,\n        \"unit\": \"g\"\n    },\n    {\n        \"ingredient\": \"egg\",\n        \"quantity\": 1.0\n    },\n    {\n        \"ingredient\": \"milk\",\n        \"quantity\": 2.0,\n        \"unit\": \"tbsp\"\n    },\n    {\n        \"ingredient\": \"butter\",\n        \"quantity\": 1.0,\n        \"unit\": \"knob\"\n    }\n]"
+             },
+             "logprobs": null,
+             "finish_reason": "stop"
+           }
+         ],
+         "usage": {
+           "prompt_tokens": 174,
+           "completion_tokens": 256,
+           "total_tokens": 430
+         },
+         "system_fingerprint": null
+       }
+   """
+       // Mock function for ingredient found
+       val actualList = mutableListOf<IngredientMetaData>()
+       val mockForIngredientFound: (IngredientMetaData) -> Unit = { ingredientMetaData ->
+           actualList.add(ingredientMetaData)
+       }
+
+
+       // Call the function with the mock data
+       parseResponse(responseBody, mockForIngredientFound)
+
+       // Assert if necessary
+       val expectedList = listOf(
+           IngredientMetaData(2.0, MeasureUnit.TABLESPOON, Ingredient("Sugar", "DEFAULT_TYPE", "DEFAULT_ID")),
+           IngredientMetaData(1.0, MeasureUnit.TEASPOON, Ingredient("Salt", "DEFAULT_TYPE", "DEFAULT_ID"))
+       )
+
+       assertEquals(expectedList, actualList)
+   }
+
+*/

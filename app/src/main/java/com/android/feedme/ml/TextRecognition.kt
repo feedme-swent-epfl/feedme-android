@@ -186,7 +186,6 @@ fun parseResponse(responseBody: String?, forIngredientFound: (IngredientMetaData
   val messageObject = choiceObject?.getJSONObject("message")
   val contentString = messageObject?.getString("content")
   val contentObject = contentString?.let { JSONArray(it) }
-
   // Iterate through the ingredients array
   contentObject?.let {
     for (i in 0 until contentObject.length()) {

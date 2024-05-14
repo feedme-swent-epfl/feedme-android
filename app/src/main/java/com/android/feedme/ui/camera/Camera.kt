@@ -60,15 +60,12 @@ import androidx.core.content.ContextCompat
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.android.feedme.R
 import com.android.feedme.ml.OverlayTextField
-import com.android.feedme.ml.TextRecognition
-import com.android.feedme.ml.barcodeScanner
-import com.android.feedme.ml.extractProductNameFromBarcode
 import com.android.feedme.model.viewmodel.CameraViewModel
+import com.android.feedme.model.viewmodel.InputViewModel
 import com.android.feedme.ui.navigation.NavigationActions
 import com.android.feedme.ui.navigation.TopBarNavigation
 import com.android.feedme.ui.theme.BottomIconColorSelected
 import com.android.feedme.ui.theme.CameraButtonsBackground
-import com.google.mlkit.vision.text.Text
 import kotlinx.coroutines.launch
 
 /**
@@ -81,7 +78,7 @@ import kotlinx.coroutines.launch
  */
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun CameraScreen(navigationActions: NavigationActions) {
+fun CameraScreen(navigationActions: NavigationActions, inputViewModel: InputViewModel) {
   ///// Machine Learning Part /////
   // Switch off and on the text recognition functionality
   val textRecognitionMode = remember { mutableStateOf(true) }
@@ -116,7 +113,10 @@ fun CameraScreen(navigationActions: NavigationActions) {
 
   BottomSheetScaffold(
       modifier = Modifier.testTag("CameraScreen"),
-      topBar = { TopBarNavigation(title = "Camera", navAction = navigationActions) },
+      topBar = { TopBarNavigation(title = "Camera", navAction = navigationActions, backArrowOnClickAction = {
+          inputViewModel.addToList(listOfIngredientToInput.value.toMutableList())
+          navigationActions.goBack()
+      }) },
       scaffoldState = scaffoldState,
       sheetPeekHeight = 0.dp,
       sheetContent = {
@@ -213,20 +213,20 @@ fun CameraScreen(navigationActions: NavigationActions) {
           }
           // If text recognition button is pressed
           if (displayText.value) {
-            viewModel.textRecognitionButtonPressed()
+              cameraViewModel.textRecognitionButtonPressed()
             OverlayTextField(
                 isVisible = true,
                 onDismiss = { displayText.value = false },
-                text = viewModel.informationToDisplay.collectAsState().value)
+                text = cameraViewModel.informationToDisplay.collectAsState().value)
           }
 
           // If barcode scanner button is pressed
           if (displayBarcode.value) {
-            viewModel.barcodeScanButtonPressed()
+              cameraViewModel.barcodeScanButtonPressed()
             OverlayTextField(
                 isVisible = true,
                 onDismiss = { displayBarcode.value = false },
-                text = viewModel.informationToDisplay.collectAsState().value)
+                text = cameraViewModel.informationToDisplay.collectAsState().value)
           }
         }
       }

@@ -3,30 +3,19 @@ package com.android.feedme.model.viewmodel
 import android.graphics.Bitmap
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.android.feedme.BuildConfig
-import com.android.feedme.model.data.Ingredient
-import com.android.feedme.model.data.IngredientMetaData
-import com.android.feedme.model.data.MeasureUnit
-import com.google.mlkit.vision.text.Text
+import com.android.feedme.ml.analyzeTextForIngredients
 import com.android.feedme.ml.barcodeScan
 import com.android.feedme.ml.extractProductNameFromBarcode
 import com.android.feedme.ml.textExtraction
 import com.android.feedme.ml.textProcessing
-import kotlin.coroutines.resume
-import kotlin.coroutines.suspendCoroutine
+import com.android.feedme.model.data.Ingredient
+import com.android.feedme.model.data.IngredientMetaData
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.launch
-import okhttp3.Call
-import okhttp3.Callback
-import okhttp3.MediaType.Companion.toMediaType
-import okhttp3.OkHttpClient
-import okhttp3.Request
-import okhttp3.RequestBody.Companion.toRequestBody
-import okhttp3.Response
-import org.json.JSONArray
-import org.json.JSONObject
+import kotlin.coroutines.resume
+import kotlin.coroutines.suspendCoroutine
 
 class CameraViewModel : ViewModel() {
 
@@ -76,102 +65,6 @@ class CameraViewModel : ViewModel() {
     _lastPhoto.value = PhotoState.Photo(bitmap)
   }
 
-  fun getMeasureUnitFromString(unitString: String): MeasureUnit {
-    return when (unitString.lowercase()) {
-      "teaspoon",
-      "tsp",
-      "teaspoons" -> MeasureUnit.TEASPOON
-      "tablespoon",
-      "tbsp",
-      "tablespoons" -> MeasureUnit.TABLESPOON
-      "cup",
-      "cups" -> MeasureUnit.CUP
-      "g",
-      "grams",
-      "gram" -> MeasureUnit.G
-      "kg",
-      "kilograms",
-      "kilogram" -> MeasureUnit.KG
-      "l",
-      "liter",
-      "liters" -> MeasureUnit.L
-      "ml",
-      "millilitre",
-      "millilitres" -> MeasureUnit.ML
-      else -> MeasureUnit.NONE
-    }
-  }
-
-  fun analyzeTextForIngredients(
-      mlText: Text,
-      onSuccess: () -> Unit = {},
-      onFailure: (Exception) -> Unit = {}
-  ) {
-
-    val requestJson =
-        """
-    {
-        "model": "gpt-3.5-turbo",
-        "max_tokens": 2000,
-        "messages": [{"role": "user", "content": "Your task is to extract the ingredients of a text and simplify them. Then find their respective quantity and units if they exist. Send back a jsonArray with each element having a 'ingredient', 'quantity' as Double and 'unit' If no ingredients found send an empty JSONArray. Here is the text : ${mlText.text.replace('\n', ' ')}"}]
-    }
-    """
-            .trimIndent()
-
-    val request =
-        Request.Builder()
-            .url("https://api.openai.com/v1/chat/completions")
-            .post(requestJson.toRequestBody("application/json".toMediaType()))
-            .header("Authorization", "Bearer ${BuildConfig.CHATGBT_API_KEY}")
-            .header("Content-Type", "application/json")
-            .build()
-
-    val client = OkHttpClient()
-    client
-        .newCall(request)
-        .enqueue(
-            object : Callback {
-              override fun onFailure(call: Call, e: java.io.IOException) {
-                println("Failed to execute request: ${e.message}")
-                onFailure(e)
-              }
-
-              override fun onResponse(call: Call, response: Response) {
-                val responseBody = response.body?.string()
-                println("Response: $responseBody")
-                try {
-                  val jsonResponse = responseBody?.let { JSONObject(it) }
-                  val choicesArray = jsonResponse?.getJSONArray("choices")
-                  val choiceObject = choicesArray?.getJSONObject(0)
-                  val messageObject = choiceObject?.getJSONObject("message")
-                  val contentString = messageObject?.getString("content")
-                  val contentObject = contentString?.let { JSONArray(it) }
-
-                  // Iterate through the ingredients array
-                  if (contentObject != null) {
-                    for (i in 0 until contentObject.length()) {
-                      val ingredientObject = contentObject.getJSONObject(i)
-                      val ingredient = ingredientObject.optString("ingredient", "")
-                      val quantity = ingredientObject.getString("quantity").toDoubleOrNull() ?: 0.0
-                      val unitString = ingredientObject.optString("unit", "")
-                      val unit = getMeasureUnitFromString(unitString)
-
-                      _listOfIngredientToInput.value +=
-                          IngredientMetaData(
-                              quantity,
-                              unit,
-                              Ingredient(ingredient, "DEFAULT_TYPE", "DEFAULT_ID"),
-                          )
-                    }
-                  }
-                  onSuccess()
-                } catch (e: Exception) {
-                  println(e.message)
-                  onFailure(e)
-                }
-              }
-            })
-  }
 
   /**
    * This function is called when the user taps the save button in the CameraScreen. It sets the
@@ -264,7 +157,10 @@ class CameraViewModel : ViewModel() {
     return suspendCoroutine { continuation ->
       textExtraction(
           bitmap,
-          { text -> continuation.resume(textProcessing(text = text)) },
+          { text ->
+            analyzeTextForIngredients(text,{ing -> _listOfIngredientToInput.value+=ing})
+            continuation.resume(textProcessing(text = text))
+          },
           { continuation.resume("ERROR : Failed to identify text, please try again.") })
     }
   }

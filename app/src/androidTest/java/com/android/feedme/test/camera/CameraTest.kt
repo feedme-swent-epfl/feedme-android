@@ -9,6 +9,7 @@ import androidx.compose.ui.test.onNodeWithTag
 import androidx.compose.ui.test.onNodeWithText
 import androidx.test.ext.junit.runners.AndroidJUnit4
 import androidx.test.rule.GrantPermissionRule
+import com.android.feedme.model.viewmodel.InputViewModel
 import com.android.feedme.screen.CameraScreen
 import com.android.feedme.ui.camera.CameraScreen
 import com.android.feedme.ui.navigation.NavigationActions
@@ -105,7 +106,7 @@ class CameraTest : TestCase() {
   private fun goToCameraScreen() {
     val navActions = mockk<NavigationActions>()
     every { navActions.canGoBack() } returns true
-    composeTestRule.setContent { CameraScreen(navActions) }
+    composeTestRule.setContent { CameraScreen(navActions, mockk<InputViewModel>()) }
     composeTestRule.waitForIdle()
   }
   // Test the normal case

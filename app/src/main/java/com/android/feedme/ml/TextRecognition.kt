@@ -31,6 +31,7 @@ import okhttp3.RequestBody.Companion.toRequestBody
 import okhttp3.Response
 import org.json.JSONArray
 import org.json.JSONObject
+import java.util.Locale
 
 /**
  * Extract text from a bitmap image using the google ML-kit.
@@ -173,7 +174,7 @@ fun analyzeTextForIngredients(
                 if (contentObject != null) {
                   for (i in 0 until contentObject.length()) {
                     val ingredientObject = contentObject.getJSONObject(i)
-                    val ingredient = ingredientObject.optString("ingredient", "")
+                    val ingredient = ingredientObject.optString("ingredient", "").capitalizeWords()
                     val quantity = ingredientObject.getString("quantity").toDoubleOrNull() ?: 0.0
                     val unitString = ingredientObject.optString("unit", "")
                     val unit = getMeasureUnitFromString(unitString)
@@ -220,3 +221,10 @@ fun OverlayTextField(isVisible: Boolean, onDismiss: () -> Unit, text: String = "
         })
   }
 }
+
+private fun String.capitalizeWords(): String = split(" ").map { it.replaceFirstChar {
+    if (it.isLowerCase()) it.titlecase(
+        Locale.getDefault()
+    ) else it.toString()
+} }.joinToString(" ")
+

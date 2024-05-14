@@ -43,6 +43,6 @@ enum class MeasureUnit {
   EMPTY;
 
   override fun toString(): String {
-    return if (name == "NONE") "" else name.lowercase()
+    return if (name == "NONE") " / " else name.lowercase()
   }
 }

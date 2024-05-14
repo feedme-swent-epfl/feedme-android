@@ -6,6 +6,7 @@ import com.android.feedme.ml.buildRequestJson
 import com.android.feedme.ml.capitalizeWords
 import com.android.feedme.ml.getMeasureUnitFromString
 import com.android.feedme.ml.parseResponse
+import com.android.feedme.ml.textProcessing
 import com.android.feedme.model.data.IngredientMetaData
 import com.android.feedme.model.data.MeasureUnit
 import com.google.mlkit.vision.text.Text
@@ -97,6 +98,32 @@ class TextRecognitionTest {
 
     parseResponse(responseBody) { ingredientMetaData -> resultList.add(ingredientMetaData) }
     assertEquals(expectedResult, resultList)
+  }
+
+  @Test
+  fun testTextProcessingWithEmptyText() {
+    val emptyText = mock(Text::class.java)
+    `when`(emptyText.textBlocks).thenReturn(emptyList())
+
+    val result = textProcessing(emptyText)
+
+    // Assert that the result is an empty string
+    assert(result.isEmpty())
+  }
+
+  @Test
+  fun testTextProcessingWithNonEmptyText() {
+    // Mocking a non-empty text with one block containing some text
+    val mockBlock = mock(Text.TextBlock::class.java)
+    `when`(mockBlock.text).thenReturn("This is a test block")
+
+    val nonEmptyText = mock(Text::class.java)
+    `when`(nonEmptyText.textBlocks).thenReturn(listOf(mockBlock))
+
+    val result = textProcessing(nonEmptyText)
+
+    // Assert that the result contains the text from the block
+    assert(result == "This is a test block")
   }
 }
 

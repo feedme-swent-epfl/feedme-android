@@ -4,6 +4,7 @@ import androidx.compose.ui.test.assertIsDisplayed
 import androidx.compose.ui.test.junit4.createComposeRule
 import androidx.compose.ui.test.onNodeWithTag
 import androidx.test.ext.junit.runners.AndroidJUnit4
+import com.android.feedme.ui.component.CreateComment
 import junit.framework.TestCase
 import org.junit.Rule
 import org.junit.Test
@@ -16,6 +17,7 @@ class CreateCommentTest : TestCase() {
 
   @Test
   fun testCreateCommentEverythingDisplayed() {
+    composeTestRule.setContent { CreateComment() }
 
     composeTestRule.onNodeWithTag("OuterBox").assertIsDisplayed()
     composeTestRule.onNodeWithTag("InnerCol").assertIsDisplayed()

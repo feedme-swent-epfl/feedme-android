@@ -18,10 +18,11 @@ import androidx.navigation.compose.rememberNavController
 import com.android.feedme.model.data.ProfileRepository
 import com.android.feedme.model.data.RecipeRepository
 import com.android.feedme.model.viewmodel.AuthViewModel
+import com.android.feedme.model.viewmodel.HomeViewModel
 import com.android.feedme.model.viewmodel.InputViewModel
-import com.android.feedme.model.viewmodel.LandingPageViewModel
 import com.android.feedme.model.viewmodel.ProfileViewModel
 import com.android.feedme.model.viewmodel.RecipeViewModel
+import com.android.feedme.model.viewmodel.SearchViewModel
 import com.android.feedme.resources.C
 import com.android.feedme.ui.auth.LoginScreen
 import com.android.feedme.ui.auth.WelcomeScreen
@@ -61,6 +62,7 @@ class MainActivity : ComponentActivity() {
               val navController = rememberNavController()
               val navigationActions = NavigationActions(navController)
               val profileViewModel: ProfileViewModel = viewModel<ProfileViewModel>()
+              val searchViewModel: SearchViewModel = viewModel<SearchViewModel>()
               val authViewModel: AuthViewModel = viewModel<AuthViewModel>()
               val inputViewModel: InputViewModel = viewModel<InputViewModel>()
 
@@ -82,9 +84,8 @@ class MainActivity : ComponentActivity() {
                   composable(Screen.HOME) {
                     // Create a shared view model for Recipe
                     val recipeViewModel = viewModel<RecipeViewModel>()
-                    val landingPageViewModel: LandingPageViewModel =
-                        viewModel<LandingPageViewModel>()
-                    LandingPage(navigationActions, recipeViewModel, landingPageViewModel)
+                    val homeViewModel: HomeViewModel = viewModel<HomeViewModel>()
+                    LandingPage(navigationActions, recipeViewModel, homeViewModel, searchViewModel)
                   }
                 }
 
@@ -137,6 +138,21 @@ class MainActivity : ComponentActivity() {
                     val navBackStackEntry = navController.getBackStackEntry(backScreen)
                     val recipeViewModel = viewModel<RecipeViewModel>(navBackStackEntry)
                     RecipeFullDisplay(it, navigationActions, recipeViewModel)
+                  }
+                }
+                composable(Screen.SEARCH) { backStackEntry ->
+                  backStackEntry.arguments?.getString("sourceRoute")?.let {
+                    /*val backScreen =
+                    when (it) {
+                      Route.HOME -> Screen.HOME
+                      // TODO add other routes to SearchScreen later (for ex SAVED)
+                      else -> {
+                        ""
+                      }
+                    }*/
+                    val recipeViewModel = viewModel<RecipeViewModel>()
+                    SearchScreen(
+                        it, navigationActions, searchViewModel, recipeViewModel, profileViewModel)
                   }
                 }
               }

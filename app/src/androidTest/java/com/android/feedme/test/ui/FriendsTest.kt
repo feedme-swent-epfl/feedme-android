@@ -57,7 +57,6 @@ class FriendsTest {
 
   @Test
   fun emptyFriendsDisplayed() {
-    val mockNavActions = mockk<NavigationActions>(relaxed = true) // Make the mock relaxed
     val profileViewModel = ProfileViewModel()
     profileViewModel.updateCurrentUserProfile(Profile())
     composeTestRule.setContent {
@@ -75,7 +74,6 @@ class FriendsTest {
 
   @Test
   fun noFollowersDisplayed() {
-    val mockNavActions = mockk<NavigationActions>(relaxed = true) // Make the mock relaxed
     val profileViewModel = ProfileViewModel()
     profileViewModel.updateCurrentUserProfile(Profile())
     composeTestRule.setContent {
@@ -95,7 +93,6 @@ class FriendsTest {
   fun noFollowingDisplayed() {
     val profileViewModel = ProfileViewModel()
     profileViewModel.updateCurrentUserProfile(Profile())
-    val mockNavActions = mockk<NavigationActions>(relaxed = true) // Make the mock relaxed
     composeTestRule.setContent {
       com.android.feedme.ui.profile.FriendsScreen(mockNavActions, profileViewModel, mode = 0)
     }
@@ -110,7 +107,6 @@ class FriendsTest {
   }
 
   private fun goToFriendsScreen() {
-    val mockNavActions = mockk<NavigationActions>(relaxed = true) // Make the mock relaxed
     val profileViewModel = ProfileViewModel()
     profileViewModel.updateCurrentUserProfile(Profile())
     composeTestRule.setContent {

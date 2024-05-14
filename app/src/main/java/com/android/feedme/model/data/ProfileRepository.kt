@@ -134,6 +134,35 @@ class ProfileRepository(private val db: FirebaseFirestore) {
   }
 
   /**
+   * Fetch all the profiles that contain the given query in their name.
+   *
+   * @param query The search query to filter the profiles.
+   * @param onSuccess A callback function invoked with the list of profiles on success.
+   * @param onFailure A callback function invoked on failure to fetch the profiles, with an
+   *   exception.
+   */
+  fun getFilteredProfiles(
+      query: String,
+      onSuccess: (List<Profile>) -> Unit,
+      onFailure: (Exception) -> Unit
+  ) {
+    db.collection(collectionPath)
+        .whereGreaterThanOrEqualTo("username", query)
+        .whereLessThan("username", query + "\uf8ff")
+        .get()
+        .addOnSuccessListener {
+          it.documents.map { recipeMap ->
+            val data = recipeMap.data
+            if (data != null) {
+              val success = { profile: Profile? -> onSuccess(listOfNotNull(profile)) }
+              mapToProfile(data, success, onFailure)
+            }
+          }
+        }
+        .addOnFailureListener { onFailure(it) }
+  }
+
+  /**
    * Deletes a user profile from Firestore.
    *
    * This method removes the profile document with the given [id] from the Firestore collection
@@ -281,5 +310,72 @@ class ProfileRepository(private val db: FirebaseFirestore) {
         .addOnFailureListener { exception ->
           onFailure(exception) // Handle failure
         }
+  }
+
+  private fun mapToProfile(
+      map: Map<String, Any>,
+      onSuccess: (Profile?) -> Unit,
+      onFailure: (Exception) -> Unit
+  ) {
+    try {
+      val rawFollowersList = map["followers"]
+      val followers =
+          if (rawFollowersList is List<*>) {
+            rawFollowersList.mapNotNull { it as? String }
+          } else {
+            listOf()
+          }
+
+      val rawFollowingList = map["following"]
+      val following =
+          if (rawFollowingList is List<*>) {
+            rawFollowingList.mapNotNull { it as? String }
+          } else {
+            listOf()
+          }
+
+      val rawFilterList = map["filter"]
+      val filter =
+          if (rawFilterList is List<*>) {
+            rawFilterList.mapNotNull { it as? String }
+          } else {
+            listOf()
+          }
+
+      val rawRecipeList = map["recipeList"]
+      val recipeList =
+          if (rawRecipeList is List<*>) {
+            rawRecipeList.mapNotNull { it as? String }
+          } else {
+            listOf()
+          }
+
+      val rawCommentList = map["commentList"]
+      val commentList =
+          if (rawCommentList is List<*>) {
+            rawCommentList.mapNotNull { it as? String }
+          } else {
+            listOf()
+          }
+
+      // Construct the Profile object
+      val profile =
+          Profile(
+              id = map["id"] as? String ?: "ID_DEFAULT",
+              name = map["name"] as? String ?: "NAME_DEFAULT",
+              username = map["username"] as? String ?: "USERNAME_DEFAULT",
+              email = map["email"] as? String ?: "EMAIL_DEFAULT",
+              description = map["description"] as? String ?: "BIO_DEFAULT",
+              imageUrl = map["imageUrl"] as? String ?: "URL_DEFAULT",
+              followers = followers,
+              following = following,
+              filter = filter,
+              recipeList = recipeList,
+              commentList = commentList)
+
+      onSuccess(profile)
+    } catch (e: Exception) {
+      onFailure(e)
+    }
   }
 }

@@ -86,12 +86,41 @@ class RecipeRepository(private val db: FirebaseFirestore) {
         .addOnFailureListener { exception -> onFailure(exception) }
   }*/
 
+  /**
+   * Fetches all the recipes that contain the given query in their title.
+   *
+   * @param query The query string to search for in the recipe titles.
+   * @param onSuccess A callback function invoked with the list of recipes on success.
+   * @param onFailure A callback function invoked on failure to fetch the recipes, with an
+   *   exception.
+   */
+  fun getFilteredRecipes(
+      query: String,
+      onSuccess: (List<Recipe>) -> Unit,
+      onFailure: (Exception) -> Unit
+  ) {
+    db.collection(collectionPath)
+        .whereGreaterThanOrEqualTo("title", query)
+        .whereLessThan("title", query + "\uf8ff")
+        .get()
+        .addOnSuccessListener {
+          it.documents.map { recipeMap ->
+            val data = recipeMap.data
+            if (data != null) {
+              val success = { recipe: Recipe? -> onSuccess(listOfNotNull(recipe)) }
+              mapToRecipe(data, success, onFailure)
+            }
+          }
+        }
+        .addOnFailureListener { onFailure(it) }
+  }
+
   private fun recipeToMap(recipe: Recipe): Map<String, Any> {
     return mapOf(
         "recipeId" to recipe.recipeId,
         "title" to recipe.title,
         "description" to recipe.description,
-        "ingredients" to recipe.ingredients.map { it.ingredient.id },
+        "ingredients" to recipe.ingredients.map { it.toMap() },
         "steps" to recipe.steps.map { it.toMap() },
         "tags" to recipe.tags,
         "time" to recipe.time,
@@ -105,7 +134,10 @@ class RecipeRepository(private val db: FirebaseFirestore) {
       mapOf(
           "quantity" to this.quantity,
           "measure" to this.measure.name, // Store the measure as a string
-          "ingredientId" to this.ingredient.id)
+          "ingredient" to this.ingredient.toMap())
+
+  private fun Ingredient.toMap(): Map<String, Any> =
+      mapOf("name" to this.name, "type" to this.type, "id" to this.id)
 
   private fun Step.toMap(): Map<String, Any> =
       mapOf(

@@ -9,9 +9,10 @@ import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.launch
 
-class LandingPageViewModel : ViewModel() {
+class HomeViewModel : ViewModel() {
 
-  private val repository = RecipeRepository.instance
+  private val recipeRepository = RecipeRepository.instance
+
   private val _recipes = MutableStateFlow<List<Recipe>>(emptyList())
   val recipes = _recipes.asStateFlow()
 
@@ -30,7 +31,7 @@ class LandingPageViewModel : ViewModel() {
    */
   fun fetchRecipe(id: String) {
     viewModelScope.launch {
-      repository.getRecipe(
+      recipeRepository.getRecipe(
           id,
           onSuccess = { recipe ->
             if (recipe != null) {
@@ -73,6 +74,26 @@ class LandingPageViewModel : ViewModel() {
     } TODO : We will use this for recommendations (maybe)
   }*/
 
+  /**
+   * A function that sets which recipes to show
+   *
+   * @param isFiltered: a boolean that indicates if the filtered recipes should be shown
+   */
+  /*fun setShowedRecipes(isFiltered: Boolean) {
+      _recipes.value =
+          if (isFiltered) {
+              _filteredRecipes.value
+          } else {
+              _recommendedRecipes.value
+          }
+  }*/
+
+  /**
+   * A function that forces recipes to be shown for testing purposes
+   *
+   * @param recipes: a list of recipes to show
+   * @param isFiltered: a boolean that indicates if the filtered recipes should be shown
+   */
   fun setRecipes(recipes: List<Recipe>) {
     _recipes.value = recipes
   }

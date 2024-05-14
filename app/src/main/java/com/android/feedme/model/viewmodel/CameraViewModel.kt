@@ -157,7 +157,22 @@ class CameraViewModel : ViewModel() {
       textExtraction(
           bitmap,
           { text ->
-            analyzeTextForIngredients(text, { ing -> _listOfIngredientToInput.value += ing })
+            analyzeTextForIngredients(
+                text,
+                { ing ->
+                  val existingIngredient =
+                      _listOfIngredientToInput.value.find { it.ingredient.id == ing.ingredient.id }
+
+                  if (existingIngredient != null) {
+                    // If the ingredient exists, update its quantity
+                    val updatedQuantity = existingIngredient.quantity + ing.quantity
+                    val updatedIngredient = existingIngredient.copy(quantity = updatedQuantity)
+                    _listOfIngredientToInput.value += updatedIngredient
+                  } else {
+                    // If the ingredient doesn't exist, add it to the list
+                    _listOfIngredientToInput.value += ing
+                  }
+                })
             continuation.resume(textProcessing(text = text))
           },
           { continuation.resume("ERROR : Failed to identify text, please try again.") })

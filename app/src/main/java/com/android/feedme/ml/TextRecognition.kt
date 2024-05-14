@@ -22,6 +22,7 @@ import com.google.mlkit.vision.common.InputImage
 import com.google.mlkit.vision.text.Text
 import com.google.mlkit.vision.text.TextRecognition
 import com.google.mlkit.vision.text.latin.TextRecognizerOptions
+import java.util.Locale
 import okhttp3.Call
 import okhttp3.Callback
 import okhttp3.MediaType.Companion.toMediaType
@@ -31,7 +32,6 @@ import okhttp3.RequestBody.Companion.toRequestBody
 import okhttp3.Response
 import org.json.JSONArray
 import org.json.JSONObject
-import java.util.Locale
 
 /**
  * Extract text from a bitmap image using the google ML-kit.
@@ -131,23 +131,9 @@ fun analyzeTextForIngredients(
     onFailure: (Exception) -> Unit = {}
 ) {
 
-  val requestJson =
-      """
-    {
-        "model": "gpt-3.5-turbo",
-        "max_tokens": 2000,
-        "messages": [{"role": "user", "content": "Your task is to extract the ingredients of a text and simplify them. Then find their respective quantity and units if they exist. Send back a jsonArray with each element having a 'ingredient', 'quantity' as Double and 'unit' If no ingredients found send an empty JSONArray. Here is the text : ${mlText.text.replace('\n', ' ')}"}]
-    }
-    """
-          .trimIndent()
+  val requestJson = buildRequestJson(mlText)
 
-  val request =
-      Request.Builder()
-          .url("https://api.openai.com/v1/chat/completions")
-          .post(requestJson.toRequestBody("application/json".toMediaType()))
-          .header("Authorization", "Bearer ${BuildConfig.CHATGBT_API_KEY}")
-          .header("Content-Type", "application/json")
-          .build()
+  val request = buildRequest(requestJson)
 
   val client = OkHttpClient()
   client
@@ -163,30 +149,7 @@ fun analyzeTextForIngredients(
               val responseBody = response.body?.string()
               println("Response: $responseBody")
               try {
-                val jsonResponse = responseBody?.let { JSONObject(it) }
-                val choicesArray = jsonResponse?.getJSONArray("choices")
-                val choiceObject = choicesArray?.getJSONObject(0)
-                val messageObject = choiceObject?.getJSONObject("message")
-                val contentString = messageObject?.getString("content")
-                val contentObject = contentString?.let { JSONArray(it) }
-
-                // Iterate through the ingredients array
-                if (contentObject != null) {
-                  for (i in 0 until contentObject.length()) {
-                    val ingredientObject = contentObject.getJSONObject(i)
-                    val ingredient = ingredientObject.optString("ingredient", "").capitalizeWords()
-                    val quantity = ingredientObject.getString("quantity").toDoubleOrNull() ?: 0.0
-                    val unitString = ingredientObject.optString("unit", "")
-                    val unit = getMeasureUnitFromString(unitString)
-
-                    forIngredientFound(
-                        IngredientMetaData(
-                            quantity,
-                            unit,
-                            Ingredient(ingredient, "DEFAULT_TYPE", "DEFAULT_ID"),
-                        ))
-                  }
-                }
+                parseResponse(responseBody, forIngredientFound)
                 onSuccess()
               } catch (e: Exception) {
                 println(e.message)
@@ -194,6 +157,48 @@ fun analyzeTextForIngredients(
               }
             }
           })
+}
+
+fun buildRequestJson(mlText: Text): String {
+  return """
+        {
+            "model": "gpt-3.5-turbo",
+            "max_tokens": 2000,
+            "messages": [{"role": "user", "content": "Your task is to extract the ingredients of a text and simplify them. Then find their respective quantity and units if they exist. Send back a jsonArray with each element having a 'ingredient', 'quantity' as Double and 'unit' If no ingredients found send an empty JSONArray. Here is the text : ${mlText.text.replace('\n', ' ')}"}]
+        }
+    """
+      .trimIndent()
+}
+
+fun buildRequest(requestJson: String): Request {
+  return Request.Builder()
+      .url("https://api.openai.com/v1/chat/completions")
+      .post(requestJson.toRequestBody("application/json".toMediaType()))
+      .header("Authorization", "Bearer ${BuildConfig.CHATGBT_API_KEY}")
+      .header("Content-Type", "application/json")
+      .build()
+}
+
+fun parseResponse(responseBody: String?, forIngredientFound: (IngredientMetaData) -> Unit) {
+  val jsonResponse = responseBody?.let { JSONObject(it) }
+  val choicesArray = jsonResponse?.getJSONArray("choices")
+  val choiceObject = choicesArray?.getJSONObject(0)
+  val messageObject = choiceObject?.getJSONObject("message")
+  val contentString = messageObject?.getString("content")
+  val contentObject = contentString?.let { JSONArray(it) }
+
+  // Iterate through the ingredients array
+  contentObject?.let {
+    for (i in 0 until contentObject.length()) {
+      val ingredientObject = contentObject.getJSONObject(i)
+      val ingredient = ingredientObject.optString("ingredient", "").capitalizeWords()
+      val quantity = ingredientObject.getString("quantity").toDoubleOrNull() ?: 0.0
+      val unitString = ingredientObject.optString("unit", "")
+      val unit = getMeasureUnitFromString(unitString)
+      forIngredientFound(
+          IngredientMetaData(quantity, unit, Ingredient(ingredient, "DEFAULT_TYPE", "DEFAULT_ID")))
+    }
+  }
 }
 
 /**
@@ -222,9 +227,11 @@ fun OverlayTextField(isVisible: Boolean, onDismiss: () -> Unit, text: String = "
   }
 }
 
-private fun String.capitalizeWords(): String = split(" ").map { it.replaceFirstChar {
-    if (it.isLowerCase()) it.titlecase(
-        Locale.getDefault()
-    ) else it.toString()
-} }.joinToString(" ")
-
+fun String.capitalizeWords(): String =
+    split(" ")
+        .map {
+          it.replaceFirstChar {
+            if (it.isLowerCase()) it.titlecase(Locale.getDefault()) else it.toString()
+          }
+        }
+        .joinToString(" ")

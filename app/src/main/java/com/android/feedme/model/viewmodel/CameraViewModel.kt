@@ -10,12 +10,12 @@ import com.android.feedme.ml.textExtraction
 import com.android.feedme.ml.textProcessing
 import com.android.feedme.model.data.Ingredient
 import com.android.feedme.model.data.IngredientMetaData
+import kotlin.coroutines.resume
+import kotlin.coroutines.suspendCoroutine
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.launch
-import kotlin.coroutines.resume
-import kotlin.coroutines.suspendCoroutine
 
 class CameraViewModel : ViewModel() {
 

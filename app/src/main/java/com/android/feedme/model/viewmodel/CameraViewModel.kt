@@ -6,7 +6,7 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.android.feedme.R
+import com.android.feedme.BuildConfig
 import com.android.feedme.model.data.Ingredient
 import com.android.feedme.model.data.IngredientMetaData
 import com.android.feedme.model.data.MeasureUnit
@@ -84,7 +84,7 @@ class CameraViewModel : ViewModel() {
       onSuccess: () -> Unit = {},
       onFailure: (Exception) -> Unit = {}
   ) {
-    val apiKey = R.string.chatgbt_api_key
+
     val requestJson =
         """
     {
@@ -99,7 +99,7 @@ class CameraViewModel : ViewModel() {
         Request.Builder()
             .url("https://api.openai.com/v1/chat/completions")
             .post(requestJson.toRequestBody("application/json".toMediaType()))
-            .header("Authorization", "Bearer $apiKey")
+            .header("Authorization", "Bearer ${BuildConfig.CHATGBT_API_KEY}")
             .header("Content-Type", "application/json")
             .build()
 
@@ -144,6 +144,7 @@ class CameraViewModel : ViewModel() {
                   onSuccess()
                 } catch (e: Exception) {
                   println(e.message)
+                  onFailure(e)
                 }
               }
             })
@@ -164,77 +165,3 @@ class CameraViewModel : ViewModel() {
     }
   }
 }
-
-/*
-class GptPreviewViewModel : androidx.lifecycle.ViewModel() {
-  fun analyzeTextForIngredients(mlText : Text? =null, onSuccess: () -> Unit = {}, onFailure: (Exception) -> Unit = {}) {
-    val apiKey = "sk-proj-K0syZxW4CGbrhlGUF1W7T3BlbkFJG4ishht4LtZkCLm20alj"
-    val requestJson = """
-    {
-        "model": "gpt-3.5-turbo",
-        "max_tokens": 600,
-        "messages": [{"role": "user", "content": "Your task is to extract the ingredients of a text and simplify them. Then find their respective quantity and units if they exist. Send back a jsonArray 'ingredients' with each element having a 'ingredient', 'quantity' and 'unit' If no ingredients found empty json. Here is the text : tomate 10 g and flour 200 kg"}]
-    }
-    """.trimIndent()
-
-
-    val request = Request.Builder()
-      .url("https://api.openai.com/v1/chat/completions")
-      .post(requestJson.toRequestBody("application/json".toMediaType()))
-      .header("Authorization", "Bearer $apiKey")
-      .header("Content-Type", "application/json")
-      .build()
-
-
-    val client = OkHttpClient()
-    client.newCall(request).enqueue(object : Callback {
-      override fun onFailure(call: Call, e: java.io.IOException) {
-        println("Failed to execute request: ${e.message}")
-        onFailure(e)
-      }
-
-      override fun onResponse(call: Call, response: Response) {
-        val responseBody = response.body?.string()
-        println("Response: $responseBody")
-        val jsonResponse = responseBody?.let { JSONObject(it) }
-        val choicesArray = jsonResponse?.getJSONArray("choices")
-        val choiceObject = choicesArray?.getJSONObject(0)
-        val messageObject = choiceObject?.getJSONObject("message")
-        val contentString = messageObject?.getString("content")
-        val contentObject = contentString?.let { JSONObject(it) }
-        val ingredientsArray = contentObject?.getJSONArray("ingredients")
-          // Iterate through the ingredients array
-        if (ingredientsArray != null) {
-          for (i in 0 until ingredientsArray.length()) {
-                val ingredientObject = ingredientsArray.getJSONObject(i)
-                val ingredient = ingredientObject.getString("ingredient")
-                val quantity = ingredientObject.getDouble("quantity")
-                val unitString = ingredientObject.getString("unit")
-
-                println("Response element : ${IngredientMetaData( quantity, MeasureUnit.EMPTY, Ingredient(ingredient,"DEFAULT_TYPE","DEFAULT_ID"),)}")
-
-          }
-        }
-
-        onSuccess()
-      }
-    })
-  }
-}
-
-@Composable
-fun GptPreviewApp(viewModel: GptPreviewViewModel) {
-  Surface() {
-    Column() {
-      Button(onClick = { viewModel.analyzeTextForIngredients() }) {
-      }
-    }
-  }
-}
-
-@Preview(showBackground = true)
-@Composable
-fun DefaultPreview() {
-  GptPreviewApp(GptPreviewViewModel())
-}
-*/

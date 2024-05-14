@@ -98,6 +98,12 @@ fun textProcessing(text: Text): String {
   return blockText
 }
 
+/**
+ * Converts a string representation of a measure unit to a corresponding [MeasureUnit] enum value.
+ *
+ * @param unitString The string representation of the measure unit.
+ * @return The corresponding [MeasureUnit] enum value.
+ */
 fun getMeasureUnitFromString(unitString: String): MeasureUnit {
   return when (unitString.lowercase()) {
     "teaspoon",
@@ -124,6 +130,16 @@ fun getMeasureUnitFromString(unitString: String): MeasureUnit {
   }
 }
 
+/**
+ * Analyzes the provided [Text] object for ingredients and invokes a callback function for each
+ * ingredient found.
+ *
+ * @param mlText The [Text] object to be analyzed.
+ * @param forIngredientFound A callback function invoked for each ingredient found. Receives the
+ *   extracted ingredient metadata as a parameter.
+ * @param onSuccess A callback function invoked when text analysis is successful.
+ * @param onFailure A callback function invoked when text analysis fails.
+ */
 fun analyzeTextForIngredients(
     mlText: Text,
     forIngredientFound: (IngredientMetaData) -> Unit,
@@ -159,6 +175,12 @@ fun analyzeTextForIngredients(
           })
 }
 
+/**
+ * Builds a JSON request body for sending a text analysis request.
+ *
+ * @param mlText The [Text] object containing the text to be analyzed.
+ * @return The JSON request body as a string.
+ */
 fun buildRequestJson(mlText: Text): String {
   return """
         {
@@ -170,6 +192,12 @@ fun buildRequestJson(mlText: Text): String {
       .trimIndent()
 }
 
+/**
+ * Builds an HTTP request for sending a text analysis request.
+ *
+ * @param requestJson The JSON request body as a string.
+ * @return The HTTP request object.
+ */
 fun buildRequest(requestJson: String): Request {
   return Request.Builder()
       .url("https://api.openai.com/v1/chat/completions")
@@ -179,6 +207,14 @@ fun buildRequest(requestJson: String): Request {
       .build()
 }
 
+/**
+ * Parses the response from a text analysis request and invokes a callback function for each
+ * ingredient found.
+ *
+ * @param responseBody The response body as a JSON string.
+ * @param forIngredientFound A callback function invoked for each ingredient found. Receives the
+ *   extracted ingredient metadata as a parameter.
+ */
 fun parseResponse(responseBody: String?, forIngredientFound: (IngredientMetaData) -> Unit) {
   val jsonResponse = responseBody?.let { JSONObject(it) }
   val choicesArray = jsonResponse?.getJSONArray("choices")
@@ -226,6 +262,11 @@ fun OverlayTextField(isVisible: Boolean, onDismiss: () -> Unit, text: String = "
   }
 }
 
+/**
+ * Capitalizes the first character of each word in the string.
+ *
+ * @return The string with each word capitalized.
+ */
 fun String.capitalizeWords(): String =
     split(" ")
         .map {

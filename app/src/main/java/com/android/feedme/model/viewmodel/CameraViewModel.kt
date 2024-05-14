@@ -10,12 +10,12 @@ import com.android.feedme.ml.textExtraction
 import com.android.feedme.ml.textProcessing
 import com.android.feedme.model.data.Ingredient
 import com.android.feedme.model.data.IngredientMetaData
-import kotlin.coroutines.resume
-import kotlin.coroutines.suspendCoroutine
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.launch
+import kotlin.coroutines.resume
+import kotlin.coroutines.suspendCoroutine
 
 class CameraViewModel : ViewModel() {
 
@@ -162,30 +162,30 @@ class CameraViewModel : ViewModel() {
       textExtraction(
           bitmap,
           { text ->
-            analyzeTextForIngredients(
-                text,
-                { ing ->
-                  val existingIngredient =
-                      _listOfIngredientToInput.value.find {
-                        it.ingredient.name == ing.ingredient.name
-                      } // Todo change to id later
-
-                  if (existingIngredient != null) {
-                    // If the ingredient exists, update its quantity
-                    val updatedQuantity = existingIngredient.quantity + ing.quantity
-                    val updatedIngredient = existingIngredient.copy(quantity = updatedQuantity)
-                    _listOfIngredientToInput.value =
-                        _listOfIngredientToInput.value.filterNot { it == existingIngredient }
-                    _listOfIngredientToInput.value += updatedIngredient
-                  } else {
-                    // If the ingredient doesn't exist, add it to the list
-                    _listOfIngredientToInput.value += ing
-                  }
-                })
+            analyzeTextForIngredients(text, { ing -> updateIngredientList(ing) })
 
             continuation.resume(textProcessing(text = text))
           },
           { continuation.resume("ERROR : Failed to identify text, please try again.") })
+    }
+  }
+
+  fun updateIngredientList(ing: IngredientMetaData) {
+    val existingIngredient =
+        _listOfIngredientToInput.value.find {
+          it.ingredient.name == ing.ingredient.name
+        } // Todo change to id later
+
+    if (existingIngredient != null) {
+      // If the ingredient exists, update its quantity
+      val updatedQuantity = existingIngredient.quantity + ing.quantity
+      val updatedIngredient = existingIngredient.copy(quantity = updatedQuantity)
+      _listOfIngredientToInput.value =
+          _listOfIngredientToInput.value.filterNot { it == existingIngredient }
+      _listOfIngredientToInput.value += updatedIngredient
+    } else {
+      // If the ingredient doesn't exist, add it to the list
+      _listOfIngredientToInput.value += ing
     }
   }
 }

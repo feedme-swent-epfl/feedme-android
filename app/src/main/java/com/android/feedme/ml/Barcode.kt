@@ -1,6 +1,7 @@
 package com.android.feedme.ml
 
 import android.graphics.Bitmap
+import android.util.Log
 import androidx.compose.runtime.mutableStateOf
 import com.android.feedme.api.HttpMethod
 import com.android.feedme.api.httpRequestBarcode
@@ -21,7 +22,7 @@ import com.google.mlkit.vision.common.InputImage
  *   parameter of type Exception, which represents the exception occurred during the scanning
  *   process. Default is an empty function.
  */
-fun barcodeScanner(
+fun barcodeScan(
     bitmap: Bitmap?,
     onSuccess: (String) -> Unit = {},
     onFailure: (Exception) -> Unit = {}
@@ -50,21 +51,20 @@ fun barcodeScanner(
  * callbacks for both successful and failed outcomes.
  *
  * @param barcodeNB The barcode number for which the product name needs to be extracted.
- * @param onSuccess Callback function invoked when the product name extraction is successful. It
- *   takes a single parameter, [productName], representing the extracted product name.
+ * @param onSuccess Callback function invoked when the product name extraction is successful.
  * @param onFailure Callback function invoked when an exception occurs during the extraction
- *   process. It takes a single parameter, [exception], representing the exception that occurred.
+ *   process.
  * @throws Exception if an error occurs during the extraction process.
  */
 suspend fun extractProductNameFromBarcode(
     barcodeNB: String,
-    onSuccess: (String) -> Unit,
-    onFailure: (Exception) -> Unit
+    onSuccess: (String) -> Unit = {},
+    onFailure: (Exception) -> Unit = {}
 ) {
   try {
     onSuccess(httpRequestBarcode(HttpMethod.GET, barcodeNB, "fields=product_name"))
   } catch (e: Exception) {
-    println(e.message)
+    e.message?.let { Log.i(e.message, it) }
     onFailure(e)
   }
 }

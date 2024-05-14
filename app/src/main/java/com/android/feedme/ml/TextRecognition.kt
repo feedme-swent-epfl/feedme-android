@@ -1,13 +1,13 @@
 package com.android.feedme.ml
 
 import android.graphics.Bitmap
+import android.util.Log
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.mutableStateOf
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.RectangleShape
@@ -20,32 +20,34 @@ import com.google.mlkit.vision.text.TextRecognition
 import com.google.mlkit.vision.text.latin.TextRecognizerOptions
 
 /**
- * Recognizes text in the given bitmap image asynchronously, using the Google ML Kit.
+ * Extract text from a bitmap image using the google ML-kit.
  *
- * @param bitmap The bitmap containing the image with text to be recognized.
- * @param onSuccess A lambda function to be called when text recognition succeeds. It receives a
- *   Text object as a parameter.
- * @param onFailure A lambda function to be called when text recognition fails. It receives an
- *   Exception as a parameter.
+ * @param bitmap The bitmap image from which text will be extracted.
+ * @param onSuccess A callback function invoked when text extraction is successful. Receives the
+ *   extracted text as a parameter.
+ * @param onFailure A callback function invoked when text extraction fails.
  */
-fun TextRecognition(
-    bitmap: Bitmap?,
+fun textExtraction(
+    bitmap: Bitmap,
     onSuccess: (Text) -> Unit = {},
     onFailure: (Exception) -> Unit = {}
 ) {
-  val visionTextState = mutableStateOf<Text?>(null)
   val recognizer = TextRecognition.getClient(TextRecognizerOptions.DEFAULT_OPTIONS)
-  val image = bitmap?.let { InputImage.fromBitmap(it, 0) }
-  if (image != null) {
-    recognizer
-        .process(image)
-        .addOnSuccessListener { visionText ->
-          // Task completed successfully
-          visionTextState.value = visionText
+  val image = bitmap.let { InputImage.fromBitmap(it, 0) }
+  recognizer
+      .process(image)
+      .addOnFailureListener { e ->
+        Log.e("TextExtraction", "Failure: ${e.message}")
+        onFailure(e)
+      }
+      .addOnSuccessListener { visionText ->
+        if (visionText.textBlocks.isEmpty()) {
+          Log.e("TextExtraction", "No text found in the image")
+          onFailure(Exception("No text found in the image"))
+        } else {
           onSuccess(visionText)
         }
-        .addOnFailureListener { e -> onFailure(e) }
-  }
+      }
 }
 
 /**
@@ -62,8 +64,7 @@ fun TextRecognition(
  * TODO("A lot of work on exact image processing an display of the relevant information's in a smart
  *   way")
  */
-@Composable
-fun TextProcessing(text: Text): String {
+fun textProcessing(text: Text): String {
   var blockText = ""
   for (block in text.textBlocks) {
     blockText += block.text

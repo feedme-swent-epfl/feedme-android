@@ -23,7 +23,6 @@ import com.android.feedme.model.viewmodel.LandingPageViewModel
 import com.android.feedme.model.viewmodel.ProfileViewModel
 import com.android.feedme.model.viewmodel.RecipeViewModel
 import com.android.feedme.resources.C
-import com.android.feedme.ui.SavedScreen
 import com.android.feedme.ui.auth.LoginScreen
 import com.android.feedme.ui.auth.WelcomeScreen
 import com.android.feedme.ui.camera.CameraScreen
@@ -31,6 +30,7 @@ import com.android.feedme.ui.camera.GalleryScreen
 import com.android.feedme.ui.component.RecipeFullDisplay
 import com.android.feedme.ui.find.FindRecipeScreen
 import com.android.feedme.ui.home.LandingPage
+import com.android.feedme.ui.home.SavedRecipesScreen
 import com.android.feedme.ui.navigation.NavigationActions
 import com.android.feedme.ui.navigation.Route
 import com.android.feedme.ui.navigation.Screen
@@ -89,7 +89,10 @@ class MainActivity : ComponentActivity() {
                 }
 
                 navigation(startDestination = Screen.SAVED, route = Route.SAVED) {
-                  composable(Screen.SAVED) { SavedScreen(navigationActions, Route.SAVED) }
+                  composable(Screen.SAVED) {
+                    val recipeViewModel = viewModel<RecipeViewModel>()
+                    SavedRecipesScreen(navigationActions)
+                  }
                 }
 
                 navigation(startDestination = Screen.FIND_RECIPE, route = Route.FIND_RECIPE) {

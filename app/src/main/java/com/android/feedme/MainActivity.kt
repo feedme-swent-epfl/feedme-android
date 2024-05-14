@@ -32,6 +32,7 @@ import com.android.feedme.ui.component.RecipeFullDisplay
 import com.android.feedme.ui.find.FindRecipeScreen
 import com.android.feedme.ui.home.LandingPage
 import com.android.feedme.ui.home.SavedRecipesScreen
+import com.android.feedme.ui.home.SearchScreen
 import com.android.feedme.ui.navigation.NavigationActions
 import com.android.feedme.ui.navigation.Route
 import com.android.feedme.ui.navigation.Screen

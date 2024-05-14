@@ -34,26 +34,30 @@ import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
-import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.testTag
+import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import coil.compose.AsyncImage
+import com.android.feedme.model.data.Profile
 import com.android.feedme.model.data.Recipe
 import com.android.feedme.model.viewmodel.HomeViewModel
+import com.android.feedme.model.viewmodel.ProfileViewModel
 import com.android.feedme.model.viewmodel.RecipeViewModel
 import com.android.feedme.model.viewmodel.SearchViewModel
 import com.android.feedme.ui.component.SearchBarFun
 import com.android.feedme.ui.navigation.BottomNavigationMenu
 import com.android.feedme.ui.navigation.NavigationActions
 import com.android.feedme.ui.navigation.Route
+import com.android.feedme.ui.navigation.Screen
 import com.android.feedme.ui.navigation.TOP_LEVEL_DESTINATIONS
 import com.android.feedme.ui.navigation.TopBarNavigation
+import com.android.feedme.ui.theme.BlueUsername
 import com.android.feedme.ui.theme.TemplateColor
 import com.android.feedme.ui.theme.TextBarColor
 import com.android.feedme.ui.theme.YellowStar
@@ -64,6 +68,8 @@ import com.android.feedme.ui.theme.YellowStarBlackOutline
  *
  * @param navigationActions The [NavigationActions] instance for handling back navigation.
  * @param recipeViewModel The [RecipeViewModel] instance of the recipe ViewModel.
+ * @param homeViewModel The [HomeViewModel] instance of the home ViewModel.
+ * @param profileViewModel The [ProfileViewModel] instance of the profile ViewModel.
  */
 @SuppressLint("StateFlowValueCalledInComposition")
 @Composable
@@ -71,6 +77,7 @@ fun LandingPage(
     navigationActions: NavigationActions,
     recipeViewModel: RecipeViewModel,
     homeViewModel: HomeViewModel,
+    profileViewModel: ProfileViewModel,
     searchViewModel: SearchViewModel
 ) {
 
@@ -83,7 +90,13 @@ fun LandingPage(
         BottomNavigationMenu(Route.HOME, navigationActions::navigateTo, TOP_LEVEL_DESTINATIONS)
       },
       content = {
-        RecipeDisplay(it, navigationActions, recipes.value, searchViewModel, recipeViewModel)
+        RecipeDisplay(
+            it,
+            navigationActions,
+            recipes.value,
+            searchViewModel,
+            recipeViewModel,
+            profileViewModel)
       })
 }
 
@@ -95,6 +108,7 @@ fun LandingPage(
  * @param recipes : the list of [Recipe] to be displayed
  * @param searchViewModel : the [SearchViewModel] instance
  * @param recipeViewModel : the [RecipeViewModel] instance
+ * @param profileViewModel : the [ProfileViewModel] instance
  */
 @Composable
 fun RecipeDisplay(
@@ -102,7 +116,8 @@ fun RecipeDisplay(
     navigationActions: NavigationActions,
     recipes: List<Recipe>,
     searchViewModel: SearchViewModel,
-    recipeViewModel: RecipeViewModel
+    recipeViewModel: RecipeViewModel,
+    profileViewModel: ProfileViewModel
 ) {
 
   Column(
@@ -117,8 +132,13 @@ fun RecipeDisplay(
             modifier =
                 Modifier.testTag("RecipeList").padding(top = 8.dp).background(TextBarColor)) {
               items(recipes) { recipe ->
+
+                // Fetch the profile of the user who created the recipe
+                profileViewModel.fetchProfile(recipe.userid)
+                val profile = profileViewModel.viewingUserProfile.collectAsState().value
+
                 // Recipe card
-                RecipeCard(recipe, navigationActions, recipeViewModel)
+                RecipeCard(recipe, profile, navigationActions, recipeViewModel, profileViewModel)
               }
             }
       }
@@ -128,14 +148,18 @@ fun RecipeDisplay(
  * Composable function for the Recipe Card. This function displays the recipe in a card format.
  *
  * @param recipe The [Recipe] to be displayed.
+ * @param profile The [Profile] of the user who created the recipe.
  * @param navigationActions The [NavigationActions] instance for handling back navigation.
  * @param recipeViewModel The [RecipeViewModel] instance of the recipe ViewModel.
+ * @param profileViewModel The [ProfileViewModel] instance of the profile ViewModel.
  */
 @Composable
 fun RecipeCard(
     recipe: Recipe,
+    profile: Profile?,
     navigationActions: NavigationActions,
-    recipeViewModel: RecipeViewModel
+    recipeViewModel: RecipeViewModel,
+    profileViewModel: ProfileViewModel
 ) {
   Card(
       modifier =
@@ -216,7 +240,6 @@ fun RecipeCard(
                           contentDescription = "Share Icon on Recipe Card",
                           modifier = Modifier.size(32.dp))
                     }
-
                 Spacer(modifier = Modifier.weight(1f))
                 // Save icon
                 IconButton(
@@ -252,13 +275,20 @@ fun RecipeCard(
                   text = recipe.description,
                   modifier = Modifier.fillMaxWidth().height(50.dp),
                   color = TemplateColor)
-              Text(
-                  "@${recipe.userid}",
-                  color = TemplateColor,
-                  modifier =
-                      Modifier.padding(bottom = 10.dp)
-                          .clickable(onClick = { /* TODO : implement the clicking on username */})
-                          .testTag("UserName"))
+              if (profile != null) {
+                Text(
+                    modifier =
+                        Modifier.padding(bottom = 10.dp)
+                            .clickable(
+                                onClick = {
+                                  profileViewModel.setViewingProfile(profile)
+                                  navigationActions.navigateTo(Screen.PROFILE)
+                                })
+                            .testTag("UserName"),
+                    text = "@${profile.username}",
+                    color = BlueUsername,
+                    style = TextStyle(fontSize = 16.sp, fontWeight = FontWeight.Medium))
+              }
             }
       }
 }

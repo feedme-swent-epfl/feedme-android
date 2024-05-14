@@ -169,8 +169,8 @@ fun FriendsList(
  * @param profile The profile data of the user to display.
  * @param navigationActions Provides navigation actions for handling user interactions with the
  *   navigation bar.
- *     @param profileViewModel The view model that provides the profile data.
- *     @param isFollowerList A boolean value that determines if the user is in the follower list.
+ * @param profileViewModel The view model that provides the profile data.
+ * @param isFollowerList A boolean value that determines if the user is in the follower list.
  */
 @Composable
 fun FriendsCard(

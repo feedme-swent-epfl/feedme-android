@@ -86,7 +86,12 @@ class MainActivity : ComponentActivity() {
                     // Create a shared view model for Recipe
                     val recipeViewModel = viewModel<RecipeViewModel>()
                     val homeViewModel: HomeViewModel = viewModel<HomeViewModel>()
-                    LandingPage(navigationActions, recipeViewModel, homeViewModel, searchViewModel)
+                    LandingPage(
+                        navigationActions,
+                        recipeViewModel,
+                        homeViewModel,
+                        profileViewModel,
+                        searchViewModel)
                   }
                 }
 
@@ -135,19 +140,11 @@ class MainActivity : ComponentActivity() {
                     // Link the shared view model to the composable
                     val navBackStackEntry = navController.getBackStackEntry(backScreen)
                     val recipeViewModel = viewModel<RecipeViewModel>(navBackStackEntry)
-                    RecipeFullDisplay(it, navigationActions, recipeViewModel)
+                    RecipeFullDisplay(it, navigationActions, recipeViewModel, profileViewModel)
                   }
                 }
                 composable(Screen.SEARCH) { backStackEntry ->
                   backStackEntry.arguments?.getString("sourceRoute")?.let {
-                    /*val backScreen =
-                    when (it) {
-                      Route.HOME -> Screen.HOME
-                      // TODO add other routes to SearchScreen later (for ex SAVED)
-                      else -> {
-                        ""
-                      }
-                    }*/
                     val recipeViewModel = viewModel<RecipeViewModel>()
                     SearchScreen(
                         it, navigationActions, searchViewModel, recipeViewModel, profileViewModel)

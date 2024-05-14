@@ -113,10 +113,15 @@ fun CameraScreen(navigationActions: NavigationActions, inputViewModel: InputView
 
   BottomSheetScaffold(
       modifier = Modifier.testTag("CameraScreen"),
-      topBar = { TopBarNavigation(title = "Camera", navAction = navigationActions, backArrowOnClickAction = {
-          inputViewModel.addToList(listOfIngredientToInput.value.toMutableList())
-          navigationActions.goBack()
-      }) },
+      topBar = {
+        TopBarNavigation(
+            title = "Camera",
+            navAction = navigationActions,
+            backArrowOnClickAction = {
+              inputViewModel.addToList(listOfIngredientToInput.value.toMutableList())
+              navigationActions.goBack()
+            })
+      },
       scaffoldState = scaffoldState,
       sheetPeekHeight = 0.dp,
       sheetContent = {
@@ -213,7 +218,7 @@ fun CameraScreen(navigationActions: NavigationActions, inputViewModel: InputView
           }
           // If text recognition button is pressed
           if (displayText.value) {
-              cameraViewModel.textRecognitionButtonPressed()
+            cameraViewModel.textRecognitionButtonPressed()
             OverlayTextField(
                 isVisible = true,
                 onDismiss = { displayText.value = false },
@@ -222,7 +227,7 @@ fun CameraScreen(navigationActions: NavigationActions, inputViewModel: InputView
 
           // If barcode scanner button is pressed
           if (displayBarcode.value) {
-              cameraViewModel.barcodeScanButtonPressed()
+            cameraViewModel.barcodeScanButtonPressed()
             OverlayTextField(
                 isVisible = true,
                 onDismiss = { displayBarcode.value = false },

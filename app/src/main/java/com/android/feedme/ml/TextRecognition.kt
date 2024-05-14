@@ -97,31 +97,30 @@ fun textProcessing(text: Text): String {
   return blockText
 }
 
-
 fun getMeasureUnitFromString(unitString: String): MeasureUnit {
-    return when (unitString.lowercase()) {
-        "teaspoon",
-        "tsp",
-        "teaspoons" -> MeasureUnit.TEASPOON
-        "tablespoon",
-        "tbsp",
-        "tablespoons" -> MeasureUnit.TABLESPOON
-        "cup",
-        "cups" -> MeasureUnit.CUP
-        "g",
-        "grams",
-        "gram" -> MeasureUnit.G
-        "kg",
-        "kilograms",
-        "kilogram" -> MeasureUnit.KG
-        "l",
-        "liter",
-        "liters" -> MeasureUnit.L
-        "ml",
-        "millilitre",
-        "millilitres" -> MeasureUnit.ML
-        else -> MeasureUnit.NONE
-    }
+  return when (unitString.lowercase()) {
+    "teaspoon",
+    "tsp",
+    "teaspoons" -> MeasureUnit.TEASPOON
+    "tablespoon",
+    "tbsp",
+    "tablespoons" -> MeasureUnit.TABLESPOON
+    "cup",
+    "cups" -> MeasureUnit.CUP
+    "g",
+    "grams",
+    "gram" -> MeasureUnit.G
+    "kg",
+    "kilograms",
+    "kilogram" -> MeasureUnit.KG
+    "l",
+    "liter",
+    "liters" -> MeasureUnit.L
+    "ml",
+    "millilitre",
+    "millilitres" -> MeasureUnit.ML
+    else -> MeasureUnit.NONE
+  }
 }
 
 fun analyzeTextForIngredients(
@@ -131,69 +130,69 @@ fun analyzeTextForIngredients(
     onFailure: (Exception) -> Unit = {}
 ) {
 
-    val requestJson =
-        """
+  val requestJson =
+      """
     {
         "model": "gpt-3.5-turbo",
         "max_tokens": 2000,
         "messages": [{"role": "user", "content": "Your task is to extract the ingredients of a text and simplify them. Then find their respective quantity and units if they exist. Send back a jsonArray with each element having a 'ingredient', 'quantity' as Double and 'unit' If no ingredients found send an empty JSONArray. Here is the text : ${mlText.text.replace('\n', ' ')}"}]
     }
     """
-            .trimIndent()
+          .trimIndent()
 
-    val request =
-        Request.Builder()
-            .url("https://api.openai.com/v1/chat/completions")
-            .post(requestJson.toRequestBody("application/json".toMediaType()))
-            .header("Authorization", "Bearer ${BuildConfig.CHATGBT_API_KEY}")
-            .header("Content-Type", "application/json")
-            .build()
+  val request =
+      Request.Builder()
+          .url("https://api.openai.com/v1/chat/completions")
+          .post(requestJson.toRequestBody("application/json".toMediaType()))
+          .header("Authorization", "Bearer ${BuildConfig.CHATGBT_API_KEY}")
+          .header("Content-Type", "application/json")
+          .build()
 
-    val client = OkHttpClient()
-    client
-        .newCall(request)
-        .enqueue(
-            object : Callback {
-                override fun onFailure(call: Call, e: java.io.IOException) {
-                    println("Failed to execute request: ${e.message}")
-                    onFailure(e)
+  val client = OkHttpClient()
+  client
+      .newCall(request)
+      .enqueue(
+          object : Callback {
+            override fun onFailure(call: Call, e: java.io.IOException) {
+              println("Failed to execute request: ${e.message}")
+              onFailure(e)
+            }
+
+            override fun onResponse(call: Call, response: Response) {
+              val responseBody = response.body?.string()
+              println("Response: $responseBody")
+              try {
+                val jsonResponse = responseBody?.let { JSONObject(it) }
+                val choicesArray = jsonResponse?.getJSONArray("choices")
+                val choiceObject = choicesArray?.getJSONObject(0)
+                val messageObject = choiceObject?.getJSONObject("message")
+                val contentString = messageObject?.getString("content")
+                val contentObject = contentString?.let { JSONArray(it) }
+
+                // Iterate through the ingredients array
+                if (contentObject != null) {
+                  for (i in 0 until contentObject.length()) {
+                    val ingredientObject = contentObject.getJSONObject(i)
+                    val ingredient = ingredientObject.optString("ingredient", "")
+                    val quantity = ingredientObject.getString("quantity").toDoubleOrNull() ?: 0.0
+                    val unitString = ingredientObject.optString("unit", "")
+                    val unit = getMeasureUnitFromString(unitString)
+
+                    forIngredientFound(
+                        IngredientMetaData(
+                            quantity,
+                            unit,
+                            Ingredient(ingredient, "DEFAULT_TYPE", "DEFAULT_ID"),
+                        ))
+                  }
                 }
-
-                override fun onResponse(call: Call, response: Response) {
-                    val responseBody = response.body?.string()
-                    println("Response: $responseBody")
-                    try {
-                        val jsonResponse = responseBody?.let { JSONObject(it) }
-                        val choicesArray = jsonResponse?.getJSONArray("choices")
-                        val choiceObject = choicesArray?.getJSONObject(0)
-                        val messageObject = choiceObject?.getJSONObject("message")
-                        val contentString = messageObject?.getString("content")
-                        val contentObject = contentString?.let { JSONArray(it) }
-
-                        // Iterate through the ingredients array
-                        if (contentObject != null) {
-                            for (i in 0 until contentObject.length()) {
-                                val ingredientObject = contentObject.getJSONObject(i)
-                                val ingredient = ingredientObject.optString("ingredient", "")
-                                val quantity = ingredientObject.getString("quantity").toDoubleOrNull() ?: 0.0
-                                val unitString = ingredientObject.optString("unit", "")
-                                val unit = getMeasureUnitFromString(unitString)
-
-                                forIngredientFound(
-                                    IngredientMetaData(
-                                        quantity,
-                                        unit,
-                                        Ingredient(ingredient, "DEFAULT_TYPE", "DEFAULT_ID"),
-                                    ))
-                            }
-                        }
-                        onSuccess()
-                    } catch (e: Exception) {
-                        println(e.message)
-                        onFailure(e)
-                    }
-                }
-            })
+                onSuccess()
+              } catch (e: Exception) {
+                println(e.message)
+                onFailure(e)
+              }
+            }
+          })
 }
 
 /**

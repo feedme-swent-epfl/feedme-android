@@ -10,12 +10,12 @@ import com.android.feedme.ml.textExtraction
 import com.android.feedme.ml.textProcessing
 import com.android.feedme.model.data.Ingredient
 import com.android.feedme.model.data.IngredientMetaData
+import kotlin.coroutines.resume
+import kotlin.coroutines.suspendCoroutine
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.launch
-import kotlin.coroutines.resume
-import kotlin.coroutines.suspendCoroutine
 
 class CameraViewModel : ViewModel() {
 
@@ -51,7 +51,7 @@ class CameraViewModel : ViewModel() {
 
   private val _listOfIngredientToInput = MutableStateFlow<List<IngredientMetaData>>(emptyList())
   val listOfIngredientToInput = _listOfIngredientToInput.asStateFlow()
-  
+
   /** Information's to be displayed after a ML button was pressed */
   private val _informationToDisplay = MutableStateFlow<String>("")
   val informationToDisplay = _informationToDisplay.asStateFlow()
@@ -64,7 +64,6 @@ class CameraViewModel : ViewModel() {
     _bitmaps.value += bitmap
     _lastPhoto.value = PhotoState.Photo(bitmap)
   }
-
 
   /**
    * This function is called when the user taps the save button in the CameraScreen. It sets the
@@ -158,7 +157,7 @@ class CameraViewModel : ViewModel() {
       textExtraction(
           bitmap,
           { text ->
-            analyzeTextForIngredients(text,{ing -> _listOfIngredientToInput.value+=ing})
+            analyzeTextForIngredients(text, { ing -> _listOfIngredientToInput.value += ing })
             continuation.resume(textProcessing(text = text))
           },
           { continuation.resume("ERROR : Failed to identify text, please try again.") })

@@ -36,7 +36,7 @@ class SmallCommentsTest {
     composeTestRule.onNodeWithContentDescription("Recipe Image").assertIsDisplayed()
 
     // Author name
-    composeTestRule.onNodeWithText(comment1.authorId).assertIsDisplayed()
+    composeTestRule.onNodeWithText(comment1.commentId).assertIsDisplayed()
 
     // Title
     composeTestRule.onNodeWithText(comment1.title).assertIsDisplayed()

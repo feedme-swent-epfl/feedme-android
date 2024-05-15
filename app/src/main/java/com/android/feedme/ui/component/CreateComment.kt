@@ -35,15 +35,21 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.text.font.FontWeight
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import com.android.feedme.model.data.Comment
+import com.android.feedme.model.viewmodel.CommentViewModel
+import com.android.feedme.model.viewmodel.ProfileViewModel
+import com.android.feedme.model.viewmodel.RecipeViewModel
 import com.android.feedme.ui.theme.TemplateColor
 
 /** Composable function to enable comment creation */
-@Preview
 @Composable
-fun CreateComment() {
+fun CreateComment(
+    profileViewModel: ProfileViewModel,
+    recipeViewModel: RecipeViewModel,
+    commentViewModel: CommentViewModel
+) {
 
   var commentTitle by remember { mutableStateOf("") }
   var rating by remember { mutableStateOf("") }
@@ -155,7 +161,19 @@ fun CreateComment() {
 
                     // publish button
                     OutlinedButton(
-                        onClick = { /* TODO() implement publishing button functionality */},
+                        onClick = {
+                          val com =
+                              Comment(
+                                  "ID_DEFAULT",
+                                  profileViewModel.currentUserId!!,
+                                  recipeViewModel.recipe.value!!.recipeId,
+                                  "URL_DEFAULT",
+                                  rating.toDouble(),
+                                  commentTitle,
+                                  description,
+                                  java.util.Date())
+                          commentViewModel.setComment(com)
+                        },
                         colors = ButtonDefaults.buttonColors(Color.White),
                         modifier =
                             Modifier.width(150.dp)

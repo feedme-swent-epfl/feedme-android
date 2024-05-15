@@ -14,9 +14,11 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.outlined.Add
 import androidx.compose.material.icons.rounded.Star
 import androidx.compose.material.icons.twotone.Bookmark
 import androidx.compose.material.icons.twotone.Star
+import androidx.compose.material3.FloatingActionButton
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
@@ -24,8 +26,10 @@ import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.testTag
@@ -36,11 +40,13 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.compose.ui.window.Dialog
 import coil.compose.AsyncImage
 import com.android.feedme.model.data.IngredientMetaData
 import com.android.feedme.model.data.Profile
 import com.android.feedme.model.data.Recipe
 import com.android.feedme.model.data.Step
+import com.android.feedme.model.viewmodel.CommentViewModel
 import com.android.feedme.model.viewmodel.ProfileViewModel
 import com.android.feedme.model.viewmodel.RecipeViewModel
 import com.android.feedme.ui.navigation.BottomNavigationMenu
@@ -75,7 +81,7 @@ fun RecipeFullDisplay(
   // Fetch the profile of the user who created the recipe
   recipe?.let { profileViewModel.fetchProfile(it.userid) }
   val profile = profileViewModel.viewingUserProfile.collectAsState().value
-
+  var showDialog by remember { mutableStateOf(false) }
   Scaffold(
       modifier = Modifier.fillMaxSize(),
       topBar = {
@@ -88,6 +94,11 @@ fun RecipeFullDisplay(
       bottomBar = {
         BottomNavigationMenu(route, navigationActions::navigateTo, TOP_LEVEL_DESTINATIONS)
       },
+      floatingActionButton = {
+        FloatingActionButton(
+            onClick = { showDialog = true },
+            content = { Icon(imageVector = Icons.Outlined.Add, contentDescription = "Add") })
+      },
       content = { padding ->
         if (recipe != null) {
           LazyColumn(modifier = Modifier.padding(padding)) {
@@ -97,6 +108,15 @@ fun RecipeFullDisplay(
             items(recipe.ingredients) { ingredient -> IngredientDisplay(ingredient = ingredient) }
             item { IngredientStepsDividerDisplay() }
             items(recipe.steps) { step -> StepDisplay(step = step) }
+          }
+        }
+        if (showDialog) {
+          Dialog(onDismissRequest = { showDialog = false }) {
+            CreateComment(
+                profileViewModel,
+                recipeViewModel,
+                CommentViewModel(),
+            )
           }
         }
       })

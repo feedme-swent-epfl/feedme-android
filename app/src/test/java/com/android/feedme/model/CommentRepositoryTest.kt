@@ -69,7 +69,7 @@ class CommentRepositoryTest {
             "Content",
             Date.from(Instant.now()))
     `when`(mockFirestore.collection("comments")).thenReturn(mockCollectionReference)
-    `when`(mockCollectionReference.document(comment.authorId)).thenReturn(mockDocumentReference)
+    `when`(mockCollectionReference.document(comment.commentId)).thenReturn(mockDocumentReference)
     `when`(mockDocumentReference.set(any())).thenReturn(Tasks.forResult(null)) // Simulate success
 
     // Execute

@@ -37,7 +37,7 @@ class CommentRepository(private val db: FirebaseFirestore) {
    */
   fun addComment(comment: Comment, onSuccess: () -> Unit, onFailure: (Exception) -> Unit) {
     db.collection("comments")
-        .document(comment.authorId)
+        .document(comment.commentId)
         .set(comment)
         .addOnSuccessListener { onSuccess() }
         .addOnFailureListener { exception -> onFailure(exception) }

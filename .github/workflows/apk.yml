@@ -41,6 +41,10 @@ jobs:
           echo $ENCODED_KEYSTORE | base64 -di > upload-keystore.jks
           echo $ENCODED_PASSWORDS | base64 -di > keystore.properties
 
+      - name: Get local.properties from secrets
+        run:
+          echo "${{secrets.LOCAL_PROPERTIES }}" > $GITHUB_WORKSPACE/local.properties
+
       - name: Set up Gradle cache
         uses: gradle/actions/setup-gradle@v3
   

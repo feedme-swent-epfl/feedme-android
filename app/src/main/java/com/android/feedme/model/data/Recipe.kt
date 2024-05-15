@@ -23,7 +23,11 @@ data class IngredientMetaData(
     val quantity: Double, // Quantity of the ingredient
     val measure: MeasureUnit, // Measure unit of the ingredient
     val ingredient: Ingredient // Ingredient object
-)
+) {
+  override fun toString(): String {
+    return "$quantity ${measure.toString()} of ${ingredient.name}"
+  }
+}
 
 enum class MeasureUnit {
   TEASPOON,
@@ -34,6 +38,10 @@ enum class MeasureUnit {
   L,
   ML,
   NONE,
-  EMPTY
-  // Add more units as needed
+  EMPTY,
+  PIECES;
+
+  override fun toString(): String {
+    return if (name == "NONE") " / " else name.lowercase()
+  }
 }

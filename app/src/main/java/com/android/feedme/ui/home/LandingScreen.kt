@@ -18,6 +18,7 @@ import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Bookmark
 import androidx.compose.material.icons.outlined.BookmarkBorder
 import androidx.compose.material.icons.outlined.Share
 import androidx.compose.material.icons.rounded.Star
@@ -228,12 +229,25 @@ fun RecipeCard(
                 Spacer(modifier = Modifier.weight(1f))
                 // Save icon
                 IconButton(
-                    onClick = { /* TODO() add saving logic here */},
+                    onClick = {
+                        if (profileViewModel.savedRecipeExists(recipe))
+                            profileViewModel.removeSavedRecipes(listOf(recipe))
+                        else
+                            profileViewModel.addSavedRecipes(listOf(recipe))
+                    },
                     modifier = Modifier.testTag("SaveIcon")) {
-                      Icon(
-                          imageVector = Icons.Outlined.BookmarkBorder,
-                          contentDescription = "Bookmark Icon on Recipe Card",
-                          modifier = Modifier.size(34.dp).padding(start = 4.dp))
+                        if (profileViewModel.savedRecipeExists(recipe))
+                            Icon(
+                                imageVector = Icons.Filled.Bookmark,
+                                contentDescription = "Bookmark Icon on Recipe Card",
+                                modifier = Modifier.size(34.dp).padding(start = 4.dp),
+                                tint = YellowStarBlackOutline
+                            )
+                        else
+                            Icon(
+                                imageVector = Icons.Outlined.BookmarkBorder,
+                                contentDescription = "Bookmark Icon on Recipe Card",
+                                modifier = Modifier.size(34.dp).padding(start = 4.dp))
                     }
               }
               Row(verticalAlignment = Alignment.CenterVertically) {

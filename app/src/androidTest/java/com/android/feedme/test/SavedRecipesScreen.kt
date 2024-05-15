@@ -29,7 +29,6 @@ class SavedRecipesScreen : TestCase() {
   private val searchViewModel = mockk<SearchViewModel>(relaxed = true)
   private val recipeViewModel = mockk<RecipeViewModel>(relaxed = true)
 
-
   @Before
   fun init() {
     ProfileRepository.initialize(mockFirestore)
@@ -39,7 +38,9 @@ class SavedRecipesScreen : TestCase() {
   @Test
   fun mainComponentsAreDisplayed() {
     ComposeScreen.onComposeScreen<SavedRecipesScreen>(composeTestRule) {
-      composeTestRule.setContent { SavedRecipesScreen(navAction, profileViewModel, searchViewModel, recipeViewModel) }
+      composeTestRule.setContent {
+        SavedRecipesScreen(navAction, profileViewModel, searchViewModel, recipeViewModel)
+      }
       composeTestRule.onNodeWithTag("SavedScreen").assertIsDisplayed()
       composeTestRule.onNodeWithTag("SavedScreenBox").assertIsDisplayed()
       composeTestRule.onNodeWithTag("SavedScreenText").assertIsDisplayed()

@@ -139,8 +139,6 @@ class CameraTest : TestCase() {
     }
   }
 
-  @Test fun MLInputIngredient() {}
-
   // Test the case where no photo was taken before asking for text recognition.
   @Test
   fun MLTextButtonWithNoPhoto() {

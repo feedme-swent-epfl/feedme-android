@@ -31,6 +31,8 @@ import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
@@ -228,24 +230,33 @@ fun RecipeCard(
                     }
                 Spacer(modifier = Modifier.weight(1f))
                 // Save icon
+                val isSaved = remember {
+                  mutableStateOf(profileViewModel.savedRecipeExists(recipe))
+                }
+
                 IconButton(
                     onClick = {
-                      if (profileViewModel.savedRecipeExists(recipe))
-                          profileViewModel.removeSavedRecipes(listOf(recipe))
-                      else profileViewModel.addSavedRecipes(listOf(recipe))
+                      if (isSaved.value) {
+                        profileViewModel.removeSavedRecipes(listOf(recipe))
+                        isSaved.value = false // Update: now it reflects the change correctly
+                      } else {
+                        profileViewModel.addSavedRecipes(listOf(recipe))
+                        isSaved.value = true // Update: now it reflects the change correctly
+                      }
                     },
                     modifier = Modifier.testTag("SaveIcon")) {
-                      if (profileViewModel.savedRecipeExists(recipe))
-                          Icon(
-                              imageVector = Icons.Filled.Bookmark,
-                              contentDescription = "Bookmark Icon on Recipe Card",
-                              modifier = Modifier.size(34.dp).padding(start = 4.dp),
-                              tint = YellowStarBlackOutline)
-                      else
-                          Icon(
-                              imageVector = Icons.Outlined.BookmarkBorder,
-                              contentDescription = "Bookmark Icon on Recipe Card",
-                              modifier = Modifier.size(34.dp).padding(start = 4.dp))
+                      if (isSaved.value) {
+                        Icon(
+                            imageVector = Icons.Filled.Bookmark,
+                            contentDescription = "Bookmark Icon on Recipe Card",
+                            modifier = Modifier.size(34.dp).padding(start = 4.dp),
+                            tint = YellowStarBlackOutline)
+                      } else {
+                        Icon(
+                            imageVector = Icons.Outlined.BookmarkBorder,
+                            contentDescription = "Bookmark Icon on Recipe Card",
+                            modifier = Modifier.size(34.dp).padding(start = 4.dp))
+                      }
                     }
               }
               Row(verticalAlignment = Alignment.CenterVertically) {

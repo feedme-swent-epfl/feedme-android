@@ -268,10 +268,8 @@ fun OverlayTextField(isVisible: Boolean, onDismiss: () -> Unit, text: String = "
  * @return The string with each word capitalized.
  */
 fun String.capitalizeWords(): String =
-    split(" ")
-        .map {
-          it.replaceFirstChar {
-            if (it.isLowerCase()) it.titlecase(Locale.getDefault()) else it.toString()
-          }
-        }
-        .joinToString(" ")
+    split(" ").joinToString(" ") { it ->
+      it.replaceFirstChar {
+        if (it.isLowerCase()) it.titlecase(Locale.getDefault()) else it.toString()
+      }
+    }

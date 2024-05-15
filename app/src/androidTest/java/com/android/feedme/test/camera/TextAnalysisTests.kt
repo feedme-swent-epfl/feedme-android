@@ -15,7 +15,6 @@ class TextAnalysisTests {
 
   @Test
   fun testAnalyzeTextForIngredients() {
-    // Mock the Text object
     val mockText = mockk<Text>()
     every { mockText.text } returns "1 cup flour, 2 eggs, 1/2 teaspoon salt"
 

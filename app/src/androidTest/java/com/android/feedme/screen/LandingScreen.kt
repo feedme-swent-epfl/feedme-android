@@ -14,6 +14,7 @@ class LandingScreen(semanticsProvider: SemanticsNodeInteractionsProvider) :
   val topBarLanding: KNode = child { hasTestTag("TopBarNavigation") }
   val bottomBarLanding: KNode = child { hasTestTag("BottomNavigationMenu") }
   val completeScreen: KNode = child { hasTestTag("CompleteScreen") }
+  val searchBar: KNode = child { hasTestTag("SearchBar") }
   val recipeList: KNode = child { hasTestTag("RecipeList") }
   val recipeCard: KNode = child { hasTestTag("RecipeCard") }
   val userName: KNode = child { hasTestTag("UserName") }

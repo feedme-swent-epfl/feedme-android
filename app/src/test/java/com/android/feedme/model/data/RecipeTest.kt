@@ -19,10 +19,8 @@ class RecipeTest {
             ingredients = ingredients,
             steps = steps,
             tags = listOf("dessert", "cake"),
-            time = 60.0,
             rating = 4.5,
             userid = "user123",
-            difficulty = "Easy",
             imageUrl = "https://example.com/cake.jpg")
 
     // When - Retrieving properties (implicitly in assertions)

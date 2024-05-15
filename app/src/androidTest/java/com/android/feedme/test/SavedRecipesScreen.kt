@@ -25,13 +25,15 @@ class SavedRecipesScreen : TestCase() {
   @get:Rule val composeTestRule = createComposeRule()
   private val mockFirestore = mockk<FirebaseFirestore>(relaxed = true)
   private val navAction = mockk<NavigationActions>(relaxed = true)
-  private val profileViewModel = mockk<ProfileViewModel>(relaxed = true)
+  private lateinit var profileViewModel: ProfileViewModel
   private val searchViewModel = mockk<SearchViewModel>(relaxed = true)
   private val recipeViewModel = mockk<RecipeViewModel>(relaxed = true)
+
 
   @Before
   fun init() {
     ProfileRepository.initialize(mockFirestore)
+    profileViewModel = ProfileViewModel()
   }
 
   @Test

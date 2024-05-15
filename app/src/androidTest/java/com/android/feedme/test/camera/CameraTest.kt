@@ -7,6 +7,7 @@ import androidx.compose.ui.test.junit4.createComposeRule
 import androidx.compose.ui.test.onNodeWithContentDescription
 import androidx.compose.ui.test.onNodeWithTag
 import androidx.compose.ui.test.onNodeWithText
+import androidx.compose.ui.test.performClick
 import androidx.test.ext.junit.runners.AndroidJUnit4
 import androidx.test.rule.GrantPermissionRule
 import com.android.feedme.model.viewmodel.InputViewModel
@@ -109,6 +110,7 @@ class CameraTest : TestCase() {
     composeTestRule.setContent { CameraScreen(navActions, mockk<InputViewModel>()) }
     composeTestRule.waitForIdle()
   }
+
   // Test the normal case
   @Test
   fun MLTextButton() {
@@ -126,16 +128,19 @@ class CameraTest : TestCase() {
         composeTestRule.onNodeWithText("Photo saved", useUnmergedTree = true).isDisplayed()
       }
 
-      MLTextButton {
+      mlTextButton {
         assertIsDisplayed()
         performClick()
       }
 
       composeTestRule.waitForIdle()
-      composeTestRule.onNodeWithTag("ML Text Box")
-      composeTestRule.onNodeWithTag("ML Text Box inside")
+      composeTestRule.onNodeWithTag("ML Text Box").assertIsDisplayed()
+      composeTestRule.onNodeWithTag("TopBarNavigation").assertIsDisplayed()
     }
   }
+
+  @Test fun MLInputIngredient() {}
+
   // Test the case where no photo was taken before asking for text recognition.
   @Test
   fun MLTextButtonWithNoPhoto() {
@@ -145,7 +150,7 @@ class CameraTest : TestCase() {
 
       photoButton { assertIsDisplayed() }
 
-      MLTextButton {
+      mlTextButton {
         assertIsDisplayed()
         performClick()
       }
@@ -167,7 +172,7 @@ class CameraTest : TestCase() {
 
       photoButton { assertIsDisplayed() }
 
-      MLBarcodeButton {
+      mlBarcodeButton {
         assertIsDisplayed()
         performClick()
       }
@@ -183,7 +188,7 @@ class CameraTest : TestCase() {
         composeTestRule.onNodeWithText("Photo saved", useUnmergedTree = true).isDisplayed()
       }
 
-      MLBarcodeButton { performClick() }
+      mlBarcodeButton { performClick() }
 
       composeTestRule.waitForIdle()
       composeTestRule.onNodeWithTag("ML Text Box")

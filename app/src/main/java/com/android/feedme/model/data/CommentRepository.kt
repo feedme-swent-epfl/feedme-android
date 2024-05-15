@@ -30,17 +30,20 @@ class CommentRepository(private val db: FirebaseFirestore) {
 
   /**
    * Adds a comment to Firestore.
+   * Will OVERRIDE the comment Id and get a new from firestore.
    *
    * @param comment The Comment object to be added.
    * @param onSuccess Callback invoked on successful addition of the comment.
    * @param onFailure Callback invoked on failure to add the comment, with an exception.
    */
   fun addComment(comment: Comment, onSuccess: () -> Unit, onFailure: (Exception) -> Unit) {
-    db.collection("comments")
-        .document(comment.commentId)
-        .set(comment)
-        .addOnSuccessListener { onSuccess() }
-        .addOnFailureListener { exception -> onFailure(exception) }
+      val newDocRef = db.collection("comments").document()
+      comment.commentId = newDocRef.id // Assign the generated ID to the comment
+      newDocRef.set(comment)
+          .addOnSuccessListener { onSuccess() }
+          .addOnFailureListener { exception ->
+              onFailure(exception)
+          }
   }
 
   /**

@@ -38,6 +38,7 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.android.feedme.model.data.Comment
+import com.android.feedme.model.data.Profile
 import com.android.feedme.model.viewmodel.CommentViewModel
 import com.android.feedme.model.viewmodel.ProfileViewModel
 import com.android.feedme.model.viewmodel.RecipeViewModel
@@ -162,17 +163,21 @@ fun CreateComment(
                     // publish button
                     OutlinedButton(
                         onClick = {
-                          val com =
-                              Comment(
-                                  "ID_DEFAULT",
-                                  profileViewModel.currentUserId!!,
-                                  recipeViewModel.recipe.value!!.recipeId,
-                                  "URL_DEFAULT",
-                                  rating.toDouble(),
-                                  commentTitle,
-                                  description,
-                                  java.util.Date())
-                          commentViewModel.setComment(com)
+                            val com = Comment(
+                                "ID_DEFAULT",
+                                profileViewModel.currentUserId!!,
+                                recipeViewModel.recipe.value!!.recipeId,
+                                "URL_DEFAULT",
+                                rating.toDouble(),
+                                commentTitle,
+                                description,
+                                java.util.Date()
+                                )
+                            commentViewModel.addComment(com) {
+                                // the rest profileViewModel.setProfile(Profile())
+
+                            }
+
                         },
                         colors = ButtonDefaults.buttonColors(Color.White),
                         modifier =

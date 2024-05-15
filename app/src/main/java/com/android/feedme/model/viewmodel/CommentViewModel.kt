@@ -45,4 +45,23 @@ class CommentViewModel : ViewModel() {
           })
     }
   }
+
+    /**
+     * A function that sets the comment in the database
+     *
+     * @param comment: the comment to set in the database
+     */
+    fun addComment(comment: Comment,  onSuccess: () -> Unit ) {
+        viewModelScope.launch {
+            repository.addComment(
+                comment,
+                onSuccess = { _comment.value = comment
+                            onSuccess()
+                            },
+                onFailure = {
+                    // Handle failure
+                    throw error("comment could not get updated")
+                })
+        }
+    }
 }

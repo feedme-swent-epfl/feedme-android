@@ -110,16 +110,17 @@ fun RecipeFullDisplay(
             items(recipe.steps) { step -> StepDisplay(step = step) }
           }
         }
-        if (showDialog) {
-          Dialog(onDismissRequest = { showDialog = false }) {
-            CreateComment(
-                profileViewModel,
-                recipeViewModel,
-                CommentViewModel(),
-            )
+          if (showDialog) {
+              Dialog(onDismissRequest = { showDialog = false }) {
+                  CreateComment(
+                      profileViewModel = profileViewModel,
+                      recipeViewModel = recipeViewModel,
+                      commentViewModel = CommentViewModel()
+                  )
+              }
           }
         }
-      })
+      )
 }
 /**
  * Displays the image associated with a recipe.

@@ -25,8 +25,8 @@ import com.android.feedme.ui.navigation.TopBarNavigation
 
 /**
  * Composable that displays the saved recipes screen. If the user has saved recipes, it displays the
- * list of recipes in a scrollable list. If the user has not saved any recipes, it displays a message
- * saying that there are no recipes saved yet.
+ * list of recipes in a scrollable list. If the user has not saved any recipes, it displays a
+ * message saying that there are no recipes saved yet.
  *
  * @param navigationActions Provides navigation actions for handling user interactions with the
  * @param profileViewModel The view model that provides the profile data.
@@ -47,18 +47,19 @@ fun SavedRecipesScreen(
         BottomNavigationMenu(Route.SAVED, navigationActions::navigateTo, TOP_LEVEL_DESTINATIONS)
       },
       content = { padding ->
-          val savedRecipes = profileViewModel.currentUserSavedRecipes.collectAsState(initial = listOf()).value
-          if (savedRecipes.isEmpty()) {
-              EmptySavedScreen(padding)
-          } else {
-              RecipeDisplay(
-                  padding,
-                  navigationActions,
-                  savedRecipes,
-                  searchViewModel,
-                  recipeViewModel,
-                  profileViewModel)
-          }
+        val savedRecipes =
+            profileViewModel.currentUserSavedRecipes.collectAsState(initial = listOf()).value
+        if (savedRecipes.isEmpty()) {
+          EmptySavedScreen(padding)
+        } else {
+          RecipeDisplay(
+              padding,
+              navigationActions,
+              savedRecipes,
+              searchViewModel,
+              recipeViewModel,
+              profileViewModel)
+        }
       })
 }
 
@@ -69,9 +70,9 @@ fun SavedRecipesScreen(
  */
 @Composable
 fun EmptySavedScreen(padding: PaddingValues) {
-    Box(
-        modifier = Modifier.fillMaxSize().padding(padding).testTag("SavedScreenBox"),
-        contentAlignment = Alignment.Center) {
+  Box(
+      modifier = Modifier.fillMaxSize().padding(padding).testTag("SavedScreenBox"),
+      contentAlignment = Alignment.Center) {
         Text(
             fontWeight = FontWeight(400),
             fontSize = 20.sp,
@@ -79,5 +80,5 @@ fun EmptySavedScreen(padding: PaddingValues) {
             textAlign = TextAlign.Center,
             text = "You did not save any recipes yet!",
             modifier = Modifier.testTag("SavedScreenText"))
-    }
+      }
 }

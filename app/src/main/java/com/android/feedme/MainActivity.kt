@@ -100,7 +100,8 @@ class MainActivity : ComponentActivity() {
                 navigation(startDestination = Screen.SAVED, route = Route.SAVED) {
                   composable(Screen.SAVED) {
                     val recipeViewModel = viewModel<RecipeViewModel>()
-                    SavedRecipesScreen(navigationActions, profileViewModel, searchViewModel, recipeViewModel)
+                    SavedRecipesScreen(
+                        navigationActions, profileViewModel, searchViewModel, recipeViewModel)
                   }
                 }
 

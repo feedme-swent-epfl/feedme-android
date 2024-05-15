@@ -230,24 +230,22 @@ fun RecipeCard(
                 // Save icon
                 IconButton(
                     onClick = {
-                        if (profileViewModel.savedRecipeExists(recipe))
-                            profileViewModel.removeSavedRecipes(listOf(recipe))
-                        else
-                            profileViewModel.addSavedRecipes(listOf(recipe))
+                      if (profileViewModel.savedRecipeExists(recipe))
+                          profileViewModel.removeSavedRecipes(listOf(recipe))
+                      else profileViewModel.addSavedRecipes(listOf(recipe))
                     },
                     modifier = Modifier.testTag("SaveIcon")) {
-                        if (profileViewModel.savedRecipeExists(recipe))
-                            Icon(
-                                imageVector = Icons.Filled.Bookmark,
-                                contentDescription = "Bookmark Icon on Recipe Card",
-                                modifier = Modifier.size(34.dp).padding(start = 4.dp),
-                                tint = YellowStarBlackOutline
-                            )
-                        else
-                            Icon(
-                                imageVector = Icons.Outlined.BookmarkBorder,
-                                contentDescription = "Bookmark Icon on Recipe Card",
-                                modifier = Modifier.size(34.dp).padding(start = 4.dp))
+                      if (profileViewModel.savedRecipeExists(recipe))
+                          Icon(
+                              imageVector = Icons.Filled.Bookmark,
+                              contentDescription = "Bookmark Icon on Recipe Card",
+                              modifier = Modifier.size(34.dp).padding(start = 4.dp),
+                              tint = YellowStarBlackOutline)
+                      else
+                          Icon(
+                              imageVector = Icons.Outlined.BookmarkBorder,
+                              contentDescription = "Bookmark Icon on Recipe Card",
+                              modifier = Modifier.size(34.dp).padding(start = 4.dp))
                     }
               }
               Row(verticalAlignment = Alignment.CenterVertically) {

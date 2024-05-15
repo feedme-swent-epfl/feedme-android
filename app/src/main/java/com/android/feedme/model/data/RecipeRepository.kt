@@ -123,10 +123,8 @@ class RecipeRepository(private val db: FirebaseFirestore) {
         "ingredients" to recipe.ingredients.map { it.toMap() },
         "steps" to recipe.steps.map { it.toMap() },
         "tags" to recipe.tags,
-        "time" to recipe.time,
         "rating" to recipe.rating,
         "userid" to recipe.userid,
-        "difficulty" to recipe.difficulty,
         "imageUrl" to recipe.imageUrl)
   }
 
@@ -197,10 +195,8 @@ class RecipeRepository(private val db: FirebaseFirestore) {
                     ingredients = ingredients,
                     steps = steps,
                     tags = tags,
-                    time = (map["time"] as? Number)?.toDouble() ?: 0.0,
                     rating = (map["rating"] as? Number)?.toDouble() ?: 0.0,
                     userid = map["userid"] as? String ?: "",
-                    difficulty = map["difficulty"] as? String ?: "",
                     imageUrl = map["imageUrl"] as? String ?: "")
 
             onSuccess(recipe)

@@ -121,18 +121,6 @@ fun SmallThumbnailsDisplay(
                             String.format("%.1f", listRecipe[i].rating),
                             modifier = Modifier.padding(end = 10.dp).testTag("Text Rating"))
 
-                        // Clock icon for the time
-                        // There is no clock icon in Material, so for now i'm using the "build" icon
-                        Icon(
-                            imageVector = Icons.Outlined.Timer,
-                            contentDescription = "Timer Icon",
-                            modifier = Modifier.size(26.dp).padding(end = 3.dp))
-
-                        // Recipe time
-                        Text(
-                            text = "${listRecipe[i].time.toInt()} '",
-                            modifier = Modifier.padding(end = 45.dp).testTag("Text Time"))
-
                         // Save button, to keep the recipe accessible even offline
                         // There is no save icon in Material, so for now i'm using the "build" icon
                         IconButton(

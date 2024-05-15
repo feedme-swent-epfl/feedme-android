@@ -218,18 +218,7 @@ fun RecipeCard(
                       )
                     }
 
-                Spacer(modifier = Modifier.width(10.dp))
-
-                // Cooking time
-                Icon(
-                    imageVector = Icons.Outlined.Timer,
-                    contentDescription = null,
-                    modifier = Modifier.size(34.dp).padding(end = 4.dp))
-                Text(
-                    text = "${recipe.time.toInt()} '",
-                    fontWeight = FontWeight.Bold,
-                )
-                Spacer(modifier = Modifier.width(3.dp))
+                Spacer(modifier = Modifier.width(15.dp))
 
                 // Share icon
                 IconButton(
@@ -259,14 +248,6 @@ fun RecipeCard(
                     fontSize = 24.sp,
                     color = TemplateColor,
                     modifier = Modifier.padding(bottom = 10.dp, end = 10.dp))
-                Spacer(modifier = Modifier.weight(1f))
-                OutlinedButton(
-                    onClick = {},
-                    border = BorderStroke(1.dp, TemplateColor),
-                    colors = ButtonDefaults.outlinedButtonColors(contentColor = TemplateColor),
-                ) {
-                  Text(recipe.difficulty)
-                }
               }
 
               Spacer(modifier = Modifier.height(10.dp))

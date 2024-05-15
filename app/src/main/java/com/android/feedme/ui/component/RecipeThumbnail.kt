@@ -39,15 +39,6 @@ fun RecipeSmallCard(recipe: Recipe, recipeViewModel: RecipeViewModel = RecipeVie
                 }
 
                 Spacer(modifier = Modifier.size(8.dp))
-                Row {
-                  Icon(
-                      imageVector = Icons.Outlined.Timer,
-                      contentDescription = "Time Icon",
-                      modifier = Modifier.size(24.dp).padding(horizontal = 4.dp))
-                  Text("${recipe.time}", style = MaterialTheme.typography.bodySmall)
-                }
-
-                Spacer(modifier = Modifier.size(8.dp))
                 IconButton(onClick = { /* Handle save action here */}) {
                   Icon(
                       imageVector = Icons.TwoTone.Bookmark,

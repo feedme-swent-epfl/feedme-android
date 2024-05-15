@@ -5,6 +5,9 @@ import androidx.compose.ui.test.junit4.createComposeRule
 import androidx.compose.ui.test.onNodeWithTag
 import androidx.test.ext.junit.runners.AndroidJUnit4
 import com.android.feedme.model.data.ProfileRepository
+import com.android.feedme.model.viewmodel.ProfileViewModel
+import com.android.feedme.model.viewmodel.RecipeViewModel
+import com.android.feedme.model.viewmodel.SearchViewModel
 import com.android.feedme.screen.SavedRecipesScreen
 import com.android.feedme.ui.home.SavedRecipesScreen
 import com.android.feedme.ui.navigation.NavigationActions
@@ -22,6 +25,9 @@ class SavedRecipesScreen : TestCase() {
   @get:Rule val composeTestRule = createComposeRule()
   private val mockFirestore = mockk<FirebaseFirestore>(relaxed = true)
   private val navAction = mockk<NavigationActions>(relaxed = true)
+  private val profileViewModel = mockk<ProfileViewModel>(relaxed = true)
+  private val searchViewModel = mockk<SearchViewModel>(relaxed = true)
+  private val recipeViewModel = mockk<RecipeViewModel>(relaxed = true)
 
   @Before
   fun init() {
@@ -31,7 +37,7 @@ class SavedRecipesScreen : TestCase() {
   @Test
   fun mainComponentsAreDisplayed() {
     ComposeScreen.onComposeScreen<SavedRecipesScreen>(composeTestRule) {
-      composeTestRule.setContent { SavedRecipesScreen(navAction) }
+      composeTestRule.setContent { SavedRecipesScreen(navAction, profileViewModel, searchViewModel, recipeViewModel) }
       composeTestRule.onNodeWithTag("SavedScreen").assertIsDisplayed()
       composeTestRule.onNodeWithTag("SavedScreenBox").assertIsDisplayed()
       composeTestRule.onNodeWithTag("SavedScreenText").assertIsDisplayed()

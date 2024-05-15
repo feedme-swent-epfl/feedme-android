@@ -49,10 +49,8 @@ class SmallThumbnailsDisplayTest {
                         ingredient = Ingredient("Tomato", "Vegetables", "tomatoID"))),
             steps = listOf(Step(1, "a", "Step1")),
             tags = listOf("Meat"),
-            time = 1.15,
             rating = 4.5,
             userid = "PasDavid",
-            difficulty = "Intermediate",
             "https://external-content.duckduckgo.com/iu/?u=https%3A%2F%2Fwww.mamablip.com%2Fstorage%2FLasagna%2520with%2520Meat%2520and%2520Tomato%2520Sauce_3481612355355.jpg&f=1&nofb=1&ipt=8e887ba99ce20a85fb867dabbe0206c1146ebf2f13548b5653a2778e3ea18c54&ipo=images")
 
     composeTestRule.setContent { SmallThumbnailsDisplay(listOf(recipe1), navMock) }
@@ -71,11 +69,6 @@ class SmallThumbnailsDisplayTest {
         .onNodeWithContentDescription("Star Icon", useUnmergedTree = true)
         .assertIsDisplayed()
     composeTestRule.onNodeWithTag("Text Rating", useUnmergedTree = true).assertIsDisplayed()
-
-    composeTestRule
-        .onNodeWithContentDescription("Timer Icon", useUnmergedTree = true)
-        .assertIsDisplayed()
-    composeTestRule.onNodeWithTag("Text Time", useUnmergedTree = true).assertIsDisplayed()
 
     composeTestRule
         .onNodeWithContentDescription("Save Icon", useUnmergedTree = true)

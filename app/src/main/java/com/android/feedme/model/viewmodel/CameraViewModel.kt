@@ -8,7 +8,6 @@ import com.android.feedme.ml.barcodeScan
 import com.android.feedme.ml.extractProductNameFromBarcode
 import com.android.feedme.ml.textExtraction
 import com.android.feedme.ml.textProcessing
-import com.android.feedme.model.data.Ingredient
 import com.android.feedme.model.data.IngredientMetaData
 import kotlin.coroutines.resume
 import kotlin.coroutines.suspendCoroutine
@@ -45,9 +44,6 @@ class CameraViewModel : ViewModel() {
   private val _lastPhoto = MutableStateFlow<PhotoState>(PhotoState.NoPhoto)
   // Could be useful later if lastPhoto needs to be accessed outside the view model
   val lastPhoto = _lastPhoto.asStateFlow()
-
-  val listOfIngredient: List<Ingredient> =
-      listOf(Ingredient("Tomate", "DEFAULT_TYPE", "DEFAULT_ID"))
 
   private val _listOfIngredientToInput = MutableStateFlow<List<IngredientMetaData>>(emptyList())
   val listOfIngredientToInput = _listOfIngredientToInput.asStateFlow()

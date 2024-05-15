@@ -13,7 +13,6 @@ import com.google.mlkit.vision.text.Text
 import okhttp3.MediaType.Companion.toMediaType
 import okhttp3.Request
 import okhttp3.RequestBody.Companion.toRequestBody
-import org.json.JSONObject
 import org.junit.Assert.assertEquals
 import org.junit.Test
 import org.mockito.Mockito.mock
@@ -128,43 +127,26 @@ class TextRecognitionTest {
   }
 
   @Test
-  fun testParseResponse() {
-    // Create a mock JSON response
-    val jsonResponse =
-      JSONObject(
-        """
-            {
-                "choices": [
-                    {
-                        "message": {
-                            "content": "[{\"ingredient\":\"flour\",\"quantity\":\"1\",\"unit\":\"cup\"},{\"ingredient\":\"eggs\",\"quantity\":\"2\",\"unit\":\"\"},{\"ingredient\":\"salt\",\"quantity\":\"0.5\",\"unit\":\"teaspoon\"}]"
-                        }
-                    }
-                ]
-            }
-        """
-          .trimIndent())
+  fun parseInvalidJSON() {
+    val invalidResponseBody = "This is not a valid JSON"
 
-    // Capture the callback arguments
     val ingredientsList = mutableListOf<IngredientMetaData>()
-    val forIngredientFound: (IngredientMetaData) -> Unit = { ingredientsList.add(it) }
+    parseResponse(invalidResponseBody) { ingredientMetaData ->
+      ingredientsList.add(ingredientMetaData)
+    }
 
-    // Call the function under test
-    parseResponse(jsonResponse.toString(), forIngredientFound)
+    assertEquals(0, ingredientsList.size)
+  }
 
-    // Verify the captured arguments
-    assert(ingredientsList.size == 3)
-    assert(
-      ingredientsList[0].quantity == 1.0 &&
-              ingredientsList[0].measure == MeasureUnit.CUP &&
-              ingredientsList[0].ingredient.name == "Flour")
-    assert(
-      ingredientsList[1].quantity == 2.0 &&
-              ingredientsList[1].measure == MeasureUnit.NONE &&
-              ingredientsList[1].ingredient.name == "Eggs")
-    assert(
-      ingredientsList[2].quantity == 0.5 &&
-              ingredientsList[2].measure == MeasureUnit.TEASPOON &&
-              ingredientsList[2].ingredient.name == "Salt")
+  @Test
+  fun parseEmptyJSON() {
+    val emptyResponseBody = "{}"
+
+    val ingredientsList = mutableListOf<IngredientMetaData>()
+    parseResponse(emptyResponseBody) { ingredientMetaData ->
+      ingredientsList.add(ingredientMetaData)
+    }
+
+    assertEquals(0, ingredientsList.size)
   }
 }

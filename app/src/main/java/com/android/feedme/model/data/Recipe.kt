@@ -8,10 +8,8 @@ data class Recipe(
         emptyList(), // List of ingredients with quantity and measure
     val steps: List<Step> = emptyList(), // List of steps to prepare the recipe
     val tags: List<String> = emptyList(), // List of tags for the recipe
-    val time: Double = 0.0, // Time to prepare the recipe
     val rating: Double = 0.0, // Rating of the recipe
     val userid: String = "", // User id of the recipe creator
-    val difficulty: String = "", // Difficulty level of the recipe
     val imageUrl: String = "" // Image URL of the recipe
 )
 

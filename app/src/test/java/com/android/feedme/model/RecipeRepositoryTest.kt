@@ -76,9 +76,7 @@ class RecipeRepositoryTest {
             listOf(),
             listOf("dessert"),
             60.0,
-            4.5,
             "user123",
-            "Easy",
             "http://image.url")
     `when`(mockDocumentReference.set(any())).thenReturn(Tasks.forResult(null))
 
@@ -165,9 +163,7 @@ class RecipeRepositoryTest {
             listOf(),
             listOf("dessert"),
             60.0,
-            4.5,
             "user123",
-            "Easy",
             "http://image.url")
     val exception = Exception("Firestore set operation failed")
     `when`(mockDocumentReference.set(any())).thenReturn(Tasks.forException(exception))
@@ -228,10 +224,8 @@ class RecipeRepositoryTest {
                     Step(1, "Mix ingredients.", "Mix all dry ingredients together."),
                     Step(2, "Bake", "Bake in the oven for 45 minutes.")),
             tags = listOf("dessert", "cake", "chocolate"),
-            time = 60.0,
             rating = 4.5,
             userid = "user123",
-            difficulty = "Medium",
             imageUrl = "http://example.com/cake.jpg")
 
     var successCalled = false
@@ -272,9 +266,7 @@ class RecipeRepositoryTest {
             listOf(step1, step2),
             listOf("Dessert", "Chocolate"),
             60.0,
-            5.0,
             "userId123",
-            "Medium",
             "http://example.com/chocolate_cake.jpg")
 
     // Mocking Firestore response for a successful set operation

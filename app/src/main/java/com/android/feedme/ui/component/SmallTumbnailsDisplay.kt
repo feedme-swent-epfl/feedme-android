@@ -11,7 +11,6 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.lazy.grid.GridCells
 import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.outlined.Timer
 import androidx.compose.material.icons.rounded.Star
 import androidx.compose.material.icons.twotone.Bookmark
 import androidx.compose.material.icons.twotone.Star
@@ -120,18 +119,6 @@ fun SmallThumbnailsDisplay(
                         Text(
                             String.format("%.1f", listRecipe[i].rating),
                             modifier = Modifier.padding(end = 10.dp).testTag("Text Rating"))
-
-                        // Clock icon for the time
-                        // There is no clock icon in Material, so for now i'm using the "build" icon
-                        Icon(
-                            imageVector = Icons.Outlined.Timer,
-                            contentDescription = "Timer Icon",
-                            modifier = Modifier.size(26.dp).padding(end = 3.dp))
-
-                        // Recipe time
-                        Text(
-                            text = "${listRecipe[i].time.toInt()} '",
-                            modifier = Modifier.padding(end = 45.dp).testTag("Text Time"))
 
                         // Save button, to keep the recipe accessible even offline
                         // There is no save icon in Material, so for now i'm using the "build" icon

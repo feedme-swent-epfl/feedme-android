@@ -14,7 +14,6 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.outlined.Timer
 import androidx.compose.material.icons.rounded.Star
 import androidx.compose.material.icons.twotone.Bookmark
 import androidx.compose.material.icons.twotone.Star
@@ -144,17 +143,6 @@ fun GeneralInfoDisplay(
       horizontalArrangement = Arrangement.SpaceAround,
       verticalAlignment = Alignment.CenterVertically,
       modifier = modifier.fillMaxWidth().height(45.dp).testTag("General Infos Row")) {
-
-        // Recipe time
-        Spacer(modifier = Modifier.weight(1f))
-        Icon(
-            imageVector = Icons.Outlined.Timer,
-            contentDescription = "Time Icon",
-            modifier = Modifier.size(26.dp))
-        Text(
-            text = "${recipe.time.toInt()} '",
-            modifier = Modifier.padding(start = 4.dp).testTag("Text Time"),
-            style = TextStyle(fontSize = 16.sp, fontWeight = FontWeight.Medium))
 
         // Recipe creator's userId
         Spacer(modifier = Modifier.weight(1f))

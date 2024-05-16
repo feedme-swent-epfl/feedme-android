@@ -34,16 +34,16 @@ class HomeViewModel : ViewModel() {
     FirebaseAuth.getInstance().uid?.let {
       viewModelScope.launch {
         recipeRepository.getRecipe(
-          id,
-          onSuccess = { recipe ->
-            if (recipe != null) {
-              _recipes.value += recipe
-            }
-          },
-          onFailure = {
-            // Handle failure
-            Log.d("fetchRecipe","Failed fetch of $id")
-          })
+            id,
+            onSuccess = { recipe ->
+              if (recipe != null) {
+                _recipes.value += recipe
+              }
+            },
+            onFailure = {
+              // Handle failure
+              Log.d("fetchRecipe", "Failed fetch of $id")
+            })
       }
     }
   }

@@ -129,24 +129,6 @@ class CameraViewModel : ViewModel() {
    * @return The extracted product name from the barcode as string if successful, a relevant error
    *   message otherwise.
    */
-  /*private suspend fun performBarCodeScanning(bitmap: Bitmap): String {
-    return suspendCoroutine { continuation ->
-      barcodeScan(
-          bitmap,
-          { barcodeNumber ->
-            viewModelScope.launch {
-              extractProductInfoFromBarcode(
-                  barcodeNumber,
-                  { productName -> continuation.resume(productName) },
-                  {
-                    continuation.resume(
-                        "ERROR: Failed to extract product name from barcode, please try again.")
-                  })
-            }
-          },
-          { continuation.resume("ERROR: Failed to identify barcode, please try again.") })
-    }
-  }*/
   private suspend fun performBarCodeScanning(bitmap: Bitmap): String {
     return suspendCoroutine { continuation ->
       barcodeScan(

@@ -5,10 +5,12 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.android.feedme.ml.analyzeTextForIngredients
 import com.android.feedme.ml.barcodeScan
-import com.android.feedme.ml.extractProductNameFromBarcode
+import com.android.feedme.ml.extractProductInfoFromBarcode
 import com.android.feedme.ml.textExtraction
 import com.android.feedme.ml.textProcessing
+import com.android.feedme.model.data.Ingredient
 import com.android.feedme.model.data.IngredientMetaData
+import com.android.feedme.model.data.MeasureUnit
 import kotlin.coroutines.resume
 import kotlin.coroutines.suspendCoroutine
 import kotlinx.coroutines.delay
@@ -127,13 +129,13 @@ class CameraViewModel : ViewModel() {
    * @return The extracted product name from the barcode as string if successful, a relevant error
    *   message otherwise.
    */
-  private suspend fun performBarCodeScanning(bitmap: Bitmap): String {
+  /*private suspend fun performBarCodeScanning(bitmap: Bitmap): String {
     return suspendCoroutine { continuation ->
       barcodeScan(
           bitmap,
           { barcodeNumber ->
             viewModelScope.launch {
-              extractProductNameFromBarcode(
+              extractProductInfoFromBarcode(
                   barcodeNumber,
                   { productName -> continuation.resume(productName) },
                   {
@@ -143,6 +145,29 @@ class CameraViewModel : ViewModel() {
             }
           },
           { continuation.resume("ERROR: Failed to identify barcode, please try again.") })
+    }
+  }*/
+  private suspend fun performBarCodeScanning(bitmap: Bitmap): String {
+    return suspendCoroutine { continuation ->
+      barcodeScan(
+        bitmap,
+        { barcodeNumber ->
+          viewModelScope.launch {
+            extractProductInfoFromBarcode(
+              barcodeNumber,
+              { productInfo ->
+                if (productInfo != null) {
+                  // TODO How can i create new ingredients correctly or check if they already exist ? => Sylvain PR ?
+                  updateIngredientList(IngredientMetaData(0.0,MeasureUnit.NONE,Ingredient(productInfo.productName,"Default","DefaultID")))
+                }
+                continuation.resume(productInfo?.productName ?: "ERROR: Failed to extract product name from barcode, please try again.")
+              },
+              {
+                continuation.resume("ERROR: Failed to extract product name from barcode, please try again.")
+              })
+          }
+        },
+        { continuation.resume("ERROR: Failed to identify barcode, please try again.") })
     }
   }
 

@@ -64,8 +64,8 @@ suspend fun extractProductInfoFromBarcode(
     onFailure: (Exception) -> Unit = {}
 ) {
   try {
-      val result = httpRequestBarcode(HttpMethod.GET, barcodeNB, "fields=product_name")
-      println(result)
+    val result = httpRequestBarcode(HttpMethod.GET, barcodeNB, "fields=product_name")
+    println(result)
     onSuccess(parseJsonString(httpRequestBarcode(HttpMethod.GET, barcodeNB, "fields=product_name")))
   } catch (e: Exception) {
     e.message?.let { Log.i(e.message, it) }
@@ -77,23 +77,21 @@ suspend fun extractProductInfoFromBarcode(
  * Parses a JSON string to extract product information into a ProductInfo object.
  *
  * @param jsonString The JSON string containing product details (obtained after httpRequest).
- * @param onFailure  Callback invoked on parsing failure, default is an empty lambda.
- *
+ * @param onFailure Callback invoked on parsing failure, default is an empty lambda.
  * @return A ProductInfo object if parsing is successful; null otherwise.
  */
 fun parseJsonString(jsonString: String, onFailure: (Exception) -> Unit = {}): ProductInfo? {
-    try {
-        val jsonObject = JSONObject(jsonString)
-        return ProductInfo(
-            code = jsonObject.getString("code"),
-            productName = jsonObject.getJSONObject("product").getString("product_name"),
-            status = jsonObject.getInt("status")
-        )
-    } catch (e: JSONException) {
-        e.message?.let { Log.e("Error parsing Json string for barcode : ", it) }
-        onFailure(Exception("Failed to parse Json information of barcode."))
-        return null
-    }
+  try {
+    val jsonObject = JSONObject(jsonString)
+    return ProductInfo(
+        code = jsonObject.getString("code"),
+        productName = jsonObject.getJSONObject("product").getString("product_name"),
+        status = jsonObject.getInt("status"))
+  } catch (e: JSONException) {
+    e.message?.let { Log.e("Error parsing Json string for barcode : ", it) }
+    onFailure(Exception("Failed to parse Json information of barcode."))
+    return null
+  }
 }
 
 /**
@@ -103,8 +101,4 @@ fun parseJsonString(jsonString: String, onFailure: (Exception) -> Unit = {}): Pr
  * @property productName The name of the product.
  * @property status The status of the product (1 if successful, 0 if no information).
  */
-data class ProductInfo(
-    val code: String,
-    val productName: String,
-    val status: Int
-)
+data class ProductInfo(val code: String, val productName: String, val status: Int)

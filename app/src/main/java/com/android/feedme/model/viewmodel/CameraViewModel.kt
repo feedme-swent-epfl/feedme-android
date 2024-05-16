@@ -132,24 +132,32 @@ class CameraViewModel : ViewModel() {
   private suspend fun performBarCodeScanning(bitmap: Bitmap): String {
     return suspendCoroutine { continuation ->
       barcodeScan(
-        bitmap,
-        { barcodeNumber ->
-          viewModelScope.launch {
-            extractProductInfoFromBarcode(
-              barcodeNumber,
-              { productInfo ->
-                if (productInfo != null) {
-                  // TODO How can i create new ingredients correctly or check if they already exist ? => Sylvain PR ?
-                  updateIngredientList(IngredientMetaData(0.0,MeasureUnit.NONE,Ingredient(productInfo.productName,"Default","DefaultID")))
-                }
-                continuation.resume(productInfo?.productName ?: "ERROR: Failed to extract product name from barcode, please try again.")
-              },
-              {
-                continuation.resume("ERROR: Failed to extract product name from barcode, please try again.")
-              })
-          }
-        },
-        { continuation.resume("ERROR: Failed to identify barcode, please try again.") })
+          bitmap,
+          { barcodeNumber ->
+            viewModelScope.launch {
+              extractProductInfoFromBarcode(
+                  barcodeNumber,
+                  { productInfo ->
+                    if (productInfo != null) {
+                      // TODO How can i create new ingredients correctly or check if they already
+                      // exist ? => Sylvain PR ?
+                      updateIngredientList(
+                          IngredientMetaData(
+                              0.0,
+                              MeasureUnit.NONE,
+                              Ingredient(productInfo.productName, "Default", "DefaultID")))
+                    }
+                    continuation.resume(
+                        productInfo?.productName
+                            ?: "ERROR: Failed to extract product name from barcode, please try again.")
+                  },
+                  {
+                    continuation.resume(
+                        "ERROR: Failed to extract product name from barcode, please try again.")
+                  })
+            }
+          },
+          { continuation.resume("ERROR: Failed to identify barcode, please try again.") })
     }
   }
 

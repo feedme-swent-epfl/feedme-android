@@ -1,10 +1,8 @@
 package com.android.feedme.test.camera
 
 import android.Manifest
-import androidx.compose.ui.semantics.SemanticsProperties
 import androidx.compose.ui.test.assertIsDisplayed
 import androidx.compose.ui.test.assertTextEquals
-import androidx.compose.ui.test.hasTestTag
 import androidx.compose.ui.test.isDisplayed
 import androidx.compose.ui.test.junit4.createComposeRule
 import androidx.compose.ui.test.onChild
@@ -14,7 +12,6 @@ import androidx.compose.ui.test.onNodeWithText
 import androidx.compose.ui.test.performClick
 import androidx.test.ext.junit.runners.AndroidJUnit4
 import androidx.test.rule.GrantPermissionRule
-import androidx.test.uiautomator.By.hasDescendant
 import com.android.feedme.model.viewmodel.InputViewModel
 import com.android.feedme.screen.CameraScreen
 import com.android.feedme.ui.camera.CameraScreen
@@ -200,8 +197,10 @@ class CameraTest : TestCase() {
       composeTestRule.onNodeWithTag("ML Text Box").assertIsDisplayed()
       Thread.sleep(5000)
       composeTestRule.onNodeWithTag("Column").assertIsDisplayed()
-      composeTestRule.onNodeWithTag("Column").onChild().assertTextEquals("Cranberry protein - Farmer")
-
+      composeTestRule
+          .onNodeWithTag("Column")
+          .onChild()
+          .assertTextEquals("Cranberry protein - Farmer")
     }
   }
 }

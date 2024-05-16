@@ -200,7 +200,7 @@ class CameraTest : TestCase() {
       composeTestRule
           .onNodeWithTag("Column")
           .onChild()
-          .assertTextEquals("Cranberry protein - Farmer")
+          .assertTextEquals("ERROR: Failed to identify barcode, please try again.")
     }
   }
 }

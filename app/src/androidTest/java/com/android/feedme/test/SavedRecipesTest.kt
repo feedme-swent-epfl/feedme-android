@@ -7,8 +7,10 @@ import androidx.test.ext.junit.runners.AndroidJUnit4
 import com.android.feedme.model.data.Ingredient
 import com.android.feedme.model.data.IngredientMetaData
 import com.android.feedme.model.data.MeasureUnit
+import com.android.feedme.model.data.Profile
 import com.android.feedme.model.data.ProfileRepository
 import com.android.feedme.model.data.Recipe
+import com.android.feedme.model.data.RecipeRepository
 import com.android.feedme.model.data.Step
 import com.android.feedme.model.viewmodel.ProfileViewModel
 import com.android.feedme.model.viewmodel.RecipeViewModel
@@ -16,9 +18,14 @@ import com.android.feedme.model.viewmodel.SearchViewModel
 import com.android.feedme.screen.SavedRecipesScreen
 import com.android.feedme.ui.home.SavedRecipesScreen
 import com.android.feedme.ui.navigation.NavigationActions
+import com.google.android.gms.tasks.Tasks
+import com.google.firebase.firestore.CollectionReference
+import com.google.firebase.firestore.DocumentReference
+import com.google.firebase.firestore.DocumentSnapshot
 import com.google.firebase.firestore.FirebaseFirestore
 import com.kaspersky.kaspresso.testcases.api.testcase.TestCase
 import io.github.kakaocup.compose.node.element.ComposeScreen
+import io.mockk.every
 import io.mockk.mockk
 import org.junit.Before
 import org.junit.Rule
@@ -30,9 +37,14 @@ class SavedRecipesTest : TestCase() {
   @get:Rule val composeTestRule = createComposeRule()
   private val mockFirestore = mockk<FirebaseFirestore>(relaxed = true)
   private val navAction = mockk<NavigationActions>(relaxed = true)
-  private lateinit var profileViewModel: ProfileViewModel
   private val searchViewModel = mockk<SearchViewModel>(relaxed = true)
   private val recipeViewModel = mockk<RecipeViewModel>(relaxed = true)
+  private val mockDocumentReference = mockk<DocumentReference>(relaxed = true)
+  private val mockCollectionReference = mockk<CollectionReference>(relaxed = true)
+  private var mockDocumentSnapshot = mockk<DocumentSnapshot>(relaxed = true)
+
+  private lateinit var profileRepository: ProfileRepository
+  private lateinit var profileViewModel: ProfileViewModel
 
   private val recipe1 =
       Recipe(
@@ -86,7 +98,21 @@ class SavedRecipesTest : TestCase() {
 
   @Before
   fun init() {
+    RecipeRepository.initialize(mockFirestore)
     ProfileRepository.initialize(mockFirestore)
+
+    ProfileRepository.initialize(mockFirestore)
+    profileRepository = ProfileRepository.instance
+
+    every { mockFirestore.collection("profiles") } returns mockCollectionReference
+    every { mockCollectionReference.document(any()) } returns mockDocumentReference
+
+    every { mockDocumentReference.get() } returns Tasks.forResult(mockDocumentSnapshot)
+    every { mockDocumentSnapshot.toObject(Profile::class.java) } returns
+        Profile(id = "ID_DEFAULT_1")
+
+    every { mockDocumentReference.set(any()) } returns Tasks.forResult(null)
+    profileViewModel = ProfileViewModel()
     profileViewModel = ProfileViewModel()
   }
 
@@ -101,12 +127,15 @@ class SavedRecipesTest : TestCase() {
       composeTestRule.onNodeWithTag("SavedScreenText").assertIsDisplayed()
     }
   }
-  /* WILL BE IMPLEMENTED SOON
+
   @Test
   fun mainComponentsNotEmptyAreDisplayed() {
     profileViewModel.addSavedRecipes(listOf(recipe1, recipe2))
-    composeTestRule.setContent {
-      SavedRecipesScreen(navAction, profileViewModel, searchViewModel, recipeViewModel)
+    ComposeScreen.onComposeScreen<SavedRecipesScreen>(composeTestRule) {
+      composeTestRule.setContent {
+        SavedRecipesScreen(navAction, profileViewModel, searchViewModel, recipeViewModel)
+      }
+      composeTestRule.onNodeWithTag("SavedScreen").assertIsDisplayed()
     }
-  }*/
+  }
 }

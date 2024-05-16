@@ -86,6 +86,13 @@ fun RecipeInputScreen(
       content = { padding -> RecipeBox(padding, inputViewModel, recipeStepViewModel) })
 }
 
+/**
+ * Box containing all the recipe input fields.
+ *
+ * @param paddingValues: PaddingValues object to provide padding values
+ * @param inputViewModel: InputViewModel object to interact with input data
+ * @param recipeStepViewModel: RecipeStepViewModel object to interact with recipe step data
+ */
 @Composable
 fun RecipeBox(
     paddingValues: PaddingValues,
@@ -101,6 +108,7 @@ fun RecipeBox(
       }
 }
 
+/** Box containing the recipe picture, title, and description input fields. */
 @Composable
 fun RecipeInputTopContent() {
   Column(
@@ -116,6 +124,7 @@ fun RecipeInputTopContent() {
       }
 }
 
+/** Composable function that displays the recipe picture. */
 @Composable
 fun RecipePicture() {
   // TODO integrate with gallery after implementing viewmodel
@@ -135,6 +144,7 @@ fun RecipePicture() {
               .testTag("RecipePicture"))
 }
 
+/** Box containing the title and description input fields. */
 @Composable
 fun TitleBox() {
   val mod = Modifier.fillMaxWidth().height(56.dp)

@@ -6,6 +6,7 @@ import com.android.feedme.model.data.Profile
 import com.android.feedme.model.data.ProfileRepository
 import com.android.feedme.model.data.Recipe
 import com.android.feedme.model.data.RecipeRepository
+import com.google.firebase.firestore.DocumentSnapshot
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.launch
@@ -26,16 +27,25 @@ class SearchViewModel : ViewModel() {
   private val _filteredProfiles = MutableStateFlow<List<Profile>>(emptyList())
   val filteredProfiles = _filteredProfiles.asStateFlow()
 
+  private var lastRecipe: DocumentSnapshot? = null
+  private var lastProfile: DocumentSnapshot? = null
+  private var query: String = ""
+
   /**
    * A function that fetches the recipes given a query
    *
    * @param query: the query to search for in the recipes
    */
   fun searchRecipes(query: String) {
+    this.query = query
     viewModelScope.launch {
       recipeRepository.getFilteredRecipes(
           query,
-          onSuccess = { filteredRecipes -> _filteredRecipes.value = filteredRecipes },
+          lastRecipe,
+          onSuccess = { filteredRecipes, lastRec ->
+            lastRecipe = lastRec
+            _filteredRecipes.value += filteredRecipes
+          },
           onFailure = {
             // Handle failure
             throw error("Filtered recipes could not be fetched")
@@ -49,10 +59,15 @@ class SearchViewModel : ViewModel() {
    * @param query: the query to search for in the profiles
    */
   fun searchProfiles(query: String) {
+    this.query = query
     viewModelScope.launch {
       profileRepository.getFilteredProfiles(
           query,
-          onSuccess = { filteredProfiles -> _filteredProfiles.value = filteredProfiles },
+          lastProfile,
+          onSuccess = { filteredProfiles, lastProf ->
+            lastProfile = lastProf
+            _filteredProfiles.value += filteredProfiles
+          },
           onFailure = {
             // Handle failure
             throw error("Filtered profiles could not be fetched")
@@ -60,10 +75,30 @@ class SearchViewModel : ViewModel() {
     }
   }
 
+  /**
+   * A function that fetches more recipes based on the last recipe fetched
+   *
+   * This function is called when the user scrolls to the bottom of the list of recipes
+   */
+  fun loadMoreRecipes() {
+    searchRecipes(query)
+  }
+
+  /**
+   * A function that fetches more profiles based on the last profile fetched
+   *
+   * This function is called when the user scrolls to the bottom of the list of profiles
+   */
+  fun loadMoreProfiles() {
+    searchProfiles(query)
+  }
+
   /** A function that resets the filtered recipes and profiles lists */
   fun resetSearch() {
     _filteredRecipes.value = emptyList()
     _filteredProfiles.value = emptyList()
+    lastRecipe = null
+    lastProfile = null
   }
 
   /**

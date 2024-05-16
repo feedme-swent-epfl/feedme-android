@@ -1,5 +1,6 @@
 package com.android.feedme.model.data
 
+import com.google.firebase.firestore.DocumentSnapshot
 import com.google.firebase.firestore.FirebaseFirestore
 
 class RecipeRepository(private val db: FirebaseFirestore) {
@@ -96,19 +97,29 @@ class RecipeRepository(private val db: FirebaseFirestore) {
    */
   fun getFilteredRecipes(
       query: String,
-      onSuccess: (List<Recipe>) -> Unit,
+      lastRecipe: DocumentSnapshot?,
+      onSuccess: (List<Recipe>, DocumentSnapshot?) -> Unit,
       onFailure: (Exception) -> Unit
   ) {
-    db.collection(collectionPath)
-        .whereGreaterThanOrEqualTo("title", query)
-        .whereLessThan("title", query + "\uf8ff")
-        .limit(10)
+    var queryRef =
+        db.collection(collectionPath)
+            .whereGreaterThanOrEqualTo("title", query)
+            .whereLessThan("title", query + "\uf8ff")
+            .limit(10) // Limit the number of documents fetched
+
+    if (lastRecipe != null) {
+      queryRef = queryRef.startAfter(lastRecipe)
+    }
+
+    queryRef
         .get()
         .addOnSuccessListener {
           it.documents.map { recipeMap ->
             val data = recipeMap.data
             if (data != null) {
-              val success = { recipe: Recipe? -> onSuccess(listOfNotNull(recipe)) }
+              val success = { recipe: Recipe? ->
+                onSuccess(listOfNotNull(recipe), it.documents.lastOrNull())
+              }
               mapToRecipe(data, success, onFailure)
             }
           }

@@ -7,6 +7,7 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
+import androidx.compose.material3.Button
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Tab
@@ -69,7 +70,7 @@ fun SearchScreen(
  *
  * @param padding: the [PaddingValues] for the content padding
  * @param navigationActions: the navigation actions to be performed
- * @param homeViewModel: the [SearchViewModel] view model for the search functionality
+ * @param searchViewModel: the [SearchViewModel] view model for the search functionality
  * @param recipeViewModel: the [RecipeViewModel] view model for the recipe functionality
  * @param profileViewModel: the [ProfileViewModel] view model for the profile functionality
  */
@@ -77,15 +78,15 @@ fun SearchScreen(
 fun SearchScreenContent(
     padding: PaddingValues,
     navigationActions: NavigationActions,
-    homeViewModel: SearchViewModel,
+    searchViewModel: SearchViewModel,
     recipeViewModel: RecipeViewModel,
     profileViewModel: ProfileViewModel
 ) {
   val tabSearchList = listOf("Recipes", "Accounts")
   var selectedTabIndex by remember { mutableIntStateOf(0) }
 
-  val recipes = homeViewModel.filteredRecipes.collectAsState()
-  val profiles = homeViewModel.filteredProfiles.collectAsState()
+  val recipes = searchViewModel.filteredRecipes.collectAsState()
+  val profiles = searchViewModel.filteredProfiles.collectAsState()
 
   Column(modifier = Modifier.padding(padding)) {
     TabRow(
@@ -109,7 +110,8 @@ fun SearchScreenContent(
               navigationActions,
               selectedTabIndex,
               recipeViewModel,
-              profileViewModel)
+              profileViewModel,
+              searchViewModel::loadMoreRecipes)
       1 ->
           FilteredContent(
               emptyList(),
@@ -117,7 +119,8 @@ fun SearchScreenContent(
               navigationActions,
               selectedTabIndex,
               recipeViewModel,
-              profileViewModel)
+              profileViewModel,
+              searchViewModel::loadMoreProfiles)
     }
   }
 }
@@ -139,7 +142,8 @@ fun FilteredContent(
     navigationActions: NavigationActions,
     mode: Int,
     recipeViewModel: RecipeViewModel,
-    profileViewModel: ProfileViewModel
+    profileViewModel: ProfileViewModel,
+    loadMore: () -> Unit
 ) {
   if (recipes.isEmpty() && mode == 0 || profiles.isEmpty() && mode == 1) {
     Column(
@@ -171,6 +175,7 @@ fun FilteredContent(
         1 ->
             items(profiles) { profile -> FriendsCard(profile, navigationActions, profileViewModel) }
       }
+      item { Button(onClick = { loadMore() }) { Text("Load More") } }
     }
   }
 }

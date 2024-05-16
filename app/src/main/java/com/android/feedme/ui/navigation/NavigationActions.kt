@@ -97,6 +97,7 @@ object Screen {
   const val FRIENDS = "Friends/{showFollowers}"
   const val RECIPE = "Recipe/{sourceRoute}"
   const val ADD_RECIPE = "Recipe Input Screen"
+  const val SEARCH = "Search/{sourceRoute}"
 }
 
 /**

@@ -3,10 +3,12 @@ package com.android.feedme.model.viewmodel
 import android.graphics.Bitmap
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.android.feedme.ml.analyzeTextForIngredients
 import com.android.feedme.ml.barcodeScan
 import com.android.feedme.ml.extractProductNameFromBarcode
 import com.android.feedme.ml.textExtraction
 import com.android.feedme.ml.textProcessing
+import com.android.feedme.model.data.IngredientMetaData
 import kotlin.coroutines.resume
 import kotlin.coroutines.suspendCoroutine
 import kotlinx.coroutines.delay
@@ -43,9 +45,14 @@ class CameraViewModel : ViewModel() {
   // Could be useful later if lastPhoto needs to be accessed outside the view model
   val lastPhoto = _lastPhoto.asStateFlow()
 
+  private val _listOfIngredientToInput = MutableStateFlow<List<IngredientMetaData>>(emptyList())
+  val listOfIngredientToInput = _listOfIngredientToInput.asStateFlow()
+
   /** Information's to be displayed after a ML button was pressed */
   private val _informationToDisplay = MutableStateFlow<String>("")
   val informationToDisplay = _informationToDisplay.asStateFlow()
+
+  private val _lastAnalyzedPhoto = MutableStateFlow<Bitmap?>(null)
 
   /**
    * This function is called when the user taps the photo button in the CameraScreen. It adds the
@@ -83,8 +90,11 @@ class CameraViewModel : ViewModel() {
             _informationToDisplay.value = "ERROR : No photo to analyse, please take a picture."
           }
           is PhotoState.Photo -> {
-            val result = performTextRecognition(photoState.bitmap)
-            _informationToDisplay.value = result
+            if (photoState.bitmap != _lastAnalyzedPhoto.value) {
+              _lastAnalyzedPhoto.value = photoState.bitmap
+              val result = performTextRecognition(photoState.bitmap)
+              _informationToDisplay.value = result
+            }
           }
         }
       }
@@ -147,8 +157,36 @@ class CameraViewModel : ViewModel() {
     return suspendCoroutine { continuation ->
       textExtraction(
           bitmap,
-          { text -> continuation.resume(textProcessing(text = text)) },
+          { text ->
+            analyzeTextForIngredients(text, { ing -> updateIngredientList(ing) })
+
+            continuation.resume(textProcessing(text = text))
+          },
           { continuation.resume("ERROR : Failed to identify text, please try again.") })
+    }
+  }
+
+  /**
+   * Updates the list of ingredients based on the provided [IngredientMetaData].
+   *
+   * @param ing The ingredient metadata to update the list with.
+   */
+  fun updateIngredientList(ing: IngredientMetaData) {
+    val existingIngredient =
+        _listOfIngredientToInput.value.find {
+          it.ingredient.name == ing.ingredient.name
+        } // Todo change to id later
+
+    if (existingIngredient != null) {
+      // If the ingredient exists, update its quantity
+      val updatedQuantity = existingIngredient.quantity + ing.quantity
+      val updatedIngredient = existingIngredient.copy(quantity = updatedQuantity)
+      _listOfIngredientToInput.value =
+          _listOfIngredientToInput.value.filterNot { it == existingIngredient }
+      _listOfIngredientToInput.value += updatedIngredient
+    } else {
+      // If the ingredient doesn't exist, add it to the list
+      _listOfIngredientToInput.value += ing
     }
   }
 }

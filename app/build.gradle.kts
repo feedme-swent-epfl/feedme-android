@@ -10,11 +10,14 @@ plugins {
     alias(libs.plugins.sonar)
     alias(libs.plugins.gms)
     id("org.jetbrains.kotlin.plugin.serialization") version "1.5.21"
+    id ("com.google.android.libraries.mapsplatform.secrets-gradle-plugin") version "2.0.1" apply false
+
 }
 
 android {
     namespace = "com.android.feedme"
     compileSdk = 34
+
 
     defaultConfig {
         applicationId = "com.android.feedme"
@@ -27,6 +30,11 @@ android {
         vectorDrawables {
             useSupportLibrary = true
         }
+
+        val localProps = Properties()
+        localProps.load(project.rootProject.file("local.properties").inputStream())
+        buildConfigField("String", "CHATGBT_API_KEY", "\"${localProps.getProperty("CHATGBT_API_KEY")}\"")
+
     }
 
     val keystorePropertiesFile = rootProject.file("keystore.properties")
@@ -66,6 +74,7 @@ android {
 
     buildFeatures {
         compose = true
+        buildConfig = true
     }
 
     composeOptions {

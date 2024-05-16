@@ -1,8 +1,6 @@
-package com.android.feedme.test
+package com.android.feedme.test.ui
 
 import androidx.compose.ui.test.junit4.createComposeRule
-import androidx.compose.ui.test.onNodeWithContentDescription
-import androidx.compose.ui.test.performClick
 import androidx.test.ext.junit.runners.AndroidJUnit4
 import com.android.feedme.model.data.Ingredient
 import com.android.feedme.model.data.IngredientMetaData
@@ -12,39 +10,43 @@ import com.android.feedme.model.data.ProfileRepository
 import com.android.feedme.model.data.Recipe
 import com.android.feedme.model.data.RecipeRepository
 import com.android.feedme.model.data.Step
-import com.android.feedme.model.viewmodel.HomeViewModel
 import com.android.feedme.model.viewmodel.ProfileViewModel
 import com.android.feedme.model.viewmodel.RecipeViewModel
 import com.android.feedme.model.viewmodel.SearchViewModel
-import com.android.feedme.screen.LandingScreen
-import com.android.feedme.ui.home.LandingPage
+import com.android.feedme.screen.SearchScreen
+import com.android.feedme.ui.home.SearchScreen
 import com.android.feedme.ui.navigation.NavigationActions
+import com.android.feedme.ui.navigation.Route
 import com.google.android.gms.tasks.Tasks
 import com.google.firebase.firestore.CollectionReference
 import com.google.firebase.firestore.DocumentReference
 import com.google.firebase.firestore.DocumentSnapshot
 import com.google.firebase.firestore.FirebaseFirestore
-import com.kaspersky.kaspresso.testcases.api.testcase.TestCase
 import io.github.kakaocup.compose.node.element.ComposeScreen
 import io.mockk.every
 import io.mockk.mockk
+import junit.framework.TestCase
 import org.junit.Before
 import org.junit.Rule
 import org.junit.Test
 import org.junit.runner.RunWith
 
 @RunWith(AndroidJUnit4::class)
-class LandingTest : TestCase() {
+class SearchScreenTest : TestCase() {
   @get:Rule val composeTestRule = createComposeRule()
   private val mockFirestore = mockk<FirebaseFirestore>(relaxed = true)
   private val mockDocumentReference = mockk<DocumentReference>(relaxed = true)
   private val mockCollectionReference = mockk<CollectionReference>(relaxed = true)
   private var mockDocumentSnapshot = mockk<DocumentSnapshot>(relaxed = true)
 
-  private lateinit var profileRepository: ProfileRepository
+  private lateinit var searchViewModel: SearchViewModel
   private lateinit var profileViewModel: ProfileViewModel
+  private lateinit var recipeViewModel: RecipeViewModel
 
-  private val recipe =
+  private lateinit var recipeRepository: RecipeRepository
+  private lateinit var profileRepository: ProfileRepository
+
+  private val dummyRecipe =
       Recipe(
           recipeId = "lasagna1",
           title = "Tasty Lasagna",
@@ -66,15 +68,14 @@ class LandingTest : TestCase() {
                       "Make the Meat Sauce")),
           tags = listOf("Meat"),
           rating = 4.5,
-          userid = "9vu1XpyZwrW5hSvEpHuuvcVVgiv2",
+          userid = "username",
           "https://external-content.duckduckgo.com/iu/?u=https%3A%2F%2Fwww.mamablip.com%2Fstorage%2FLasagna%2520with%2520Meat%2520and%2520Tomato%2520Sauce_3481612355355.jpg&f=1&nofb=1&ipt=8e887ba99ce20a85fb867dabbe0206c1146ebf2f13548b5653a2778e3ea18c54&ipo=images")
 
   @Before
-  fun init() {
+  fun setup() {
     RecipeRepository.initialize(mockFirestore)
     ProfileRepository.initialize(mockFirestore)
-
-    ProfileRepository.initialize(mockFirestore)
+    recipeRepository = RecipeRepository.instance
     profileRepository = ProfileRepository.instance
 
     every { mockFirestore.collection("profiles") } returns mockCollectionReference
@@ -85,76 +86,53 @@ class LandingTest : TestCase() {
         Profile(id = "ID_DEFAULT_1")
 
     every { mockDocumentReference.set(any()) } returns Tasks.forResult(null)
+
+    searchViewModel = SearchViewModel()
     profileViewModel = ProfileViewModel()
+    recipeViewModel = RecipeViewModel()
   }
 
   @Test
-  fun mainComponentsAreDisplayed() {
-    goToLandingScreen()
-
-    ComposeScreen.onComposeScreen<LandingScreen>(composeTestRule) {
-      composeTestRule.waitForIdle()
-
-      completeScreen.assertIsDisplayed()
-
-      topBarLanding { assertIsDisplayed() }
-
-      bottomBarLanding { assertIsDisplayed() }
-
-      recipeList { assertIsDisplayed() }
-
-      recipeCard {
-        assertIsDisplayed()
-        assertHasClickAction()
-      }
-
-      saveIcon {
-        assertIsDisplayed()
-        assertHasClickAction()
-      }
-
-      userName {
-        assertIsDisplayed()
-        assertHasClickAction()
-      }
-
-      shareIcon { assertIsDisplayed() }
-
-      ratingButton {
-        assertIsDisplayed()
-        assertHasClickAction()
-      }
-
-      completeScreen { assertIsDisplayed() }
-    }
-  }
-
-  @Test
-  fun searchBarFunctionality() {
-    goToLandingScreen()
-
-    ComposeScreen.onComposeScreen<LandingScreen>(composeTestRule) {
-      searchBar {
+  fun checkEmptySearchScreen() {
+    goToSearchScreen()
+    ComposeScreen.onComposeScreen<SearchScreen>(composeTestRule) {
+      topBar { assertIsDisplayed() }
+      bottomBar { assertIsDisplayed() }
+      tabRow { assertIsDisplayed() }
+      emptyListDisplay { assertIsDisplayed() }
+      noRecipesText { assertIsDisplayed() }
+      tabAccounts {
         assertIsDisplayed()
         performClick()
       }
       composeTestRule.waitForIdle()
-      composeTestRule.onNodeWithContentDescription("Search Icon Button").performClick()
+      noAccountsText { assertIsDisplayed() }
+      tabRecipes {
+        assertIsDisplayed()
+        performClick()
+      }
       composeTestRule.waitForIdle()
     }
   }
 
-  private fun goToLandingScreen() {
-    profileViewModel.setViewingProfile(Profile(id = "ID_DEFAULT_1"))
-    val landingViewModel = HomeViewModel()
-    landingViewModel.setRecipes(listOf(recipe, recipe, recipe))
+  @Test
+  fun checkNotEmptySearchScreen() {
+    goToSearchScreen(false)
+    ComposeScreen.onComposeScreen<SearchScreen>(composeTestRule) {
+      tabRow { assertIsDisplayed() }
+      filteredListDisplay { assertIsDisplayed() }
+      recipeCard { assertIsDisplayed() }
+    }
+  }
+
+  private fun goToSearchScreen(isEmpty: Boolean = true) {
+    if (!isEmpty) {
+      searchViewModel.setFilteredRecipes(listOf(dummyRecipe))
+      searchViewModel.setFilteredProfiles(listOf(Profile()))
+    }
+    val mockNavAction = mockk<NavigationActions>(relaxed = true)
     composeTestRule.setContent {
-      LandingPage(
-          mockk<NavigationActions>(relaxed = true),
-          RecipeViewModel(),
-          landingViewModel,
-          profileViewModel,
-          SearchViewModel())
+      SearchScreen(Route.HOME, mockNavAction, searchViewModel, recipeViewModel, profileViewModel)
     }
     composeTestRule.waitForIdle()
   }

@@ -9,9 +9,12 @@ import androidx.test.ext.junit.runners.AndroidJUnit4
 import com.android.feedme.model.data.Ingredient
 import com.android.feedme.model.data.IngredientMetaData
 import com.android.feedme.model.data.MeasureUnit
+import com.android.feedme.model.data.Profile
+import com.android.feedme.model.data.ProfileRepository
 import com.android.feedme.model.data.Recipe
 import com.android.feedme.model.data.RecipeRepository
 import com.android.feedme.model.data.Step
+import com.android.feedme.model.viewmodel.ProfileViewModel
 import com.android.feedme.model.viewmodel.RecipeViewModel
 import com.android.feedme.ui.component.RecipeFullDisplay
 import com.android.feedme.ui.navigation.NavigationActions
@@ -52,10 +55,8 @@ class FullRecipeTest : TestCase() {
                           "When the beef is beginning to dry up, add the tomatoes and stir well. Add more salt, then lower the heat and allow to simmer for about an hour, stirring from time to time. Taste for salt and add pepper.",
                       "Make the Meat Sauce")),
           tags = listOf("Meat"),
-          time = 1.15,
           rating = 4.5,
-          userid = "@PasDavid",
-          difficulty = "Intermediate",
+          userid = "9vu1XpyZwrW5hSvEpHuuvcVVgiv2",
           "https://external-content.duckduckgo.com/iu/?u=https%3A%2F%2Fwww.mamablip.com%2Fstorage%2FLasagna%2520with%2520Meat%2520and%2520Tomato%2520Sauce_3481612355355.jpg&f=1&nofb=1&ipt=8e887ba99ce20a85fb867dabbe0206c1146ebf2f13548b5653a2778e3ea18c54&ipo=images")
 
   @get:Rule val composeTestRule = createComposeRule()
@@ -69,26 +70,36 @@ class FullRecipeTest : TestCase() {
 
   // Avoid re-creating a viewModel for every test
   private lateinit var recipeViewModel: RecipeViewModel
+  private lateinit var profileViewModel: ProfileViewModel
+
   private lateinit var recipeRepository: RecipeRepository
+  private lateinit var profileRepository: ProfileRepository
 
   @Before
   fun setUpMocks() {
     every { mockNavActions.canGoBack() } returns true
 
     RecipeRepository.initialize(mockFirestore)
+    ProfileRepository.initialize(mockFirestore)
     recipeRepository = RecipeRepository.instance
+    profileRepository = ProfileRepository.instance
 
     every { mockFirestore.collection("recipes") } returns mockCollectionReference
-    every { mockCollectionReference.document("lasagna1") } returns mockDocumentReference
+    every { mockFirestore.collection("profiles") } returns mockCollectionReference
+    every { mockCollectionReference.document(any()) } returns mockDocumentReference
 
     every { mockDocumentReference.get() } returns Tasks.forResult(mockDocumentSnapshot)
     every { mockDocumentSnapshot.toObject(Recipe::class.java) } returns recipe
+    every { mockDocumentSnapshot.toObject(Profile::class.java) } returns
+        Profile(id = "ID_DEFAULT_1")
 
     every { mockDocumentReference.set(any()) } returns Tasks.forResult(null)
 
     recipeViewModel = RecipeViewModel()
     recipeViewModel.setRecipe(recipe)
     recipeViewModel.selectRecipe(recipe)
+
+    profileViewModel = ProfileViewModel()
   }
 
   @Test
@@ -103,8 +114,6 @@ class FullRecipeTest : TestCase() {
     }
     composeTestRule.onNodeWithTag("General Infos Row").assertIsDisplayed()
 
-    composeTestRule.onNodeWithContentDescription("Time Icon").assertIsDisplayed()
-    composeTestRule.onNodeWithTag("Text Time").assertIsDisplayed()
     composeTestRule
         .onNodeWithContentDescription("Star Icon", useUnmergedTree = true)
         .assertIsDisplayed()
@@ -120,7 +129,10 @@ class FullRecipeTest : TestCase() {
   }
 
   private fun goToFullRecipeScreen() {
-    composeTestRule.setContent { RecipeFullDisplay(Route.HOME, mockNavActions, recipeViewModel) }
+    profileViewModel.setViewingProfile(Profile(id = "ID_DEFAULT_1"))
+    composeTestRule.setContent {
+      RecipeFullDisplay(Route.HOME, mockNavActions, recipeViewModel, profileViewModel)
+    }
     composeTestRule.waitForIdle()
   }
 }

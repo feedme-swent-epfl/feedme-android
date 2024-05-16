@@ -48,7 +48,7 @@ class IngredientsRepositoryTest {
 
   @Test
   fun addIngredient_Success() {
-    val ingredient = Ingredient("Sugar", "Sweetener", "sugarId")
+    val ingredient = Ingredient("Sugar", "sugarId", false, false)
     `when`(mockDocumentReference.set(ingredient)).thenReturn(Tasks.forResult(null))
 
     var successCalled = false
@@ -63,7 +63,7 @@ class IngredientsRepositoryTest {
   @Test
   fun getIngredient_Success() {
     val ingredientId = "sugarId"
-    val expectedIngredient = Ingredient("Sugar", "Sweetener", ingredientId)
+    val expectedIngredient = Ingredient("Sugar", ingredientId, false, false)
     `when`(mockDocumentReference.get()).thenReturn(Tasks.forResult(mockDocumentSnapshot))
     `when`(mockDocumentSnapshot.toObject(Ingredient::class.java)).thenReturn(expectedIngredient)
 
@@ -78,8 +78,8 @@ class IngredientsRepositoryTest {
   @Test
   fun getIngredients_Success() {
     val ingredientIds = listOf("sugarId", "flourId")
-    val sugar = Ingredient("Sugar", "Sweetener", "sugarId")
-    val flour = Ingredient("Flour", "Baking", "flourId")
+    val sugar = Ingredient("Sugar", "sugarId", false, false)
+    val flour = Ingredient("Flour", "flourId", false, false)
 
     // Setup responses for fetching each ingredient by ID
     `when`(mockFirestore.collection("ingredients")).thenReturn(mockCollectionReference)
@@ -118,7 +118,7 @@ class IngredientsRepositoryTest {
 
   @Test
   fun addIngredient_Failure() {
-    val ingredient = Ingredient("Sugar", "Sweetener", "sugarId")
+    val ingredient = Ingredient("Sugar", "sugarId", false, false)
     val exception = Exception("Firestore add failure")
     `when`(mockDocumentReference.set(ingredient)).thenReturn(Tasks.forException(exception))
 

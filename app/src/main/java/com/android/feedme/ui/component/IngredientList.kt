@@ -1,6 +1,7 @@
 package com.android.feedme.ui.component
 
 import android.annotation.SuppressLint
+import android.util.Log
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Row
@@ -24,6 +25,7 @@ import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextFieldColors
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.movableContentOf
@@ -39,11 +41,17 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.window.PopupProperties
 import com.android.feedme.model.data.Ingredient
 import com.android.feedme.model.data.IngredientMetaData
+import com.android.feedme.model.data.IngredientsRepository
 import com.android.feedme.model.data.MeasureUnit
 import com.android.feedme.model.viewmodel.InputViewModel
 import com.android.feedme.ui.theme.InValidInput
 import com.android.feedme.ui.theme.NoInput
 import com.android.feedme.ui.theme.ValidInput
+
+// Fetch all ingredients and collect them as state
+var listOfIngredient: List<Ingredient> = emptyList()
+
+val ingredientsRepository = IngredientsRepository.instance
 
 /**
  * Composable function for displaying a list of ingredients.
@@ -57,7 +65,14 @@ fun IngredientList(
     inputViewModel: InputViewModel = InputViewModel(),
     modifier: Modifier = Modifier,
 ) {
-
+  // Fetch all ingredients asynchronously
+  LaunchedEffect(Unit) {
+    ingredientsRepository.getAllIngredients(
+        onSuccess = { ingredients -> listOfIngredient = ingredients },
+        onFailure = { e ->
+          Log.e("Fetching Error : ","Couldn't fetch list of ingredients",e)
+        })
+  }
   val totalIngredients by inputViewModel.totalIngredientEntriesDisplayed.collectAsState()
   LazyColumn(modifier = modifier.testTag("LazyList")) {
     this.items(totalIngredients) { index ->
@@ -103,8 +118,8 @@ fun IngredientInput(
   }
 
   var isDropdownVisible by remember { mutableStateOf(false) }
-  val suggestionIngredients =
-      listOf("Item 1", "Item 2", "Item 3", "Item 4", "Item 5") // Your list of items
+
+  val filteredIngredients = listOfIngredient.filter { it.name.contains(name, ignoreCase = true) }
 
   Row(
       modifier = Modifier.fillMaxWidth().padding(horizontal = 20.dp, vertical = 8.dp).height(70.dp),
@@ -135,12 +150,12 @@ fun IngredientInput(
                   PopupProperties(
                       focusable = false, dismissOnClickOutside = false, dismissOnBackPress = false),
           ) {
-            suggestionIngredients.forEach { item ->
+            filteredIngredients.forEach { item ->
               DropdownMenuItem(
                   modifier = Modifier.testTag("IngredientOption"),
-                  text = { Text(text = item) },
+                  text = { Text(text = item.name) },
                   onClick = {
-                    name = item
+                    name = item.name
                     isDropdownVisible = false
                     val beforeState = state
                     if (name != " ") {
@@ -150,10 +165,18 @@ fun IngredientInput(
                       action(
                           beforeState,
                           state,
-                          IngredientMetaData(quantity, dose, Ingredient(name, "", "")))
+                          IngredientMetaData(quantity, dose, Ingredient(name, "", false, false)))
                     }
                   })
             }
+
+            DropdownMenuItem(
+                modifier = Modifier.background(Color.LightGray).testTag("addOption"),
+                text = { Text(text = "Add Ingredient") },
+                onClick = {
+                    //TODO check validty of addition with Chatgbt
+                    ingredientsRepository.addIngredient(Ingredient(name, "", false, false), {},{})
+                })
           }
         }
 
@@ -168,7 +191,12 @@ fun IngredientInput(
               if (it.isNotEmpty() && it.toDoubleOrNull() != null && it.toDouble() >= 0.0) {
                 quantity = it.toDouble()
                 if (quantity != 0.0) {
-                  action(state, state, IngredientMetaData(quantity, dose, Ingredient(name, "", "")))
+                  action(state, state, IngredientMetaData(quantity, dose, Ingredient(
+                      name,
+                      "",
+                      false,
+                      false
+                  )))
                 }
               }
             },
@@ -214,7 +242,12 @@ fun IngredientInput(
                               action(
                                   beforeState,
                                   state,
-                                  IngredientMetaData(quantity, dose, Ingredient(name, "", "")))
+                                  IngredientMetaData(quantity, dose, Ingredient(
+                                      name,
+                                      "",
+                                      false,
+                                      false
+                                  )))
                             }
                           })
                     }
@@ -229,7 +262,7 @@ fun IngredientInput(
                 action(
                     state,
                     IngredientInputState.EMPTY,
-                    IngredientMetaData(quantity, dose, Ingredient(name, "", "")))
+                    IngredientMetaData(quantity, dose, Ingredient(name, "", false, false)))
               }) {
                 Icon(
                     imageVector = Icons.Default.DeleteForever,

@@ -17,7 +17,7 @@ val recipe =
                 IngredientMetaData(
                     quantity = 2.0,
                     measure = MeasureUnit.ML,
-                    ingredient = Ingredient("Tomato", "Vegetables", "tomatoID"))),
+                    ingredient = Ingredient("Tomato", "tomatoID", false, false))),
         steps =
             listOf(
                 Step(

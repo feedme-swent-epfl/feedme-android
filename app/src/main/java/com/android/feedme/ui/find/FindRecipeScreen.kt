@@ -16,10 +16,12 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.PhotoCamera
 import androidx.compose.material.icons.filled.PhotoLibrary
+import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedButton
 import androidx.compose.material3.Scaffold
+import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
@@ -31,9 +33,14 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
+import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.navigation.compose.rememberNavController
 import com.android.feedme.R
+import com.android.feedme.model.data.IngredientsRepository
+import com.android.feedme.model.data.ProfileRepository
+import com.android.feedme.model.data.RecipeRepository
 import com.android.feedme.model.viewmodel.InputViewModel
 import com.android.feedme.ui.component.IngredientList
 import com.android.feedme.ui.navigation.BottomNavigationMenu
@@ -43,6 +50,7 @@ import com.android.feedme.ui.navigation.Screen
 import com.android.feedme.ui.navigation.TOP_LEVEL_DESTINATIONS
 import com.android.feedme.ui.navigation.TopBarNavigation
 import com.android.feedme.ui.theme.FindRecipeIcons
+import com.google.firebase.firestore.FirebaseFirestore
 
 /**
  * Composable function for the Create Screen.
@@ -150,4 +158,22 @@ fun FindRecipeScreen(navigationActions: NavigationActions, inputViewModel: Input
               IngredientList(inputViewModel)
             }
       }
+}
+
+@OptIn(ExperimentalMaterial3Api::class)
+@Preview(showBackground = true)
+@Composable
+fun FindRecipeScreenPreview() {
+    val firebase = FirebaseFirestore.getInstance()
+    ProfileRepository.initialize(firebase)
+    RecipeRepository.initialize(firebase)
+    IngredientsRepository.initialize(firebase)
+  val navigationActions = NavigationActions(rememberNavController())
+  val inputViewModel = InputViewModel()
+
+  MaterialTheme {
+    Surface {
+      FindRecipeScreen(navigationActions = navigationActions, inputViewModel = inputViewModel)
+    }
+  }
 }

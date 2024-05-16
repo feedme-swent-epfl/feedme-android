@@ -231,7 +231,12 @@ fun parseResponse(responseBody: String?, forIngredientFound: (IngredientMetaData
       val unitString = ingredientObject.optString("unit", "")
       val unit = getMeasureUnitFromString(unitString)
       forIngredientFound(
-          IngredientMetaData(quantity, unit, Ingredient(ingredient, "DEFAULT_TYPE", "DEFAULT_ID")))
+          IngredientMetaData(quantity, unit, Ingredient(
+              ingredient,
+              "DEFAULT_ID",
+              false,
+              false
+          )))
     }
   }
 }

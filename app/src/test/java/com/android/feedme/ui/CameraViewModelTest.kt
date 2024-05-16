@@ -14,7 +14,12 @@ class CameraViewModelTest {
     // Create a mock list of existing ingredients
     val existingIngredients =
         IngredientMetaData(
-            2.0, MeasureUnit.TABLESPOON, Ingredient("Sugar", "DEFAULT_TYPE", "DEFAULT_ID"))
+            2.0, MeasureUnit.TABLESPOON, Ingredient(
+                "Sugar",
+                "DEFAULT_ID",
+                false,
+                false
+            ))
 
     viewModel.updateIngredientList(existingIngredients)
 
@@ -25,7 +30,12 @@ class CameraViewModelTest {
     viewModel.updateIngredientList(existingIngredients)
     val newIngredients =
         IngredientMetaData(
-            4.0, MeasureUnit.TABLESPOON, Ingredient("Sugar", "DEFAULT_TYPE", "DEFAULT_ID"))
+            4.0, MeasureUnit.TABLESPOON, Ingredient(
+                "Sugar",
+                "DEFAULT_ID",
+                false,
+                false
+            ))
 
     // Assert if necessary
     assertEquals(1, viewModel.listOfIngredientToInput.value.size)

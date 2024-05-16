@@ -115,4 +115,29 @@ class IngredientsRepository(private val db: FirebaseFirestore) {
           }
     }
   }
+
+  /**
+   * Retrieves the whole list of ingredients from Firestore.
+   *
+   * @param onSuccess Callback invoked with a list of IngredientMetaData objects on success.
+   * @param onFailure Callback invoked on failure to retrieve ingredients, with an exception.
+   */
+  fun getAllIngredients(onSuccess: (List<Ingredient>) -> Unit, onFailure: (Exception) -> Unit) {
+    db.collection(collectionPath)
+        .get()
+        .addOnSuccessListener { querySnapshot ->
+          val ingredients =
+              querySnapshot.documents.mapNotNull { documentSnapshot ->
+                documentSnapshot.toObject(Ingredient::class.java)
+              }
+          onSuccess(ingredients)
+        }
+        .addOnFailureListener { exception -> onFailure(exception) }
+  }
+
+
+    // Method to generate a random ID
+    fun generateRandomId() {
+        db.collection(collectionPath).document()
+    }
 }

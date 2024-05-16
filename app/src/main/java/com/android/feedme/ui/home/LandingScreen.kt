@@ -245,18 +245,16 @@ fun RecipeCard(
                       }
                     },
                     modifier = Modifier.testTag("SaveIcon")) {
-                      if (isSaved.value) {
-                        Icon(
-                            imageVector = Icons.Filled.Bookmark,
-                            contentDescription = "Bookmark Icon on Recipe Card",
-                            modifier = Modifier.size(34.dp).padding(start = 4.dp),
-                            tint = YellowStarBlackOutline)
-                      } else {
-                        Icon(
-                            imageVector = Icons.Outlined.BookmarkBorder,
-                            contentDescription = "Bookmark Icon on Recipe Card",
-                            modifier = Modifier.size(34.dp).padding(start = 4.dp))
-                      }
+                      Icon(
+                          imageVector =
+                              if (isSaved.value) {
+                                Icons.Filled.Bookmark
+                              } else {
+                                Icons.Outlined.BookmarkBorder
+                              },
+                          contentDescription = "Bookmark Icon on Recipe Card",
+                          modifier = Modifier.size(34.dp).padding(start = 4.dp),
+                          tint = YellowStar)
                     }
               }
               Row(verticalAlignment = Alignment.CenterVertically) {

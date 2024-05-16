@@ -144,10 +144,25 @@ class LandingTest : TestCase() {
     }
   }
 
+  @Test
+  fun savedRecipesFunctionality() {
+    goToLandingScreen()
+
+    ComposeScreen.onComposeScreen<LandingScreen>(composeTestRule) {
+      saveIcon {
+        assertIsDisplayed()
+        performClick()
+      }
+      composeTestRule.waitForIdle()
+      composeTestRule.onNodeWithContentDescription("Bookmark Icon on Recipe Card").performClick()
+      composeTestRule.waitForIdle()
+    }
+  }
+
   private fun goToLandingScreen() {
     profileViewModel.setViewingProfile(Profile(id = "ID_DEFAULT_1"))
     val landingViewModel = HomeViewModel()
-    landingViewModel.setRecipes(listOf(recipe, recipe, recipe))
+    landingViewModel.setRecipes(listOf(recipe))
     composeTestRule.setContent {
       LandingPage(
           mockk<NavigationActions>(relaxed = true),

@@ -254,11 +254,12 @@ fun RecipeCard(
                               },
                           contentDescription = "Bookmark Icon on Recipe Card",
                           modifier = Modifier.size(34.dp).padding(start = 4.dp),
-                          tint = if (isSaved.value) {
-                              YellowStar
-                          } else {
-                              YellowStarBlackOutline
-                          })
+                          tint =
+                              if (isSaved.value) {
+                                YellowStar
+                              } else {
+                                YellowStarBlackOutline
+                              })
                     }
               }
               Row(verticalAlignment = Alignment.CenterVertically) {

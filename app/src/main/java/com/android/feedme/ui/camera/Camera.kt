@@ -91,7 +91,6 @@ fun CameraScreen(navigationActions: NavigationActions, inputViewModel: InputView
 
   ///// Machine Learning Part /////
 
-
   val applicationContext = LocalContext.current
   // Request camera permission if not already granted
   if (!hasRequiredPermissions(applicationContext)) {
@@ -110,9 +109,9 @@ fun CameraScreen(navigationActions: NavigationActions, inputViewModel: InputView
   val cameraViewModel = viewModel<CameraViewModel>()
   val bitmaps by cameraViewModel.bitmaps.collectAsState()
   val photoSavedMessageVisible by cameraViewModel.photoSavedMessageVisible.collectAsState()
-    val pickImage = cameraViewModel.galleryLauncher()
+  val pickImage = cameraViewModel.galleryLauncher()
 
-    val listOfIngredientToInput = cameraViewModel.listOfIngredientToInput.collectAsState()
+  val listOfIngredientToInput = cameraViewModel.listOfIngredientToInput.collectAsState()
 
   BottomSheetScaffold(
       modifier = Modifier.testTag("CameraScreen"),
@@ -148,9 +147,8 @@ fun CameraScreen(navigationActions: NavigationActions, inputViewModel: InputView
                             .testTag("GalleryButton"),
                     // Open the local gallery when the gallery button is clicked
                     onClick = {
-                        pickImage.launch(
-                        PickVisualMediaRequest(ActivityResultContracts.PickVisualMedia.ImageOnly)
-                    )
+                      pickImage.launch(
+                          PickVisualMediaRequest(ActivityResultContracts.PickVisualMedia.ImageOnly))
                     }) {
                       Icon(imageVector = Icons.Default.Photo, contentDescription = "Open gallery")
                     }

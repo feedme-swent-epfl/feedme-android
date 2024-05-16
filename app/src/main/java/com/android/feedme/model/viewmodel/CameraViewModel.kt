@@ -6,7 +6,6 @@ import android.content.Context
 import android.content.pm.PackageManager
 import android.graphics.Bitmap
 import android.graphics.ImageDecoder
-import android.net.Uri
 import android.os.Build
 import androidx.activity.compose.ManagedActivityResultLauncher
 import androidx.activity.compose.rememberLauncherForActivityResult
@@ -80,39 +79,39 @@ class CameraViewModel : ViewModel() {
     _lastPhoto.value = PhotoState.Photo(bitmap)
   }
 
-    @Composable
-    fun galleryLauncher(): ManagedActivityResultLauncher<PickVisualMediaRequest, out Any?> {
-        val context = LocalContext.current
+  @Composable
+  fun galleryLauncher(): ManagedActivityResultLauncher<PickVisualMediaRequest, out Any?> {
+    val context = LocalContext.current
 
-        if (!hasRequiredPermissions(context)) askForPermission(context)
+    if (!hasRequiredPermissions(context)) askForPermission(context)
 
-        return rememberLauncherForActivityResult(
-            ActivityResultContracts.PickVisualMedia(),
-            onResult = { uri ->
-                uri?.let {
-                    val source = ImageDecoder.createSource(context.contentResolver, uri)
-                    _bitmaps.value += ImageDecoder.decodeBitmap(source)
-                    _lastPhoto.value = PhotoState.Photo(ImageDecoder.decodeBitmap(source))
-                }})
-    }
+    return rememberLauncherForActivityResult(
+        ActivityResultContracts.PickVisualMedia(),
+        onResult = { uri ->
+          uri?.let {
+            val source = ImageDecoder.createSource(context.contentResolver, uri)
+            _bitmaps.value += ImageDecoder.decodeBitmap(source)
+            _lastPhoto.value = PhotoState.Photo(ImageDecoder.decodeBitmap(source))
+          }
+        })
+  }
 
-
-private fun hasRequiredPermissions(context: Context): Boolean {
+  private fun hasRequiredPermissions(context: Context): Boolean {
     return if (Build.VERSION.SDK_INT >= 34)
         ContextCompat.checkSelfPermission(
             context, Manifest.permission.READ_MEDIA_VISUAL_USER_SELECTED) ==
-                PackageManager.PERMISSION_GRANTED ||
-                ContextCompat.checkSelfPermission(context, Manifest.permission.READ_MEDIA_IMAGES) ==
+            PackageManager.PERMISSION_GRANTED ||
+            ContextCompat.checkSelfPermission(context, Manifest.permission.READ_MEDIA_IMAGES) ==
                 PackageManager.PERMISSION_GRANTED
     else if (Build.VERSION.SDK_INT < 33)
         ContextCompat.checkSelfPermission(context, Manifest.permission.READ_EXTERNAL_STORAGE) ==
-                PackageManager.PERMISSION_GRANTED
+            PackageManager.PERMISSION_GRANTED
     else
         ContextCompat.checkSelfPermission(context, Manifest.permission.READ_MEDIA_IMAGES) ==
-                PackageManager.PERMISSION_GRANTED
-}
+            PackageManager.PERMISSION_GRANTED
+  }
 
-private fun askForPermission(context: Context) {
+  private fun askForPermission(context: Context) {
     val permission =
         if (Build.VERSION.SDK_INT >= 34)
             arrayOf(
@@ -122,9 +121,9 @@ private fun askForPermission(context: Context) {
         else arrayOf(Manifest.permission.READ_MEDIA_IMAGES)
 
     return ActivityCompat.requestPermissions(context as Activity, permission, 0)
-}
+  }
 
-/**
+  /**
    * This function is called when the user taps the save button in the CameraScreen. It sets the
    * [_photoSavedMessageVisible] state to true, which triggers a message to be shown to the user.
    * The message is hidden after 3 seconds.

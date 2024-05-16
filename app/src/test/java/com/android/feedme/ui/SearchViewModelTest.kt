@@ -170,4 +170,25 @@ class SearchViewModelTest {
     println(searchViewModel.filteredProfiles.value)
     TestCase.assertTrue(searchViewModel.filteredProfiles.value.first().username == "user123")
   }
+
+  @Test
+  fun loadMoreRecipes_Success() {
+    searchViewModel.searchRecipes(query)
+    searchViewModel.loadMoreRecipes()
+    Shadows.shadowOf(Looper.getMainLooper()).idle()
+
+    println(searchViewModel.filteredRecipes.value)
+    TestCase.assertTrue(searchViewModel.filteredRecipes.value.first().recipeId == recipeId)
+  }
+
+  @Test
+  fun loadMoreProfiles_Success() {
+    `when`(mockDocumentSnapshot.data).thenReturn(profileMap)
+    searchViewModel.searchProfiles(queryUser)
+    searchViewModel.loadMoreProfiles()
+    Shadows.shadowOf(Looper.getMainLooper()).idle()
+
+    println(searchViewModel.filteredProfiles.value)
+    TestCase.assertTrue(searchViewModel.filteredProfiles.value.first().username == "user123")
+  }
 }

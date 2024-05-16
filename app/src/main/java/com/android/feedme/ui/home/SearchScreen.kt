@@ -7,8 +7,9 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
-import androidx.compose.material3.Button
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.OutlinedButton
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Tab
 import androidx.compose.material3.TabRow
@@ -175,7 +176,11 @@ fun FilteredContent(
         1 ->
             items(profiles) { profile -> FriendsCard(profile, navigationActions, profileViewModel) }
       }
-      item { Button(onClick = { loadMore() }) { Text("Load More") } }
+      item {
+        OutlinedButton(onClick = { loadMore() }, shape = RoundedCornerShape(20.dp)) {
+          Text("Load More")
+        }
+      }
     }
   }
 }

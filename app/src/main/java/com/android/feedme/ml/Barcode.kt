@@ -73,6 +73,14 @@ suspend fun extractProductInfoFromBarcode(
   }
 }
 
+/**
+ * Parses a JSON string to extract product information into a ProductInfo object.
+ *
+ * @param jsonString The JSON string containing product details (obtained after httpRequest).
+ * @param onFailure  Callback invoked on parsing failure, default is an empty lambda.
+ *
+ * @return A ProductInfo object if parsing is successful; null otherwise.
+ */
 fun parseJsonString(jsonString: String, onFailure: (Exception) -> Unit = {}): ProductInfo? {
     try {
         val jsonObject = JSONObject(jsonString)
@@ -88,6 +96,13 @@ fun parseJsonString(jsonString: String, onFailure: (Exception) -> Unit = {}): Pr
     }
 }
 
+/**
+ * Data class representing product information.
+ *
+ * @property code The product barcode code.
+ * @property productName The name of the product.
+ * @property status The status of the product (1 if successful, 0 if no information).
+ */
 data class ProductInfo(
     val code: String,
     val productName: String,

@@ -142,6 +142,8 @@ class SearchViewModelTest {
         .thenReturn(mockQuery)
     `when`(mockQuery.whereLessThan("username", queryUser + "\uf8ff")).thenReturn(mockQuery)
 
+    `when`(mockQuery.limit(10)).thenReturn(mockQuery)
+
     `when`(mockQuery.get()).thenReturn(Tasks.forResult(mockQuerySnapshot))
 
     `when`(mockQuerySnapshot.documents).thenReturn(listOf(mockDocumentSnapshot))

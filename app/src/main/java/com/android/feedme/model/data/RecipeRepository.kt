@@ -164,7 +164,7 @@ class RecipeRepository(private val db: FirebaseFirestore) {
         if (rawIngredientsList is List<*>) {
           rawIngredientsList.mapNotNull { (it as? Map<*, *>)?.get("ingredientId") as? String }
         } else {
-          listOf<String>()
+          listOf()
         }
 
     // Safely process the tags
@@ -195,7 +195,7 @@ class RecipeRepository(private val db: FirebaseFirestore) {
                     }
                   }
                 } else {
-                  listOf<Step>()
+                  listOf()
                 }
 
             // Construct the Recipe object

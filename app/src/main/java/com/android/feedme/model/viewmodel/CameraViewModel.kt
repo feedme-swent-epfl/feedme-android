@@ -34,6 +34,19 @@ class CameraViewModel : ViewModel() {
     data class Photo(val bitmap: Bitmap) : PhotoState()
   }
 
+    class InformationDisplay(){
+        var ErrorInformation : String? = null
+        var Information : String? = null
+        fun updateErrorInfo(s : String) {
+            this.ErrorInformation = s
+            this.Information = null
+        }
+        fun updateInfo(s : String) {
+            this.Information = s
+            this.ErrorInformation = null
+        }
+    }
+
   /** Keep a list of bitmaps taken by user */
   private val _bitmaps = MutableStateFlow<List<Bitmap>>(emptyList())
   val bitmaps = _bitmaps.asStateFlow()
@@ -51,7 +64,7 @@ class CameraViewModel : ViewModel() {
   val listOfIngredientToInput = _listOfIngredientToInput.asStateFlow()
 
   /** Information's to be displayed after a ML button was pressed */
-  private val _informationToDisplay = MutableStateFlow<String>("")
+  private val _informationToDisplay = MutableStateFlow<InformationDisplay>(InformationDisplay())
   val informationToDisplay = _informationToDisplay.asStateFlow()
 
   private val _lastAnalyzedPhoto = MutableStateFlow<Bitmap?>(null)
@@ -89,13 +102,13 @@ class CameraViewModel : ViewModel() {
       viewModelScope.launch {
         when (val photoState = _lastPhoto.value) {
           is PhotoState.NoPhoto -> {
-            _informationToDisplay.value = "ERROR : No photo to analyse, please take a picture."
+            _informationToDisplay.value.updateErrorInfo("ERROR : No photo to analyse, please take a picture.")
           }
           is PhotoState.Photo -> {
             if (photoState.bitmap != _lastAnalyzedPhoto.value) {
               _lastAnalyzedPhoto.value = photoState.bitmap
               val result = performTextRecognition(photoState.bitmap)
-              _informationToDisplay.value = result
+              _informationToDisplay.value.updateInfo(result)
             }
           }
         }
@@ -111,11 +124,11 @@ class CameraViewModel : ViewModel() {
       viewModelScope.launch {
         when (val photoState = _lastPhoto.value) {
           is PhotoState.NoPhoto -> {
-            _informationToDisplay.value = "ERROR : No photo to analyse, please take a picture."
+            _informationToDisplay.value.updateErrorInfo("ERROR : No photo to analyse, please take a picture.")
           }
           is PhotoState.Photo -> {
             val result = performBarCodeScanning(photoState.bitmap)
-            _informationToDisplay.value = result
+            _informationToDisplay.value.updateInfo(result)
           }
         }
       }

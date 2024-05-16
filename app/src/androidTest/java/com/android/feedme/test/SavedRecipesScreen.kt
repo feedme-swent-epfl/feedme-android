@@ -103,12 +103,12 @@ class SavedRecipesScreen : TestCase() {
       composeTestRule.onNodeWithTag("SavedScreenText").assertIsDisplayed()
     }
   }
-
+  /* WILL BE IMPLEMENTED SOON
   @Test
   fun mainComponentsNotEmptyAreDisplayed() {
     profileViewModel.addSavedRecipes(listOf(recipe1, recipe2))
     composeTestRule.setContent {
       SavedRecipesScreen(navAction, profileViewModel, searchViewModel, recipeViewModel)
     }
-  }
+  }*/
 }

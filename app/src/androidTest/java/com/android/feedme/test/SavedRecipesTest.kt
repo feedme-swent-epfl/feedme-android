@@ -26,7 +26,7 @@ import org.junit.Test
 import org.junit.runner.RunWith
 
 @RunWith(AndroidJUnit4::class)
-class SavedRecipesScreen : TestCase() {
+class SavedRecipesTest : TestCase() {
   @get:Rule val composeTestRule = createComposeRule()
   private val mockFirestore = mockk<FirebaseFirestore>(relaxed = true)
   private val navAction = mockk<NavigationActions>(relaxed = true)

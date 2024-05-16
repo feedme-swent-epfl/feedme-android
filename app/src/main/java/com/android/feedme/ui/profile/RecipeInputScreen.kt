@@ -2,6 +2,7 @@ package com.android.feedme.ui.profile
 
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
@@ -32,7 +33,6 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.res.painterResource
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.android.feedme.R
@@ -101,7 +101,6 @@ fun RecipeBox(
       }
 }
 
-@Preview
 @Composable
 fun RecipeInputTopContent() {
   Column(
@@ -119,7 +118,11 @@ fun RecipeInputTopContent() {
 
 @Composable
 fun RecipePicture() {
-  // TODO integrate with gallery
+  // TODO integrate with gallery after implementing viewmodel
+  /*
+    AsyncImage(
+        model = profileViewModel._imageUrl.collectAsState().value,
+  */
   Image(
       painter = painterResource(id = R.drawable.add_image),
       contentDescription = "Recipe Picture",
@@ -128,6 +131,7 @@ fun RecipePicture() {
               .width(70.dp)
               .height(70.dp)
               .clip(CircleShape)
+              .clickable(onClick = { /* TODO with ViewModel */})
               .testTag("RecipePicture"))
 }
 

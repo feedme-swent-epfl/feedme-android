@@ -40,7 +40,7 @@ class HomeViewModel : ViewModel() {
           },
           onFailure = {
             // Handle failure
-            throw error("Recipe was not fetched during Login")
+            // throw error("Recipe was not fetched during Login")
           })
     }
   }

@@ -1,6 +1,7 @@
 package com.android.feedme.model.viewmodel
 
 import android.graphics.Bitmap
+import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.android.feedme.ml.analyzeTextForIngredients
@@ -50,12 +51,16 @@ class CameraViewModel : ViewModel() {
   private val _listOfIngredientToInput = MutableStateFlow<List<IngredientMetaData>>(emptyList())
   val listOfIngredientToInput = _listOfIngredientToInput.asStateFlow()
 
-  /** Information's to be displayed after a ML button was pressed */
+  /** Information's to be displayed after a ML button was pressed and lead to a successful result */
   private val _informationToDisplay = MutableStateFlow<String?>(null)
   val informationToDisplay = _informationToDisplay.asStateFlow()
 
+  /** Information's to be displayed when an error occurs * */
   private val _errorToDisplay = MutableStateFlow<String?>(null)
   val errorToDisplay = _errorToDisplay.asStateFlow()
+
+    /** Number of ingredient to be added to the input screen after one text recognition scan **/
+  private val _nbOfIngredientAdded = MutableStateFlow<Int>(0)
 
   private val _lastAnalyzedPhoto = MutableStateFlow<Bitmap?>(null)
 
@@ -99,7 +104,7 @@ class CameraViewModel : ViewModel() {
               _lastAnalyzedPhoto.value = photoState.bitmap
               val result = performTextRecognition(photoState.bitmap)
               if (result != null) {
-                _informationToDisplay.value = result
+                _informationToDisplay.value = "$_nbOfIngredientAdded ingredient(s) added to your ingredient list."
               }
             }
           }
@@ -121,7 +126,7 @@ class CameraViewModel : ViewModel() {
           is PhotoState.Photo -> {
             val result = performBarCodeScanning(photoState.bitmap)
             if (result != null) {
-              _informationToDisplay.value = result
+              _informationToDisplay.value = "$result added to your ingredient list."
             }
           }
         }
@@ -136,37 +141,6 @@ class CameraViewModel : ViewModel() {
    * @return The extracted product name from the barcode as string if successful, a relevant error
    *   message otherwise.
    */
-  /*private suspend fun performBarCodeScanning(bitmap: Bitmap): String {
-    return suspendCoroutine { continuation ->
-      barcodeScan(
-          bitmap,
-          { barcodeNumber ->
-            viewModelScope.launch {
-              extractProductInfoFromBarcode(
-                  barcodeNumber,
-                  { productInfo ->
-                    if (productInfo != null) {
-                      // TODO How can i create new ingredients correctly or check if they already
-                      // exist ? => Sylvain PR ?
-                      updateIngredientList(
-                          IngredientMetaData(
-                              0.0,
-                              MeasureUnit.NONE,
-                              Ingredient(productInfo.productName, "Default", "DefaultID")))
-                    }
-                    continuation.resume(
-                        productInfo?.productName
-                            ?: "ERROR: Failed to extract product name from barcode, please try again.")
-                  },
-                  {
-                    continuation.resume(
-                        "ERROR: Failed to extract product name from barcode, please try again.")
-                  })
-            }
-          },
-          { continuation.resume("ERROR: Failed to identify barcode, please try again.") })
-    }
-  }*/
   private suspend fun performBarCodeScanning(bitmap: Bitmap): String? {
     return suspendCoroutine { continuation ->
       barcodeScan(
@@ -212,32 +186,27 @@ class CameraViewModel : ViewModel() {
    * @param bitmap The bitmap image on which text recognition will be performed.
    * @return The recognized text if successful; otherwise, an error message.
    */
-  /*private suspend fun performTextRecognition(bitmap: Bitmap): String {
-    return suspendCoroutine { continuation ->
-      textExtraction(
-          bitmap,
-          { text ->
-            analyzeTextForIngredients(text, { ing -> updateIngredientList(ing) })
-
-            continuation.resume(textProcessing(text = text))
-          },
-          { continuation.resume("ERROR : Failed to identify text, please try again.") })
-    }
-  }*/
   private suspend fun performTextRecognition(bitmap: Bitmap): String? {
+    var counter = 0
     return suspendCoroutine { continuation ->
       textExtraction(
           bitmap,
           { text ->
-            analyzeTextForIngredients(text, { ing -> updateIngredientList(ing) })
-
-            val processedText = textProcessing(text = text)
-            if (processedText.isNotEmpty()) {
-              continuation.resume(processedText)
-            } else {
-              _errorToDisplay.value = "Failed to process text, please try again."
-              continuation.resume(null)
-            }
+            analyzeTextForIngredients(
+                text,
+                { ing ->
+                  counter += 1
+                  updateIngredientList(ing)
+                },
+                onSuccess = { _nbOfIngredientAdded.value = counter },
+                onFailure = { e ->
+                  e.message?.let {
+                    Log.d("ML", it)
+                    _errorToDisplay.value =
+                        "Failed to extract ingredients from text, please try again."
+                  }
+                  continuation.resume(null)
+                })
           },
           {
             _errorToDisplay.value = "Failed to identify text, please try again."

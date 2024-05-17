@@ -2,18 +2,7 @@ package com.android.feedme.ml
 
 import android.graphics.Bitmap
 import android.util.Log
-import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.padding
-import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
-import androidx.compose.runtime.Composable
-import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.graphics.RectangleShape
-import androidx.compose.ui.platform.testTag
-import androidx.compose.ui.unit.dp
-import androidx.compose.ui.window.Dialog
 import com.android.feedme.BuildConfig
 import com.android.feedme.model.data.Ingredient
 import com.android.feedme.model.data.IngredientMetaData
@@ -233,32 +222,6 @@ fun parseResponse(responseBody: String?, forIngredientFound: (IngredientMetaData
       forIngredientFound(
           IngredientMetaData(quantity, unit, Ingredient(ingredient, "DEFAULT_TYPE", "DEFAULT_ID")))
     }
-  }
-}
-
-/**
- * Displays an overlay text field when [isVisible] is true. When you click outside of the text field
- * the [onDismiss] function is called.
- *
- * @param isVisible Whether the overlay text field should be displayed.
- * @param onDismiss Callback function to be invoked when the overlay text field is dismissed.
- * @param text The text to display within the overlay text field.
- */
-@Composable
-fun OverlayTextField(isVisible: Boolean, onDismiss: () -> Unit, text: String = "") {
-  if (isVisible) {
-    Dialog(
-        onDismissRequest = { onDismiss() },
-        content = {
-          Surface(
-              shape = RectangleShape,
-              color = Color.White,
-              modifier = Modifier.padding(16.dp).testTag("ML Text Box")) {
-                Column(modifier = Modifier.fillMaxWidth().padding(16.dp).testTag("Column")) {
-                  Text(text = text, modifier = Modifier.testTag("ML Text Box Inside"))
-                }
-              }
-        })
   }
 }
 

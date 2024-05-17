@@ -143,9 +143,19 @@ class IngredientsRepository(private val db: FirebaseFirestore) {
         .addOnSuccessListener { querySnapshot ->
           val ingredients =
               querySnapshot.documents.mapNotNull { documentSnapshot ->
-                documentSnapshot.toObject(Ingredient::class.java)
+                  val data = documentSnapshot.data
+                  val name = data?.get("name") as? String
+                  val id = data?.get("id") as? String
+                  val vegan = data?.get("vegan") as? Boolean ?: false
+                  val vegetarian = data?.get("vegetarian") as? Boolean ?: false
+
+                  if (name != null && id != null) {
+                      Ingredient(name, id, vegan, vegetarian)
+                  } else {
+                      null
+                  }
               }
-            Log.e("Size of ingredients :"," ${ingredients.size}")
+            Log.e(null, "Size of ingredients : ${ingredients.size}")
           onSuccess(ingredients)
         }
         .addOnFailureListener { exception -> onFailure(exception) }

@@ -101,7 +101,7 @@ fun IngredientInput(
   var dose by remember { mutableStateOf(ingredient?.measure ?: MeasureUnit.EMPTY) }
 
   val isComplete by remember {
-    mutableStateOf(name.isNotBlank() && dose != MeasureUnit.EMPTY && quantity != 0.0 && (ingredientCurrent.id != "NO_ID") || (ingredientCurrent.id != ""))
+    mutableStateOf(name.isNotBlank() && dose != MeasureUnit.EMPTY && quantity != 0.0 && (ingredientCurrent.id != "NO_ID") && (ingredientCurrent.id != ""))
   }
 
   var state by remember {

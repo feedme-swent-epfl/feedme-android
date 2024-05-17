@@ -21,6 +21,7 @@ import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.lazy.staggeredgrid.LazyVerticalStaggeredGrid
@@ -64,7 +65,6 @@ import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.android.feedme.R
-import com.android.feedme.ml.OverlayTextField
 import com.android.feedme.model.viewmodel.CameraViewModel
 import com.android.feedme.model.viewmodel.InputViewModel
 import com.android.feedme.ui.navigation.NavigationActions
@@ -84,7 +84,7 @@ import kotlinx.coroutines.launch
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun CameraScreen(navigationActions: NavigationActions, inputViewModel: InputViewModel) {
-    ///// Machine Learning Part /////
+  ///// Machine Learning Part /////
   // Switch off and on the text recognition functionality
   val textRecognitionMode = remember { mutableStateOf(true) }
   val barcodeRecognition = remember { mutableStateOf(true) }
@@ -104,11 +104,7 @@ fun CameraScreen(navigationActions: NavigationActions, inputViewModel: InputView
 
   // Set up the camera controller, view model, and coroutine scope
   val scope = rememberCoroutineScope()
-    val errorSnackbarHostState = remember {SnackbarHostState()}
-    val infoSnackbarHostState = remember {SnackbarHostState()}
-    /*val snackbarHost = @androidx.compose.runtime.Composable {
-        SnackbarHost(hostState = snackbarHostState)
-    }*/
+
   val scaffoldState = rememberBottomSheetScaffoldState()
   val controller = remember {
     LifecycleCameraController(applicationContext).apply {
@@ -120,6 +116,12 @@ fun CameraScreen(navigationActions: NavigationActions, inputViewModel: InputView
   val photoSavedMessageVisible by cameraViewModel.photoSavedMessageVisible.collectAsState()
 
   val listOfIngredientToInput = cameraViewModel.listOfIngredientToInput.collectAsState()
+
+  //////
+  val snackbarHostStateInfo = remember { SnackbarHostState() }
+  val snackbarHostStateError = remember { SnackbarHostState() }
+
+  /////
 
   BottomSheetScaffold(
       modifier = Modifier.testTag("CameraScreen"),
@@ -137,26 +139,22 @@ fun CameraScreen(navigationActions: NavigationActions, inputViewModel: InputView
       sheetContent = {
         PhotoBottomSheetContent(bitmaps = bitmaps, modifier = Modifier.fillMaxWidth())
       }) { padding ->
-        Box(modifier = Modifier
-            .fillMaxSize()
-            .padding(padding)) {
+        Box(modifier = Modifier.fillMaxSize().padding(padding)) {
           CameraPreview(controller = controller, modifier = Modifier.fillMaxSize())
 
           Row(
               modifier =
-              Modifier
-                  .fillMaxWidth()
-                  .align(Alignment.BottomCenter)
-                  .padding(16.dp)
-                  .padding(bottom = 32.dp),
+                  Modifier.fillMaxWidth()
+                      .align(Alignment.BottomCenter)
+                      .padding(16.dp)
+                      .padding(bottom = 32.dp),
               horizontalArrangement = Arrangement.SpaceAround) {
                 IconButton(
                     modifier =
-                    Modifier
-                        .size(56.dp)
-                        .background(CameraButtonsBackground, shape = CircleShape)
-                        .padding(10.dp)
-                        .testTag("GalleryButton"),
+                        Modifier.size(56.dp)
+                            .background(CameraButtonsBackground, shape = CircleShape)
+                            .padding(10.dp)
+                            .testTag("GalleryButton"),
                     // Open the local gallery when the gallery button is clicked
                     onClick = { scope.launch { scaffoldState.bottomSheetState.expand() } }) {
                       Icon(imageVector = Icons.Default.Photo, contentDescription = "Open gallery")
@@ -164,11 +162,10 @@ fun CameraScreen(navigationActions: NavigationActions, inputViewModel: InputView
 
                 IconButton(
                     modifier =
-                    Modifier
-                        .size(56.dp)
-                        .background(CameraButtonsBackground, shape = CircleShape)
-                        .padding(10.dp)
-                        .testTag("PhotoButton"),
+                        Modifier.size(56.dp)
+                            .background(CameraButtonsBackground, shape = CircleShape)
+                            .padding(10.dp)
+                            .testTag("PhotoButton"),
                     // Take a photo when the photo button is clicked
                     onClick = {
                       takePhoto(
@@ -185,13 +182,12 @@ fun CameraScreen(navigationActions: NavigationActions, inputViewModel: InputView
                 // Button for text recognition
                 if (textRecognitionMode.value) {
                   IconButton(
-                      onClick = { displayText.value = true },
+                      onClick = { cameraViewModel.textRecognitionButtonPressed() },
                       modifier =
-                      Modifier
-                          .size(56.dp)
-                          .background(CameraButtonsBackground, shape = CircleShape)
-                          .padding(10.dp)
-                          .testTag("MLTextButton")) {
+                          Modifier.size(56.dp)
+                              .background(CameraButtonsBackground, shape = CircleShape)
+                              .padding(10.dp)
+                              .testTag("MLTextButton")) {
                         Icon(
                             imageVector = Icons.TwoTone.TextFields,
                             contentDescription = "Display text after ML")
@@ -201,13 +197,12 @@ fun CameraScreen(navigationActions: NavigationActions, inputViewModel: InputView
                 if (barcodeRecognition.value) {
                   val barcodeScannerPainter = painterResource(id = R.drawable.barcode_scanner)
                   IconButton(
-                      onClick = { displayBarcode.value = true },
+                      onClick = { cameraViewModel.barcodeScanButtonPressed() },
                       modifier =
-                      Modifier
-                          .size(56.dp)
-                          .background(CameraButtonsBackground, shape = CircleShape)
-                          .padding(10.dp)
-                          .testTag("MLBarcodeButton")) {
+                          Modifier.size(56.dp)
+                              .background(CameraButtonsBackground, shape = CircleShape)
+                              .padding(10.dp)
+                              .testTag("MLBarcodeButton")) {
                         Icon(
                             painter = barcodeScannerPainter,
                             contentDescription = "Barcode Scanner",
@@ -222,67 +217,51 @@ fun CameraScreen(navigationActions: NavigationActions, inputViewModel: InputView
             // Show the message box
             Box(
                 modifier =
-                Modifier
-                    .padding(16.dp)
-                    .background(
-                        Color.Black.copy(alpha = 0.7f), shape = RoundedCornerShape(8.dp)
-                    )
-                    .padding(horizontal = 24.dp, vertical = 16.dp)
-                    .align(Alignment.BottomCenter)) {
+                    Modifier.padding(16.dp)
+                        .background(
+                            Color.Black.copy(alpha = 0.7f), shape = RoundedCornerShape(8.dp))
+                        .padding(horizontal = 24.dp, vertical = 16.dp)
+                        .align(Alignment.BottomCenter)) {
                   Text(
                       text = "Photo saved",
                       color = Color.White,
                       modifier = Modifier.testTag("PhotoSavedMessage"))
                 }
           }
-            SnackbarHost(
-                hostState = errorSnackbarHostState,
-                snackbar = { snackbarData ->
-                    Snackbar(
-                        modifier = Modifier.padding(16.dp),
-                        snackbarData = snackbarData,
-                        containerColor = Color.Red, // Error SnackBar color
-                        contentColor = Color.White
-                    )
-                }
-            )
-            SnackbarHost(
-                hostState = infoSnackbarHostState,
-                snackbar = { snackbarData ->
-                    Snackbar(
-                        modifier = Modifier.padding(16.dp),
-                        snackbarData = snackbarData,
-                        containerColor = Color.Green, // Info SnackBar color
-                        contentColor = Color.White
-                    )
-                }
-            )
-          // If text recognition button is pressed
-          if (displayText.value) {
-            LaunchedEffect(cameraViewModel.textRecognitionButtonPressed()){
-                val content = cameraViewModel.informationToDisplay.value.Information
-                if (content != null) {
-                    infoSnackbarHostState.showSnackbar(content, duration = SnackbarDuration.Long)
-                } else {
-                    cameraViewModel.informationToDisplay.value.ErrorInformation?.let {
-                        errorSnackbarHostState.showSnackbar(it, cameraViewModel.informationToDisplay.value.ErrorInformation)
-                    }
-                }
+          SnackbarHost(
+              hostState = snackbarHostStateInfo,
+              modifier = Modifier.align(Alignment.TopCenter),
+              snackbar = { snackbarData ->
+                Snackbar(
+                    snackbarData = snackbarData,
+                    containerColor = Color.Green.copy(alpha = 0.5f),
+                    contentColor = Color.White)
+              })
+          SnackbarHost(
+              hostState = snackbarHostStateError,
+              modifier = Modifier.align(Alignment.TopCenter),
+              snackbar = { snackbarData ->
+                Snackbar(
+                    snackbarData = snackbarData,
+                    containerColor = Color.Red.copy(alpha = 0.5f),
+                    contentColor = Color.White)
+              })
+
+          LaunchedEffect(Unit) {
+            cameraViewModel.informationToDisplay.collect {
+              Log.d("Snack bar", "Snack bar information")
+              if (it != null) {
+                snackbarHostStateInfo.showSnackbar(message = it, duration = SnackbarDuration.Short)
+              }
             }
-            /*OverlayTextField(
-                isVisible = true,
-                onDismiss = { displayText.value = false },
-                text = cameraViewModel.informationToDisplay.collectAsState().value)*/
-
           }
-
-          // If barcode scanner button is pressed
-          if (displayBarcode.value) {
-            cameraViewModel.barcodeScanButtonPressed()
-            /*OverlayTextField(
-                isVisible = true,
-                onDismiss = { displayBarcode.value = false },
-                text = cameraViewModel.informationToDisplay.collectAsState().value)*/
+          LaunchedEffect(Unit) {
+            cameraViewModel.errorToDisplay.collect {
+              Log.d("Snack bar", "Snack bar error")
+              if (it != null) {
+                snackbarHostStateError.showSnackbar(message = it, duration = SnackbarDuration.Short)
+              }
+            }
           }
         }
       }

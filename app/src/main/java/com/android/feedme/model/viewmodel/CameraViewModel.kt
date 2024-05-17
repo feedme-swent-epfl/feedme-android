@@ -34,19 +34,6 @@ class CameraViewModel : ViewModel() {
     data class Photo(val bitmap: Bitmap) : PhotoState()
   }
 
-    class InformationDisplay(){
-        var ErrorInformation : String? = null
-        var Information : String? = null
-        fun updateErrorInfo(s : String) {
-            this.ErrorInformation = s
-            this.Information = null
-        }
-        fun updateInfo(s : String) {
-            this.Information = s
-            this.ErrorInformation = null
-        }
-    }
-
   /** Keep a list of bitmaps taken by user */
   private val _bitmaps = MutableStateFlow<List<Bitmap>>(emptyList())
   val bitmaps = _bitmaps.asStateFlow()
@@ -64,8 +51,11 @@ class CameraViewModel : ViewModel() {
   val listOfIngredientToInput = _listOfIngredientToInput.asStateFlow()
 
   /** Information's to be displayed after a ML button was pressed */
-  private val _informationToDisplay = MutableStateFlow<InformationDisplay>(InformationDisplay())
+  private val _informationToDisplay = MutableStateFlow<String?>(null)
   val informationToDisplay = _informationToDisplay.asStateFlow()
+
+  private val _errorToDisplay = MutableStateFlow<String?>(null)
+  val errorToDisplay = _errorToDisplay.asStateFlow()
 
   private val _lastAnalyzedPhoto = MutableStateFlow<Bitmap?>(null)
 
@@ -102,13 +92,15 @@ class CameraViewModel : ViewModel() {
       viewModelScope.launch {
         when (val photoState = _lastPhoto.value) {
           is PhotoState.NoPhoto -> {
-            _informationToDisplay.value.updateErrorInfo("ERROR : No photo to analyse, please take a picture.")
+            _errorToDisplay.value = "ERROR : No photo to analyse, please take a picture."
           }
           is PhotoState.Photo -> {
             if (photoState.bitmap != _lastAnalyzedPhoto.value) {
               _lastAnalyzedPhoto.value = photoState.bitmap
               val result = performTextRecognition(photoState.bitmap)
-              _informationToDisplay.value.updateInfo(result)
+              if (result != null) {
+                _informationToDisplay.value = result
+              }
             }
           }
         }
@@ -124,11 +116,13 @@ class CameraViewModel : ViewModel() {
       viewModelScope.launch {
         when (val photoState = _lastPhoto.value) {
           is PhotoState.NoPhoto -> {
-            _informationToDisplay.value.updateErrorInfo("ERROR : No photo to analyse, please take a picture.")
+            _errorToDisplay.value = "ERROR : No photo to analyse, please take a picture."
           }
           is PhotoState.Photo -> {
             val result = performBarCodeScanning(photoState.bitmap)
-            _informationToDisplay.value.updateInfo(result)
+            if (result != null) {
+              _informationToDisplay.value = result
+            }
           }
         }
       }
@@ -142,7 +136,7 @@ class CameraViewModel : ViewModel() {
    * @return The extracted product name from the barcode as string if successful, a relevant error
    *   message otherwise.
    */
-  private suspend fun performBarCodeScanning(bitmap: Bitmap): String {
+  /*private suspend fun performBarCodeScanning(bitmap: Bitmap): String {
     return suspendCoroutine { continuation ->
       barcodeScan(
           bitmap,
@@ -172,6 +166,43 @@ class CameraViewModel : ViewModel() {
           },
           { continuation.resume("ERROR: Failed to identify barcode, please try again.") })
     }
+  }*/
+  private suspend fun performBarCodeScanning(bitmap: Bitmap): String? {
+    return suspendCoroutine { continuation ->
+      barcodeScan(
+          bitmap,
+          { barcodeNumber ->
+            viewModelScope.launch {
+              extractProductInfoFromBarcode(
+                  barcodeNumber,
+                  { productInfo ->
+                    if (productInfo != null) {
+                      // TODO How can i create new ingredients correctly or check if they already
+                      // exist ? => Sylvain PR ?
+                      updateIngredientList(
+                          IngredientMetaData(
+                              0.0,
+                              MeasureUnit.NONE,
+                              Ingredient(productInfo.productName, "Default", "DefaultID")))
+                      continuation.resume(productInfo.productName)
+                    } else {
+                      _errorToDisplay.value =
+                          "Failed to extract product name from barcode, please try again."
+                      continuation.resume(null)
+                    }
+                  },
+                  {
+                    _errorToDisplay.value =
+                        "Failed to extract product name from barcode, please try again."
+                    continuation.resume(null)
+                  })
+            }
+          },
+          {
+            _errorToDisplay.value = "Failed to identify barcode, please try again."
+            continuation.resume(null)
+          })
+    }
   }
 
   /**
@@ -181,7 +212,7 @@ class CameraViewModel : ViewModel() {
    * @param bitmap The bitmap image on which text recognition will be performed.
    * @return The recognized text if successful; otherwise, an error message.
    */
-  private suspend fun performTextRecognition(bitmap: Bitmap): String {
+  /*private suspend fun performTextRecognition(bitmap: Bitmap): String {
     return suspendCoroutine { continuation ->
       textExtraction(
           bitmap,
@@ -191,6 +222,27 @@ class CameraViewModel : ViewModel() {
             continuation.resume(textProcessing(text = text))
           },
           { continuation.resume("ERROR : Failed to identify text, please try again.") })
+    }
+  }*/
+  private suspend fun performTextRecognition(bitmap: Bitmap): String? {
+    return suspendCoroutine { continuation ->
+      textExtraction(
+          bitmap,
+          { text ->
+            analyzeTextForIngredients(text, { ing -> updateIngredientList(ing) })
+
+            val processedText = textProcessing(text = text)
+            if (processedText.isNotEmpty()) {
+              continuation.resume(processedText)
+            } else {
+              _errorToDisplay.value = "Failed to process text, please try again."
+              continuation.resume(null)
+            }
+          },
+          {
+            _errorToDisplay.value = "Failed to identify text, please try again."
+            continuation.resume(null)
+          })
     }
   }
 

@@ -3,7 +3,7 @@ package com.android.feedme.model.data
 import java.util.Date
 
 data class Comment(
-    var commentId: String,
+    var commentId: String = "DEFAULT_ID",
     val userId: String,
     val recipeId: String,
     val photoURL: String,

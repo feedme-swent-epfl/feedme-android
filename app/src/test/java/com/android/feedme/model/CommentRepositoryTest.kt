@@ -6,15 +6,10 @@ import com.android.feedme.model.data.Comment
 import com.android.feedme.model.data.CommentRepository
 import com.google.android.gms.tasks.Tasks
 import com.google.firebase.FirebaseApp
-import com.google.firebase.firestore.CollectionReference
-import com.google.firebase.firestore.DocumentReference
-import com.google.firebase.firestore.DocumentSnapshot
-import com.google.firebase.firestore.FirebaseFirestore
+import com.google.firebase.firestore.*
 import java.time.Instant
-import java.util.Date
-import junit.framework.TestCase.assertEquals
-import junit.framework.TestCase.assertNotNull
-import junit.framework.TestCase.fail
+import java.util.*
+import junit.framework.TestCase.*
 import org.junit.Assert.assertTrue
 import org.junit.Before
 import org.junit.Test
@@ -29,9 +24,7 @@ import org.robolectric.Shadows.shadowOf
 class CommentRepositoryTest {
 
   @Mock private lateinit var mockFirestore: FirebaseFirestore
-
   @Mock private lateinit var mockDocumentReference: DocumentReference
-
   @Mock private lateinit var mockCollectionReference: CollectionReference
 
   private lateinit var commentRepository: CommentRepository
@@ -41,42 +34,32 @@ class CommentRepositoryTest {
     // Initialize Mockito annotations
     MockitoAnnotations.openMocks(this)
 
-    // Initialize Firebase only if absolutely necessary for the test
+    // Initialize Firebase if necessary
     if (FirebaseApp.getApps(ApplicationProvider.getApplicationContext()).isEmpty()) {
       FirebaseApp.initializeApp(ApplicationProvider.getApplicationContext())
     }
 
-    // Initialize your Database class with the mocked FirebaseFirestore instance
-    // Make sure your Database class accepts FirebaseFirestore as a constructor parameter
+    // Initialize the repository with the mocked Firestore instance
     commentRepository = CommentRepository(mockFirestore)
 
     // Setup your mocks as needed
     `when`(mockFirestore.collection("comments")).thenReturn(mockCollectionReference)
     `when`(mockCollectionReference.document(anyString())).thenReturn(mockDocumentReference)
+    `when`(mockCollectionReference.document()).thenReturn(mockDocumentReference)
+    `when`(mockDocumentReference.id).thenReturn("testCommentId") // Mock the ID property
   }
 
   @Test
   fun addComment_Success() {
     // Setup
-    val comment =
-        Comment(
-            "authorId",
-            "recipeId",
-            "photoURL",
-            5.0,
-            120.0,
-            "Title",
-            "Content",
-            Date.from(Instant.now()))
-    `when`(mockFirestore.collection("comments")).thenReturn(mockCollectionReference)
-    `when`(mockCollectionReference.document(comment.commentId)).thenReturn(mockDocumentReference)
+    val comment = createTestComment()
     `when`(mockDocumentReference.set(any())).thenReturn(Tasks.forResult(null)) // Simulate success
 
     // Execute
     var successCalled = false
     commentRepository.addComment(comment, { successCalled = true }, {})
 
-    // This ensures all asynchronous operations complete
+    // Ensure all asynchronous operations complete
     shadowOf(Looper.getMainLooper()).idle()
 
     // Verify
@@ -88,19 +71,8 @@ class CommentRepositoryTest {
   fun getComment_Success() {
     // Setup
     val commentId = "testCommentId"
-    val expectedComment =
-        Comment(
-            "authorId",
-            "recipeId",
-            "photoURL",
-            5.0,
-            120.0,
-            "Title",
-            "Content",
-            Date.from(Instant.now()))
+    val expectedComment = createTestComment()
     val mockSnapshot = mock(DocumentSnapshot::class.java)
-    `when`(mockFirestore.collection("comments")).thenReturn(mockCollectionReference)
-    `when`(mockCollectionReference.document(commentId)).thenReturn(mockDocumentReference)
     `when`(mockDocumentReference.get()).thenReturn(Tasks.forResult(mockSnapshot))
     `when`(mockSnapshot.toObject(Comment::class.java)).thenReturn(expectedComment)
 
@@ -113,44 +85,43 @@ class CommentRepositoryTest {
 
   @Test
   fun addComment_Failure() {
-    val comment =
-        Comment(
-            "authorId",
-            "recipeId",
-            "photoURL",
-            5.0,
-            120.0,
-            "Title",
-            "Content",
-            Date.from(Instant.now()))
+    // Setup
+    val comment = createTestComment()
     val exception = Exception("Firestore set operation failed")
     `when`(mockDocumentReference.set(any())).thenReturn(Tasks.forException(exception))
 
+    // Execute
     var failureCalled = false
     commentRepository.addComment(
         comment,
         onSuccess = { fail("Success callback should not be called") },
         onFailure = { failureCalled = true })
 
+    // Ensure all asynchronous operations complete
     shadowOf(Looper.getMainLooper()).idle()
 
+    // Verify
     assertTrue("Failure callback was not called", failureCalled)
   }
 
   @Test
   fun getComment_Failure() {
+    // Setup
     val commentId = "nonexistentId"
     val exception = Exception("Firestore get operation failed")
     `when`(mockDocumentReference.get()).thenReturn(Tasks.forException(exception))
 
+    // Execute
     var failureCalled = false
     commentRepository.getComment(
         commentId,
         onSuccess = { fail("Success callback should not be called") },
         onFailure = { failureCalled = true })
 
+    // Ensure all asynchronous operations complete
     shadowOf(Looper.getMainLooper()).idle()
 
+    // Verify
     assertTrue("Failure callback was not called", failureCalled)
   }
 
@@ -160,5 +131,17 @@ class CommentRepositoryTest {
     CommentRepository.initialize(mockFirestore)
 
     assertNotNull("Singleton instance should be initialized", CommentRepository.instance)
+  }
+
+  private fun createTestComment(): Comment {
+    return Comment(
+        "authorId",
+        "recipeId",
+        "photoURL",
+        "hehehe",
+        120.0,
+        "Title",
+        "Content",
+        Date.from(Instant.now()))
   }
 }

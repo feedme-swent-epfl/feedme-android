@@ -12,11 +12,11 @@ class CommentTest {
     // Given
     val comment =
         Comment(
+            userId = "user123",
             commentId = "user123",
             recipeId = "recipe456",
             photoURL = "https://example.com/photo.jpg",
             rating = 4.5,
-            time = 120.0,
             title = "Delicious!",
             content = "This recipe is fantastic!",
             creationDate = Date.from(Instant.now()))

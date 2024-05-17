@@ -21,6 +21,12 @@ import kotlinx.coroutines.launch
 
 class CameraViewModel : ViewModel() {
 
+  val ERROR_NO_PHOTO = "ERROR : No photo to analyse, please take a picture."
+  val ERROR_NO_BARCODE = "Failed to identify barcode, please try again."
+  val ERROR_BARCODE_PRODUCT_NAME = "Failed to extract product name from barcode, please try again."
+  val ERROR_NO_TEXT = "Failed to identify text, please try again."
+  val ERROR_INGREDIENT_IN_TEXT = "Failed to extract ingredients from text, please try again."
+
   /** This sealed class is used to model the different states that a photo can be in. */
   sealed class PhotoState() {
 
@@ -98,7 +104,7 @@ class CameraViewModel : ViewModel() {
       viewModelScope.launch {
         when (val photoState = _lastPhoto.value) {
           is PhotoState.NoPhoto -> {
-            _errorToDisplay.value = "ERROR : No photo to analyse, please take a picture."
+            _errorToDisplay.value = ERROR_NO_PHOTO
           }
           is PhotoState.Photo -> {
             if (photoState.bitmap != _lastAnalyzedPhoto.value) {
@@ -122,7 +128,7 @@ class CameraViewModel : ViewModel() {
       viewModelScope.launch {
         when (val photoState = _lastPhoto.value) {
           is PhotoState.NoPhoto -> {
-            _errorToDisplay.value = "ERROR : No photo to analyse, please take a picture."
+            _errorToDisplay.value = ERROR_NO_PHOTO
           }
           is PhotoState.Photo -> {
             val result = performBarCodeScanning(photoState.bitmap)
@@ -161,20 +167,18 @@ class CameraViewModel : ViewModel() {
                               Ingredient(productInfo.productName, "Default", "DefaultID")))
                       continuation.resume(productInfo.productName)
                     } else {
-                      _errorToDisplay.value =
-                          "Failed to extract product name from barcode, please try again."
+                      _errorToDisplay.value = ERROR_BARCODE_PRODUCT_NAME
                       continuation.resume(null)
                     }
                   },
                   {
-                    _errorToDisplay.value =
-                        "Failed to extract product name from barcode, please try again."
+                    _errorToDisplay.value = ERROR_BARCODE_PRODUCT_NAME
                     continuation.resume(null)
                   })
             }
           },
           {
-            _errorToDisplay.value = "Failed to identify barcode, please try again."
+            _errorToDisplay.value = ERROR_NO_BARCODE
             continuation.resume(null)
           })
     }
@@ -207,14 +211,13 @@ class CameraViewModel : ViewModel() {
                 onFailure = { e ->
                   e.message?.let {
                     Log.d("ML", it)
-                    _errorToDisplay.value =
-                        "Failed to extract ingredients from text, please try again."
+                    _errorToDisplay.value = ERROR_INGREDIENT_IN_TEXT
                   }
                   continuation.resume(null)
                 })
           },
           {
-            _errorToDisplay.value = "Failed to identify text, please try again."
+            _errorToDisplay.value = ERROR_NO_TEXT
             continuation.resume(null)
           })
     }

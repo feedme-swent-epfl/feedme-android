@@ -122,15 +122,18 @@ fun IngredientInput(
   var filteredIngredients by remember { mutableStateOf(emptyList<Ingredient>()) }
 
   LaunchedEffect(name) {
-    ingredientsRepository.getFilteredIngredients(
-        name,
-        { filteredIngredients = it },
-        {
-          Log.e(
-              "IngredientList ",
-              "Error Filtered Ingredients: Failed to retrieve Ingredient because ",
-              it)
-        })
+      if (name != " ") {
+          ingredientsRepository.getFilteredIngredients(
+              name,
+              { filteredIngredients = it },
+              {
+                  Log.e(
+                      "IngredientList ",
+                      "Error Filtered Ingredients: Failed to retrieve Ingredient because ",
+                      it
+                  )
+              })
+      }
   }
 
   Row(
@@ -184,7 +187,7 @@ fun IngredientInput(
             }
 
             DropdownMenuItem(
-                modifier = Modifier.background(Color.LightGray).testTag("addOption"),
+                modifier = Modifier.background(Color.LightGray).testTag("IngredientOption"),
                 text = { Text(text = "Add Ingredient") },
                 onClick = {
                   // TODO check validty of addition with Chatgbt

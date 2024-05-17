@@ -92,7 +92,6 @@ object Screen {
   const val PROFILE = "Profile Screen"
   const val SETTINGS = "Settings Screen"
   const val CAMERA = "Camera"
-  const val GALLERY = "Gallery"
   const val EDIT_PROFILE = "Edit Profile"
   const val FRIENDS = "Friends/{showFollowers}"
   const val RECIPE = "Recipe/{sourceRoute}"

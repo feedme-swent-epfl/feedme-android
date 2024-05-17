@@ -1,6 +1,7 @@
 package com.android.feedme.test.camera
 
 import android.Manifest
+import android.os.Build
 import androidx.compose.ui.test.assertIsDisplayed
 import androidx.compose.ui.test.assertTextEquals
 import androidx.compose.ui.test.isDisplayed
@@ -30,6 +31,13 @@ class CameraTest : TestCase() {
   // Grant camera permission for tests
   @get:Rule
   val permissionRule: GrantPermissionRule = GrantPermissionRule.grant(Manifest.permission.CAMERA)
+
+  // Grant gallery permission for tests
+  @get:Rule
+  val permissionRuleGallery: GrantPermissionRule =
+      if (Build.VERSION.SDK_INT <= 32)
+          GrantPermissionRule.grant(android.Manifest.permission.READ_EXTERNAL_STORAGE)
+      else GrantPermissionRule.grant(android.Manifest.permission.READ_MEDIA_IMAGES)
 
   @Test
   fun buttonsAndCameraCorrectlyDisplayed() {

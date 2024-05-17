@@ -1,5 +1,6 @@
 package com.android.feedme.model.data
 
+import android.util.Log
 import com.google.firebase.firestore.FirebaseFirestore
 
 /**
@@ -38,12 +39,14 @@ class IngredientsRepository(private val db: FirebaseFirestore) {
    * @param onSuccess Callback invoked on successful addition of the ingredient.
    * @param onFailure Callback invoked on failure to add the ingredient, with an exception.
    */
-  fun addIngredient(ingredient: Ingredient, onSuccess: () -> Unit, onFailure: (Exception) -> Unit) {
+  fun addIngredient(ingredient: Ingredient, onSuccess: (Ingredient) -> Unit, onFailure: (Exception) -> Unit) {
     val newDocRef = db.collection(collectionPath).document()
     ingredient.id = newDocRef.id // Assign the generated ID to the comment
     newDocRef
         .set(ingredient)
-        .addOnSuccessListener { onSuccess() }
+        .addOnSuccessListener {
+            Log.e("Ingredient was added"," Name : ${ingredient.name}")
+            onSuccess(ingredient) }
         .addOnFailureListener { exception -> onFailure(exception) }
   }
 
@@ -118,26 +121,7 @@ class IngredientsRepository(private val db: FirebaseFirestore) {
   }
 
   /**
-   * Retrieves the whole list of ingredients from Firestore.
-   *
-   * @param onSuccess Callback invoked with a list of IngredientMetaData objects on success.
-   * @param onFailure Callback invoked on failure to retrieve ingredients, with an exception.
-   */
-  fun getAllIngredients(onSuccess: (List<Ingredient>) -> Unit, onFailure: (Exception) -> Unit) {
-    db.collection(collectionPath)
-        .get()
-        .addOnSuccessListener { querySnapshot ->
-          val ingredients =
-              querySnapshot.documents.mapNotNull { documentSnapshot ->
-                documentSnapshot.toObject(Ingredient::class.java)
-              }
-          onSuccess(ingredients)
-        }
-        .addOnFailureListener { exception -> onFailure(exception) }
-  }
-
-  /**
-   * Fetches the 25 most similar ingredients to the given query.
+   * Fetches the 10 most similar ingredients to the given query.
    *
    * @param query The query string to search for in the ingredient names.
    * @param onSuccess Callback invoked with a list of Ingredient objects on success.
@@ -148,7 +132,7 @@ class IngredientsRepository(private val db: FirebaseFirestore) {
       onSuccess: (List<Ingredient>) -> Unit,
       onFailure: (Exception) -> Unit
   ) {
-    val queryRef =
+    var queryRef =
         db.collection(collectionPath)
             .whereGreaterThanOrEqualTo("name", query)
             .whereLessThan("name", query + "\uf8ff")
@@ -161,6 +145,7 @@ class IngredientsRepository(private val db: FirebaseFirestore) {
               querySnapshot.documents.mapNotNull { documentSnapshot ->
                 documentSnapshot.toObject(Ingredient::class.java)
               }
+            Log.e("Size of ingredients :"," ${ingredients.size}")
           onSuccess(ingredients)
         }
         .addOnFailureListener { exception -> onFailure(exception) }

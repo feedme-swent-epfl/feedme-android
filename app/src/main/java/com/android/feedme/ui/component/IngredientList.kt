@@ -25,6 +25,7 @@ import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextFieldColors
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.movableContentOf
@@ -46,6 +47,9 @@ import com.android.feedme.model.viewmodel.InputViewModel
 import com.android.feedme.ui.theme.InValidInput
 import com.android.feedme.ui.theme.NoInput
 import com.android.feedme.ui.theme.ValidInput
+
+private val ingredientsRepository = IngredientsRepository.instance
+
 
 /**
  * Composable function for displaying a list of ingredients.
@@ -88,14 +92,16 @@ fun IngredientInput(
     ingredient: IngredientMetaData? = null,
     action: (IngredientInputState?, IngredientInputState?, IngredientMetaData?) -> Unit
 ) {
-  val ingredientsRepository = IngredientsRepository.instance
 
-  var name by remember { mutableStateOf(ingredient?.ingredient?.name ?: " ") }
+    var ingredientCurrent by remember { mutableStateOf(ingredient?.ingredient?:  Ingredient(" ", "NO_ID", false, false)) }
+
+
+    var name by remember { mutableStateOf(ingredient?.ingredient?.name ?: " ") }
   var quantity by remember { mutableDoubleStateOf(ingredient?.quantity ?: 0.0) }
   var dose by remember { mutableStateOf(ingredient?.measure ?: MeasureUnit.EMPTY) }
 
   val isComplete by remember {
-    mutableStateOf(name.isNotBlank() && dose != MeasureUnit.EMPTY && quantity != 0.0)
+    mutableStateOf(name.isNotBlank() && dose != MeasureUnit.EMPTY && quantity != 0.0 && (ingredientCurrent.id != "NO_ID") || (ingredientCurrent.id != ""))
   }
 
   var state by remember {
@@ -108,7 +114,15 @@ fun IngredientInput(
 
   var isDropdownVisible by remember { mutableStateOf(false) }
 
-  var filteredIngredients = emptyList<Ingredient>()
+  var filteredIngredients  by remember { mutableStateOf(emptyList<Ingredient>())}
+
+    LaunchedEffect(name) {
+        ingredientsRepository.getFilteredIngredients(
+            name,
+            { filteredIngredients = it },
+            { Log.e("Error Filtered Ingredients : ", "Failed to retrieve Ingredient because ", it) }
+        )
+    }
 
   Row(
       modifier = Modifier.fillMaxWidth().padding(horizontal = 20.dp, vertical = 8.dp).height(70.dp),
@@ -139,13 +153,6 @@ fun IngredientInput(
                   PopupProperties(
                       focusable = false, dismissOnClickOutside = false, dismissOnBackPress = false),
           ) {
-            ingredientsRepository.getFilteredIngredients(
-                name,
-                { filteredIngredients = it },
-                {
-                  Log.e(
-                      "Error Filtered Ingredients : ", "Failed to retrieve Ingredient because ", it)
-                })
 
             filteredIngredients.forEach { item ->
               DropdownMenuItem(
@@ -156,13 +163,14 @@ fun IngredientInput(
                     isDropdownVisible = false
                     val beforeState = state
                     if (name != " ") {
+                        ingredientCurrent = item
                       state =
                           if (isComplete) IngredientInputState.COMPLETE
                           else IngredientInputState.SEMI_COMPLETE
                       action(
                           beforeState,
                           state,
-                          IngredientMetaData(quantity, dose, Ingredient(name, "", false, false)))
+                          IngredientMetaData(quantity, dose, item))
                     }
                   })
             }
@@ -173,7 +181,7 @@ fun IngredientInput(
                 onClick = {
                   // TODO check validty of addition with Chatgbt
                   ingredientsRepository.addIngredient(
-                      Ingredient(name, "NO_ID", false, false), {}, {})
+                      Ingredient(name, "NO_ID", false, false), {ingredientCurrent = it }, {Log.e("Fail to add Ingredient : "," ", it)})
                 })
           }
         }
@@ -192,7 +200,7 @@ fun IngredientInput(
                   action(
                       state,
                       state,
-                      IngredientMetaData(quantity, dose, Ingredient(name, "", false, false)))
+                      IngredientMetaData(quantity, dose, ingredientCurrent))
                 }
               }
             },
@@ -239,7 +247,7 @@ fun IngredientInput(
                                   beforeState,
                                   state,
                                   IngredientMetaData(
-                                      quantity, dose, Ingredient(name, "", false, false)))
+                                      quantity, dose, ingredientCurrent))
                             }
                           })
                     }
@@ -254,7 +262,7 @@ fun IngredientInput(
                 action(
                     state,
                     IngredientInputState.EMPTY,
-                    IngredientMetaData(quantity, dose, Ingredient(name, "", false, false)))
+                    IngredientMetaData(quantity, dose, ingredientCurrent))
               }) {
                 Icon(
                     imageVector = Icons.Default.DeleteForever,

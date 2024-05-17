@@ -15,6 +15,7 @@ import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.navigation
 import androidx.navigation.compose.rememberNavController
+import com.android.feedme.model.data.IngredientsRepository
 import com.android.feedme.model.data.ProfileRepository
 import com.android.feedme.model.data.RecipeRepository
 import com.android.feedme.model.viewmodel.AuthViewModel
@@ -53,6 +54,8 @@ class MainActivity : ComponentActivity() {
     val firebase = FirebaseFirestore.getInstance()
     ProfileRepository.initialize(firebase)
     RecipeRepository.initialize(firebase)
+    IngredientsRepository.initialize(firebase)
+
     setContent {
       feedmeAppTheme {
         // A surface container using the 'background' color from the theme

@@ -242,6 +242,7 @@ fun CameraScreen(navigationActions: NavigationActions, inputViewModel: InputView
               modifier = Modifier.align(Alignment.TopCenter),
               snackbar = { snackbarData ->
                 Snackbar(
+                    modifier = Modifier.testTag("Error Snack Bar"),
                     snackbarData = snackbarData,
                     containerColor = Color.Red.copy(alpha = 0.5f),
                     contentColor = Color.White)

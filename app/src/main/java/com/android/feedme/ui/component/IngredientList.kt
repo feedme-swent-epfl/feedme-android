@@ -35,6 +35,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.testTag
+import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.window.PopupProperties
 import com.android.feedme.model.data.Ingredient
@@ -44,6 +45,12 @@ import com.android.feedme.model.viewmodel.InputViewModel
 import com.android.feedme.ui.theme.InValidInput
 import com.android.feedme.ui.theme.NoInput
 import com.android.feedme.ui.theme.ValidInput
+
+@Preview
+@Composable
+fun preview(){
+    IngredientList(InputViewModel())
+}
 
 /**
  * Composable function for displaying a list of ingredients.
@@ -107,11 +114,17 @@ fun IngredientInput(
       listOf("Item 1", "Item 2", "Item 3", "Item 4", "Item 5") // Your list of items
 
   Row(
-      modifier = Modifier.fillMaxWidth().padding(horizontal = 20.dp, vertical = 8.dp).height(70.dp),
+      modifier = Modifier
+          .fillMaxWidth()
+          .padding(horizontal = 20.dp, vertical = 8.dp)
+          .height(70.dp),
       verticalAlignment = Alignment.CenterVertically) {
 
         // Ingredients Box
-        Box(modifier = Modifier.weight(1.5f).height(60.dp).testTag("IngredientsBox")) {
+        Box(modifier = Modifier
+            .weight(1.5f)
+            .height(60.dp)
+            .testTag("IngredientsBox")) {
           OutlinedTextField(
               colors = colorOfInputBoxes(state),
               value = name,
@@ -121,7 +134,9 @@ fun IngredientInput(
                 isDropdownVisible = true
               },
               singleLine = true,
-              modifier = Modifier.padding(end = 0.dp).testTag("IngredientsInput"),
+              modifier = Modifier
+                  .padding(end = 0.dp)
+                  .testTag("IngredientsInput"),
               placeholder = { Text(text = "...") },
               label = {
                 Text(text = "Ingredient", modifier = Modifier.background(color = Color.Transparent))
@@ -173,7 +188,10 @@ fun IngredientInput(
               }
             },
             singleLine = true,
-            modifier = Modifier.weight(1f).height(60.dp).testTag("QuantityInput"),
+            modifier = Modifier
+                .weight(1f)
+                .height(60.dp)
+                .testTag("QuantityInput"),
             placeholder = { Text(text = "...") },
             label = {
               Text(text = "Quantity", modifier = Modifier.background(color = Color.Transparent))
@@ -185,7 +203,10 @@ fun IngredientInput(
         var expanded by remember { mutableStateOf(false) }
 
         ExposedDropdownMenuBox(
-            modifier = Modifier.weight(1f).height(60.dp).testTag("DoseBox"),
+            modifier = Modifier
+                .weight(1f)
+                .height(60.dp)
+                .testTag("DoseBox"),
             expanded = expanded,
             onExpandedChange = { expanded = !expanded }) {
               OutlinedTextField(
@@ -195,7 +216,9 @@ fun IngredientInput(
                   value = if (dose != MeasureUnit.EMPTY) dose.toString() else " ",
                   onValueChange = {},
                   label = { Text("Dose") },
-                  modifier = Modifier.menuAnchor().testTag("DoseInput"))
+                  modifier = Modifier
+                      .menuAnchor()
+                      .testTag("DoseInput"))
               ExposedDropdownMenu(
                   modifier = Modifier.height(120.dp),
                   expanded = expanded,
@@ -234,7 +257,9 @@ fun IngredientInput(
                 Icon(
                     imageVector = Icons.Default.DeleteForever,
                     contentDescription = null,
-                    modifier = Modifier.size(48.dp).height(55.dp))
+                    modifier = Modifier
+                        .size(48.dp)
+                        .height(55.dp))
               }
         }
       }

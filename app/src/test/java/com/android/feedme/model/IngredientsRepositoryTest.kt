@@ -7,14 +7,23 @@ import com.android.feedme.model.data.IngredientMetaData
 import com.android.feedme.model.data.IngredientsRepository
 import com.google.android.gms.tasks.Tasks
 import com.google.firebase.FirebaseApp
-import com.google.firebase.firestore.*
-import junit.framework.TestCase.*
+import com.google.firebase.firestore.CollectionReference
+import com.google.firebase.firestore.DocumentReference
+import com.google.firebase.firestore.DocumentSnapshot
+import com.google.firebase.firestore.FirebaseFirestore
+import junit.framework.TestCase.assertEquals
+import junit.framework.TestCase.assertNotNull
+import junit.framework.TestCase.assertTrue
+import junit.framework.TestCase.fail
 import org.junit.Before
 import org.junit.Test
 import org.junit.runner.RunWith
 import org.mockito.Mock
 import org.mockito.Mockito
-import org.mockito.Mockito.*
+import org.mockito.Mockito.anyString
+import org.mockito.Mockito.mock
+import org.mockito.Mockito.verify
+import org.mockito.Mockito.`when`
 import org.mockito.MockitoAnnotations
 import org.robolectric.RobolectricTestRunner
 import org.robolectric.Shadows.shadowOf
@@ -44,6 +53,9 @@ class IngredientsRepositoryTest {
 
     `when`(mockFirestore.collection("ingredients")).thenReturn(mockCollectionReference)
     `when`(mockCollectionReference.document(anyString())).thenReturn(mockDocumentReference)
+    `when`(mockCollectionReference.document()).thenReturn(mockDocumentReference)
+    `when`(mockDocumentReference.id).thenReturn("TEST_ID")
+
   }
 
   @Test
@@ -58,6 +70,8 @@ class IngredientsRepositoryTest {
 
     verify(mockDocumentReference).set(ingredient)
     assertTrue("Success callback was not called", successCalled)
+    assertTrue("Not a matching id", ingredient.id == "TEST_ID")
+
   }
 
   @Test

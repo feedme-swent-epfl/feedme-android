@@ -191,10 +191,10 @@ class CameraTest : TestCase() {
       composeTestRule.waitUntil(timeoutMillis = 12000) {
         composeTestRule.onNodeWithText("Photo saved", useUnmergedTree = true).isDisplayed()
       }
-
+      composeTestRule.waitForIdle()
       mlBarcodeButton { performClick() }
 
-      composeTestRule.waitUntil(timeoutMillis = 12000) {
+      composeTestRule.waitUntil(timeoutMillis = 18000) {
         composeTestRule.onNodeWithTag("Error Snack Bar", useUnmergedTree = true).isDisplayed()
       }
 

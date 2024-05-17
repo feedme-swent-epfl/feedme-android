@@ -1,11 +1,16 @@
 package com.android.feedme.model.viewmodel
 
+import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.android.feedme.model.data.Profile
 import com.android.feedme.model.data.ProfileRepository
+import com.android.feedme.ui.navigation.NavigationActions
+import com.android.feedme.ui.navigation.TOP_LEVEL_DESTINATIONS
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.GoogleAuthProvider
+import com.google.firebase.firestore.FirebaseFirestore
+import com.google.firebase.firestore.Source
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.tasks.await
 
@@ -122,6 +127,31 @@ class AuthViewModel : ViewModel() {
       // Add the newly created profile to the Firestore database.
       ProfileRepository.instance.addProfile(newProfile, onSuccess, onFailure)
       onSuccess()
+    }
+  }
+
+  fun fetchUserProfileOffline(navigationActions: NavigationActions) {
+    val currentUser = FirebaseAuth.getInstance().currentUser
+    if (currentUser != null) {
+      val db = FirebaseFirestore.getInstance()
+      db.collection("profiles")
+          .document(currentUser.uid)
+          .get(Source.CACHE)
+          .addOnSuccessListener { document ->
+            if (document != null && document.exists()) {
+              val userProfile = document.toObject(Profile::class.java)
+              if (userProfile != null) {
+                // Use the user profile
+                navigationActions.navigateTo(TOP_LEVEL_DESTINATIONS[1])
+              }
+            }
+          }
+          .addOnFailureListener { e ->
+            Log.d("LoginScreen", "Offline sign in failed")
+            Log.e("LoginScreen", "Error fetching user profile from cache", e)
+          }
+    } else {
+      Log.e("LoginScreen", "No user is signed in")
     }
   }
 }

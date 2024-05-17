@@ -91,12 +91,18 @@ fun LoginScreen(navigationActions: NavigationActions, authViewModel: AuthViewMod
                       onFailure = { exception ->
                         // Log error or show error message
                         Log.e("LoginScreen", "Authentication failed", exception)
+
+                        // Attempt to fetch the profile offline
+                        authViewModel.fetchUserProfileOffline(navigationActions)
                       })
                 }
               }
             } catch (e: ApiException) {
               // Handle API exception
-              Log.e("LoginScreen", "Sign in failed", e)
+              Log.d("LoginScreen", "Online sign in failed", e)
+
+              // Attempt to fetch the profile offline
+              authViewModel.fetchUserProfileOffline(navigationActions)
             }
           })
 

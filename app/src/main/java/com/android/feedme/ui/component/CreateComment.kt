@@ -38,7 +38,6 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.android.feedme.model.data.Comment
-import com.android.feedme.model.data.Profile
 import com.android.feedme.model.viewmodel.CommentViewModel
 import com.android.feedme.model.viewmodel.ProfileViewModel
 import com.android.feedme.model.viewmodel.RecipeViewModel
@@ -49,7 +48,8 @@ import com.android.feedme.ui.theme.TemplateColor
 fun CreateComment(
     profileViewModel: ProfileViewModel,
     recipeViewModel: RecipeViewModel,
-    commentViewModel: CommentViewModel
+    commentViewModel: CommentViewModel,
+    onDismiss: () -> Unit
 ) {
 
   var commentTitle by remember { mutableStateOf("") }
@@ -143,7 +143,7 @@ fun CreateComment(
 
                     // delete button
                     OutlinedButton(
-                        onClick = { /* TODO() implement deleting button functionality */},
+                        onClick = { onDismiss() },
                         colors = ButtonDefaults.buttonColors(Color.White),
                         modifier =
                             Modifier.width(150.dp)
@@ -163,21 +163,27 @@ fun CreateComment(
                     // publish button
                     OutlinedButton(
                         onClick = {
-                            val com = Comment(
-                                "ID_DEFAULT",
-                                profileViewModel.currentUserId!!,
-                                recipeViewModel.recipe.value!!.recipeId,
-                                "URL_DEFAULT",
-                                rating.toDouble(),
-                                commentTitle,
-                                description,
-                                java.util.Date()
-                                )
+                          val com =
+                              Comment(
+                                  "ID_DEFAULT",
+                                  profileViewModel.currentUserId!!,
+                                  recipeViewModel.recipe.value!!.recipeId,
+                                  "URL_DEFAULT",
+                                  rating.toDoubleOrNull() ?: 0.0,
+                                  commentTitle,
+                                  description,
+                                  java.util.Date())
+                          if (commentTitle.isNotEmpty() &&
+                              description.isNotEmpty() &&
+                              rating.isNotEmpty()) {
+
                             commentViewModel.addComment(com) {
-                                // the rest profileViewModel.setProfile(Profile())
+                              // the rest profileViewModel.setProfile(Profile())
+                              // Add the comment Id to profile and recipe locally and in the db
 
                             }
-
+                          }
+                          onDismiss()
                         },
                         colors = ButtonDefaults.buttonColors(Color.White),
                         modifier =

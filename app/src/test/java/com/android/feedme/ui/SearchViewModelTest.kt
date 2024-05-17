@@ -142,6 +142,8 @@ class SearchViewModelTest {
         .thenReturn(mockQuery)
     `when`(mockQuery.whereLessThan("username", queryUser + "\uf8ff")).thenReturn(mockQuery)
 
+    `when`(mockQuery.limit(10)).thenReturn(mockQuery)
+
     `when`(mockQuery.get()).thenReturn(Tasks.forResult(mockQuerySnapshot))
 
     `when`(mockQuerySnapshot.documents).thenReturn(listOf(mockDocumentSnapshot))
@@ -163,6 +165,27 @@ class SearchViewModelTest {
   fun searchProfiles_Success() {
     `when`(mockDocumentSnapshot.data).thenReturn(profileMap)
     searchViewModel.searchProfiles(queryUser)
+    Shadows.shadowOf(Looper.getMainLooper()).idle()
+
+    println(searchViewModel.filteredProfiles.value)
+    TestCase.assertTrue(searchViewModel.filteredProfiles.value.first().username == "user123")
+  }
+
+  @Test
+  fun loadMoreRecipes_Success() {
+    searchViewModel.searchRecipes(query)
+    searchViewModel.loadMoreRecipes()
+    Shadows.shadowOf(Looper.getMainLooper()).idle()
+
+    println(searchViewModel.filteredRecipes.value)
+    TestCase.assertTrue(searchViewModel.filteredRecipes.value.first().recipeId == recipeId)
+  }
+
+  @Test
+  fun loadMoreProfiles_Success() {
+    `when`(mockDocumentSnapshot.data).thenReturn(profileMap)
+    searchViewModel.searchProfiles(queryUser)
+    searchViewModel.loadMoreProfiles()
     Shadows.shadowOf(Looper.getMainLooper()).idle()
 
     println(searchViewModel.filteredProfiles.value)

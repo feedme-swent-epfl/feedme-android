@@ -21,6 +21,7 @@ import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.lazy.staggeredgrid.LazyVerticalStaggeredGrid
@@ -36,9 +37,14 @@ import androidx.compose.material3.BottomSheetScaffold
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
+import androidx.compose.material3.Snackbar
+import androidx.compose.material3.SnackbarDuration
+import androidx.compose.material3.SnackbarHost
+import androidx.compose.material3.SnackbarHostState
 import androidx.compose.material3.Text
 import androidx.compose.material3.rememberBottomSheetScaffoldState
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -59,7 +65,6 @@ import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.android.feedme.R
-import com.android.feedme.ml.OverlayTextField
 import com.android.feedme.model.viewmodel.CameraViewModel
 import com.android.feedme.model.viewmodel.InputViewModel
 import com.android.feedme.ui.navigation.NavigationActions
@@ -83,11 +88,6 @@ fun CameraScreen(navigationActions: NavigationActions, inputViewModel: InputView
   // Switch off and on the text recognition functionality
   val textRecognitionMode = remember { mutableStateOf(true) }
   val barcodeRecognition = remember { mutableStateOf(true) }
-  // Display the text box with the recognised text
-  val displayText = remember { mutableStateOf(false) }
-  // Display the text box with the barcode scanned information's
-  val displayBarcode = remember { mutableStateOf(false) }
-
   ///// Machine Learning Part /////
 
   val applicationContext = LocalContext.current
@@ -99,6 +99,7 @@ fun CameraScreen(navigationActions: NavigationActions, inputViewModel: InputView
 
   // Set up the camera controller, view model, and coroutine scope
   val scope = rememberCoroutineScope()
+
   val scaffoldState = rememberBottomSheetScaffoldState()
   val controller = remember {
     LifecycleCameraController(applicationContext).apply {
@@ -110,6 +111,9 @@ fun CameraScreen(navigationActions: NavigationActions, inputViewModel: InputView
   val photoSavedMessageVisible by cameraViewModel.photoSavedMessageVisible.collectAsState()
 
   val listOfIngredientToInput = cameraViewModel.listOfIngredientToInput.collectAsState()
+
+  val snackbarHostStateInfo = remember { SnackbarHostState() }
+  val snackbarHostStateError = remember { SnackbarHostState() }
 
   BottomSheetScaffold(
       modifier = Modifier.testTag("CameraScreen"),
@@ -170,7 +174,7 @@ fun CameraScreen(navigationActions: NavigationActions, inputViewModel: InputView
                 // Button for text recognition
                 if (textRecognitionMode.value) {
                   IconButton(
-                      onClick = { displayText.value = true },
+                      onClick = { cameraViewModel.textRecognitionButtonPressed() },
                       modifier =
                           Modifier.size(56.dp)
                               .background(CameraButtonsBackground, shape = CircleShape)
@@ -185,7 +189,7 @@ fun CameraScreen(navigationActions: NavigationActions, inputViewModel: InputView
                 if (barcodeRecognition.value) {
                   val barcodeScannerPainter = painterResource(id = R.drawable.barcode_scanner)
                   IconButton(
-                      onClick = { displayBarcode.value = true },
+                      onClick = { cameraViewModel.barcodeScanButtonPressed() },
                       modifier =
                           Modifier.size(56.dp)
                               .background(CameraButtonsBackground, shape = CircleShape)
@@ -216,22 +220,47 @@ fun CameraScreen(navigationActions: NavigationActions, inputViewModel: InputView
                       modifier = Modifier.testTag("PhotoSavedMessage"))
                 }
           }
-          // If text recognition button is pressed
-          if (displayText.value) {
-            cameraViewModel.textRecognitionButtonPressed()
-            OverlayTextField(
-                isVisible = true,
-                onDismiss = { displayText.value = false },
-                text = cameraViewModel.informationToDisplay.collectAsState().value)
-          }
+          // Snack bar host for info messages (green)
+          SnackbarHost(
+              hostState = snackbarHostStateInfo,
+              modifier = Modifier.align(Alignment.TopCenter),
+              snackbar = { snackbarData ->
+                Snackbar(
+                    snackbarData = snackbarData,
+                    containerColor = Color.Green.copy(alpha = 0.5f),
+                    contentColor = Color.White)
+              })
 
-          // If barcode scanner button is pressed
-          if (displayBarcode.value) {
-            cameraViewModel.barcodeScanButtonPressed()
-            OverlayTextField(
-                isVisible = true,
-                onDismiss = { displayBarcode.value = false },
-                text = cameraViewModel.informationToDisplay.collectAsState().value)
+          // Snack bar host for error messages (red)
+          SnackbarHost(
+              hostState = snackbarHostStateError,
+              modifier = Modifier.align(Alignment.TopCenter),
+              snackbar = { snackbarData ->
+                Snackbar(
+                    modifier = Modifier.testTag("Error Snack Bar"),
+                    snackbarData = snackbarData,
+                    containerColor = Color.Red.copy(alpha = 0.5f),
+                    contentColor = Color.White)
+              })
+
+          // Information snack bar is displayed each time there is something new to display from the
+          // view model
+          LaunchedEffect(Unit) {
+            cameraViewModel.informationToDisplay.collect {
+              Log.d("Snack bar", "Snack bar information")
+              if (it != null) {
+                snackbarHostStateInfo.showSnackbar(message = it, duration = SnackbarDuration.Short)
+              }
+            }
+          }
+          // Error snack bar is displayed each time an error related to ML occurs
+          LaunchedEffect(Unit) {
+            cameraViewModel.errorToDisplay.collect {
+              Log.d("Snack bar", "Snack bar error")
+              if (it != null) {
+                snackbarHostStateError.showSnackbar(message = it, duration = SnackbarDuration.Short)
+              }
+            }
           }
         }
       }

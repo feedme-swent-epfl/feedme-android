@@ -1,5 +1,6 @@
 package com.android.feedme.model.viewmodel
 
+import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.android.feedme.model.data.Recipe
@@ -30,6 +31,7 @@ class HomeViewModel : ViewModel() {
    * @param id: the unique ID of the recipe we want to fetch
    */
   fun fetchRecipe(id: String) {
+
     viewModelScope.launch {
       recipeRepository.getRecipe(
           id,
@@ -40,7 +42,7 @@ class HomeViewModel : ViewModel() {
           },
           onFailure = {
             // Handle failure
-            throw error("Recipe was not fetched during Login")
+            Log.d("fetchRecipe", "Failed fetch of $id")
           })
     }
   }

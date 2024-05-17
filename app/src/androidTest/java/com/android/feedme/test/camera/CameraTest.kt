@@ -2,8 +2,11 @@ package com.android.feedme.test.camera
 
 import android.Manifest
 import androidx.compose.ui.test.assertIsDisplayed
+import androidx.compose.ui.test.assertTextEquals
 import androidx.compose.ui.test.isDisplayed
+import androidx.compose.ui.test.isNotDisplayed
 import androidx.compose.ui.test.junit4.createComposeRule
+import androidx.compose.ui.test.onChild
 import androidx.compose.ui.test.onNodeWithContentDescription
 import androidx.compose.ui.test.onNodeWithTag
 import androidx.compose.ui.test.onNodeWithText
@@ -118,47 +121,42 @@ class CameraTest : TestCase() {
     ComposeScreen.onComposeScreen<CameraScreen>(composeTestRule) {
       cameraPreview { assertIsDisplayed() }
 
+      mlTextButton {
+        assertIsDisplayed()
+        performClick()
+      }
+
+      composeTestRule.onNodeWithTag("Error Snack Bar").assertIsDisplayed()
+      composeTestRule
+          .onNodeWithTag("Error Snack Bar")
+          .onChild()
+          .assertTextEquals("ERROR : No photo to analyse, please take a picture.")
+      composeTestRule.waitForIdle()
+
+      composeTestRule.waitUntil(timeoutMillis = 12000) {
+        composeTestRule.onNodeWithTag("Error Snack Bar").isNotDisplayed()
+      }
+
       photoButton {
         assertIsDisplayed()
         performClick()
       }
 
       // Wait until the "Photo saved" text appears on the UI.
-      composeTestRule.waitUntil(timeoutMillis = 5000) {
+      composeTestRule.waitUntil(timeoutMillis = 12000) {
         composeTestRule.onNodeWithText("Photo saved", useUnmergedTree = true).isDisplayed()
       }
 
-      mlTextButton {
-        assertIsDisplayed()
-        performClick()
+      mlTextButton { performClick() }
+
+      composeTestRule.waitUntil(timeoutMillis = 12000) {
+        composeTestRule.onNodeWithTag("Error Snack Bar", useUnmergedTree = true).isDisplayed()
       }
 
-      composeTestRule.waitForIdle()
-      composeTestRule.onNodeWithTag("ML Text Box").assertIsDisplayed()
-      composeTestRule.onNodeWithTag("TopBarNavigation").assertIsDisplayed()
-    }
-  }
-
-  // Test the case where no photo was taken before asking for text recognition.
-  @Test
-  fun MLTextButtonWithNoPhoto() {
-    goToCameraScreen()
-    ComposeScreen.onComposeScreen<CameraScreen>(composeTestRule) {
-      cameraPreview { assertIsDisplayed() }
-
-      photoButton { assertIsDisplayed() }
-
-      mlTextButton {
-        assertIsDisplayed()
-        performClick()
-      }
-
-      composeTestRule.waitForIdle()
-      composeTestRule.onNodeWithTag("ML Text Box")
-      composeTestRule.onNodeWithTag("ML Text Box inside")
       composeTestRule
-          .onNodeWithText("ERROR : No photo to analyse, please take a picture.")
-          .assertIsDisplayed()
+          .onNodeWithTag("Error Snack Bar")
+          .onChild()
+          .assertTextEquals("Failed to identify text, please try again.")
     }
   }
 
@@ -168,31 +166,42 @@ class CameraTest : TestCase() {
     ComposeScreen.onComposeScreen<CameraScreen>(composeTestRule) {
       cameraPreview { assertIsDisplayed() }
 
-      photoButton { assertIsDisplayed() }
-
       mlBarcodeButton {
         assertIsDisplayed()
         performClick()
       }
 
+      composeTestRule.onNodeWithTag("Error Snack Bar").assertIsDisplayed()
+      composeTestRule
+          .onNodeWithTag("Error Snack Bar")
+          .onChild()
+          .assertTextEquals("ERROR : No photo to analyse, please take a picture.")
       composeTestRule.waitForIdle()
-      composeTestRule.onNodeWithTag("ML Text Box")
-      composeTestRule.onNodeWithTag("ML Text Box inside")
 
-      photoButton { performClick() }
-
-      // Wait until the "Photo saved" text appears on the UI.
-      composeTestRule.waitUntil(timeoutMillis = 5000) {
-        composeTestRule.onNodeWithText("Photo saved", useUnmergedTree = true).isDisplayed()
+      composeTestRule.waitUntil(timeoutMillis = 18000) {
+        composeTestRule.onNodeWithTag("Error Snack Bar").isNotDisplayed()
       }
 
+      photoButton {
+        assertIsDisplayed()
+        performClick()
+      }
+
+      // Wait until the "Photo saved" text appears on the UI.
+      composeTestRule.waitUntil(timeoutMillis = 18000) {
+        composeTestRule.onNodeWithText("Photo saved", useUnmergedTree = true).isDisplayed()
+      }
+      composeTestRule.waitForIdle()
       mlBarcodeButton { performClick() }
 
-      composeTestRule.waitForIdle()
-      composeTestRule.onNodeWithTag("ML Text Box")
-      composeTestRule.onNodeWithTag("ML Text Box inside")
-      composeTestRule.onNodeWithText(
-          "{\"code\":\"status\":0,\"status_verbose\":\"no code or invalid code\"}")
+      composeTestRule.waitUntil(timeoutMillis = 18000) {
+        composeTestRule.onNodeWithTag("Error Snack Bar", useUnmergedTree = true).isDisplayed()
+      }
+
+      composeTestRule
+          .onNodeWithTag("Error Snack Bar")
+          .onChild()
+          .assertTextEquals("Failed to identify barcode, please try again.")
     }
   }
 }

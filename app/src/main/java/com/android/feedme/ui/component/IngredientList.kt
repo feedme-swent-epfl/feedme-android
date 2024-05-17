@@ -50,7 +50,6 @@ import com.android.feedme.ui.theme.ValidInput
 
 private val ingredientsRepository = IngredientsRepository.instance
 
-
 /**
  * Composable function for displaying a list of ingredients.
  *
@@ -93,15 +92,21 @@ fun IngredientInput(
     action: (IngredientInputState?, IngredientInputState?, IngredientMetaData?) -> Unit
 ) {
 
-    var ingredientCurrent by remember { mutableStateOf(ingredient?.ingredient?:  Ingredient(" ", "NO_ID", false, false)) }
+  var ingredientCurrent by remember {
+    mutableStateOf(ingredient?.ingredient ?: Ingredient(" ", "NO_ID", false, false))
+  }
 
-
-    var name by remember { mutableStateOf(ingredient?.ingredient?.name ?: " ") }
+  var name by remember { mutableStateOf(ingredient?.ingredient?.name ?: " ") }
   var quantity by remember { mutableDoubleStateOf(ingredient?.quantity ?: 0.0) }
   var dose by remember { mutableStateOf(ingredient?.measure ?: MeasureUnit.EMPTY) }
 
   val isComplete by remember {
-    mutableStateOf(name.isNotBlank() && dose != MeasureUnit.EMPTY && quantity != 0.0 && (ingredientCurrent.id != "NO_ID") && (ingredientCurrent.id != ""))
+    mutableStateOf(
+        name.isNotBlank() &&
+            dose != MeasureUnit.EMPTY &&
+            quantity != 0.0 &&
+            (ingredientCurrent.id != "NO_ID") &&
+            (ingredientCurrent.id != ""))
   }
 
   var state by remember {
@@ -114,15 +119,19 @@ fun IngredientInput(
 
   var isDropdownVisible by remember { mutableStateOf(false) }
 
-  var filteredIngredients  by remember { mutableStateOf(emptyList<Ingredient>())}
+  var filteredIngredients by remember { mutableStateOf(emptyList<Ingredient>()) }
 
-    LaunchedEffect(name) {
-        ingredientsRepository.getFilteredIngredients(
-            name,
-            { filteredIngredients = it },
-            { Log.e("Error Filtered Ingredients : ", "Failed to retrieve Ingredient because ", it) }
-        )
-    }
+  LaunchedEffect(name) {
+    ingredientsRepository.getFilteredIngredients(
+        name,
+        { filteredIngredients = it },
+        {
+          Log.e(
+              "IngredientList ",
+              "Error Filtered Ingredients: Failed to retrieve Ingredient because ",
+              it)
+        })
+  }
 
   Row(
       modifier = Modifier.fillMaxWidth().padding(horizontal = 20.dp, vertical = 8.dp).height(70.dp),
@@ -133,7 +142,10 @@ fun IngredientInput(
           OutlinedTextField(
               colors = colorOfInputBoxes(state),
               value = name,
-              isError = name == " " && state != IngredientInputState.EMPTY,
+              isError =
+                  (name == " " ||
+                      (ingredientCurrent.id == "NO_ID") ||
+                      (ingredientCurrent.id == "")) && state != IngredientInputState.EMPTY,
               onValueChange = {
                 name = it
                 isDropdownVisible = true
@@ -153,7 +165,6 @@ fun IngredientInput(
                   PopupProperties(
                       focusable = false, dismissOnClickOutside = false, dismissOnBackPress = false),
           ) {
-
             filteredIngredients.forEach { item ->
               DropdownMenuItem(
                   modifier = Modifier.testTag("IngredientOption"),
@@ -163,14 +174,11 @@ fun IngredientInput(
                     isDropdownVisible = false
                     val beforeState = state
                     if (name != " ") {
-                        ingredientCurrent = item
+                      ingredientCurrent = item
                       state =
                           if (isComplete) IngredientInputState.COMPLETE
                           else IngredientInputState.SEMI_COMPLETE
-                      action(
-                          beforeState,
-                          state,
-                          IngredientMetaData(quantity, dose, item))
+                      action(beforeState, state, IngredientMetaData(quantity, dose, item))
                     }
                   })
             }
@@ -181,7 +189,9 @@ fun IngredientInput(
                 onClick = {
                   // TODO check validty of addition with Chatgbt
                   ingredientsRepository.addIngredient(
-                      Ingredient(name, "NO_ID", false, false), {ingredientCurrent = it }, {Log.e("Fail to add Ingredient : "," ", it)})
+                      Ingredient(name, "NO_ID", false, false),
+                      { ingredientCurrent = it },
+                      { Log.e("Fail to add Ingredient : ", " ", it) })
                 })
           }
         }
@@ -197,10 +207,7 @@ fun IngredientInput(
               if (it.isNotEmpty() && it.toDoubleOrNull() != null && it.toDouble() >= 0.0) {
                 quantity = it.toDouble()
                 if (quantity != 0.0) {
-                  action(
-                      state,
-                      state,
-                      IngredientMetaData(quantity, dose, ingredientCurrent))
+                  action(state, state, IngredientMetaData(quantity, dose, ingredientCurrent))
                 }
               }
             },
@@ -246,8 +253,7 @@ fun IngredientInput(
                               action(
                                   beforeState,
                                   state,
-                                  IngredientMetaData(
-                                      quantity, dose, ingredientCurrent))
+                                  IngredientMetaData(quantity, dose, ingredientCurrent))
                             }
                           })
                     }

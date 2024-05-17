@@ -39,14 +39,19 @@ class IngredientsRepository(private val db: FirebaseFirestore) {
    * @param onSuccess Callback invoked on successful addition of the ingredient.
    * @param onFailure Callback invoked on failure to add the ingredient, with an exception.
    */
-  fun addIngredient(ingredient: Ingredient, onSuccess: (Ingredient) -> Unit, onFailure: (Exception) -> Unit) {
+  fun addIngredient(
+      ingredient: Ingredient,
+      onSuccess: (Ingredient) -> Unit,
+      onFailure: (Exception) -> Unit
+  ) {
     val newDocRef = db.collection(collectionPath).document()
     ingredient.id = newDocRef.id // Assign the generated ID to the comment
     newDocRef
         .set(ingredient)
         .addOnSuccessListener {
-            Log.e("Ingredient was added"," Name : ${ingredient.name}")
-            onSuccess(ingredient) }
+          Log.e("Ingredient was added", " Name : ${ingredient.name}")
+          onSuccess(ingredient)
+        }
         .addOnFailureListener { exception -> onFailure(exception) }
   }
 
@@ -134,28 +139,28 @@ class IngredientsRepository(private val db: FirebaseFirestore) {
   ) {
     var queryRef =
         db.collection(collectionPath)
-            .whereGreaterThanOrEqualTo("name", query)
-            .whereLessThan("name", query + "\uf8ff")
-            .limit(10) // Limit the number of documents fetched to 10
+            .whereGreaterThanOrEqualTo("name", query.trim())
+            .whereLessThan("name", query.trim() + "\uf8ff")
+            .limit(5) // Limit the number of documents fetched to 10
 
     queryRef
         .get()
         .addOnSuccessListener { querySnapshot ->
           val ingredients =
               querySnapshot.documents.mapNotNull { documentSnapshot ->
-                  val data = documentSnapshot.data
-                  val name = data?.get("name") as? String
-                  val id = data?.get("id") as? String
-                  val vegan = data?.get("vegan") as? Boolean ?: false
-                  val vegetarian = data?.get("vegetarian") as? Boolean ?: false
+                val data = documentSnapshot.data
+                val name = data?.get("name") as? String?
+                val id = data?.get("id") as? String ?: "NO_ID"
+                val vegan = data?.get("vegan") as? Boolean ?: false
+                val vegetarian = data?.get("vegetarian") as? Boolean ?: false
 
-                  if (name != null && id != null) {
-                      Ingredient(name, id, vegan, vegetarian)
-                  } else {
-                      null
-                  }
+                if (name != null) {
+                  Ingredient(name, id, vegan, vegetarian)
+                } else {
+                  null
+                }
               }
-            Log.e(null, "Size of ingredients : ${ingredients.size}")
+          Log.e(null, "Size of ingredients : ${ingredients.size}")
           onSuccess(ingredients)
         }
         .addOnFailureListener { exception -> onFailure(exception) }

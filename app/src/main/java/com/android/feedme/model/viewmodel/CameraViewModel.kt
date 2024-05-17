@@ -11,12 +11,12 @@ import com.android.feedme.ml.textProcessing
 import com.android.feedme.model.data.Ingredient
 import com.android.feedme.model.data.IngredientMetaData
 import com.android.feedme.model.data.MeasureUnit
+import kotlin.coroutines.resume
+import kotlin.coroutines.suspendCoroutine
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.launch
-import kotlin.coroutines.resume
-import kotlin.coroutines.suspendCoroutine
 
 class CameraViewModel : ViewModel() {
 
@@ -139,8 +139,6 @@ class CameraViewModel : ViewModel() {
                   barcodeNumber,
                   { productInfo ->
                     if (productInfo != null) {
-                      // TODO How can i create new ingredients correctly or check if they already
-                      // exist ? => Sylvain PR ?
                       updateIngredientList(
                           IngredientMetaData(
                               0.0,

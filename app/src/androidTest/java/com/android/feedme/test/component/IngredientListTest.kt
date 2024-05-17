@@ -22,10 +22,10 @@ class IngredientListTest : TestCase() {
 
   @Test
   fun testIngredientListTestEverythingDisplayed() {
-      val mockFirestore = mockk<FirebaseFirestore>(relaxed = true)
-      ProfileRepository.initialize(mockFirestore)
-      RecipeRepository.initialize(mockFirestore)
-      IngredientsRepository.initialize(mockFirestore)
+    val mockFirestore = mockk<FirebaseFirestore>(relaxed = true)
+    ProfileRepository.initialize(mockFirestore)
+    RecipeRepository.initialize(mockFirestore)
+    IngredientsRepository.initialize(mockFirestore)
     composeTestRule.setContent { IngredientList() }
 
     composeTestRule.onNodeWithTag("LazyList").assertIsDisplayed()
@@ -38,10 +38,10 @@ class IngredientListTest : TestCase() {
 
   @Test
   fun testIngredientDropDownMenuWorksAndHasClickableItem() {
-      val mockFirestore = mockk<FirebaseFirestore>(relaxed = true)
-      ProfileRepository.initialize(mockFirestore)
-      RecipeRepository.initialize(mockFirestore)
-      IngredientsRepository.initialize(mockFirestore)
+    val mockFirestore = mockk<FirebaseFirestore>(relaxed = true)
+    ProfileRepository.initialize(mockFirestore)
+    RecipeRepository.initialize(mockFirestore)
+    IngredientsRepository.initialize(mockFirestore)
     composeTestRule.setContent { IngredientList() }
 
     composeTestRule.onNodeWithTag("LazyList").assertIsDisplayed()

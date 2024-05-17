@@ -122,18 +122,17 @@ fun IngredientInput(
   var filteredIngredients by remember { mutableStateOf(emptyList<Ingredient>()) }
 
   LaunchedEffect(name) {
-      if (name != " ") {
-          ingredientsRepository.getFilteredIngredients(
-              name,
-              { filteredIngredients = it },
-              {
-                  Log.e(
-                      "IngredientList ",
-                      "Error Filtered Ingredients: Failed to retrieve Ingredient because ",
-                      it
-                  )
-              })
-      }
+    if (name != " ") {
+      ingredientsRepository.getFilteredIngredients(
+          name,
+          { filteredIngredients = it },
+          {
+            Log.e(
+                "IngredientList ",
+                "Error Filtered Ingredients: Failed to retrieve Ingredient because ",
+                it)
+          })
+    }
   }
 
   Row(

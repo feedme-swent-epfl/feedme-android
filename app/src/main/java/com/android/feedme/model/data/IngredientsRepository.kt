@@ -39,8 +39,9 @@ class IngredientsRepository(private val db: FirebaseFirestore) {
    * @param onFailure Callback invoked on failure to add the ingredient, with an exception.
    */
   fun addIngredient(ingredient: Ingredient, onSuccess: () -> Unit, onFailure: (Exception) -> Unit) {
-    db.collection(collectionPath)
-        .document(ingredient.id)
+    val newDocRef = db.collection(collectionPath).document()
+    ingredient.id = newDocRef.id // Assign the generated ID to the comment
+    newDocRef
         .set(ingredient)
         .addOnSuccessListener { onSuccess() }
         .addOnFailureListener { exception -> onFailure(exception) }
@@ -135,9 +136,33 @@ class IngredientsRepository(private val db: FirebaseFirestore) {
         .addOnFailureListener { exception -> onFailure(exception) }
   }
 
+  /**
+   * Fetches the 25 most similar ingredients to the given query.
+   *
+   * @param query The query string to search for in the ingredient names.
+   * @param onSuccess Callback invoked with a list of Ingredient objects on success.
+   * @param onFailure Callback invoked on failure to retrieve ingredients, with an exception.
+   */
+  fun getFilteredIngredients(
+      query: String,
+      onSuccess: (List<Ingredient>) -> Unit,
+      onFailure: (Exception) -> Unit
+  ) {
+    val queryRef =
+        db.collection(collectionPath)
+            .whereGreaterThanOrEqualTo("name", query)
+            .whereLessThan("name", query + "\uf8ff")
+            .limit(10) // Limit the number of documents fetched to 10
 
-    // Method to generate a random ID
-    fun generateRandomId() {
-        db.collection(collectionPath).document()
-    }
+    queryRef
+        .get()
+        .addOnSuccessListener { querySnapshot ->
+          val ingredients =
+              querySnapshot.documents.mapNotNull { documentSnapshot ->
+                documentSnapshot.toObject(Ingredient::class.java)
+              }
+          onSuccess(ingredients)
+        }
+        .addOnFailureListener { exception -> onFailure(exception) }
+  }
 }

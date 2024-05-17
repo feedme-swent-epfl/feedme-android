@@ -147,7 +147,11 @@ class RecipeRepository(private val db: FirebaseFirestore) {
           "ingredient" to this.ingredient.toMap())
 
   private fun Ingredient.toMap(): Map<String, Any> =
-      mapOf("name" to this.name, "id" to this.id, "vegan" to this.vegan, "vegetarian" to this.vegetarian)
+      mapOf(
+          "name" to this.name,
+          "id" to this.id,
+          "vegan" to this.vegan,
+          "vegetarian" to this.vegetarian)
 
   private fun Step.toMap(): Map<String, Any> =
       mapOf(

@@ -25,7 +25,6 @@ import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextFieldColors
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.movableContentOf
@@ -48,11 +47,6 @@ import com.android.feedme.ui.theme.InValidInput
 import com.android.feedme.ui.theme.NoInput
 import com.android.feedme.ui.theme.ValidInput
 
-// Fetch all ingredients and collect them as state
-var listOfIngredient: List<Ingredient> = emptyList()
-
-val ingredientsRepository = IngredientsRepository.instance
-
 /**
  * Composable function for displaying a list of ingredients.
  *
@@ -65,14 +59,7 @@ fun IngredientList(
     inputViewModel: InputViewModel = InputViewModel(),
     modifier: Modifier = Modifier,
 ) {
-  // Fetch all ingredients asynchronously
-  LaunchedEffect(Unit) {
-    ingredientsRepository.getAllIngredients(
-        onSuccess = { ingredients -> listOfIngredient = ingredients },
-        onFailure = { e ->
-          Log.e("Fetching Error : ","Couldn't fetch list of ingredients",e)
-        })
-  }
+
   val totalIngredients by inputViewModel.totalIngredientEntriesDisplayed.collectAsState()
   LazyColumn(modifier = modifier.testTag("LazyList")) {
     this.items(totalIngredients) { index ->
@@ -101,6 +88,8 @@ fun IngredientInput(
     ingredient: IngredientMetaData? = null,
     action: (IngredientInputState?, IngredientInputState?, IngredientMetaData?) -> Unit
 ) {
+  val ingredientsRepository = IngredientsRepository.instance
+
   var name by remember { mutableStateOf(ingredient?.ingredient?.name ?: " ") }
   var quantity by remember { mutableDoubleStateOf(ingredient?.quantity ?: 0.0) }
   var dose by remember { mutableStateOf(ingredient?.measure ?: MeasureUnit.EMPTY) }
@@ -119,7 +108,7 @@ fun IngredientInput(
 
   var isDropdownVisible by remember { mutableStateOf(false) }
 
-  val filteredIngredients = listOfIngredient.filter { it.name.contains(name, ignoreCase = true) }
+  var filteredIngredients = emptyList<Ingredient>()
 
   Row(
       modifier = Modifier.fillMaxWidth().padding(horizontal = 20.dp, vertical = 8.dp).height(70.dp),
@@ -150,6 +139,14 @@ fun IngredientInput(
                   PopupProperties(
                       focusable = false, dismissOnClickOutside = false, dismissOnBackPress = false),
           ) {
+            ingredientsRepository.getFilteredIngredients(
+                name,
+                { filteredIngredients = it },
+                {
+                  Log.e(
+                      "Error Filtered Ingredients : ", "Failed to retrieve Ingredient because ", it)
+                })
+
             filteredIngredients.forEach { item ->
               DropdownMenuItem(
                   modifier = Modifier.testTag("IngredientOption"),
@@ -174,8 +171,9 @@ fun IngredientInput(
                 modifier = Modifier.background(Color.LightGray).testTag("addOption"),
                 text = { Text(text = "Add Ingredient") },
                 onClick = {
-                    //TODO check validty of addition with Chatgbt
-                    ingredientsRepository.addIngredient(Ingredient(name, "", false, false), {},{})
+                  // TODO check validty of addition with Chatgbt
+                  ingredientsRepository.addIngredient(
+                      Ingredient(name, "NO_ID", false, false), {}, {})
                 })
           }
         }
@@ -191,12 +189,10 @@ fun IngredientInput(
               if (it.isNotEmpty() && it.toDoubleOrNull() != null && it.toDouble() >= 0.0) {
                 quantity = it.toDouble()
                 if (quantity != 0.0) {
-                  action(state, state, IngredientMetaData(quantity, dose, Ingredient(
-                      name,
-                      "",
-                      false,
-                      false
-                  )))
+                  action(
+                      state,
+                      state,
+                      IngredientMetaData(quantity, dose, Ingredient(name, "", false, false)))
                 }
               }
             },
@@ -242,12 +238,8 @@ fun IngredientInput(
                               action(
                                   beforeState,
                                   state,
-                                  IngredientMetaData(quantity, dose, Ingredient(
-                                      name,
-                                      "",
-                                      false,
-                                      false
-                                  )))
+                                  IngredientMetaData(
+                                      quantity, dose, Ingredient(name, "", false, false)))
                             }
                           })
                     }

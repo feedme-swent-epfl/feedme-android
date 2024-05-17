@@ -164,10 +164,10 @@ fun FindRecipeScreen(navigationActions: NavigationActions, inputViewModel: Input
 @Preview(showBackground = true)
 @Composable
 fun FindRecipeScreenPreview() {
-    val firebase = FirebaseFirestore.getInstance()
-    ProfileRepository.initialize(firebase)
-    RecipeRepository.initialize(firebase)
-    IngredientsRepository.initialize(firebase)
+  val firebase = FirebaseFirestore.getInstance()
+  ProfileRepository.initialize(firebase)
+  RecipeRepository.initialize(firebase)
+  IngredientsRepository.initialize(firebase)
   val navigationActions = NavigationActions(rememberNavController())
   val inputViewModel = InputViewModel()
 

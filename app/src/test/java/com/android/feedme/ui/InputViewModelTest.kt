@@ -27,12 +27,7 @@ class InputViewModelTest {
     val newList: MutableList<IngredientMetaData?> =
         mutableListOf(
             IngredientMetaData(
-                200.0, MeasureUnit.G, Ingredient(
-                    "Ingredient 1",
-                    "ID_TYPE",
-                    false,
-                    false
-                )))
+                200.0, MeasureUnit.G, Ingredient("Ingredient 1", "ID_TYPE", false, false)))
     viewModel.setNewList(newList)
     assertEquals(2, viewModel.totalIngredientEntriesDisplayed.first())
     assertEquals(newList, viewModel.listOfIngredientMetadatas.first())
@@ -93,12 +88,7 @@ class InputViewModelTest {
     val incompleteIngredient: MutableList<IngredientMetaData?> =
         mutableListOf(
             IngredientMetaData(
-                1.0, MeasureUnit.EMPTY, Ingredient(
-                    "Ingredient 1",
-                    "ID_TYPE",
-                    false,
-                    false
-                )))
+                1.0, MeasureUnit.EMPTY, Ingredient("Ingredient 1", "ID_TYPE", false, false)))
     viewModel.setNewList(incompleteIngredient)
     viewModel.isComplete { _ -> isCompleteResult = true }
     assertEquals(false, isCompleteResult)
@@ -107,12 +97,7 @@ class InputViewModelTest {
     val completeIngredient: MutableList<IngredientMetaData?> =
         mutableListOf(
             IngredientMetaData(
-                1.0, MeasureUnit.NONE, Ingredient(
-                    "Ingredient 1",
-                    "ID_TYPE",
-                    false,
-                    false
-                )))
+                1.0, MeasureUnit.NONE, Ingredient("Ingredient 1", "ID_TYPE", false, false)))
     viewModel.setNewList(completeIngredient)
     viewModel.isComplete { _ -> isCompleteResult = true }
     assertEquals(true, isCompleteResult)

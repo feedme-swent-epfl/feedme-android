@@ -150,7 +150,6 @@ fun analyzeTextForIngredients(
   val requestJson = buildRequestJson(mlText)
 
   val request = buildRequest(requestJson)
-
   val client = OkHttpClient()
   client
       .newCall(request)

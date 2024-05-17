@@ -4,7 +4,7 @@ import androidx.compose.ui.test.junit4.createComposeRule
 import androidx.test.ext.junit.runners.AndroidJUnit4
 import com.android.feedme.model.viewmodel.InputViewModel
 import com.android.feedme.screen.FindRecipeScreen
-import com.android.feedme.ui.find.FindRecipeScreen
+import com.android.feedme.ui.generate.FindRecipeScreen
 import com.android.feedme.ui.navigation.NavigationActions
 import com.kaspersky.kaspresso.testcases.api.testcase.TestCase
 import io.github.kakaocup.compose.node.element.ComposeScreen

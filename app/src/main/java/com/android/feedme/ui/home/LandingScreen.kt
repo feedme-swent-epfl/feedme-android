@@ -40,7 +40,6 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import coil.compose.AsyncImage
-import com.android.feedme.model.data.Profile
 import com.android.feedme.model.data.Recipe
 import com.android.feedme.model.viewmodel.HomeViewModel
 import com.android.feedme.model.viewmodel.ProfileViewModel
@@ -129,12 +128,8 @@ fun RecipeDisplay(
                 Modifier.testTag("RecipeList").padding(top = 8.dp).background(TextBarColor)) {
               items(recipes) { recipe ->
 
-                // Fetch the profile of the user who created the recipe
-                profileViewModel.fetchProfile(recipe.userid)
-                val profile = profileViewModel.viewingUserProfile.collectAsState().value
-
                 // Recipe card
-                RecipeCard(recipe, profile, navigationActions, recipeViewModel, profileViewModel)
+                RecipeCard(recipe, navigationActions, recipeViewModel, profileViewModel)
               }
             }
       }
@@ -144,19 +139,21 @@ fun RecipeDisplay(
  * Composable function for the Recipe Card. This function displays the recipe in a card format.
  *
  * @param recipe The [Recipe] to be displayed.
- * @param profile The [Profile] of the user who created the recipe.
  * @param navigationActions The [NavigationActions] instance for handling back navigation.
  * @param recipeViewModel The [RecipeViewModel] instance of the recipe ViewModel.
  * @param profileViewModel The [ProfileViewModel] instance of the profile ViewModel.
  */
+@SuppressLint("StateFlowValueCalledInComposition")
 @Composable
 fun RecipeCard(
     recipe: Recipe,
-    profile: Profile?,
     navigationActions: NavigationActions,
     recipeViewModel: RecipeViewModel,
     profileViewModel: ProfileViewModel
 ) {
+  profileViewModel.fetchProfile(recipe.userid)
+  val profile = profileViewModel.viewingUserProfile.value
+
   Card(
       modifier =
           Modifier.padding(16.dp)

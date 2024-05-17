@@ -29,7 +29,7 @@ import com.android.feedme.ui.auth.WelcomeScreen
 import com.android.feedme.ui.camera.CameraScreen
 import com.android.feedme.ui.camera.GalleryScreen
 import com.android.feedme.ui.component.RecipeFullDisplay
-import com.android.feedme.ui.find.FindRecipeScreen
+import com.android.feedme.ui.generate.FindRecipeScreen
 import com.android.feedme.ui.home.LandingPage
 import com.android.feedme.ui.home.SavedRecipesScreen
 import com.android.feedme.ui.home.SearchScreen

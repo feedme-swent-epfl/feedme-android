@@ -1,4 +1,4 @@
-package com.android.feedme.ui.find
+package com.android.feedme.ui.generate
 
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.Image

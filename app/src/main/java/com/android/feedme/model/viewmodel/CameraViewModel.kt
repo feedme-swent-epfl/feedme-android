@@ -15,6 +15,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.platform.LocalContext
 import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
+import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.android.feedme.ml.analyzeTextForIngredients
@@ -33,6 +34,12 @@ import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.launch
 
 class CameraViewModel : ViewModel() {
+
+  val ERROR_NO_PHOTO = "ERROR : No photo to analyse, please take a picture."
+  val ERROR_NO_BARCODE = "Failed to identify barcode, please try again."
+  val ERROR_BARCODE_PRODUCT_NAME = "Failed to extract product name from barcode, please try again."
+  val ERROR_NO_TEXT = "Failed to identify text, please try again."
+  val ERROR_INGREDIENT_IN_TEXT = "Failed to extract ingredients from text, please try again."
 
   /** This sealed class is used to model the different states that a photo can be in. */
   sealed class PhotoState() {
@@ -64,10 +71,18 @@ class CameraViewModel : ViewModel() {
   private val _listOfIngredientToInput = MutableStateFlow<List<IngredientMetaData>>(emptyList())
   val listOfIngredientToInput = _listOfIngredientToInput.asStateFlow()
 
-  /** Information's to be displayed after a ML button was pressed */
-  private val _informationToDisplay = MutableStateFlow<String>("")
+  /** Information's to be displayed after a ML button was pressed and lead to a successful result */
+  private val _informationToDisplay = MutableStateFlow<String?>(null)
   val informationToDisplay = _informationToDisplay.asStateFlow()
 
+  /** Information's to be displayed when an error occurs * */
+  private val _errorToDisplay = MutableStateFlow<String?>(null)
+  val errorToDisplay = _errorToDisplay.asStateFlow()
+
+  /** Number of ingredient to be added to the input screen after one text recognition scan * */
+  private val _nbOfIngredientAdded = MutableStateFlow<Int>(0)
+
+  /** Last photo on which ML was run * */
   private val _lastAnalyzedPhoto = MutableStateFlow<Bitmap?>(null)
 
   /**
@@ -147,13 +162,15 @@ class CameraViewModel : ViewModel() {
       viewModelScope.launch {
         when (val photoState = _lastPhoto.value) {
           is PhotoState.NoPhoto -> {
-            _informationToDisplay.value = "ERROR : No photo to analyse, please take a picture."
+            _errorToDisplay.value = ERROR_NO_PHOTO
           }
           is PhotoState.Photo -> {
             if (photoState.bitmap != _lastAnalyzedPhoto.value) {
               _lastAnalyzedPhoto.value = photoState.bitmap
               val result = performTextRecognition(photoState.bitmap)
-              _informationToDisplay.value = result
+              if (result != null) {
+                _informationToDisplay.value = result
+              }
             }
           }
         }
@@ -169,11 +186,13 @@ class CameraViewModel : ViewModel() {
       viewModelScope.launch {
         when (val photoState = _lastPhoto.value) {
           is PhotoState.NoPhoto -> {
-            _informationToDisplay.value = "ERROR : No photo to analyse, please take a picture."
+            _errorToDisplay.value = ERROR_NO_PHOTO
           }
           is PhotoState.Photo -> {
             val result = performBarCodeScanning(photoState.bitmap)
-            _informationToDisplay.value = result
+            if (result != null) {
+              _informationToDisplay.value = "$result added to your ingredient list."
+            }
           }
         }
       }
@@ -187,7 +206,7 @@ class CameraViewModel : ViewModel() {
    * @return The extracted product name from the barcode as string if successful, a relevant error
    *   message otherwise.
    */
-  private suspend fun performBarCodeScanning(bitmap: Bitmap): String {
+  private suspend fun performBarCodeScanning(bitmap: Bitmap): String? {
     return suspendCoroutine { continuation ->
       barcodeScan(
           bitmap,
@@ -204,18 +223,22 @@ class CameraViewModel : ViewModel() {
                               0.0,
                               MeasureUnit.NONE,
                               Ingredient(productInfo.productName, "Default", "DefaultID")))
+                      continuation.resume(productInfo.productName)
+                    } else {
+                      _errorToDisplay.value = ERROR_BARCODE_PRODUCT_NAME
+                      continuation.resume(null)
                     }
-                    continuation.resume(
-                        productInfo?.productName
-                            ?: "ERROR: Failed to extract product name from barcode, please try again.")
                   },
                   {
-                    continuation.resume(
-                        "ERROR: Failed to extract product name from barcode, please try again.")
+                    _errorToDisplay.value = ERROR_BARCODE_PRODUCT_NAME
+                    continuation.resume(null)
                   })
             }
           },
-          { continuation.resume("ERROR: Failed to identify barcode, please try again.") })
+          {
+            _errorToDisplay.value = ERROR_NO_BARCODE
+            continuation.resume(null)
+          })
     }
   }
 
@@ -226,16 +249,35 @@ class CameraViewModel : ViewModel() {
    * @param bitmap The bitmap image on which text recognition will be performed.
    * @return The recognized text if successful; otherwise, an error message.
    */
-  private suspend fun performTextRecognition(bitmap: Bitmap): String {
+  private suspend fun performTextRecognition(bitmap: Bitmap): String? {
+    var counter = 0
     return suspendCoroutine { continuation ->
       textExtraction(
           bitmap,
           { text ->
-            analyzeTextForIngredients(text, { ing -> updateIngredientList(ing) })
-
-            continuation.resume(textProcessing(text = text))
+            analyzeTextForIngredients(
+                text,
+                { ing ->
+                  counter += 1
+                  updateIngredientList(ing)
+                },
+                onSuccess = {
+                  _nbOfIngredientAdded.value = counter
+                  continuation.resume(
+                      "${_nbOfIngredientAdded.value} ingredient(s) added to your ingredient list.")
+                },
+                onFailure = { e ->
+                  e.message?.let {
+                    Log.d("ML", it)
+                    _errorToDisplay.value = ERROR_INGREDIENT_IN_TEXT
+                  }
+                  continuation.resume(null)
+                })
           },
-          { continuation.resume("ERROR : Failed to identify text, please try again.") })
+          {
+            _errorToDisplay.value = ERROR_NO_TEXT
+            continuation.resume(null)
+          })
     }
   }
 

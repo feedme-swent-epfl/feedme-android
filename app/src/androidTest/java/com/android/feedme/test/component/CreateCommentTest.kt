@@ -3,6 +3,7 @@ package com.android.feedme.test.component
 import androidx.compose.ui.test.assertIsDisplayed
 import androidx.compose.ui.test.junit4.createComposeRule
 import androidx.compose.ui.test.onNodeWithTag
+import androidx.compose.ui.test.performClick
 import androidx.test.ext.junit.runners.AndroidJUnit4
 import com.android.feedme.model.data.CommentRepository
 import com.android.feedme.model.data.ProfileRepository
@@ -35,8 +36,9 @@ class CreateCommentTest : TestCase() {
 
   @Test
   fun testCreateCommentEverythingDisplayed() {
+    var bol = false
     composeTestRule.setContent {
-      CreateComment(ProfileViewModel(), RecipeViewModel(), CommentViewModel()) {}
+      CreateComment(ProfileViewModel(), RecipeViewModel(), CommentViewModel()) { bol = true }
     }
 
     composeTestRule.onNodeWithTag("OuterBox").assertIsDisplayed()
@@ -48,5 +50,10 @@ class CreateCommentTest : TestCase() {
     composeTestRule.onNodeWithTag("DescriptionField").assertIsDisplayed()
     composeTestRule.onNodeWithTag("DeleteButton").assertIsDisplayed()
     composeTestRule.onNodeWithTag("PublishButton").assertIsDisplayed()
+    composeTestRule.onNodeWithTag("PublishButton").performClick()
+    assertTrue(bol)
+    bol = false
+    composeTestRule.onNodeWithTag("DeleteButton").performClick()
+    assertTrue(bol)
   }
 }

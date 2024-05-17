@@ -166,8 +166,8 @@ fun CreateComment(
                           val com =
                               Comment(
                                   "ID_DEFAULT",
-                                  profileViewModel.currentUserId!!,
-                                  recipeViewModel.recipe.value!!.recipeId,
+                                  profileViewModel.currentUserId ?: "ID_DEFAULT",
+                                  recipeViewModel.recipe.value?.recipeId ?: "ID_DEFAULT",
                                   "URL_DEFAULT",
                                   rating.toDoubleOrNull() ?: 0.0,
                                   commentTitle,
@@ -176,11 +176,8 @@ fun CreateComment(
                           if (commentTitle.isNotEmpty() &&
                               description.isNotEmpty() &&
                               rating.isNotEmpty()) {
-
                             commentViewModel.addComment(com) {
-                              // the rest profileViewModel.setProfile(Profile())
                               // Add the comment Id to profile and recipe locally and in the db
-
                             }
                           }
                           onDismiss()

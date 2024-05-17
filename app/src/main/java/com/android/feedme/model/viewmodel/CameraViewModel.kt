@@ -59,7 +59,7 @@ class CameraViewModel : ViewModel() {
   private val _errorToDisplay = MutableStateFlow<String?>(null)
   val errorToDisplay = _errorToDisplay.asStateFlow()
 
-    /** Number of ingredient to be added to the input screen after one text recognition scan **/
+  /** Number of ingredient to be added to the input screen after one text recognition scan * */
   private val _nbOfIngredientAdded = MutableStateFlow<Int>(0)
 
   private val _lastAnalyzedPhoto = MutableStateFlow<Bitmap?>(null)
@@ -104,7 +104,7 @@ class CameraViewModel : ViewModel() {
               _lastAnalyzedPhoto.value = photoState.bitmap
               val result = performTextRecognition(photoState.bitmap)
               if (result != null) {
-                _informationToDisplay.value = "$_nbOfIngredientAdded ingredient(s) added to your ingredient list."
+                _informationToDisplay.value = result
               }
             }
           }
@@ -198,7 +198,11 @@ class CameraViewModel : ViewModel() {
                   counter += 1
                   updateIngredientList(ing)
                 },
-                onSuccess = { _nbOfIngredientAdded.value = counter },
+                onSuccess = {
+                  _nbOfIngredientAdded.value = counter
+                  continuation.resume(
+                      "${_nbOfIngredientAdded.value} ingredient(s) added to your ingredient list.")
+                },
                 onFailure = { e ->
                   e.message?.let {
                     Log.d("ML", it)

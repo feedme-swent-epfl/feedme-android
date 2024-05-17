@@ -127,7 +127,10 @@ class CameraTest : TestCase() {
       }
 
       composeTestRule.onNodeWithTag("Error Snack Bar").assertIsDisplayed()
-      composeTestRule.onNodeWithTag("Error Snack Bar").onChild().assertTextEquals("ERROR : No photo to analyse, please take a picture.")
+      composeTestRule
+          .onNodeWithTag("Error Snack Bar")
+          .onChild()
+          .assertTextEquals("ERROR : No photo to analyse, please take a picture.")
       composeTestRule.waitForIdle()
 
       composeTestRule.waitUntil(timeoutMillis = 8000) {
@@ -144,15 +147,16 @@ class CameraTest : TestCase() {
         composeTestRule.onNodeWithText("Photo saved", useUnmergedTree = true).isDisplayed()
       }
 
-      mlTextButton {
-        performClick()
-      }
+      mlTextButton { performClick() }
 
       composeTestRule.waitUntil(timeoutMillis = 4000) {
         composeTestRule.onNodeWithTag("Error Snack Bar", useUnmergedTree = true).isDisplayed()
       }
 
-      composeTestRule.onNodeWithTag("Error Snack Bar").onChild().assertTextEquals("Failed to identify text, please try again.")
+      composeTestRule
+          .onNodeWithTag("Error Snack Bar")
+          .onChild()
+          .assertTextEquals("Failed to identify text, please try again.")
     }
   }
 
@@ -168,7 +172,10 @@ class CameraTest : TestCase() {
       }
 
       composeTestRule.onNodeWithTag("Error Snack Bar").assertIsDisplayed()
-      composeTestRule.onNodeWithTag("Error Snack Bar").onChild().assertTextEquals("ERROR : No photo to analyse, please take a picture.")
+      composeTestRule
+          .onNodeWithTag("Error Snack Bar")
+          .onChild()
+          .assertTextEquals("ERROR : No photo to analyse, please take a picture.")
       composeTestRule.waitForIdle()
 
       composeTestRule.waitUntil(timeoutMillis = 8000) {
@@ -185,15 +192,16 @@ class CameraTest : TestCase() {
         composeTestRule.onNodeWithText("Photo saved", useUnmergedTree = true).isDisplayed()
       }
 
-      mlBarcodeButton {
-        performClick()
-      }
+      mlBarcodeButton { performClick() }
 
       composeTestRule.waitUntil(timeoutMillis = 4000) {
         composeTestRule.onNodeWithTag("Error Snack Bar", useUnmergedTree = true).isDisplayed()
       }
 
-      composeTestRule.onNodeWithTag("Error Snack Bar").onChild().assertTextEquals("Failed to identify barcode, please try again.")
+      composeTestRule
+          .onNodeWithTag("Error Snack Bar")
+          .onChild()
+          .assertTextEquals("Failed to identify barcode, please try again.")
     }
   }
 }

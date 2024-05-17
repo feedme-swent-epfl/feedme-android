@@ -79,7 +79,7 @@ fun CommentCard(comment: Comment) {
 
                 // Comment authorId
                 Text(
-                    text = comment.authorId,
+                    text = comment.commentId,
                     style = MaterialTheme.typography.bodyMedium,
                     color = BlueUsername,
                     fontWeight = FontWeight.Bold)

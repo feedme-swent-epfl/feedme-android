@@ -88,11 +88,6 @@ fun CameraScreen(navigationActions: NavigationActions, inputViewModel: InputView
   // Switch off and on the text recognition functionality
   val textRecognitionMode = remember { mutableStateOf(true) }
   val barcodeRecognition = remember { mutableStateOf(true) }
-  // Display the text box with the recognised text
-  val displayText = remember { mutableStateOf(false) }
-  // Display the text box with the barcode scanned information's
-  val displayBarcode = remember { mutableStateOf(false) }
-
   ///// Machine Learning Part /////
 
   val applicationContext = LocalContext.current
@@ -117,11 +112,8 @@ fun CameraScreen(navigationActions: NavigationActions, inputViewModel: InputView
 
   val listOfIngredientToInput = cameraViewModel.listOfIngredientToInput.collectAsState()
 
-  //////
   val snackbarHostStateInfo = remember { SnackbarHostState() }
   val snackbarHostStateError = remember { SnackbarHostState() }
-
-  /////
 
   BottomSheetScaffold(
       modifier = Modifier.testTag("CameraScreen"),
@@ -228,6 +220,7 @@ fun CameraScreen(navigationActions: NavigationActions, inputViewModel: InputView
                       modifier = Modifier.testTag("PhotoSavedMessage"))
                 }
           }
+          // Snack bar host for info messages (green)
           SnackbarHost(
               hostState = snackbarHostStateInfo,
               modifier = Modifier.align(Alignment.TopCenter),
@@ -237,6 +230,8 @@ fun CameraScreen(navigationActions: NavigationActions, inputViewModel: InputView
                     containerColor = Color.Green.copy(alpha = 0.5f),
                     contentColor = Color.White)
               })
+
+          // Snack bar host for error messages (red)
           SnackbarHost(
               hostState = snackbarHostStateError,
               modifier = Modifier.align(Alignment.TopCenter),
@@ -248,6 +243,8 @@ fun CameraScreen(navigationActions: NavigationActions, inputViewModel: InputView
                     contentColor = Color.White)
               })
 
+          // Information snack bar is displayed each time there is something new to display from the
+          // view model
           LaunchedEffect(Unit) {
             cameraViewModel.informationToDisplay.collect {
               Log.d("Snack bar", "Snack bar information")
@@ -256,6 +253,7 @@ fun CameraScreen(navigationActions: NavigationActions, inputViewModel: InputView
               }
             }
           }
+          // Error snack bar is displayed each time an error related to ML occurs
           LaunchedEffect(Unit) {
             cameraViewModel.errorToDisplay.collect {
               Log.d("Snack bar", "Snack bar error")

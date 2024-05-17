@@ -62,6 +62,7 @@ class CameraViewModel : ViewModel() {
   /** Number of ingredient to be added to the input screen after one text recognition scan * */
   private val _nbOfIngredientAdded = MutableStateFlow<Int>(0)
 
+  /** Last photo on which ML was run * */
   private val _lastAnalyzedPhoto = MutableStateFlow<Bitmap?>(null)
 
   /**

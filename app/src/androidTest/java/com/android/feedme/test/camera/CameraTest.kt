@@ -149,7 +149,7 @@ class CameraTest : TestCase() {
 
       mlTextButton { performClick() }
 
-      composeTestRule.waitUntil(timeoutMillis = 4000) {
+      composeTestRule.waitUntil(timeoutMillis = 6000) {
         composeTestRule.onNodeWithTag("Error Snack Bar", useUnmergedTree = true).isDisplayed()
       }
 

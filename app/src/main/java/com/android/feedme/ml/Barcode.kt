@@ -9,6 +9,8 @@ import com.google.mlkit.vision.barcode.BarcodeScannerOptions
 import com.google.mlkit.vision.barcode.BarcodeScanning
 import com.google.mlkit.vision.barcode.common.Barcode
 import com.google.mlkit.vision.common.InputImage
+import org.json.JSONException
+import org.json.JSONObject
 
 /**
  * Scans a barcode from a given bitmap image using google ML kit. By default it's parametrized to
@@ -56,15 +58,47 @@ fun barcodeScan(
  *   process.
  * @throws Exception if an error occurs during the extraction process.
  */
-suspend fun extractProductNameFromBarcode(
+suspend fun extractProductInfoFromBarcode(
     barcodeNB: String,
-    onSuccess: (String) -> Unit = {},
+    onSuccess: (ProductInfo?) -> Unit = {},
     onFailure: (Exception) -> Unit = {}
 ) {
   try {
-    onSuccess(httpRequestBarcode(HttpMethod.GET, barcodeNB, "fields=product_name"))
+    val result = httpRequestBarcode(HttpMethod.GET, barcodeNB, "fields=product_name")
+    println(result)
+    onSuccess(parseJsonString(httpRequestBarcode(HttpMethod.GET, barcodeNB, "fields=product_name")))
   } catch (e: Exception) {
     e.message?.let { Log.i(e.message, it) }
     onFailure(e)
   }
 }
+
+/**
+ * Parses a JSON string to extract product information into a ProductInfo object.
+ *
+ * @param jsonString The JSON string containing product details (obtained after httpRequest).
+ * @param onFailure Callback invoked on parsing failure, default is an empty lambda.
+ * @return A ProductInfo object if parsing is successful; null otherwise.
+ */
+fun parseJsonString(jsonString: String, onFailure: (Exception) -> Unit = {}): ProductInfo? {
+  try {
+    val jsonObject = JSONObject(jsonString)
+    return ProductInfo(
+        code = jsonObject.getString("code"),
+        productName = jsonObject.getJSONObject("product").getString("product_name"),
+        status = jsonObject.getInt("status"))
+  } catch (e: JSONException) {
+    e.message?.let { Log.e("Error parsing Json string for barcode : ", it) }
+    onFailure(Exception("Failed to parse Json information of barcode."))
+    return null
+  }
+}
+
+/**
+ * Data class representing product information.
+ *
+ * @property code The product barcode code.
+ * @property productName The name of the product.
+ * @property status The status of the product (1 if successful, 0 if no information).
+ */
+data class ProductInfo(val code: String, val productName: String, val status: Int)

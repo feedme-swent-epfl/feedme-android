@@ -2,6 +2,7 @@ package com.android.feedme.model.data
 
 import android.net.Uri
 import com.android.feedme.model.viewmodel.ProfileViewModel
+import com.google.firebase.firestore.DocumentSnapshot
 import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.firestore.Transaction
 import com.google.firebase.storage.FirebaseStorage
@@ -143,18 +144,29 @@ class ProfileRepository(private val db: FirebaseFirestore) {
    */
   fun getFilteredProfiles(
       query: String,
-      onSuccess: (List<Profile>) -> Unit,
+      lastProfile: DocumentSnapshot?,
+      onSuccess: (List<Profile>, DocumentSnapshot?) -> Unit,
       onFailure: (Exception) -> Unit
   ) {
-    db.collection(collectionPath)
-        .whereGreaterThanOrEqualTo("username", query)
-        .whereLessThan("username", query + "\uf8ff")
+    var queryRef =
+        db.collection(collectionPath)
+            .whereGreaterThanOrEqualTo("username", query)
+            .whereLessThan("username", query + "\uf8ff")
+            .limit(10)
+
+    if (lastProfile != null) {
+      queryRef = queryRef.startAfter(lastProfile)
+    }
+
+    queryRef
         .get()
         .addOnSuccessListener {
           it.documents.map { recipeMap ->
             val data = recipeMap.data
             if (data != null) {
-              val success = { profile: Profile? -> onSuccess(listOfNotNull(profile)) }
+              val success = { profile: Profile? ->
+                onSuccess(listOfNotNull(profile), it.documents.lastOrNull())
+              }
               mapToProfile(data, success, onFailure)
             }
           }

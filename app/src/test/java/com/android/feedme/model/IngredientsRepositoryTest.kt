@@ -55,7 +55,6 @@ class IngredientsRepositoryTest {
     `when`(mockCollectionReference.document(anyString())).thenReturn(mockDocumentReference)
     `when`(mockCollectionReference.document()).thenReturn(mockDocumentReference)
     `when`(mockDocumentReference.id).thenReturn("TEST_ID")
-
   }
 
   @Test
@@ -71,7 +70,6 @@ class IngredientsRepositoryTest {
     verify(mockDocumentReference).set(ingredient)
     assertTrue("Success callback was not called", successCalled)
     assertTrue("Not a matching id", ingredient.id == "TEST_ID")
-
   }
 
   @Test

@@ -30,7 +30,11 @@ class IngredientsRepository(val db: FirebaseFirestore) {
     fun initialize(db: FirebaseFirestore) {
       instance = IngredientsRepository(db)
     }
-
+    /**
+     * Updates the singleton instance of IngredientsRepository with a new instance.
+     *
+     * @param rp The new IngredientsRepository instance to replace the current singleton instance.
+     */
     fun initialize(rp: IngredientsRepository) {
       instance = rp
     }

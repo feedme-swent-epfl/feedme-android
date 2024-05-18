@@ -10,13 +10,14 @@ import androidx.compose.ui.test.performTextInput
 import androidx.test.ext.junit.runners.AndroidJUnit4
 import com.android.feedme.model.data.Ingredient
 import com.android.feedme.model.data.IngredientsRepository
-import com.android.feedme.model.data.ProfileRepository
-import com.android.feedme.model.data.RecipeRepository
 import com.android.feedme.ui.component.IngredientList
-import com.google.firebase.firestore.FirebaseFirestore
 import io.mockk.every
 import io.mockk.mockk
+import io.mockk.mockkObject
+import io.mockk.unmockkAll
 import junit.framework.TestCase
+import org.junit.After
+import org.junit.Before
 import org.junit.Rule
 import org.junit.Test
 import org.junit.runner.RunWith
@@ -26,43 +27,35 @@ class IngredientListTest : TestCase() {
 
   @get:Rule val composeTestRule = createComposeRule()
 
-  @Test
-  fun testIngredientListTestEverythingDisplayed() {
-    val mockFirestore = mockk<FirebaseFirestore>(relaxed = true)
-    ProfileRepository.initialize(mockFirestore)
-    RecipeRepository.initialize(mockFirestore)
-    IngredientsRepository.initialize(mockFirestore)
-    composeTestRule.setContent { IngredientList() }
+  private val mockIngredientsRepository = mockk<IngredientsRepository>()
 
-    composeTestRule.onNodeWithTag("LazyList").assertIsDisplayed()
+  @Before
+  fun setup() {
+    unmockkAll()
+    mockkObject(IngredientsRepository)
+    mockkObject(IngredientsRepository.Companion)
 
-    composeTestRule.onNodeWithTag("IngredientsBox").assertIsDisplayed()
-    composeTestRule.onNodeWithTag("QuantityInput").assertIsDisplayed()
-    composeTestRule.onNodeWithTag("DoseBox").assertIsDisplayed()
-    composeTestRule.onNodeWithTag("DoseInput").assertIsDisplayed()
-  }
-
-  @Test
-  fun testIngredientDropDownMenuWorksAndHasClickableItem() {
-    val mockFirestore = mockk<FirebaseFirestore>(relaxed = true)
-    val mockIngredientsRepository = mockk<IngredientsRepository>()
-
-    ProfileRepository.initialize(mockFirestore)
-    RecipeRepository.initialize(mockFirestore)
     IngredientsRepository.initialize(mockIngredientsRepository)
 
     val ingredient = Ingredient("Sugar", "sugarId", false, false)
     val expectedIngredientsList = listOf(ingredient)
+
     every { mockIngredientsRepository.getFilteredIngredients(any(), any(), any()) } answers
         {
           val onSuccess: (List<Ingredient>) -> Unit = arg(1)
           onSuccess.invoke(expectedIngredientsList)
         }
-    every { mockIngredientsRepository.fetchIngredients(any(), any(), any()) } answers
-        {
-          val onSuccess: (List<Ingredient>) -> Unit = arg(1)
-          onSuccess.invoke(expectedIngredientsList)
-        }
+  }
+
+  @After
+  fun tearedDown() {
+    // Clear the mocks
+    unmockkAll()
+  }
+
+  @Test
+  fun testIngredientDropDownMenuWorksAndHasClickableItem() {
+
     composeTestRule.setContent { IngredientList() }
 
     composeTestRule.onNodeWithTag("LazyList").assertIsDisplayed()
@@ -72,7 +65,7 @@ class IngredientListTest : TestCase() {
         .onNodeWithTag("IngredientsInput")
         .assertIsDisplayed()
         .performClick()
-        .performTextInput("Test")
+        .performTextInput("T")
     composeTestRule.onNodeWithTag("AddOption").assertIsDisplayed().assertHasClickAction()
     composeTestRule
         .onNodeWithTag("IngredientOption")
@@ -85,5 +78,18 @@ class IngredientListTest : TestCase() {
         .assertHasClickAction()
         .performClick()
     composeTestRule.onNodeWithTag("DeleteIconButton").assertIsNotDisplayed()
+    unmockkAll()
+  }
+
+  @Test
+  fun testIngredientListTestEverythingDisplayed() {
+    composeTestRule.setContent { IngredientList() }
+
+    composeTestRule.onNodeWithTag("LazyList").assertIsDisplayed()
+
+    composeTestRule.onNodeWithTag("IngredientsBox").assertIsDisplayed()
+    composeTestRule.onNodeWithTag("QuantityInput").assertIsDisplayed()
+    composeTestRule.onNodeWithTag("DoseBox").assertIsDisplayed()
+    composeTestRule.onNodeWithTag("DoseInput").assertIsDisplayed()
   }
 }

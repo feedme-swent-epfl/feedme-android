@@ -14,14 +14,15 @@ import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.focus.FocusRequester
+import androidx.compose.ui.focus.focusRequester
+import androidx.compose.ui.focus.onFocusChanged
 import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.android.feedme.model.data.Step
 import com.android.feedme.model.viewmodel.RecipeStepViewModel
-import kotlinx.coroutines.flow.MutableStateFlow
-import kotlinx.coroutines.flow.debounce
 
 /**
  * This composable is used to display a list of steps in a recipe.
@@ -61,11 +62,9 @@ fun StepList(
             step = step,
             onStepChanged = { newStep ->
               recipeStepViewModel.updateStep(index, newStep)
-              Log.d("StepList", "Step changed: $newStep")
             },
             onDeleteStep = {
               recipeStepViewModel.deleteStep(step) // Pass index instead of step number or object
-              Log.d("StepList", "Step deleted: $it")
             })
       }
     }
@@ -87,21 +86,8 @@ fun StepInput(step: Step, onStepChanged: (Step) -> Unit, onDeleteStep: (Step) ->
   var descriptionError by remember { mutableStateOf(step.description.isBlank()) }
   var expanded by remember { mutableStateOf(descriptionError) }
 
-  val titleState = remember { MutableStateFlow(title) }
-  val descriptionState = remember { MutableStateFlow(description) }
-  val coroutineScope = rememberCoroutineScope()
-
-  LaunchedEffect(titleState) {
-    titleState.debounce(500).collect { newTitle ->
-      onStepChanged(Step(step.stepNumber, description, newTitle))
-    }
-  }
-
-  LaunchedEffect(descriptionState) {
-    descriptionState.debounce(500).collect { newDescription ->
-      onStepChanged(Step(step.stepNumber, newDescription, title))
-    }
-  }
+    val titleFocusRequester = remember { FocusRequester() }
+    val descriptionFocusRequester = remember { FocusRequester() }
 
   Column(modifier = Modifier.padding(horizontal = 20.dp, vertical = 8.dp).testTag("stepInput")) {
     Row(
@@ -114,13 +100,18 @@ fun StepInput(step: Step, onStepChanged: (Step) -> Unit, onDeleteStep: (Step) ->
               onValueChange = {
                 title = it
                 titleError = it.isBlank() // Validate title input
-                titleState.value = it
               },
               singleLine = true,
               isError = titleError,
               label = { Text("Title") },
               modifier =
                   Modifier.weight(1f)
+                      .focusRequester(titleFocusRequester)
+                      .onFocusChanged {
+                          if (!it.isFocused) {
+                              onStepChanged(Step(step.stepNumber, description, title))
+                          }
+                      }
                       .testTag("StepInputTitle") // Give the text field flexible space
               )
           IconButton(
@@ -152,12 +143,17 @@ fun StepInput(step: Step, onStepChanged: (Step) -> Unit, onDeleteStep: (Step) ->
           onValueChange = {
             description = it
             descriptionError = it.isBlank() // Validate description input
-            descriptionState.value = it
           },
           isError = descriptionError,
           label = { Text("Description") },
           modifier =
-              Modifier.fillMaxWidth().padding(horizontal = 8.dp).testTag("StepInputDescription"))
+              Modifier.fillMaxWidth().padding(horizontal = 8.dp)
+                  .focusRequester(descriptionFocusRequester)
+                  .onFocusChanged {
+                      if (!it.isFocused) {
+                          onStepChanged(Step(step.stepNumber, description, title))
+                      }
+                  }.testTag("StepInputDescription"))
     }
 
     if (expanded && descriptionError) {

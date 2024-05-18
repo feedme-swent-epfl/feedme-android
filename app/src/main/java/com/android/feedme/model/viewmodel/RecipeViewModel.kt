@@ -44,4 +44,25 @@ class RecipeViewModel : ViewModel() {
           })
     }
   }
+
+  /**
+   * A function that fetches the recipe given its ID
+   *
+   * @param id: the unique ID of the recipe we want to fetch
+   */
+  fun fetchRecipe(id: String) {
+    viewModelScope.launch {
+      repository.getRecipe(
+          id,
+          onSuccess = { recipe ->
+            if (recipe != null) {
+              _recipe.value = recipe
+            }
+          },
+          onFailure = {
+            // Handle failure
+            throw error("Recipe could not get fetched")
+          })
+    }
+  }
 }

@@ -20,8 +20,7 @@ class HomeViewModel : ViewModel() {
   init {
     FirebaseAuth.getInstance().uid?.let {
       fetchRecipe("lasagna1")
-      fetchRecipe("lasagna1")
-      fetchRecipe("lasagna1")
+      fetchRecipe("pasta1")
     }
   }
 

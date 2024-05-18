@@ -390,4 +390,78 @@ class ProfileRepository(private val db: FirebaseFirestore) {
       onFailure(e)
     }
   }
+
+  /**
+   * Function that updates a document in Firestore with the given field and value.
+   *
+   * @param userId The ID of the user to update the saved recipe for
+   * @param recipe The [Recipe] to add to the user's saved recipes
+   * @param onSuccess A callback function invoked on successful addition of the recipe
+   * @param onFailure A callback function invoked on failure to add the recipe, with an exception
+   */
+  fun addSavedRecipe(
+      userId: String,
+      recipe: String,
+      onSuccess: () -> Unit,
+      onFailure: (Exception) -> Unit
+  ) {
+    val userRef = db.collection("users").document(userId)
+    db.runTransaction { transaction ->
+          val snapshot = transaction.get(userRef)
+          val savedRecipes = snapshot["savedRecipes"] as? List<Recipe> ?: emptyList()
+          val updatedRecipes = savedRecipes + recipe
+          transaction.update(userRef, "savedRecipes", updatedRecipes)
+        }
+        .addOnSuccessListener { onSuccess() }
+        .addOnFailureListener { onFailure(it) }
+  }
+
+  /**
+   * Function that removes a saved recipe from a user's saved recipes in Firestore.
+   *
+   * @param userId The ID of the user to remove the saved recipe for
+   * @param recipe The [Recipe] to remove from the user's saved recipes
+   * @param onSuccess A callback function invoked on successful removal of the recipe
+   * @param onFailure A callback function invoked on failure to remove the recipe, with an exception
+   */
+  fun removeSavedRecipe(
+      userId: String,
+      recipe: String,
+      onSuccess: () -> Unit,
+      onFailure: (Exception) -> Unit
+  ) {
+    val userRef = db.collection("users").document(userId)
+    db.runTransaction { transaction ->
+          val snapshot = transaction.get(userRef)
+          val savedRecipes = snapshot["savedRecipes"] as? List<Recipe> ?: emptyList()
+          val updatedRecipes = savedRecipes.filter { it.recipeId != recipe }
+          transaction.update(userRef, "savedRecipes", updatedRecipes)
+        }
+        .addOnSuccessListener { onSuccess() }
+        .addOnFailureListener { onFailure(it) }
+  }
+
+  /**
+   * Function that checks if a saved recipe exists in a user's saved recipes in Firestore.
+   *
+   * @param userId The ID of the user to check the saved recipe for
+   * @param recipe The [Recipe] to check if it exists in the user's saved recipes
+   * @param onResult A callback function invoked with the result of the check
+   * @param onFailure A callback function invoked on failure to check the recipe, with an exception
+   */
+  fun savedRecipeExists(
+      userId: String,
+      recipe: String,
+      onResult: (Boolean) -> Unit,
+      onFailure: (Exception) -> Unit
+  ) {
+    val userRef = db.collection("users").document(userId)
+    userRef
+        .get()
+        .addOnSuccessListener { snapshot ->
+          val savedRecipes = snapshot["savedRecipes"] as? List<String> ?: emptyList()
+          onResult(savedRecipes.contains(recipe))
+        }
+        .addOnFailureListener { onFailure(it) }
+  }
 }

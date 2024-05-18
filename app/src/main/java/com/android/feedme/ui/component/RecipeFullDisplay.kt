@@ -26,6 +26,7 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -86,7 +87,11 @@ fun RecipeFullDisplay(
   val profile = profileViewModel.viewingUserProfile.collectAsState().value
   var showDialog by remember { mutableStateOf(false) }
 
-  val isSaved = remember { mutableStateOf(profileViewModel.savedRecipeExists(recipe ?: Recipe())) }
+  val isSaved = remember { mutableStateOf(false) }
+  // LaunchedEffect to trigger the Firestore check when the composable is first composed
+  LaunchedEffect(recipe) {
+    profileViewModel.savedRecipeExists(recipe!!.recipeId) { exists -> isSaved.value = exists }
+  }
   Scaffold(
       modifier = Modifier.fillMaxSize(),
       topBar = {
@@ -96,9 +101,9 @@ fun RecipeFullDisplay(
             rightIcon = if (isSaved.value) Icons.Filled.Bookmark else Icons.TwoTone.Bookmark,
             rightIconOnClickAction = {
               if (isSaved.value) {
-                profileViewModel.removeSavedRecipes(listOf(recipe ?: Recipe()))
+                profileViewModel.removeSavedRecipes(recipe?.recipeId ?: Recipe().recipeId)
               } else {
-                profileViewModel.addSavedRecipes(listOf(recipe ?: Recipe()))
+                profileViewModel.addSavedRecipes(recipe?.recipeId ?: Recipe().recipeId)
               }
               isSaved.value = !isSaved.value
             })

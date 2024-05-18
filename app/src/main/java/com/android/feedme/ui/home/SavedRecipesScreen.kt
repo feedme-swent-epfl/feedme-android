@@ -14,6 +14,7 @@ import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.sp
+import com.android.feedme.model.data.Recipe
 import com.android.feedme.model.viewmodel.ProfileViewModel
 import com.android.feedme.model.viewmodel.RecipeViewModel
 import com.android.feedme.model.viewmodel.SearchViewModel
@@ -52,10 +53,15 @@ fun SavedRecipesScreen(
         if (savedRecipes.isEmpty()) {
           EmptySavedScreen(padding)
         } else {
+          var recipes = listOf<Recipe>()
+          for (recipe in savedRecipes) {
+            recipeViewModel.fetchRecipe(recipe)
+            recipes += recipeViewModel.recipe.collectAsState().value ?: Recipe()
+          }
           RecipeDisplay(
               padding,
               navigationActions,
-              savedRecipes,
+              recipes,
               searchViewModel,
               recipeViewModel,
               profileViewModel)

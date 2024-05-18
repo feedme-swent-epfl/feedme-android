@@ -30,6 +30,7 @@ import androidx.compose.material3.IconButton
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -230,17 +231,23 @@ fun RecipeCard(
                     }
                 Spacer(modifier = Modifier.weight(1f))
                 // Save icon
-                val isSaved = remember {
-                  mutableStateOf(profileViewModel.savedRecipeExists(recipe))
+                val isSaved = remember { mutableStateOf(false) }
+
+                // LaunchedEffect to trigger the Firestore check when the composable is first
+                // composed
+                LaunchedEffect(recipe) {
+                  profileViewModel.savedRecipeExists(recipe.recipeId) { exists ->
+                    isSaved.value = exists
+                  }
                 }
 
                 IconButton(
                     onClick = {
                       if (isSaved.value) {
-                        profileViewModel.removeSavedRecipes(listOf(recipe))
+                        profileViewModel.removeSavedRecipes(recipe.recipeId)
                         isSaved.value = false // Update: now it reflects the change correctly
                       } else {
-                        profileViewModel.addSavedRecipes(listOf(recipe))
+                        profileViewModel.addSavedRecipes(recipe.recipeId)
                         isSaved.value = true // Update: now it reflects the change correctly
                       }
                     },

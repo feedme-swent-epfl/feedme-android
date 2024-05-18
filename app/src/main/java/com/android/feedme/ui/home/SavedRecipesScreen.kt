@@ -15,6 +15,7 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.sp
 import com.android.feedme.model.data.Recipe
+import com.android.feedme.model.viewmodel.HomeViewModel
 import com.android.feedme.model.viewmodel.ProfileViewModel
 import com.android.feedme.model.viewmodel.RecipeViewModel
 import com.android.feedme.model.viewmodel.SearchViewModel
@@ -39,7 +40,8 @@ fun SavedRecipesScreen(
     navigationActions: NavigationActions,
     profileViewModel: ProfileViewModel,
     searchViewModel: SearchViewModel,
-    recipeViewModel: RecipeViewModel
+    recipeViewModel: RecipeViewModel,
+    homeViewModel: HomeViewModel
 ) {
   Scaffold(
       modifier = Modifier.fillMaxSize().testTag("SavedScreen"),
@@ -49,13 +51,13 @@ fun SavedRecipesScreen(
       },
       content = { padding ->
         val savedRecipes =
-            profileViewModel.currentUserSavedRecipes.collectAsState(initial = listOf()).value
+            profileViewModel.currentUserSavedRecipes.collectAsState().value
         if (savedRecipes.isEmpty()) {
           EmptySavedScreen(padding)
         } else {
           val recipes = listOf<Recipe>().toMutableList()
           for (recipe in savedRecipes) {
-            recipeViewModel.fetchRecipe(recipe)
+            homeViewModel.fetchRecipe(recipe)
             recipes.add(recipeViewModel.recipe.value ?: Recipe())
           }
           RecipeDisplay(

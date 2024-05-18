@@ -1,6 +1,5 @@
 package com.android.feedme.ui.component
 
-import android.util.Log
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
@@ -60,9 +59,7 @@ fun StepList(
       itemsIndexed(steps, key = { _, step -> step.hashCode() }) { index, step ->
         StepInput(
             step = step,
-            onStepChanged = { newStep ->
-              recipeStepViewModel.updateStep(index, newStep)
-            },
+            onStepChanged = { newStep -> recipeStepViewModel.updateStep(index, newStep) },
             onDeleteStep = {
               recipeStepViewModel.deleteStep(step) // Pass index instead of step number or object
             })
@@ -86,8 +83,8 @@ fun StepInput(step: Step, onStepChanged: (Step) -> Unit, onDeleteStep: (Step) ->
   var descriptionError by remember { mutableStateOf(step.description.isBlank()) }
   var expanded by remember { mutableStateOf(descriptionError) }
 
-    val titleFocusRequester = remember { FocusRequester() }
-    val descriptionFocusRequester = remember { FocusRequester() }
+  val titleFocusRequester = remember { FocusRequester() }
+  val descriptionFocusRequester = remember { FocusRequester() }
 
   Column(modifier = Modifier.padding(horizontal = 20.dp, vertical = 8.dp).testTag("stepInput")) {
     Row(
@@ -108,9 +105,9 @@ fun StepInput(step: Step, onStepChanged: (Step) -> Unit, onDeleteStep: (Step) ->
                   Modifier.weight(1f)
                       .focusRequester(titleFocusRequester)
                       .onFocusChanged {
-                          if (!it.isFocused) {
-                              onStepChanged(Step(step.stepNumber, description, title))
-                          }
+                        if (!it.isFocused) {
+                          onStepChanged(Step(step.stepNumber, description, title))
+                        }
                       }
                       .testTag("StepInputTitle") // Give the text field flexible space
               )
@@ -147,13 +144,15 @@ fun StepInput(step: Step, onStepChanged: (Step) -> Unit, onDeleteStep: (Step) ->
           isError = descriptionError,
           label = { Text("Description") },
           modifier =
-              Modifier.fillMaxWidth().padding(horizontal = 8.dp)
+              Modifier.fillMaxWidth()
+                  .padding(horizontal = 8.dp)
                   .focusRequester(descriptionFocusRequester)
                   .onFocusChanged {
-                      if (!it.isFocused) {
-                          onStepChanged(Step(step.stepNumber, description, title))
-                      }
-                  }.testTag("StepInputDescription"))
+                    if (!it.isFocused) {
+                      onStepChanged(Step(step.stepNumber, description, title))
+                    }
+                  }
+                  .testTag("StepInputDescription"))
     }
 
     if (expanded && descriptionError) {

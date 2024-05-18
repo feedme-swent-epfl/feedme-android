@@ -1,6 +1,5 @@
 package com.android.feedme.model.viewmodel
 
-
 import android.Manifest
 import android.app.Activity
 import android.content.Context
@@ -28,12 +27,12 @@ import com.android.feedme.model.data.Ingredient
 import com.android.feedme.model.data.IngredientMetaData
 import com.android.feedme.model.data.IngredientsRepository
 import com.android.feedme.model.data.MeasureUnit
+import kotlin.coroutines.resume
+import kotlin.coroutines.suspendCoroutine
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.launch
-import kotlin.coroutines.resume
-import kotlin.coroutines.suspendCoroutine
 
 class CameraViewModel : ViewModel() {
 
@@ -222,7 +221,7 @@ class CameraViewModel : ViewModel() {
                           IngredientMetaData(
                               0.0,
                               MeasureUnit.NONE,
-                              Ingredient(productInfo.productName, "NO_ID", false,false)))
+                              Ingredient(productInfo.productName, "NO_ID", false, false)))
                       continuation.resume(productInfo.productName)
                     } else {
                       _errorToDisplay.value = ERROR_BARCODE_PRODUCT_NAME

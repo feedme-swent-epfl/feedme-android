@@ -14,6 +14,7 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Bookmark
 import androidx.compose.material.icons.outlined.Add
 import androidx.compose.material.icons.rounded.Star
 import androidx.compose.material.icons.twotone.Bookmark
@@ -84,14 +85,23 @@ fun RecipeFullDisplay(
   recipe?.let { profileViewModel.fetchProfile(it.userid) }
   val profile = profileViewModel.viewingUserProfile.collectAsState().value
   var showDialog by remember { mutableStateOf(false) }
+
+  val isSaved = remember { mutableStateOf(profileViewModel.savedRecipeExists(recipe ?: Recipe())) }
   Scaffold(
       modifier = Modifier.fillMaxSize(),
       topBar = {
         TopBarNavigation(
             title = recipe?.title ?: "Not Found",
             navAction = navigationActions,
-            rightIcon = Icons.TwoTone.Bookmark,
-            rightIconOnClickAction = { null /* TODO() Save recipe offline*/ })
+            rightIcon = if (isSaved.value) Icons.Filled.Bookmark else Icons.TwoTone.Bookmark,
+            rightIconOnClickAction = {
+              if (isSaved.value) {
+                profileViewModel.removeSavedRecipes(listOf(recipe ?: Recipe()))
+              } else {
+                profileViewModel.addSavedRecipes(listOf(recipe ?: Recipe()))
+              }
+              isSaved.value = !isSaved.value
+            })
       },
       bottomBar = {
         BottomNavigationMenu(route, navigationActions::navigateTo, TOP_LEVEL_DESTINATIONS)

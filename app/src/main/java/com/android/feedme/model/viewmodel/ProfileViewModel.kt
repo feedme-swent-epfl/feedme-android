@@ -421,7 +421,7 @@ class ProfileViewModel : ViewModel() {
   /**
    * Adds a saved recipe to the current user's saved recipes.
    *
-   * @param recipes The list of recipe IDs to add to the saved recipes.
+   * @param recipes The list of recipes to add to the saved recipes.
    */
   fun addSavedRecipes(recipes: List<Recipe>) {
     _currentUserSavedRecipes.value += recipes
@@ -430,11 +430,16 @@ class ProfileViewModel : ViewModel() {
   /**
    * Removes a saved recipe from the current user's saved recipes.
    *
-   * @param recipe The recipe ID to remove from the saved recipes.
+   * @param recipes The list of recipes to remove from the saved recipes.
    */
   fun removeSavedRecipes(recipes: List<Recipe>) {
     _currentUserSavedRecipes.value = _currentUserSavedRecipes.value.filter { it !in recipes }
   }
 
+  /**
+   * Checks if a recipe has already been saved by the current user.
+   *
+   * @param recipe The recipe to check.
+   */
   fun savedRecipeExists(recipe: Recipe): Boolean = _currentUserSavedRecipes.value.contains(recipe)
 }

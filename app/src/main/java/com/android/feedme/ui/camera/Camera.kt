@@ -7,6 +7,8 @@ import android.content.pm.PackageManager
 import android.graphics.Bitmap
 import android.graphics.Matrix
 import android.util.Log
+import androidx.activity.result.PickVisualMediaRequest
+import androidx.activity.result.contract.ActivityResultContracts
 import androidx.camera.core.ImageCapture
 import androidx.camera.core.ImageCaptureException
 import androidx.camera.core.ImageProxy
@@ -71,7 +73,6 @@ import com.android.feedme.ui.navigation.NavigationActions
 import com.android.feedme.ui.navigation.TopBarNavigation
 import com.android.feedme.ui.theme.BottomIconColorSelected
 import com.android.feedme.ui.theme.CameraButtonsBackground
-import kotlinx.coroutines.launch
 
 /**
  * A composable function representing the camera screen.
@@ -109,6 +110,7 @@ fun CameraScreen(navigationActions: NavigationActions, inputViewModel: InputView
   val cameraViewModel = viewModel<CameraViewModel>()
   val bitmaps by cameraViewModel.bitmaps.collectAsState()
   val photoSavedMessageVisible by cameraViewModel.photoSavedMessageVisible.collectAsState()
+  val pickImage = cameraViewModel.galleryLauncher()
 
   val listOfIngredientToInput = cameraViewModel.listOfIngredientToInput.collectAsState()
 
@@ -148,7 +150,10 @@ fun CameraScreen(navigationActions: NavigationActions, inputViewModel: InputView
                             .padding(10.dp)
                             .testTag("GalleryButton"),
                     // Open the local gallery when the gallery button is clicked
-                    onClick = { scope.launch { scaffoldState.bottomSheetState.expand() } }) {
+                    onClick = {
+                      pickImage.launch(
+                          PickVisualMediaRequest(ActivityResultContracts.PickVisualMedia.ImageOnly))
+                    }) {
                       Icon(imageVector = Icons.Default.Photo, contentDescription = "Open gallery")
                     }
 

@@ -53,7 +53,7 @@ fun SavedRecipesScreen(
         if (savedRecipes.isEmpty()) {
           EmptySavedScreen(padding)
         } else {
-          savedRecipes.forEach { homeViewModel.fetchSavedRecipe(it) }
+          homeViewModel.fetchSavedRecipes(savedRecipes)
           val recipes = homeViewModel.savedRecipes.collectAsState().value
           RecipeDisplay(
               padding,

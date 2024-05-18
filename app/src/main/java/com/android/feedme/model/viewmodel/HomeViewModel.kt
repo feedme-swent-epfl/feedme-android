@@ -52,21 +52,17 @@ class HomeViewModel : ViewModel() {
   /**
    * A function that fetches the recipe during Login
    *
-   * @param id: the unique ID of the recipe we want to fetch
+   * @param ids: the unique ID of the recipe we want to fetch
    */
-  fun fetchSavedRecipe(id: String) {
+  fun fetchSavedRecipes(ids: List<String>) {
 
     viewModelScope.launch {
-      recipeRepository.getRecipe(
-          id,
-          onSuccess = { recipe ->
-            if (recipe != null) {
-              _savedRecipes.value += recipe
-            }
-          },
+      recipeRepository.getRecipes(
+          ids,
+          onSuccess = { recipe -> _savedRecipes.value = recipe },
           onFailure = {
             // Handle failure
-            Log.d("fetchRecipe", "Failed fetch of $id")
+            Log.d("fetchRecipe", "Failed fetch of $ids")
           })
     }
   }

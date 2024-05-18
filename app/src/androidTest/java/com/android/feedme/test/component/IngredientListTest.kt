@@ -30,6 +30,7 @@ class IngredientListTest : TestCase() {
     composeTestRule.onNodeWithTag("QuantityInput").assertIsDisplayed()
     composeTestRule.onNodeWithTag("DoseBox").assertIsDisplayed()
     composeTestRule.onNodeWithTag("DoseInput").assertIsDisplayed()
+    composeTestRule.onNodeWithTag("IngredientDivider").assertIsDisplayed()
   }
 
   @Test

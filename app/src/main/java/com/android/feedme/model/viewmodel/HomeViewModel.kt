@@ -17,6 +17,9 @@ class HomeViewModel : ViewModel() {
   private val _recipes = MutableStateFlow<List<Recipe>>(emptyList())
   val recipes = _recipes.asStateFlow()
 
+  private val _savedRecipes = MutableStateFlow<List<Recipe>>(emptyList())
+  val savedRecipes = _savedRecipes.asStateFlow()
+
   init {
     FirebaseAuth.getInstance().uid?.let {
       fetchRecipe("lasagna1")
@@ -37,6 +40,28 @@ class HomeViewModel : ViewModel() {
           onSuccess = { recipe ->
             if (recipe != null) {
               _recipes.value += recipe
+            }
+          },
+          onFailure = {
+            // Handle failure
+            Log.d("fetchRecipe", "Failed fetch of $id")
+          })
+    }
+  }
+
+  /**
+   * A function that fetches the recipe during Login
+   *
+   * @param id: the unique ID of the recipe we want to fetch
+   */
+  fun fetchSavedRecipe(id: String) {
+
+    viewModelScope.launch {
+      recipeRepository.getRecipe(
+          id,
+          onSuccess = { recipe ->
+            if (recipe != null) {
+              _savedRecipes.value += recipe
             }
           },
           onFailure = {

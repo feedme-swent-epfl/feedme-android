@@ -14,7 +14,6 @@ import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.sp
-import com.android.feedme.model.data.Recipe
 import com.android.feedme.model.viewmodel.HomeViewModel
 import com.android.feedme.model.viewmodel.ProfileViewModel
 import com.android.feedme.model.viewmodel.RecipeViewModel
@@ -50,16 +49,12 @@ fun SavedRecipesScreen(
         BottomNavigationMenu(Route.SAVED, navigationActions::navigateTo, TOP_LEVEL_DESTINATIONS)
       },
       content = { padding ->
-        val savedRecipes =
-            profileViewModel.currentUserSavedRecipes.collectAsState().value
+        val savedRecipes = profileViewModel.currentUserSavedRecipes.collectAsState().value
         if (savedRecipes.isEmpty()) {
           EmptySavedScreen(padding)
         } else {
-          val recipes = listOf<Recipe>().toMutableList()
-          for (recipe in savedRecipes) {
-            homeViewModel.fetchRecipe(recipe)
-            recipes.add(homeViewModel.recipes.value?.last() ?: Recipe())
-          }
+          savedRecipes.forEach { homeViewModel.fetchSavedRecipe(it) }
+          val recipes = homeViewModel.savedRecipes.collectAsState().value
           RecipeDisplay(
               padding,
               navigationActions,

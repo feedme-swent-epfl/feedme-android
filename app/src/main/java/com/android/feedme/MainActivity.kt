@@ -101,7 +101,11 @@ class MainActivity : ComponentActivity() {
                   composable(Screen.SAVED) {
                     val recipeViewModel = viewModel<RecipeViewModel>()
                     SavedRecipesScreen(
-                        navigationActions, profileViewModel, searchViewModel, recipeViewModel, homeViewModel)
+                        navigationActions,
+                        profileViewModel,
+                        searchViewModel,
+                        recipeViewModel,
+                        homeViewModel)
                   }
                 }
 

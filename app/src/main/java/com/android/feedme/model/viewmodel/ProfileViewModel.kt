@@ -434,7 +434,7 @@ class ProfileViewModel : ViewModel() {
     repository.addSavedRecipe(
         currentUserId!!,
         recipe,
-        { _currentUserSavedRecipes.value = _currentUserSavedRecipes.value.plus(recipe) },
+        { _currentUserSavedRecipes.value += recipe },
         { throw error("Can't add recipe to the database") })
   }
 

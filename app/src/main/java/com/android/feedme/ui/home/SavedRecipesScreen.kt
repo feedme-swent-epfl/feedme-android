@@ -53,10 +53,10 @@ fun SavedRecipesScreen(
         if (savedRecipes.isEmpty()) {
           EmptySavedScreen(padding)
         } else {
-          var recipes = listOf<Recipe>()
+          val recipes = listOf<Recipe>().toMutableList()
           for (recipe in savedRecipes) {
             recipeViewModel.fetchRecipe(recipe)
-            recipes += recipeViewModel.recipe.collectAsState().value ?: Recipe()
+            recipes.add(recipeViewModel.recipe.value ?: Recipe())
           }
           RecipeDisplay(
               padding,

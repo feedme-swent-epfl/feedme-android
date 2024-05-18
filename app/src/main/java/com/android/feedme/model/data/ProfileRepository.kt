@@ -405,15 +405,20 @@ class ProfileRepository(private val db: FirebaseFirestore) {
       onSuccess: () -> Unit,
       onFailure: (Exception) -> Unit
   ) {
-    val userRef = db.collection("users").document(userId)
-    db.runTransaction { transaction ->
-          val snapshot = transaction.get(userRef)
-          val savedRecipes = snapshot["savedRecipes"] as? List<Recipe> ?: emptyList()
-          val updatedRecipes = savedRecipes + recipe
-          transaction.update(userRef, "savedRecipes", updatedRecipes)
-        }
-        .addOnSuccessListener { onSuccess() }
-        .addOnFailureListener { onFailure(it) }
+    handleFirestoreTransaction(
+        {
+          val userRef = db.collection(collectionPath).document(userId)
+          val currentUser =
+              this.get(userRef).toObject(Profile::class.java)
+                  ?: return@handleFirestoreTransaction null
+          val savedRecipes = currentUser.savedRecipes.toMutableList()
+          savedRecipes.add(recipe)
+          currentUser.savedRecipes = savedRecipes
+          update(userRef, "savedRecipes", savedRecipes)
+          set(userRef, currentUser)
+        },
+        onSuccess = { onSuccess() },
+        onFailure = { onFailure(it) })
   }
 
   /**
@@ -430,15 +435,19 @@ class ProfileRepository(private val db: FirebaseFirestore) {
       onSuccess: () -> Unit,
       onFailure: (Exception) -> Unit
   ) {
-    val userRef = db.collection("users").document(userId)
-    db.runTransaction { transaction ->
-          val snapshot = transaction.get(userRef)
-          val savedRecipes = snapshot["savedRecipes"] as? List<Recipe> ?: emptyList()
-          val updatedRecipes = savedRecipes.filter { it.recipeId != recipe }
-          transaction.update(userRef, "savedRecipes", updatedRecipes)
-        }
-        .addOnSuccessListener { onSuccess() }
-        .addOnFailureListener { onFailure(it) }
+    handleFirestoreTransaction(
+        {
+          val userRef = db.collection(collectionPath).document(userId)
+          val currentUser =
+              this.get(userRef).toObject(Profile::class.java)
+                  ?: return@handleFirestoreTransaction null
+          val savedRecipes = currentUser.savedRecipes.toMutableList().filter { it != recipe }
+          currentUser.savedRecipes = savedRecipes
+          update(userRef, "savedRecipes", savedRecipes)
+          set(userRef, currentUser)
+        },
+        onSuccess = { onSuccess() },
+        onFailure = { onFailure(it) })
   }
 
   /**
@@ -455,7 +464,7 @@ class ProfileRepository(private val db: FirebaseFirestore) {
       onResult: (Boolean) -> Unit,
       onFailure: (Exception) -> Unit
   ) {
-    val userRef = db.collection("users").document(userId)
+    val userRef = db.collection(collectionPath).document(userId)
     userRef
         .get()
         .addOnSuccessListener { snapshot ->

@@ -50,15 +50,11 @@ class RecipeViewModel : ViewModel() {
    *
    * @param id: the unique ID of the recipe we want to fetch
    */
-  fun fetchRecipe(id: String) {
+  fun fetchRecipe(recipeId: String) {
     viewModelScope.launch {
       repository.getRecipe(
-          id,
-          onSuccess = { recipe ->
-            if (recipe != null) {
-              _recipe.value = recipe
-            }
-          },
+          recipeId,
+          onSuccess = { recipe -> _recipe.value = recipe },
           onFailure = {
             // Handle failure
             throw error("Recipe could not get fetched")

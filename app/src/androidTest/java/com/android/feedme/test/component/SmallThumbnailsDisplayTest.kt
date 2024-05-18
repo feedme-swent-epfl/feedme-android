@@ -57,12 +57,7 @@ class SmallThumbnailsDisplayTest {
 
     composeTestRule.onNodeWithTag("RecipeSmallCard").assertIsDisplayed()
 
-    // Check whether the Image or the warning message is displayed
-    /*try {
-      composeTestRule.onNodeWithTag("Recipe Image").assertIsDisplayed()
-    } catch (e: AssertionError) {
-      composeTestRule.onNodeWithText("Fail Image Download")
-    }*/
+    composeTestRule.onNodeWithTag("Fail Image Download", useUnmergedTree = true).assertIsDisplayed()
 
     composeTestRule
         .onNodeWithContentDescription("Star Icon", useUnmergedTree = true)

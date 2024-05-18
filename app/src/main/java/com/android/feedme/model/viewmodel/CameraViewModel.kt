@@ -1,6 +1,7 @@
 package com.android.feedme.model.viewmodel
 
 import android.graphics.Bitmap
+import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.android.feedme.ml.analyzeTextForIngredients
@@ -10,13 +11,14 @@ import com.android.feedme.ml.textExtraction
 import com.android.feedme.ml.textProcessing
 import com.android.feedme.model.data.Ingredient
 import com.android.feedme.model.data.IngredientMetaData
+import com.android.feedme.model.data.IngredientsRepository
 import com.android.feedme.model.data.MeasureUnit
-import kotlin.coroutines.resume
-import kotlin.coroutines.suspendCoroutine
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.launch
+import kotlin.coroutines.resume
+import kotlin.coroutines.suspendCoroutine
 
 class CameraViewModel : ViewModel() {
 
@@ -179,27 +181,50 @@ class CameraViewModel : ViewModel() {
     }
   }
 
-  /**
-   * Updates the list of ingredients based on the provided [IngredientMetaData].
-   *
-   * @param ing The ingredient metadata to update the list with.
-   */
-  fun updateIngredientList(ing: IngredientMetaData) {
-    val existingIngredient =
-        _listOfIngredientToInput.value.find {
-          it.ingredient.name == ing.ingredient.name
-        } // Todo change to id later
+    /**
+     * Updates the list of ingredients based on the provided [IngredientMetaData].
+     *
+     * @param ing The ingredient metadata to update the list with.
+     */
+    fun updateIngredientList(ing: IngredientMetaData) {
+        if (ing.ingredient.id != "TEST_ID") {
+            IngredientsRepository.instance.getExactFilteredIngredients(
+                ing.ingredient.name,
+                { ingredients ->
+                    if (ingredients.isNotEmpty()) {
+                        ing.ingredient = ingredients[0]
+                    }
+                    updateIngredientInList(ing)
+                },
+                {
+                    Log.e("CameraViewModel","Request to Database failed ",it)
+                    updateIngredientInList(ing)
+                })
+        }
+        updateIngredientInList(ing)
 
-    if (existingIngredient != null) {
-      // If the ingredient exists, update its quantity
-      val updatedQuantity = existingIngredient.quantity + ing.quantity
-      val updatedIngredient = existingIngredient.copy(quantity = updatedQuantity)
-      _listOfIngredientToInput.value =
-          _listOfIngredientToInput.value.filterNot { it == existingIngredient }
-      _listOfIngredientToInput.value += updatedIngredient
-    } else {
-      // If the ingredient doesn't exist, add it to the list
-      _listOfIngredientToInput.value += ing
     }
-  }
+
+    /**
+     * Updates the ingredient in the list or adds it if it doesn't exist.
+     *
+     * @param ing The ingredient metadata to update or add to the list.
+     */
+    private fun updateIngredientInList(ing: IngredientMetaData) {
+        val existingIngredient = _listOfIngredientToInput.value.find {
+            it.ingredient.name == ing.ingredient.name
+        }
+
+        if (existingIngredient != null) {
+            // If the ingredient exists, update its quantity
+            val updatedQuantity = existingIngredient.quantity + ing.quantity
+            val updatedIngredient = existingIngredient.copy(quantity = updatedQuantity)
+            _listOfIngredientToInput.value =
+                _listOfIngredientToInput.value.filterNot { it == existingIngredient }
+            _listOfIngredientToInput.value += updatedIngredient
+        } else {
+            // If the ingredient doesn't exist, add it to the list
+            _listOfIngredientToInput.value += ing
+        }
+    }
 }

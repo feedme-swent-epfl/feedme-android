@@ -2,6 +2,7 @@ package com.android.feedme.model.data
 
 import android.util.Log
 import com.google.firebase.firestore.FirebaseFirestore
+import com.google.firebase.firestore.Query
 
 /**
  * A repository class for managing ingredient documents in Firebase Firestore.
@@ -124,45 +125,67 @@ class IngredientsRepository(private val db: FirebaseFirestore) {
           }
     }
   }
+    /**
+     * Fetches ingredients based on the provided Firestore query reference.
+     *
+     * @param queryRef The Firestore query reference.
+     * @param onSuccess Callback invoked with a list of Ingredient objects on success.
+     * @param onFailure Callback invoked on failure to retrieve ingredients, with an exception.
+     */
+    private fun fetchIngredients(
+        queryRef: Query,
+        onSuccess: (List<Ingredient>) -> Unit,
+        onFailure: (Exception) -> Unit
+    ) {
+        queryRef
+            .get()
+            .addOnSuccessListener { querySnapshot ->
+                val ingredients = querySnapshot.documents.mapNotNull { documentSnapshot ->
+                    documentSnapshot.toObject(Ingredient::class.java)
+                }
+                Log.e("IngredientsRepository", "Size of ingredients: ${ingredients.size}")
+                onSuccess(ingredients)
+            }
+            .addOnFailureListener { exception -> onFailure(exception) }
+    }
 
-  /**
-   * Fetches the 10 most similar ingredients to the given query.
-   *
-   * @param query The query string to search for in the ingredient names.
-   * @param onSuccess Callback invoked with a list of Ingredient objects on success.
-   * @param onFailure Callback invoked on failure to retrieve ingredients, with an exception.
-   */
-  fun getFilteredIngredients(
-      query: String,
-      onSuccess: (List<Ingredient>) -> Unit,
-      onFailure: (Exception) -> Unit
-  ) {
-    var queryRef =
-        db.collection(collectionPath)
+    /**
+     * Fetches the 5 most similar ingredients to the given query.
+     *
+     * @param query The query string to search for in the ingredient names.
+     * @param onSuccess Callback invoked with a list of Ingredient objects on success.
+     * @param onFailure Callback invoked on failure to retrieve ingredients, with an exception.
+     */
+    fun getFilteredIngredients(
+        query: String,
+        onSuccess: (List<Ingredient>) -> Unit ={},
+        onFailure: (Exception) -> Unit={}
+    ) {
+        val queryRef = db.collection(collectionPath)
             .whereGreaterThanOrEqualTo("name", query.trim())
             .whereLessThan("name", query.trim() + "\uf8ff")
             .limit(5) // Limit the number of documents fetched to 10
 
-    queryRef
-        .get()
-        .addOnSuccessListener { querySnapshot ->
-          val ingredients =
-              querySnapshot.documents.mapNotNull { documentSnapshot ->
-                val data = documentSnapshot.data
-                val name = data?.get("name") as? String?
-                val id = data?.get("id") as? String ?: "NO_ID"
-                val vegan = data?.get("vegan") as? Boolean ?: false
-                val vegetarian = data?.get("vegetarian") as? Boolean ?: false
+        fetchIngredients(queryRef, onSuccess, onFailure)
+    }
 
-                if (name != null) {
-                  Ingredient(name, id, vegan, vegetarian)
-                } else {
-                  null
-                }
-              }
-          Log.e(null, "Size of ingredients : ${ingredients.size}")
-          onSuccess(ingredients)
-        }
-        .addOnFailureListener { exception -> onFailure(exception) }
-  }
+    /**
+     * Fetches the ingredients that exactly match the given query.
+     *
+     * @param query The query string to search for in the ingredient names.
+     * @param onSuccess Callback invoked with a list of Ingredient objects on success that will contain 1 ingredient.
+     * @param onFailure Callback invoked on failure to retrieve ingredients, with an exception.
+     */
+    fun getExactFilteredIngredients(
+        query: String,
+        onSuccess: (List<Ingredient>) -> Unit = {},
+        onFailure: (Exception) -> Unit={}
+    ) {
+        val queryRef = db.collection(collectionPath)
+            .whereEqualTo("name", query.trim())
+            .limit(1)
+
+        fetchIngredients(queryRef, onSuccess, onFailure)
+    }
+
 }

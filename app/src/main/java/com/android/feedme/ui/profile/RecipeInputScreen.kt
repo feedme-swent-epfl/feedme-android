@@ -33,7 +33,9 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.android.feedme.R
 import com.android.feedme.model.viewmodel.InputViewModel
@@ -46,7 +48,8 @@ import com.android.feedme.ui.navigation.NavigationActions
 import com.android.feedme.ui.navigation.Route
 import com.android.feedme.ui.navigation.TOP_LEVEL_DESTINATIONS
 import com.android.feedme.ui.navigation.TopBarNavigation
-import com.android.feedme.ui.theme.FindRecipeIcons
+import com.android.feedme.ui.theme.FabColor
+import com.android.feedme.ui.theme.TextBarColor
 
 /**
  * A composable function that generates the recipe input screen.
@@ -75,8 +78,8 @@ fun RecipeInputScreen(
       floatingActionButton = {
         FloatingActionButton(
             modifier = Modifier.testTag("ValidateRecipeButton"),
-            containerColor = FindRecipeIcons,
-            contentColor = Color.White,
+            containerColor = FabColor,
+            contentColor = TextBarColor,
             onClick = {
               // TODO : redirect to create recipe screen
             }) {
@@ -150,7 +153,7 @@ fun TitleBox() {
   val mod = Modifier.fillMaxWidth().height(56.dp)
   Column(
       modifier =
-          Modifier.fillMaxWidth().padding(horizontal = 10.dp, vertical = 5.dp).height(120.dp)) {
+          Modifier.fillMaxWidth().padding(horizontal = 10.dp, vertical = 5.dp).height(150.dp)) {
         var title by remember { mutableStateOf("") }
         var description by remember { mutableStateOf("") }
 
@@ -159,6 +162,7 @@ fun TitleBox() {
             onValueChange = { title = it },
             singleLine = true,
             modifier = mod.testTag("RecipeTitleInput"),
+            textStyle = TextStyle(fontSize = 14.sp),
             label = {
               Text(text = "Title", modifier = Modifier.background(color = Color.Transparent))
             })
@@ -167,6 +171,7 @@ fun TitleBox() {
             value = description,
             onValueChange = { description = it },
             modifier = mod.testTag("RecipeDescriptionInput"),
+            textStyle = TextStyle(fontSize = 14.sp),
             label = {
               Text(
                   text = "Description (optional)",

@@ -143,7 +143,8 @@ fun SmallThumbnailsDisplay(
                           }
 
                       // Recipe Title
-                      Text(text = listRecipe[i].title, modifier = Modifier.testTag("Text Title"))
+                      Text(text = listRecipe[i].title,
+                          modifier = Modifier.padding(bottom = 10.dp).testTag("Text Title"))
                     }
               }
         }

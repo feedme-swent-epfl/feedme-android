@@ -130,7 +130,8 @@ class SavedRecipesTest : TestCase() {
 
   @Test
   fun mainComponentsNotEmptyAreDisplayed() {
-    profileViewModel.addSavedRecipes(listOf(recipe1, recipe2))
+    profileViewModel.addSavedRecipes(recipe1.recipeId)
+    profileViewModel.addSavedRecipes(recipe2.recipeId)
     ComposeScreen.onComposeScreen<SavedRecipesScreen>(composeTestRule) {
       composeTestRule.setContent {
         SavedRecipesScreen(navAction, profileViewModel, searchViewModel, recipeViewModel)

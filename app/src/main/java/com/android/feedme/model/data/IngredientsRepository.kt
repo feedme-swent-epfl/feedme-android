@@ -144,11 +144,11 @@ class IngredientsRepository(private val db: FirebaseFirestore) {
               querySnapshot.documents.mapNotNull { documentSnapshot ->
                 val data = documentSnapshot.data
                 val name = data?.get("name") as? String?
-                val id = data?.get("id") as? String
+                val id = documentSnapshot.id
                 val vegan = data?.get("vegan") as? Boolean ?: false
                 val vegetarian = data?.get("vegetarian") as? Boolean ?: false
 
-                if (name != null && id != null) {
+                if (name != null) {
                   Ingredient(name, id, vegan, vegetarian)
                 } else {
                   null

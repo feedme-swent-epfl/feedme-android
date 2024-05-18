@@ -20,6 +20,8 @@ import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.android.feedme.model.data.Step
 import com.android.feedme.model.viewmodel.RecipeStepViewModel
+import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.debounce
 
 /**
  * This composable is used to display a list of steps in a recipe.
@@ -85,6 +87,22 @@ fun StepInput(step: Step, onStepChanged: (Step) -> Unit, onDeleteStep: (Step) ->
   var descriptionError by remember { mutableStateOf(step.description.isBlank()) }
   var expanded by remember { mutableStateOf(descriptionError) }
 
+  val titleState = remember { MutableStateFlow(title) }
+  val descriptionState = remember { MutableStateFlow(description) }
+  val coroutineScope = rememberCoroutineScope()
+
+  LaunchedEffect(titleState) {
+    titleState.debounce(500).collect { newTitle ->
+      onStepChanged(Step(step.stepNumber, description, newTitle))
+    }
+  }
+
+  LaunchedEffect(descriptionState) {
+    descriptionState.debounce(500).collect { newDescription ->
+      onStepChanged(Step(step.stepNumber, newDescription, title))
+    }
+  }
+
   Column(modifier = Modifier.padding(horizontal = 20.dp, vertical = 8.dp).testTag("stepInput")) {
     Row(
         verticalAlignment = Alignment.CenterVertically,
@@ -96,7 +114,7 @@ fun StepInput(step: Step, onStepChanged: (Step) -> Unit, onDeleteStep: (Step) ->
               onValueChange = {
                 title = it
                 titleError = it.isBlank() // Validate title input
-                onStepChanged(Step(step.stepNumber, description, title))
+                titleState.value = it
               },
               singleLine = true,
               isError = titleError,
@@ -134,7 +152,7 @@ fun StepInput(step: Step, onStepChanged: (Step) -> Unit, onDeleteStep: (Step) ->
           onValueChange = {
             description = it
             descriptionError = it.isBlank() // Validate description input
-            onStepChanged(Step(step.stepNumber, description, title))
+            descriptionState.value = it
           },
           isError = descriptionError,
           label = { Text("Description") },

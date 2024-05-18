@@ -49,7 +49,8 @@ class SmallThumbnailsDisplayTest {
             steps = listOf(Step(1, "a", "Step1")),
             tags = listOf("Meat"),
             rating = 4.5,
-            userid = "PasDavid",)
+            userid = "PasDavid",
+        )
 
     composeTestRule.setContent { SmallThumbnailsDisplay(listOf(recipe1), navMock) }
     composeTestRule.waitForIdle()

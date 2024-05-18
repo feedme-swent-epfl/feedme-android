@@ -108,9 +108,8 @@ fun SmallThumbnailsDisplay(
                                         tint = YellowStarBlackOutline,
                                         modifier =
                                             Modifier.size(
-                                                26
-                                                    .dp) // Make this star slightly larger to show
-                                                         // as the
+                                                26.dp) // Make this star slightly larger to show
+                                        // as the
                                         // edge
                                         )
                                     // Smaller yellow star to act as the inner part
@@ -143,7 +142,8 @@ fun SmallThumbnailsDisplay(
                           }
 
                       // Recipe Title
-                      Text(text = listRecipe[i].title,
+                      Text(
+                          text = listRecipe[i].title,
                           modifier = Modifier.padding(bottom = 10.dp).testTag("Text Title"))
                     }
               }

@@ -28,7 +28,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.android.feedme.model.data.Profile
-import com.android.feedme.model.viewmodel.GalleryViewModel
+import com.android.feedme.model.viewmodel.CameraViewModel
 import com.android.feedme.model.viewmodel.ProfileViewModel
 import com.android.feedme.ui.navigation.BottomNavigationMenu
 import com.android.feedme.ui.navigation.NavigationActions
@@ -79,8 +79,8 @@ fun EditProfileContent(
 ) {
   val profile = profileViewModel.currentUserProfile.collectAsState().value ?: Profile()
 
-  val galleryViewModel = viewModel<GalleryViewModel>()
-  val pickImage = galleryViewModel.galleryLauncher(profileViewModel, 1)
+  val cameraViewModel = viewModel<CameraViewModel>()
+  val pickImage = cameraViewModel.galleryLauncher()
 
   var name by remember { mutableStateOf(profile.name) }
   var username by remember { mutableStateOf(profile.username) }

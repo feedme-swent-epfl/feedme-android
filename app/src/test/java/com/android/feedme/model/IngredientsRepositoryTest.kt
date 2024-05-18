@@ -11,6 +11,8 @@ import com.google.firebase.firestore.CollectionReference
 import com.google.firebase.firestore.DocumentReference
 import com.google.firebase.firestore.DocumentSnapshot
 import com.google.firebase.firestore.FirebaseFirestore
+import com.google.firebase.firestore.Query
+import com.google.firebase.firestore.QuerySnapshot
 import junit.framework.TestCase.assertEquals
 import junit.framework.TestCase.assertNotNull
 import junit.framework.TestCase.assertTrue
@@ -190,5 +192,42 @@ class IngredientsRepositoryTest {
     assertNotNull("Singleton instance should be initialized", IngredientsRepository.instance)
   }
 
+  @Test
+  fun getFilteredIngredients_Success() {
+    val query = "Sug"
+    val expectedIngredients =
+        listOf(
+            Ingredient("Sugar", "sugarId", false, false),
+            Ingredient("Sugary", "sugaryId", false, false))
 
+    val querySnapshot = mock(QuerySnapshot::class.java)
+    val documentSnapshots =
+        expectedIngredients.map { ingredient ->
+          val doc = mock(DocumentSnapshot::class.java)
+          `when`(doc.toObject(Ingredient::class.java)).thenReturn(ingredient)
+          doc
+        }
+    `when`(querySnapshot.documents).thenReturn(documentSnapshots)
+
+    val queryRef = mock(Query::class.java)
+    `when`(mockFirestore.collection("ingredients")).thenReturn(mockCollectionReference)
+    `when`(mockCollectionReference.whereGreaterThanOrEqualTo("name", query.trim()))
+        .thenReturn(queryRef)
+    `when`(queryRef.whereLessThan("name", query.trim() + "\uf8ff")).thenReturn(queryRef)
+    `when`(queryRef.limit(5)).thenReturn(queryRef)
+    `when`(queryRef.get()).thenReturn(Tasks.forResult(querySnapshot))
+
+    var ingredientsResult: List<Ingredient>? = null
+    ingredientsRepository.getFilteredIngredients(
+        query,
+        onSuccess = { ingredients -> ingredientsResult = ingredients },
+        onFailure = { fail("Failure callback was called") })
+
+    shadowOf(Looper.getMainLooper()).idle()
+
+    assertNotNull("Ingredients result should not be null", ingredientsResult)
+    assertEquals(
+        "Ingredients list size incorrect", expectedIngredients.size, ingredientsResult?.size)
+    assertEquals("Ingredients do not match", expectedIngredients, ingredientsResult)
+  }
 }

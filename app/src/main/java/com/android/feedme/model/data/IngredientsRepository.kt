@@ -30,6 +30,10 @@ class IngredientsRepository(val db: FirebaseFirestore) {
     fun initialize(db: FirebaseFirestore) {
       instance = IngredientsRepository(db)
     }
+
+    fun initialize(rp: IngredientsRepository) {
+      instance = rp
+    }
   }
 
   private val collectionPath = "ingredients"

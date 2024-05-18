@@ -186,7 +186,7 @@ fun IngredientInput(
             }
 
             DropdownMenuItem(
-                modifier = Modifier.background(Color.LightGray).testTag("IngredientOption"),
+                modifier = Modifier.background(Color.LightGray).testTag("AddOption"),
                 text = { Text(text = "Add Ingredient") },
                 onClick = {
                   // TODO check validty of addition with Chatgbt

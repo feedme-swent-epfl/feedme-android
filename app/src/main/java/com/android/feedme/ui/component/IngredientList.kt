@@ -145,9 +145,8 @@ fun IngredientInput(
               colors = colorOfInputBoxes(state),
               value = name,
               isError =
-                  (name == " " ||
-                      (ingredientCurrent.id == "NO_ID") ||
-                      (ingredientCurrent.id == "")) && state != IngredientInputState.EMPTY,
+                  (name == " " || ingredientCurrent.id == "NO_ID" ||
+                      ingredientCurrent.id == "") && state != IngredientInputState.EMPTY,
               onValueChange = {
                 name = it
                 isDropdownVisible = true
@@ -180,7 +179,7 @@ fun IngredientInput(
                       state =
                           if (isComplete) IngredientInputState.COMPLETE
                           else IngredientInputState.SEMI_COMPLETE
-                      action(beforeState, state, IngredientMetaData(quantity, dose, item))
+                      action(beforeState, state, IngredientMetaData(quantity, dose, ingredientCurrent))
                     }
                   })
             }

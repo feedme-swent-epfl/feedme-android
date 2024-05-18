@@ -58,7 +58,7 @@ fun SavedRecipesScreen(
           val recipes = listOf<Recipe>().toMutableList()
           for (recipe in savedRecipes) {
             homeViewModel.fetchRecipe(recipe)
-            recipes.add(recipeViewModel.recipe.value ?: Recipe())
+            recipes.add(homeViewModel.recipes.value?.last() ?: Recipe())
           }
           RecipeDisplay(
               padding,

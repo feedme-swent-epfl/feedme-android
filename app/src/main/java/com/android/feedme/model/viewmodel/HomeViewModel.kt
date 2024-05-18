@@ -59,7 +59,10 @@ class HomeViewModel : ViewModel() {
     viewModelScope.launch {
       recipeRepository.getRecipes(
           ids,
-          onSuccess = { recipe -> _savedRecipes.value = recipe },
+          onSuccess = { recipe ->
+            if (_savedRecipes.value.filter { it == recipe.get(0) }.isEmpty())
+                _savedRecipes.value += recipe
+          },
           onFailure = {
             // Handle failure
             Log.d("fetchRecipe", "Failed fetch of $ids")

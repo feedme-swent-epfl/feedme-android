@@ -91,7 +91,7 @@ fun TopBarNavigation(
                   contentAlignment = Alignment.CenterEnd) {
                     if (rightIcon != null) {
                       IconButton(
-                          onClick = { rightIconOnClickAction },
+                          onClick = { rightIconOnClickAction() },
                           modifier = Modifier.testTag("RightIconButton")) {
                             Icon(
                                 modifier = Modifier.testTag("RightIcon"),

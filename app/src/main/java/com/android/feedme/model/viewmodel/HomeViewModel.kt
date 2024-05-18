@@ -60,8 +60,7 @@ class HomeViewModel : ViewModel() {
       recipeRepository.getRecipes(
           ids,
           onSuccess = { recipe ->
-            if (_savedRecipes.value.filter { it == recipe.get(0) }.isEmpty())
-                _savedRecipes.value += recipe
+            if (!_savedRecipes.value.contains(recipe[0])) _savedRecipes.value += recipe
           },
           onFailure = {
             // Handle failure

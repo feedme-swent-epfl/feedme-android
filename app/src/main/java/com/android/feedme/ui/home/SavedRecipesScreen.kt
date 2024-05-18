@@ -64,14 +64,15 @@ fun SavedRecipesScreen(
                 items(recipes) { recipe ->
 
                   // Fetch the profile of the user who created the recipe
-                  profileViewModel.fetchProfile(recipe.userid)
-                  val profile = profileViewModel.viewingUserProfile.collectAsState().value
+                  // TODO: fix later - TO STAY COMMENTED FOR NOW
+                  // profileViewModel.fetchProfile(recipe.userid)
+                  // val profile = profileViewModel.viewingUserProfile.collectAsState().value
 
                   // Recipe card
                   RecipeCard(
                       Route.SAVED,
                       recipe,
-                      profile,
+                      null,
                       navigationActions,
                       recipeViewModel,
                       profileViewModel)

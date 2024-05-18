@@ -14,7 +14,11 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.shape.CircleShape
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Add
 import androidx.compose.material3.ButtonDefaults
+import androidx.compose.material3.FloatingActionButton
+import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedButton
 import androidx.compose.material3.Scaffold
@@ -53,6 +57,7 @@ import com.android.feedme.ui.navigation.Screen
 import com.android.feedme.ui.navigation.TOP_LEVEL_DESTINATIONS
 import com.android.feedme.ui.navigation.TopBarNavigation
 import com.android.feedme.ui.theme.DarkGrey
+import com.android.feedme.ui.theme.FabColor
 import com.android.feedme.ui.theme.FollowButton
 import com.android.feedme.ui.theme.FollowButtonBorder
 import com.android.feedme.ui.theme.FollowingButton
@@ -100,6 +105,16 @@ fun ProfileScreen(
               navigationActions.navigateTo(top)
             },
             TOP_LEVEL_DESTINATIONS)
+      },
+      // Floating Button to create a recipe
+      floatingActionButton = {
+        FloatingActionButton(
+            modifier = Modifier.testTag("AddRecipeButton"),
+            containerColor = FabColor,
+            contentColor = TextBarColor,
+            onClick = { navigationActions.navigateTo(Screen.ADD_RECIPE) }) {
+              Icon(imageVector = Icons.Default.Add, contentDescription = "Add recipe Icon")
+            }
       },
       content = { padding ->
         ProfileBox(

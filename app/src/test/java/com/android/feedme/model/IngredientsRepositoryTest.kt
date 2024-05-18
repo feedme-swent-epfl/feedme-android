@@ -11,6 +11,8 @@ import com.google.firebase.firestore.CollectionReference
 import com.google.firebase.firestore.DocumentReference
 import com.google.firebase.firestore.DocumentSnapshot
 import com.google.firebase.firestore.FirebaseFirestore
+import com.google.firebase.firestore.Query
+import com.google.firebase.firestore.QuerySnapshot
 import junit.framework.TestCase.assertEquals
 import junit.framework.TestCase.assertNotNull
 import junit.framework.TestCase.assertTrue
@@ -40,6 +42,9 @@ class IngredientsRepositoryTest {
   @Mock private lateinit var mockDocumentSnapshot: DocumentSnapshot
 
   private lateinit var ingredientsRepository: IngredientsRepository
+  @Mock private lateinit var mockQuery: Query
+
+  @Mock private lateinit var mockQuerySnapshot: QuerySnapshot
 
   @Before
   fun setUp() {
@@ -52,6 +57,15 @@ class IngredientsRepositoryTest {
     ingredientsRepository = IngredientsRepository(mockFirestore)
 
     `when`(mockFirestore.collection("ingredients")).thenReturn(mockCollectionReference)
+    `when`(mockCollectionReference.whereGreaterThanOrEqualTo(anyString(), anyString()))
+        .thenReturn(mockCollectionReference)
+    `when`(mockCollectionReference.whereLessThan(anyString(), anyString()))
+        .thenReturn(mockCollectionReference)
+    `when`(mockCollectionReference.whereEqualTo(anyString(), anyString()))
+        .thenReturn(mockCollectionReference)
+    `when`(mockCollectionReference.limit(5)).thenReturn(mockQuery)
+    `when`(mockCollectionReference.limit(1)).thenReturn(mockQuery)
+
     `when`(mockCollectionReference.document(anyString())).thenReturn(mockDocumentReference)
     `when`(mockCollectionReference.document()).thenReturn(mockDocumentReference)
     `when`(mockDocumentReference.id).thenReturn("TEST_ID")
@@ -189,45 +203,140 @@ class IngredientsRepositoryTest {
 
     assertNotNull("Singleton instance should be initialized", IngredientsRepository.instance)
   }
-  /*
-   @Test
-   fun getFilteredIngredients_Success() {
-     val query = "Sug"
-     val expectedIngredients =
-         listOf(
-             Ingredient("Sugar", "sugarId", false, false),
-             Ingredient("Sugary", "sugaryId", false, false))
 
-     val querySnapshot = mock(QuerySnapshot::class.java)
-     val documentSnapshots =
-         expectedIngredients.map { ingredient ->
-           val doc = mock(DocumentSnapshot::class.java)
-           `when`(doc.toObject(Ingredient::class.java)).thenReturn(ingredient)
-           doc
-         }
-     `when`(querySnapshot.documents).thenReturn(documentSnapshots)
+  @Test
+  fun fetchIngredients_Success() {
+    // Mocking successful query snapshot
+    `when`(mockQuery.get()).thenReturn(Tasks.forResult(mockQuerySnapshot))
+    `when`(mockQuerySnapshot.documents).thenReturn(listOf(mockDocumentSnapshot))
+    `when`(mockDocumentSnapshot.data)
+        .thenReturn(mapOf("name" to "Sugar", "vegan" to false, "vegetarian" to true))
+    `when`(mockDocumentSnapshot.id).thenReturn("sugarId")
 
-     val queryRef = mock(Query::class.java)
-     `when`(mockFirestore.collection("ingredients")).thenReturn(mockCollectionReference)
-     `when`(mockCollectionReference.whereGreaterThanOrEqualTo("name", query.trim()))
-         .thenReturn(queryRef)
-     `when`(queryRef.whereLessThan("name", query.trim() + "\uf8ff")).thenReturn(queryRef)
-     `when`(queryRef.limit(5)).thenReturn(queryRef)
-     `when`(queryRef.get()).thenReturn(Tasks.forResult(querySnapshot))
+    // Test fetchIngredients function
+    IngredientsRepository(mockFirestore)
+        .fetchIngredients(
+            mockQuery,
+            onSuccess = { ingredients ->
+              assertEquals(1, ingredients.size)
+              assertTrue(ingredients.first() == Ingredient("Sugar", "sugarId", false, true))
+            },
+            onFailure = { fail("Should not fail") })
+  }
 
-     var ingredientsResult: List<Ingredient>? = null
-     ingredientsRepository.getFilteredIngredients(
-         query,
-         onSuccess = { ingredients -> ingredientsResult = ingredients },
-         onFailure = { fail("Failure callback was called") })
+  @Test
+  fun fetchIngredients_Failure() {
+    // Mocking failure for query snapshot
+    val exception = Exception("Firestore operation failed")
+    `when`(mockQuery.get()).thenReturn(Tasks.forException(exception))
 
-     shadowOf(Looper.getMainLooper()).idle()
+    // Test fetchIngredients function failure
+    IngredientsRepository(mockFirestore)
+        .fetchIngredients(
+            mockQuery,
+            onSuccess = { fail("Should not succeed") },
+            onFailure = { assertEquals(exception, it) })
+  }
 
-     assertNotNull("Ingredients result should not be null", ingredientsResult)
-     assertEquals(
-         "Ingredients list size incorrect", expectedIngredients.size, ingredientsResult?.size)
-     assertEquals("Ingredients do not match", expectedIngredients, ingredientsResult)
-   }
+  @Test
+  fun getFilteredIngredients_Success() {
+    // Mocking successful query snapshot
+    `when`(mockQuery.get()).thenReturn(Tasks.forResult(mockQuerySnapshot))
+    `when`(mockQuerySnapshot.documents).thenReturn(listOf(mockDocumentSnapshot))
+    `when`(mockDocumentSnapshot.data)
+        .thenReturn(mapOf("name" to "Sugar", "vegan" to false, "vegetarian" to true))
+    `when`(mockDocumentSnapshot.id).thenReturn("sugarId")
 
-  */
+    // Test getFilteredIngredients function
+    IngredientsRepository(mockFirestore)
+        .getFilteredIngredients(
+            "Sugar",
+            onSuccess = { ingredients ->
+              assertEquals(1, ingredients.size)
+              assertTrue(ingredients.first() == Ingredient("Sugar", "sugarId", false, true))
+            },
+            onFailure = { fail("Should not fail") })
+  }
+
+  @Test
+  fun getFilteredIngredients_Failure() {
+    // Mocking failure for query snapshot
+    val exception = Exception("Firestore operation failed")
+    `when`(mockQuery.get()).thenReturn(Tasks.forException(exception))
+
+    // Test getFilteredIngredients function failure
+    IngredientsRepository(mockFirestore)
+        .getFilteredIngredients(
+            "Sugar",
+            onSuccess = { fail("Should not succeed") },
+            onFailure = { assertEquals(exception, it) })
+  }
+
+  @Test
+  fun getExactFilteredIngredients_Success() {
+    // Mocking successful query snapshot
+    `when`(mockQuery.get()).thenReturn(Tasks.forResult(mockQuerySnapshot))
+    `when`(mockQuerySnapshot.documents).thenReturn(listOf(mockDocumentSnapshot))
+    `when`(mockDocumentSnapshot.data)
+        .thenReturn(mapOf("name" to "Sugar", "vegan" to false, "vegetarian" to true))
+    `when`(mockDocumentSnapshot.id).thenReturn("sugarId")
+
+    // Test getExactFilteredIngredients function
+    IngredientsRepository(mockFirestore)
+        .getExactFilteredIngredients(
+            "Sugar",
+            onSuccess = { ingredients ->
+              assertEquals(1, ingredients.size)
+              assertTrue(ingredients.first() == Ingredient("Sugar", "sugarId", false, true))
+            },
+            onFailure = { fail("Should not fail") })
+  }
+
+  @Test
+  fun getExactFilteredIngredients_Failure() {
+    // Mocking failure for query snapshot
+    val exception = Exception("Firestore operation failed")
+    `when`(mockQuery.get()).thenReturn(Tasks.forException(exception))
+
+    // Test getExactFilteredIngredients function failure
+    IngredientsRepository(mockFirestore)
+        .getExactFilteredIngredients(
+            "Sugar",
+            onSuccess = { fail("Should not succeed") },
+            onFailure = { assertEquals(exception, it) })
+  }
+
+  @Test
+  fun documentSnapshotToIngredient_Success() {
+    // Mocking a document snapshot with valid data
+    val mockDocumentSnapshot = Mockito.mock(DocumentSnapshot::class.java)
+    `when`(mockDocumentSnapshot.data)
+        .thenReturn(mapOf("name" to "Sugar", "vegan" to false, "vegetarian" to true))
+    `when`(mockDocumentSnapshot.id).thenReturn("sugarId")
+
+    // Test documentSnapshotToIngredient function
+    val ingredient =
+        IngredientsRepository(mockFirestore).documentSnapshotToIngredient(mockDocumentSnapshot)
+    assertEquals(Ingredient("Sugar", "sugarId", false, true), ingredient)
+  }
+
+  @Test
+  fun documentSnapshotToIngredient_NullName() {
+    // Mocking a document snapshot with null name
+    val mockDocumentSnapshot = Mockito.mock(DocumentSnapshot::class.java)
+    `when`(mockDocumentSnapshot.data).thenReturn(mapOf("vegan" to false, "vegetarian" to true))
+    `when`(mockDocumentSnapshot.id).thenReturn("sugarId")
+
+    // Test documentSnapshotToIngredient function with null name
+    val ingredient =
+        IngredientsRepository(mockFirestore).documentSnapshotToIngredient(mockDocumentSnapshot)
+    assertEquals(null, ingredient)
+  }
+
+  @Test
+  fun initialize_Success() {
+    // Test initialize function
+    IngredientsRepository.initialize(mockFirestore)
+    assertEquals(mockFirestore, IngredientsRepository.instance.db)
+  }
 }

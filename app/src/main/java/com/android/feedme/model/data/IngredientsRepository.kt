@@ -1,6 +1,7 @@
 package com.android.feedme.model.data
 
 import android.util.Log
+import com.google.firebase.firestore.DocumentSnapshot
 import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.firestore.Query
 
@@ -13,7 +14,7 @@ import com.google.firebase.firestore.Query
  *
  * @property db The Firestore database instance used for ingredient operations.
  */
-class IngredientsRepository(private val db: FirebaseFirestore) {
+class IngredientsRepository(val db: FirebaseFirestore) {
 
   companion object {
     /** The singleton instance of IngredientsRepository. */
@@ -132,7 +133,7 @@ class IngredientsRepository(private val db: FirebaseFirestore) {
    * @param onSuccess Callback invoked with a list of Ingredient objects on success.
    * @param onFailure Callback invoked on failure to retrieve ingredients, with an exception.
    */
-  private fun fetchIngredients(
+  fun fetchIngredients(
       queryRef: Query,
       onSuccess: (List<Ingredient>) -> Unit,
       onFailure: (Exception) -> Unit
@@ -142,17 +143,7 @@ class IngredientsRepository(private val db: FirebaseFirestore) {
         .addOnSuccessListener { querySnapshot ->
           val ingredients =
               querySnapshot.documents.mapNotNull { documentSnapshot ->
-                val data = documentSnapshot.data
-                val name = data?.get("name") as? String?
-                val id = documentSnapshot.id
-                val vegan = data?.get("vegan") as? Boolean ?: false
-                val vegetarian = data?.get("vegetarian") as? Boolean ?: false
-
-                if (name != null) {
-                  Ingredient(name, id, vegan, vegetarian)
-                } else {
-                  null
-                }
+                documentSnapshotToIngredient(documentSnapshot)
               }
           Log.e("IngredientsRepository", "Size of ingredients: ${ingredients.size}")
           onSuccess(ingredients)
@@ -197,5 +188,25 @@ class IngredientsRepository(private val db: FirebaseFirestore) {
     val queryRef = db.collection(collectionPath).whereEqualTo("name", query.trim()).limit(1)
 
     fetchIngredients(queryRef, onSuccess, onFailure)
+  }
+
+  /**
+   * Converts a DocumentSnapshot to an Ingredient object.
+   *
+   * @param documentSnapshot The DocumentSnapshot to convert.
+   * @return An Ingredient object if conversion is successful, otherwise null.
+   */
+  fun documentSnapshotToIngredient(documentSnapshot: DocumentSnapshot): Ingredient? {
+    val data = documentSnapshot.data
+    val name = data?.get("name") as? String?
+    val id = documentSnapshot.id
+    val vegan = data?.get("vegan") as? Boolean ?: false
+    val vegetarian = data?.get("vegetarian") as? Boolean ?: false
+
+    return if (name != null) {
+      Ingredient(name, id, vegan, vegetarian)
+    } else {
+      null
+    }
   }
 }

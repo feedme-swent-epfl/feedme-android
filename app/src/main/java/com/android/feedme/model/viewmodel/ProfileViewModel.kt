@@ -108,6 +108,7 @@ class ProfileViewModel : ViewModel() {
                 _imageUrl.value = profile.imageUrl
                 fetchProfiles(profile.followers, _currentUserFollowers)
                 fetchProfiles(profile.following, _currentUserFollowing)
+                _currentUserSavedRecipes.value = profile.savedRecipes
               }
             },
             onFailure = {

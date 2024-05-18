@@ -12,6 +12,7 @@ import com.android.feedme.model.data.ProfileRepository
 import com.android.feedme.model.data.Recipe
 import com.android.feedme.model.data.RecipeRepository
 import com.android.feedme.model.data.Step
+import com.android.feedme.model.viewmodel.HomeViewModel
 import com.android.feedme.model.viewmodel.ProfileViewModel
 import com.android.feedme.model.viewmodel.RecipeViewModel
 import com.android.feedme.model.viewmodel.SearchViewModel
@@ -39,6 +40,7 @@ class SavedRecipesTest : TestCase() {
   private val navAction = mockk<NavigationActions>(relaxed = true)
   private val searchViewModel = mockk<SearchViewModel>(relaxed = true)
   private val recipeViewModel = mockk<RecipeViewModel>(relaxed = true)
+  private val homeViewModel = mockk<HomeViewModel>(relaxed = true)
   private val mockDocumentReference = mockk<DocumentReference>(relaxed = true)
   private val mockCollectionReference = mockk<CollectionReference>(relaxed = true)
   private var mockDocumentSnapshot = mockk<DocumentSnapshot>(relaxed = true)
@@ -120,7 +122,8 @@ class SavedRecipesTest : TestCase() {
   fun mainComponentsEmptyAreDisplayed() {
     ComposeScreen.onComposeScreen<SavedRecipesScreen>(composeTestRule) {
       composeTestRule.setContent {
-        SavedRecipesScreen(navAction, profileViewModel, searchViewModel, recipeViewModel)
+        SavedRecipesScreen(
+            navAction, profileViewModel, searchViewModel, recipeViewModel, homeViewModel)
       }
       composeTestRule.onNodeWithTag("SavedScreen").assertIsDisplayed()
       composeTestRule.onNodeWithTag("SavedScreenBox").assertIsDisplayed()
@@ -134,7 +137,8 @@ class SavedRecipesTest : TestCase() {
     profileViewModel.addSavedRecipes(recipe2.recipeId)
     ComposeScreen.onComposeScreen<SavedRecipesScreen>(composeTestRule) {
       composeTestRule.setContent {
-        SavedRecipesScreen(navAction, profileViewModel, searchViewModel, recipeViewModel)
+        SavedRecipesScreen(
+            navAction, profileViewModel, searchViewModel, recipeViewModel, homeViewModel)
       }
       composeTestRule.onNodeWithTag("SavedScreen").assertIsDisplayed()
     }

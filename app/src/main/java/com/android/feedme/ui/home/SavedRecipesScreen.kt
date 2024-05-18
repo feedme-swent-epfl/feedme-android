@@ -1,9 +1,12 @@
 package com.android.feedme.ui.home
 
+import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.items
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -13,6 +16,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
+import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.android.feedme.model.viewmodel.HomeViewModel
 import com.android.feedme.model.viewmodel.ProfileViewModel
@@ -23,6 +27,7 @@ import com.android.feedme.ui.navigation.NavigationActions
 import com.android.feedme.ui.navigation.Route
 import com.android.feedme.ui.navigation.TOP_LEVEL_DESTINATIONS
 import com.android.feedme.ui.navigation.TopBarNavigation
+import com.android.feedme.ui.theme.TextBarColor
 
 /**
  * Composable that displays the saved recipes screen. If the user has saved recipes, it displays the
@@ -55,13 +60,19 @@ fun SavedRecipesScreen(
         } else {
           homeViewModel.fetchSavedRecipes(savedRecipes)
           val recipes = homeViewModel.savedRecipes.collectAsState().value
-          RecipeDisplay(
-              padding,
-              navigationActions,
-              recipes,
-              searchViewModel,
-              recipeViewModel,
-              profileViewModel)
+          LazyColumn(
+              modifier =
+                  Modifier.testTag("RecipeList").padding(padding).background(TextBarColor)) {
+                items(recipes) { recipe ->
+
+                  // Fetch the profile of the user who created the recipe
+                  profileViewModel.fetchProfile(recipe.userid)
+                  val profile = profileViewModel.viewingUserProfile.collectAsState().value
+
+                  // Recipe card
+                  RecipeCard(recipe, profile, navigationActions, recipeViewModel, profileViewModel)
+                }
+              }
         }
       })
 }

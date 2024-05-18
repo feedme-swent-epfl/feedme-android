@@ -138,7 +138,13 @@ fun RecipeDisplay(
                 val profile = profileViewModel.viewingUserProfile.collectAsState().value
 
                 // Recipe card
-                RecipeCard(recipe, profile, navigationActions, recipeViewModel, profileViewModel)
+                RecipeCard(
+                    Route.HOME,
+                    recipe,
+                    profile,
+                    navigationActions,
+                    recipeViewModel,
+                    profileViewModel)
               }
             }
       }
@@ -155,6 +161,7 @@ fun RecipeDisplay(
  */
 @Composable
 fun RecipeCard(
+    route: String,
     recipe: Recipe,
     profile: Profile?,
     navigationActions: NavigationActions,
@@ -169,7 +176,7 @@ fun RecipeCard(
                     // Set the selected recipe in the view model and navigate to the
                     // recipe screen
                     recipeViewModel.selectRecipe(recipe)
-                    navigationActions.navigateTo("Recipe/${Route.HOME}")
+                    navigationActions.navigateTo("Recipe/${route}")
                   })
               .testTag("RecipeCard"),
       elevation = CardDefaults.elevatedCardElevation()) {

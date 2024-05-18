@@ -144,6 +144,7 @@ class MainActivity : ComponentActivity() {
                     val backScreen =
                         when (it) {
                           Route.HOME -> Screen.HOME
+                          Route.SAVED -> Screen.SAVED
                           Route.PROFILE -> Screen.PROFILE
                           else -> {
                             ""

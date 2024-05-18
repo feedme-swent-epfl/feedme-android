@@ -16,7 +16,6 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
-import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.android.feedme.model.viewmodel.HomeViewModel
 import com.android.feedme.model.viewmodel.ProfileViewModel
@@ -61,8 +60,7 @@ fun SavedRecipesScreen(
           homeViewModel.fetchSavedRecipes(savedRecipes)
           val recipes = homeViewModel.savedRecipes.collectAsState().value
           LazyColumn(
-              modifier =
-                  Modifier.testTag("RecipeList").padding(padding).background(TextBarColor)) {
+              modifier = Modifier.testTag("RecipeList").padding(padding).background(TextBarColor)) {
                 items(recipes) { recipe ->
 
                   // Fetch the profile of the user who created the recipe
@@ -70,7 +68,13 @@ fun SavedRecipesScreen(
                   val profile = profileViewModel.viewingUserProfile.collectAsState().value
 
                   // Recipe card
-                  RecipeCard(recipe, profile, navigationActions, recipeViewModel, profileViewModel)
+                  RecipeCard(
+                      Route.SAVED,
+                      recipe,
+                      profile,
+                      navigationActions,
+                      recipeViewModel,
+                      profileViewModel)
                 }
               }
         }

@@ -49,7 +49,7 @@ fun FindRecipeScreen(navigationActions: NavigationActions, inputViewModel: Input
 
   Scaffold(
       modifier = Modifier.testTag("FindRecipeScreen"),
-      topBar = { TopBarNavigation(title = "Find Recipe") },
+      topBar = { TopBarNavigation(title = "Generate Recipe") },
       floatingActionButton = {
         Column {
           FloatingActionButton(

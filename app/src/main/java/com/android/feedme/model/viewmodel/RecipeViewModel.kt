@@ -23,7 +23,7 @@ class RecipeViewModel : ViewModel() {
   private val _recipe = MutableStateFlow<Recipe?>(null)
   val recipe: StateFlow<Recipe?> = _recipe
   /** Keep track of whether an error message should be shown */
-  private val _errorMessageVisible = MutableStateFlow<Boolean>(false)
+  private val _errorMessageVisible = MutableStateFlow(false)
   val errorMessageVisible = _errorMessageVisible.asStateFlow()
 
   /**
@@ -38,7 +38,7 @@ class RecipeViewModel : ViewModel() {
   /**
    * A function that validates a recipe before uploading it to the database
    *
-   * @param recipe: the recipe to be displayed
+   * @params: the fields of the recipe to be uploaded
    */
   fun validateRecipe(
       title: String,

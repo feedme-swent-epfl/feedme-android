@@ -95,14 +95,17 @@ fun RecipeInputScreen(
             containerColor = FabColor,
             contentColor = TextBarColor,
             onClick = {
+              // We validate the fields of our Recipe object before uploading it
               if (recipeViewModel.validateRecipe(
                   title.value,
                   description.value,
                   inputViewModel.listOfIngredientMetadatas.value,
                   recipeStepViewModel.steps.value,
                   profileViewModel.currentUserId!!,
+                  // TODO : integrate it with photo picker
                   "")) {
                 recipeViewModel.setRecipe(recipeViewModel.recipe.value!!)
+                // TODO : we could display the recipe instead of going back to the profile
                 navigationActions.navigateTo(Route.PROFILE)
               }
             }) {
@@ -111,6 +114,7 @@ fun RecipeInputScreen(
       },
       content = { padding ->
         RecipeBox(padding, inputViewModel, recipeStepViewModel, title, description)
+        // Box containing our snack bar host to be displayed when the recipe is not correctly filled
         Box(
             contentAlignment = Alignment.BottomCenter,
             modifier = Modifier.padding(padding).fillMaxSize()) {
@@ -124,6 +128,7 @@ fun RecipeInputScreen(
                         contentColor = Color.White)
                   })
             }
+        // We display the error when the recipe is not correctly filled
         LaunchedEffect(Unit) {
           recipeViewModel.errorMessageVisible.collect {
             if (error)
@@ -202,15 +207,9 @@ fun TitleBox(titleState: MutableState<String>, descriptionState: MutableState<St
   Column(
       modifier =
           Modifier.fillMaxWidth().padding(horizontal = 10.dp, vertical = 5.dp).height(150.dp)) {
-        var title by remember { mutableStateOf("") }
-        var description by remember { mutableStateOf("") }
-
         OutlinedTextField(
-            value = title,
-            onValueChange = {
-              title = it
-              titleState.value = it
-            },
+            value = titleState.value,
+            onValueChange = { titleState.value = it },
             singleLine = true,
             modifier = mod.testTag("RecipeTitleInput"),
             textStyle = TextStyle(fontSize = 14.sp),
@@ -219,11 +218,8 @@ fun TitleBox(titleState: MutableState<String>, descriptionState: MutableState<St
             })
         Spacer(modifier = Modifier.height(10.dp))
         OutlinedTextField(
-            value = description,
-            onValueChange = {
-              description = it
-              descriptionState.value = it
-            },
+            value = descriptionState.value,
+            onValueChange = { descriptionState.value = it },
             modifier = mod.testTag("RecipeDescriptionInput"),
             textStyle = TextStyle(fontSize = 14.sp),
             label = {

@@ -116,4 +116,68 @@ class IngredientListTest : TestCase() {
     composeTestRule.onNodeWithTag("DoseInput").assertIsDisplayed()
     composeTestRule.onNodeWithText("tablespoon").assertIsDisplayed().assertHasClickAction()
   }
+
+  @Test
+  fun testIngredientDropDownMenuWorksAndAddIngredient_Success() {
+    val ingredient = Ingredient("Sugar", "sugarId", false, false)
+    val expectedIngredientsList = listOf(ingredient)
+
+    every { mockIngredientsRepository.getFilteredIngredients(any(), any(), any()) } answers
+        {
+          val onSuccess: (List<Ingredient>) -> Unit = arg(1)
+          onSuccess.invoke(expectedIngredientsList)
+        }
+    every { mockIngredientsRepository.addIngredient(any(), any(), any()) } answers
+        {
+          val onSuccess: (Ingredient) -> Unit = arg(1)
+          onSuccess.invoke(ingredient)
+        }
+    composeTestRule.setContent { IngredientList() }
+
+    composeTestRule.onNodeWithTag("LazyList").assertIsDisplayed()
+
+    composeTestRule.onNodeWithTag("IngredientsBox").assertIsDisplayed()
+    composeTestRule
+        .onNodeWithTag("IngredientsInput")
+        .assertIsDisplayed()
+        .performClick()
+        .performTextInput("DONT CHANGE")
+    composeTestRule.onNodeWithTag("AddOption").assertIsDisplayed().assertHasClickAction()
+
+    unmockkAll()
+  }
+
+  @Test
+  fun testIngredientDropDownMenuWorksAndDismiss() {
+    val ingredient = Ingredient("Sugar", "sugarId", false, false)
+    val expectedIngredientsList = listOf(ingredient)
+
+    every { mockIngredientsRepository.getFilteredIngredients(any(), any(), any()) } answers
+        {
+          val onSuccess: (List<Ingredient>) -> Unit = arg(1)
+          onSuccess.invoke(expectedIngredientsList)
+        }
+    every { mockIngredientsRepository.addIngredient(any(), any(), any()) } answers
+        {
+          val onSuccess: (Ingredient) -> Unit = arg(1)
+          onSuccess.invoke(ingredient)
+        }
+    composeTestRule.setContent { IngredientList() }
+
+    composeTestRule.onNodeWithTag("LazyList").assertIsDisplayed()
+
+    composeTestRule.onNodeWithTag("IngredientsBox").assertIsDisplayed()
+    composeTestRule
+        .onNodeWithTag("IngredientsInput")
+        .assertIsDisplayed()
+        .performClick()
+        .performTextInput("DONT CHANGE")
+    composeTestRule
+        .onNodeWithTag("QuantityInput")
+        .assertIsDisplayed()
+        .assertHasClickAction()
+        .performClick()
+
+    unmockkAll()
+  }
 }

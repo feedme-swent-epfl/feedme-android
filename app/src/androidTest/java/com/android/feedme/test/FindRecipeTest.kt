@@ -56,6 +56,13 @@ class FindRecipeTest : TestCase() {
           onFailure.invoke(Exception())
           onSuccess.invoke(expectedIngredientsList)
         }
+    every { mockIngredientsRepository.addIngredient(any(), any(), any()) } answers
+        {
+          val onSuccess: (Ingredient) -> Unit = arg(1)
+          val onFailure: (Exception) -> Unit = arg(2)
+          onFailure.invoke(Exception())
+          onSuccess.invoke(ingredient)
+        }
 
     composeTestRule.setContent { FindRecipeScreen(mockk<NavigationActions>(), InputViewModel()) }
     composeTestRule.waitForIdle()

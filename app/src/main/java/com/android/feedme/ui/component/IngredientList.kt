@@ -182,7 +182,7 @@ fun IngredientInput(
                         text = "Ingredient",
                         modifier = Modifier.background(color = Color.Transparent))
                   })
-              
+
               DropdownMenu(
                   modifier = Modifier.height(120.dp),
                   expanded = isDropdownVisible && name.isNotEmpty(),

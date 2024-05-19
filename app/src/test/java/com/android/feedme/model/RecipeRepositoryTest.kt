@@ -57,9 +57,10 @@ class RecipeRepositoryTest {
         .thenReturn(mockDocumentReference)
     `when`(mockDocumentReference.get()).thenReturn(Tasks.forResult(mockIngredientDocumentSnapshot))
 
-    `when`(mockFirestore.collection("recipes")).thenReturn(mock(CollectionReference::class.java))
-    `when`(mockFirestore.collection("recipes").document(anyString()))
-        .thenReturn(mockDocumentReference)
+    `when`(mockFirestore.collection("recipes")).thenReturn(mockCollectionReference)
+    `when`(mockCollectionReference.document()).thenReturn(mockDocumentReference)
+    `when`(mockDocumentReference.id).thenReturn("testRecipeId")
+    `when`(mockDocumentReference.set(any())).thenReturn(Tasks.forResult<Void>(null))
 
     // Here's the critical part: ensure a Task<Void> is returned
     `when`(mockDocumentReference.set(any())).thenReturn(Tasks.forResult(null))

@@ -4,6 +4,7 @@ import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
@@ -21,12 +22,17 @@ import androidx.compose.material3.FloatingActionButton
 import androidx.compose.material3.Icon
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Scaffold
+import androidx.compose.material3.Snackbar
+import androidx.compose.material3.SnackbarDuration
+import androidx.compose.material3.SnackbarHost
+import androidx.compose.material3.SnackbarHostState
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.getValue
+import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.MutableState
+import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
-import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -41,6 +47,7 @@ import com.android.feedme.R
 import com.android.feedme.model.viewmodel.InputViewModel
 import com.android.feedme.model.viewmodel.ProfileViewModel
 import com.android.feedme.model.viewmodel.RecipeStepViewModel
+import com.android.feedme.model.viewmodel.RecipeViewModel
 import com.android.feedme.ui.component.IngredientList
 import com.android.feedme.ui.component.StepList
 import com.android.feedme.ui.navigation.BottomNavigationMenu
@@ -60,13 +67,15 @@ import com.android.feedme.ui.theme.TextBarColor
  * @param profileViewModel: ProfileViewModel object to interact with profile data
  */
 @Composable
-fun RecipeInputScreen(
-    navigationActions: NavigationActions,
-    profileViewModel: ProfileViewModel
-    // TODO: Integrate ViewModel with UI
-) {
-  val inputViewModel: InputViewModel = viewModel()
+fun RecipeInputScreen(navigationActions: NavigationActions, profileViewModel: ProfileViewModel) {
   val recipeStepViewModel: RecipeStepViewModel = viewModel()
+  val inputViewModel: InputViewModel = viewModel()
+  val recipeViewModel: RecipeViewModel = viewModel()
+
+  val title = remember { mutableStateOf("") }
+  val description = remember { mutableStateOf("") }
+  val error = recipeViewModel.errorMessageVisible.collectAsState()
+  val snackBarHostStateError = remember { SnackbarHostState() }
 
   Scaffold(
       modifier = Modifier.fillMaxSize().testTag("RecipeInputScreen"),
@@ -81,12 +90,49 @@ fun RecipeInputScreen(
             containerColor = FabColor,
             contentColor = TextBarColor,
             onClick = {
-              // TODO : redirect to create recipe screen
+              // We validate the fields of our Recipe object before uploading it
+              if (recipeViewModel.validateRecipe(
+                  title.value,
+                  description.value,
+                  inputViewModel.listOfIngredientMetadatas.value,
+                  recipeStepViewModel.steps.value,
+                  profileViewModel.currentUserId!!,
+                  // TODO : integrate it with photo picker
+                  "")) {
+                recipeViewModel.setRecipe(recipeViewModel.recipe.value!!)
+                // TODO : we could display the recipe instead of going back to the profile
+                navigationActions.navigateTo(Route.PROFILE)
+              }
             }) {
               Icon(imageVector = Icons.Default.Check, contentDescription = "Validate Recipe Icon")
             }
       },
-      content = { padding -> RecipeBox(padding, inputViewModel, recipeStepViewModel) })
+      content = { padding ->
+        RecipeBox(padding, inputViewModel, recipeStepViewModel, title, description)
+        // Box containing our snack bar host to be displayed when the recipe is not correctly filled
+        Box(
+            contentAlignment = Alignment.BottomCenter,
+            modifier = Modifier.padding(padding).fillMaxSize()) {
+              SnackbarHost(
+                  hostState = snackBarHostStateError,
+                  snackbar = { snackbarData ->
+                    Snackbar(
+                        modifier = Modifier.testTag("Error Snack Bar"),
+                        snackbarData = snackbarData,
+                        containerColor = Color.Red.copy(alpha = 0.5f),
+                        contentColor = Color.White)
+                  })
+            }
+        // We display the error when the recipe is not correctly filled
+        LaunchedEffect(Unit) {
+          recipeViewModel.errorMessageVisible.collect {
+            if (error.value)
+                snackBarHostStateError.showSnackbar(
+                    message = "Error : Recipe not correctly filled in",
+                    duration = SnackbarDuration.Short)
+          }
+        }
+      })
 }
 
 /**
@@ -100,12 +146,14 @@ fun RecipeInputScreen(
 fun RecipeBox(
     paddingValues: PaddingValues,
     inputViewModel: InputViewModel,
-    recipeStepViewModel: RecipeStepViewModel
+    recipeStepViewModel: RecipeStepViewModel,
+    title: MutableState<String>,
+    description: MutableState<String>
 ) {
   Column(
       modifier = Modifier.padding(paddingValues).testTag("RecipeInputBox"),
       verticalArrangement = Arrangement.Top) {
-        RecipeInputTopContent()
+        RecipeInputTopContent(title, description)
         IngredientList(inputViewModel, Modifier.heightIn(max = 150.dp))
         StepList(recipeStepViewModel = recipeStepViewModel)
       }
@@ -113,18 +161,16 @@ fun RecipeBox(
 
 /** Box containing the recipe picture, title, and description input fields. */
 @Composable
-fun RecipeInputTopContent() {
-  Column(
-      modifier = Modifier.testTag("RecipeInputBox").heightIn(max = 150.dp),
-      verticalArrangement = Arrangement.Top) {
-        Row(
-            modifier = Modifier.fillMaxWidth().padding(vertical = 5.dp),
-            horizontalArrangement = Arrangement.Center,
-            verticalAlignment = Alignment.CenterVertically) {
-              RecipePicture()
-              TitleBox()
-            }
-      }
+fun RecipeInputTopContent(title: MutableState<String>, description: MutableState<String>) {
+  Column(modifier = Modifier.heightIn(max = 150.dp), verticalArrangement = Arrangement.Top) {
+    Row(
+        modifier = Modifier.fillMaxWidth().padding(vertical = 5.dp),
+        horizontalArrangement = Arrangement.Center,
+        verticalAlignment = Alignment.CenterVertically) {
+          RecipePicture()
+          TitleBox(title, description)
+        }
+  }
 }
 
 /** Composable function that displays the recipe picture. */
@@ -149,17 +195,14 @@ fun RecipePicture() {
 
 /** Box containing the title and description input fields. */
 @Composable
-fun TitleBox() {
+fun TitleBox(titleState: MutableState<String>, descriptionState: MutableState<String>) {
   val mod = Modifier.fillMaxWidth().height(56.dp)
   Column(
       modifier =
           Modifier.fillMaxWidth().padding(horizontal = 10.dp, vertical = 5.dp).height(150.dp)) {
-        var title by remember { mutableStateOf("") }
-        var description by remember { mutableStateOf("") }
-
         OutlinedTextField(
-            value = title,
-            onValueChange = { title = it },
+            value = titleState.value,
+            onValueChange = { titleState.value = it },
             singleLine = true,
             modifier = mod.testTag("RecipeTitleInput"),
             textStyle = TextStyle(fontSize = 14.sp),
@@ -168,8 +211,8 @@ fun TitleBox() {
             })
         Spacer(modifier = Modifier.height(10.dp))
         OutlinedTextField(
-            value = description,
-            onValueChange = { description = it },
+            value = descriptionState.value,
+            onValueChange = { descriptionState.value = it },
             modifier = mod.testTag("RecipeDescriptionInput"),
             textStyle = TextStyle(fontSize = 14.sp),
             label = {

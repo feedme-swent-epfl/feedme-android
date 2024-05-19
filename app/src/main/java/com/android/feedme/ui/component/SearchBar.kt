@@ -28,7 +28,6 @@ import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.text.font.FontStyle
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import androidx.lifecycle.viewmodel.compose.viewModel
 import com.android.feedme.model.viewmodel.SearchViewModel
 import com.android.feedme.ui.navigation.NavigationActions
 
@@ -59,14 +58,12 @@ fun SearchBarFun(route: String, navigationActions: NavigationActions, viewModel:
   }
 
   // Search bar + filters icon
-  // Row(modifier = Modifier.background(Color.Red), verticalAlignment = Alignment.CenterVertically)
-  // {
   SearchBar(
       modifier =
           Modifier.fillMaxWidth()
               .padding(10.dp)
-              .height(53.dp)
-              .clip(RoundedCornerShape(20.dp))
+              .height(if (active) 70.dp else 55.dp)
+              .clip(RoundedCornerShape(35.dp))
               .testTag("SearchBar"),
       query = query,
       active = active,

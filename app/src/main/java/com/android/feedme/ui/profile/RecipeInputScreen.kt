@@ -23,6 +23,7 @@ import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -41,6 +42,7 @@ import com.android.feedme.R
 import com.android.feedme.model.viewmodel.InputViewModel
 import com.android.feedme.model.viewmodel.ProfileViewModel
 import com.android.feedme.model.viewmodel.RecipeStepViewModel
+import com.android.feedme.model.viewmodel.RecipeViewModel
 import com.android.feedme.ui.component.IngredientList
 import com.android.feedme.ui.component.StepList
 import com.android.feedme.ui.navigation.BottomNavigationMenu
@@ -67,6 +69,9 @@ fun RecipeInputScreen(
 ) {
   val inputViewModel: InputViewModel = viewModel()
   val recipeStepViewModel: RecipeStepViewModel = viewModel()
+  val recipeViewModel: RecipeViewModel = viewModel()
+  var title = remember { mutableStateOf("") }
+  var description = remember { mutableStateOf("") }
 
   Scaffold(
       modifier = Modifier.fillMaxSize().testTag("RecipeInputScreen"),
@@ -81,12 +86,21 @@ fun RecipeInputScreen(
             containerColor = FabColor,
             contentColor = TextBarColor,
             onClick = {
-              // TODO : redirect to create recipe screen
+              if (recipeViewModel.validateRecipe(
+                  title.value,
+                  description.value,
+                  inputViewModel.listOfIngredientMetadatas.value,
+                  recipeStepViewModel.steps.value,
+                  profileViewModel.currentUserId!!,
+                  ""))
+                  recipeViewModel.setRecipe(recipeViewModel.recipe.value!!)
             }) {
               Icon(imageVector = Icons.Default.Check, contentDescription = "Validate Recipe Icon")
             }
       },
-      content = { padding -> RecipeBox(padding, inputViewModel, recipeStepViewModel) })
+      content = { padding ->
+        RecipeBox(padding, inputViewModel, recipeStepViewModel, title, description)
+      })
 }
 
 /**
@@ -100,12 +114,14 @@ fun RecipeInputScreen(
 fun RecipeBox(
     paddingValues: PaddingValues,
     inputViewModel: InputViewModel,
-    recipeStepViewModel: RecipeStepViewModel
+    recipeStepViewModel: RecipeStepViewModel,
+    title: MutableState<String>,
+    description: MutableState<String>
 ) {
   Column(
       modifier = Modifier.padding(paddingValues).testTag("RecipeInputBox"),
       verticalArrangement = Arrangement.Top) {
-        RecipeInputTopContent()
+        RecipeInputTopContent(title, description)
         IngredientList(inputViewModel, Modifier.heightIn(max = 150.dp))
         StepList(recipeStepViewModel = recipeStepViewModel)
       }
@@ -113,7 +129,7 @@ fun RecipeBox(
 
 /** Box containing the recipe picture, title, and description input fields. */
 @Composable
-fun RecipeInputTopContent() {
+fun RecipeInputTopContent(title: MutableState<String>, description: MutableState<String>) {
   Column(
       modifier = Modifier.testTag("RecipeInputBox").heightIn(max = 150.dp),
       verticalArrangement = Arrangement.Top) {
@@ -122,7 +138,7 @@ fun RecipeInputTopContent() {
             horizontalArrangement = Arrangement.Center,
             verticalAlignment = Alignment.CenterVertically) {
               RecipePicture()
-              TitleBox()
+              TitleBox(title, description)
             }
       }
 }
@@ -149,7 +165,7 @@ fun RecipePicture() {
 
 /** Box containing the title and description input fields. */
 @Composable
-fun TitleBox() {
+fun TitleBox(titleState: MutableState<String>, descriptionState: MutableState<String>) {
   val mod = Modifier.fillMaxWidth().height(56.dp)
   Column(
       modifier =
@@ -159,7 +175,10 @@ fun TitleBox() {
 
         OutlinedTextField(
             value = title,
-            onValueChange = { title = it },
+            onValueChange = {
+              title = it
+              titleState.value = it
+            },
             singleLine = true,
             modifier = mod.testTag("RecipeTitleInput"),
             textStyle = TextStyle(fontSize = 14.sp),
@@ -169,7 +188,10 @@ fun TitleBox() {
         Spacer(modifier = Modifier.height(10.dp))
         OutlinedTextField(
             value = description,
-            onValueChange = { description = it },
+            onValueChange = {
+              description = it
+              descriptionState.value = it
+            },
             modifier = mod.testTag("RecipeDescriptionInput"),
             textStyle = TextStyle(fontSize = 14.sp),
             label = {

@@ -2,8 +2,10 @@ package com.android.feedme.model.viewmodel
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.android.feedme.model.data.IngredientMetaData
 import com.android.feedme.model.data.Recipe
 import com.android.feedme.model.data.RecipeRepository
+import com.android.feedme.model.data.Step
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.launch
@@ -26,6 +28,36 @@ class RecipeViewModel : ViewModel() {
    */
   fun selectRecipe(recipe: Recipe) {
     _recipe.value = recipe
+  }
+
+  /**
+   * A function that validates a recipe before uploading it to the database
+   *
+   * @param recipe: the recipe to be displayed
+   */
+  fun validateRecipe(
+      title: String,
+      description: String,
+      ingredients: List<IngredientMetaData?>,
+      steps: List<Step>,
+      userid: String,
+      imageUrl: String
+  ): Boolean {
+    // TODO : is the check complete?
+    if (title.isEmpty() || ingredients.isEmpty() || steps.isEmpty() || userid.isEmpty())
+        return false
+    _recipe.value =
+        Recipe(
+            "",
+            title,
+            description ?: "",
+            ingredients.filterNotNull(),
+            steps,
+            emptyList(),
+            0.0,
+            userid,
+            imageUrl)
+    return true
   }
 
   /**

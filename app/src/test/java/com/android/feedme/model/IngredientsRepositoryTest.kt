@@ -214,14 +214,13 @@ class IngredientsRepositoryTest {
     `when`(mockDocumentSnapshot.id).thenReturn("sugarId")
 
     // Test fetchIngredients function
-    IngredientsRepository(mockFirestore)
-        .fetchIngredients(
-            mockQuery,
-            onSuccess = { ingredients ->
-              assertEquals(1, ingredients.size)
-              assertTrue(ingredients.first() == Ingredient("Sugar", "sugarId", false, true))
-            },
-            onFailure = { fail("Should not fail") })
+    ingredientsRepository.fetchIngredients(
+        mockQuery,
+        onSuccess = { ingredients ->
+          assertEquals(1, ingredients.size)
+          assertTrue(ingredients.first() == Ingredient("Sugar", "sugarId", false, true))
+        },
+        onFailure = { fail("Should not fail") })
   }
 
   @Test
@@ -231,11 +230,10 @@ class IngredientsRepositoryTest {
     `when`(mockQuery.get()).thenReturn(Tasks.forException(exception))
 
     // Test fetchIngredients function failure
-    IngredientsRepository(mockFirestore)
-        .fetchIngredients(
-            mockQuery,
-            onSuccess = { fail("Should not succeed") },
-            onFailure = { assertEquals(exception, it) })
+    ingredientsRepository.fetchIngredients(
+        mockQuery,
+        onSuccess = { fail("Should not succeed") },
+        onFailure = { assertEquals(exception, it) })
   }
 
   @Test
@@ -248,14 +246,13 @@ class IngredientsRepositoryTest {
     `when`(mockDocumentSnapshot.id).thenReturn("sugarId")
 
     // Test getFilteredIngredients function
-    IngredientsRepository(mockFirestore)
-        .getFilteredIngredients(
-            "Sugar",
-            onSuccess = { ingredients ->
-              assertEquals(1, ingredients.size)
-              assertTrue(ingredients.first() == Ingredient("Sugar", "sugarId", false, true))
-            },
-            onFailure = { fail("Should not fail") })
+    ingredientsRepository.getFilteredIngredients(
+        "Sugar",
+        onSuccess = { ingredients ->
+          assertEquals(1, ingredients.size)
+          assertTrue(ingredients.first() == Ingredient("Sugar", "sugarId", false, true))
+        },
+        onFailure = { fail("Should not fail") })
   }
 
   @Test
@@ -265,11 +262,10 @@ class IngredientsRepositoryTest {
     `when`(mockQuery.get()).thenReturn(Tasks.forException(exception))
 
     // Test getFilteredIngredients function failure
-    IngredientsRepository(mockFirestore)
-        .getFilteredIngredients(
-            "Sugar",
-            onSuccess = { fail("Should not succeed") },
-            onFailure = { assertEquals(exception, it) })
+    ingredientsRepository.getFilteredIngredients(
+        "Sugar",
+        onSuccess = { fail("Should not succeed") },
+        onFailure = { assertEquals(exception, it) })
   }
 
   @Test
@@ -282,14 +278,13 @@ class IngredientsRepositoryTest {
     `when`(mockDocumentSnapshot.id).thenReturn("sugarId")
 
     // Test getExactFilteredIngredients function
-    IngredientsRepository(mockFirestore)
-        .getExactFilteredIngredients(
-            "Sugar",
-            onSuccess = { ingredients ->
-              assertEquals(1, ingredients.size)
-              assertTrue(ingredients.first() == Ingredient("Sugar", "sugarId", false, true))
-            },
-            onFailure = { fail("Should not fail") })
+    ingredientsRepository.getExactFilteredIngredients(
+        "Sugar",
+        onSuccess = { ingredients ->
+          assertEquals(1, ingredients.size)
+          assertTrue(ingredients.first() == Ingredient("Sugar", "sugarId", false, true))
+        },
+        onFailure = { fail("Should not fail") })
   }
 
   @Test
@@ -299,11 +294,10 @@ class IngredientsRepositoryTest {
     `when`(mockQuery.get()).thenReturn(Tasks.forException(exception))
 
     // Test getExactFilteredIngredients function failure
-    IngredientsRepository(mockFirestore)
-        .getExactFilteredIngredients(
-            "Sugar",
-            onSuccess = { fail("Should not succeed") },
-            onFailure = { assertEquals(exception, it) })
+    ingredientsRepository.getExactFilteredIngredients(
+        "Sugar",
+        onSuccess = { fail("Should not succeed") },
+        onFailure = { assertEquals(exception, it) })
   }
 
   @Test
@@ -315,8 +309,7 @@ class IngredientsRepositoryTest {
     `when`(mockDocumentSnapshot.id).thenReturn("sugarId")
 
     // Test documentSnapshotToIngredient function
-    val ingredient =
-        IngredientsRepository(mockFirestore).documentSnapshotToIngredient(mockDocumentSnapshot)
+    val ingredient = ingredientsRepository.documentSnapshotToIngredient(mockDocumentSnapshot)
     assertEquals(Ingredient("Sugar", "sugarId", false, true), ingredient)
   }
 
@@ -328,8 +321,7 @@ class IngredientsRepositoryTest {
     `when`(mockDocumentSnapshot.id).thenReturn("sugarId")
 
     // Test documentSnapshotToIngredient function with null name
-    val ingredient =
-        IngredientsRepository(mockFirestore).documentSnapshotToIngredient(mockDocumentSnapshot)
+    val ingredient = ingredientsRepository.documentSnapshotToIngredient(mockDocumentSnapshot)
     assertEquals(null, ingredient)
   }
 

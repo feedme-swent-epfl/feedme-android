@@ -179,7 +179,7 @@ fun IngredientInput(
               },
               properties =
                   PopupProperties(
-                      focusable = false, dismissOnClickOutside = true, dismissOnBackPress = false),
+                      focusable = false, dismissOnClickOutside = true, dismissOnBackPress = true),
           ) {
             filteredIngredients.forEach { item ->
               DropdownMenuItem(

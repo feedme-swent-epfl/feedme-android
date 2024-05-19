@@ -21,17 +21,16 @@ class HomeViewModel : ViewModel() {
   val savedRecipes = _savedRecipes.asStateFlow()
 
   private val authListener =
-    FirebaseAuth.AuthStateListener {
-      FirebaseAuth.getInstance().uid?.let {
-        fetchRecipe("lasagna1")
-        fetchRecipe("pasta1")
+      FirebaseAuth.AuthStateListener {
+        FirebaseAuth.getInstance().uid?.let {
+          fetchRecipe("lasagna1")
+          fetchRecipe("pasta1")
+        }
       }
-    }
 
   init {
     // Listen to FirebaseAuth state changes
     FirebaseAuth.getInstance().addAuthStateListener(authListener)
-
   }
 
   /**

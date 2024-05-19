@@ -102,260 +102,237 @@ fun IngredientInput(
     action: (IngredientInputState?, IngredientInputState?, IngredientMetaData?) -> Unit
 ) {
 
-    var ingredientCurrent by remember {
-        mutableStateOf(ingredient?.ingredient ?: Ingredient(" ", "NO_ID", false, false))
+  var ingredientCurrent by remember {
+    mutableStateOf(ingredient?.ingredient ?: Ingredient(" ", "NO_ID", false, false))
+  }
+
+  var name by remember { mutableStateOf(ingredient?.ingredient?.name ?: " ") }
+  var quantity by remember { mutableDoubleStateOf(ingredient?.quantity ?: 0.0) }
+  var dose by remember { mutableStateOf(ingredient?.measure ?: MeasureUnit.EMPTY) }
+
+  val isComplete by remember {
+    derivedStateOf {
+      name.isNotBlank() &&
+          dose != MeasureUnit.EMPTY &&
+          quantity != 0.0 &&
+          (ingredientCurrent.id != "NO_ID") &&
+          (ingredientCurrent.id != "")
     }
+  }
 
-    var name by remember { mutableStateOf(ingredient?.ingredient?.name ?: " ") }
-    var quantity by remember { mutableDoubleStateOf(ingredient?.quantity ?: 0.0) }
-    var dose by remember { mutableStateOf(ingredient?.measure ?: MeasureUnit.EMPTY) }
+  var isChecked by remember { mutableStateOf(isComplete) }
 
-    val isComplete by remember {
-        derivedStateOf {
-            name.isNotBlank() && dose != MeasureUnit.EMPTY && quantity != 0.0 && (ingredientCurrent.id != "NO_ID") &&
-                    (ingredientCurrent.id != "")
-        }
+  var state by remember {
+    mutableStateOf(
+        if (isComplete) IngredientInputState.COMPLETE
+        else if (name.isNotBlank() || dose != MeasureUnit.EMPTY || quantity != 0.0)
+            IngredientInputState.SEMI_COMPLETE
+        else IngredientInputState.EMPTY)
+  }
+
+  var isDropdownVisible by remember { mutableStateOf(false) }
+
+  var filteredIngredients by remember { mutableStateOf(emptyList<Ingredient>()) }
+
+  LaunchedEffect(name) {
+    if (name != " ") {
+      ingredientsRepository.getFilteredIngredients(
+          name,
+          { filteredIngredients = it },
+          {
+            Log.e(
+                "IngredientList ",
+                "Error Filtered Ingredients: Failed to retrieve Ingredient because ",
+                it)
+          })
     }
+  }
 
-    var isChecked by remember { mutableStateOf(isComplete) }
-
-    var state by remember {
-        mutableStateOf(
-            if (isComplete) IngredientInputState.COMPLETE
-            else if (name.isNotBlank() || dose != MeasureUnit.EMPTY || quantity != 0.0)
-                IngredientInputState.SEMI_COMPLETE
-            else IngredientInputState.EMPTY
-        )
-    }
-
-    var isDropdownVisible by remember { mutableStateOf(false) }
-
-    var filteredIngredients by remember { mutableStateOf(emptyList<Ingredient>()) }
-
-    LaunchedEffect(name) {
-        if (name != " ") {
-            ingredientsRepository.getFilteredIngredients(
-                name,
-                { filteredIngredients = it },
-                {
-                    Log.e(
-                        "IngredientList ",
-                        "Error Filtered Ingredients: Failed to retrieve Ingredient because ",
-                        it
-                    )
-                })
-        }
-    }
-
-    if (isChecked) {
-        Row(
-            modifier =
+  if (isChecked) {
+    Row(
+        modifier =
             Modifier.fillMaxWidth()
                 .padding(horizontal = 20.dp, vertical = 8.dp)
                 .padding(start = 8.dp, top = 14.dp),
-            horizontalArrangement = Arrangement.SpaceBetween
-        ) {
-            Column {
-                Text(
-                    text = name,
-                    style =
+        horizontalArrangement = Arrangement.SpaceBetween) {
+          Column {
+            Text(
+                text = name,
+                style =
                     MaterialTheme.typography.bodyLarge.copy(
                         fontStyle = FontStyle.Italic,
                         fontSize = 18.sp,
-                        fontWeight = FontWeight.Bold
-                    ),
-                    modifier = Modifier.padding(bottom = 4.dp).testTag("IngredientName")
-                )
-                Text(
-                    text = "$quantity $dose",
-                    style =
+                        fontWeight = FontWeight.Bold),
+                modifier = Modifier.padding(bottom = 4.dp).testTag("IngredientName"))
+            Text(
+                text = "$quantity $dose",
+                style =
                     MaterialTheme.typography.bodyMedium.copy(
-                        fontStyle = FontStyle.Italic, fontSize = 16.sp, color = Color.Gray
-                    ),
-                    modifier = Modifier.testTag("Quantity&Dose")
-                )
-            }
-            Row(
-                horizontalArrangement = Arrangement.End,
-                verticalAlignment = Alignment.CenterVertically
-            ) {
+                        fontStyle = FontStyle.Italic, fontSize = 16.sp, color = Color.Gray),
+                modifier = Modifier.testTag("Quantity&Dose"))
+          }
+          Row(
+              horizontalArrangement = Arrangement.End,
+              verticalAlignment = Alignment.CenterVertically) {
                 IconButton(
                     modifier = Modifier.testTag("ModifyIconButton"),
                     onClick = { isChecked = false }) {
-                    Icon(
-                        imageVector = Icons.Outlined.ModeEdit,
-                        contentDescription = null,
-                        modifier = Modifier.size(28.dp)
-                    )
-                }
+                      Icon(
+                          imageVector = Icons.Outlined.ModeEdit,
+                          contentDescription = null,
+                          modifier = Modifier.size(28.dp))
+                    }
 
                 DeleteButton(state, quantity, dose, name, action)
-            }
+              }
         }
-    } else {
-        // Column for the input fields
-        Column(
-            modifier = Modifier.fillMaxWidth().padding(horizontal = 20.dp),
-            horizontalAlignment = Alignment.CenterHorizontally,
-            verticalArrangement = Arrangement.Top
-        ) {
-            // First row for the ingredient name
-            Row(modifier = Modifier.fillMaxWidth().padding(top = 8.dp)) {
-                // Ingredients Box
-                Box(modifier = Modifier.weight(1.5f).height(60.dp).testTag("IngredientsBox")) {
-                    OutlinedTextField(
-                        colors = colorOfInputBoxes(state),
-                        value = name,
-                        isError =
-                        (name == " " || ingredientCurrent.id == "NO_ID" || ingredientCurrent.id == "") &&
-                                state != IngredientInputState.EMPTY,
-                        onValueChange = {
-                            name = it
-                            isDropdownVisible = true
-                        },
-                        singleLine = true,
-                        modifier = Modifier.padding(end = 0.dp).testTag("IngredientsInput"),
-                        placeholder = { Text(text = "...") },
-                        label = {
-                            Text(
-                                text = "Ingredient",
-                                modifier = Modifier.background(color = Color.Transparent)
-                            )
-                        })
+  } else {
+    // Column for the input fields
+    Column(
+        modifier = Modifier.fillMaxWidth().padding(horizontal = 20.dp),
+        horizontalAlignment = Alignment.CenterHorizontally,
+        verticalArrangement = Arrangement.Top) {
+          // First row for the ingredient name
+          Row(modifier = Modifier.fillMaxWidth().padding(top = 8.dp)) {
+            // Ingredients Box
+            Box(modifier = Modifier.weight(1.5f).height(60.dp).testTag("IngredientsBox")) {
+              OutlinedTextField(
+                  colors = colorOfInputBoxes(state),
+                  value = name,
+                  isError =
+                      (name == " " ||
+                          ingredientCurrent.id == "NO_ID" ||
+                          ingredientCurrent.id == "") && state != IngredientInputState.EMPTY,
+                  onValueChange = {
+                    name = it
+                    isDropdownVisible = true
+                  },
+                  singleLine = true,
+                  modifier = Modifier.padding(end = 0.dp).testTag("IngredientsInput"),
+                  placeholder = { Text(text = "...") },
+                  label = {
+                    Text(
+                        text = "Ingredient",
+                        modifier = Modifier.background(color = Color.Transparent))
+                  })
 
-                    DropdownMenu(
-                        modifier = Modifier.height(120.dp),
-                        expanded = isDropdownVisible && name.isNotEmpty(),
-                        onDismissRequest = {
+              DropdownMenu(
+                  modifier = Modifier.height(120.dp),
+                  expanded = isDropdownVisible && name.isNotEmpty(),
+                  onDismissRequest = {
+                    isDropdownVisible = false
+                    val beforeState = state
+                    if (name != " ") {
+                      ingredientCurrent =
+                          if (filteredIngredients.isNotEmpty()) {
+                            filteredIngredients[0]
+                          } else {
+                            Ingredient(name, "NO_ID", false, false)
+                          }
+                      state =
+                          if (isComplete) IngredientInputState.COMPLETE
+                          else IngredientInputState.SEMI_COMPLETE
+                      action(
+                          beforeState, state, IngredientMetaData(quantity, dose, ingredientCurrent))
+                    }
+                  },
+                  properties =
+                      PopupProperties(
+                          focusable = false,
+                          dismissOnClickOutside = true,
+                          dismissOnBackPress = true),
+              ) {
+                filteredIngredients.forEach { item ->
+                  DropdownMenuItem(
+                      modifier = Modifier.testTag("IngredientOption"),
+                      text = { Text(text = item.name) },
+                      onClick = {
+                        name = item.name
+                        isDropdownVisible = false
+                        val beforeState = state
+                        if (name != " ") {
+                          ingredientCurrent = item
+                          state =
+                              if (isComplete) IngredientInputState.COMPLETE
+                              else IngredientInputState.SEMI_COMPLETE
+                          action(
+                              beforeState,
+                              state,
+                              IngredientMetaData(quantity, dose, ingredientCurrent))
+                        }
+                      })
+                }
+                DropdownMenuItem(
+                    modifier = Modifier.background(Color.LightGray).testTag("AddOption"),
+                    text = { Text(text = "Add Ingredient") },
+                    onClick = {
+                      // TODO check validty of addition with Chatgbt
+                      // TODO once the database is fix do pop up message to confirm addition to
+                      // database
+                      ingredientsRepository.addIngredient(
+                          Ingredient(name, "NO_ID", false, false),
+                          {
                             isDropdownVisible = false
                             val beforeState = state
-                            if (name != " ") {
-                                ingredientCurrent =
-                                    if (filteredIngredients.isNotEmpty()) {
-                                        filteredIngredients[0]
-                                    } else {
-                                        Ingredient(name, "NO_ID", false, false)
-                                    }
-                                state =
-                                    if (isComplete) IngredientInputState.COMPLETE
-                                    else IngredientInputState.SEMI_COMPLETE
-                                action(
-                                    beforeState,
-                                    state,
-                                    IngredientMetaData(quantity, dose, ingredientCurrent)
-                                )
-                            }
-                        },
-                        properties =
-                        PopupProperties(
-                            focusable = false,
-                            dismissOnClickOutside = true,
-                            dismissOnBackPress = true
-                        ),
-                    ) {
-                        filteredIngredients.forEach { item ->
-                            DropdownMenuItem(
-                                modifier = Modifier.testTag("IngredientOption"),
-                                text = { Text(text = item.name) },
-                                onClick = {
-                                    name = item.name
-                                    isDropdownVisible = false
-                                    val beforeState = state
-                                    if (name != " ") {
-                                        ingredientCurrent = item
-                                        state =
-                                            if (isComplete) IngredientInputState.COMPLETE
-                                            else IngredientInputState.SEMI_COMPLETE
-                                        action(
-                                            beforeState,
-                                            state,
-                                            IngredientMetaData(quantity, dose, ingredientCurrent)
-                                        )
-                                    }
-                                })
-                        }
-                        DropdownMenuItem(
-                            modifier = Modifier.background(Color.LightGray).testTag("AddOption"),
-                            text = { Text(text = "Add Ingredient") },
-                            onClick = {
-                                // TODO check validty of addition with Chatgbt
-                                // TODO once the database is fix do pop up message to confirm addition to database
-                                ingredientsRepository.addIngredient(
-                                    Ingredient(name, "NO_ID", false, false),
-                                    {
-                                        isDropdownVisible = false
-                                        val beforeState = state
-                                        ingredientCurrent = it
-                                        state =
-                                            if (isComplete) IngredientInputState.COMPLETE
-                                            else IngredientInputState.SEMI_COMPLETE
-                                        action(
-                                            beforeState,
-                                            state,
-                                            IngredientMetaData(quantity, dose, ingredientCurrent)
-                                        )
-                                    },
-                                    { Log.e("Fail to add Ingredient : ", " ", it) })
-                            })
-
-                    }
-                }
-                    // Checked button for validating the ingredient
-                    if (state == IngredientInputState.SEMI_COMPLETE ||
-                        state == IngredientInputState.COMPLETE
-                    ) {
-                        Spacer(modifier = Modifier.width(8.dp))
-                        IconButton(
-                            modifier = Modifier.padding(top = 4.dp).testTag("CheckIconButton"),
-                            onClick = {
-                                if (state == IngredientInputState.COMPLETE) {
-                                    isChecked = true
-                                }
-                            }) {
-                            Icon(
-                                imageVector = Icons.Outlined.Check,
-                                contentDescription = null,
-                                modifier = Modifier.size(28.dp)
-                            )
-                        }
-                    }
-
-
+                            ingredientCurrent = it
+                            state =
+                                if (isComplete) IngredientInputState.COMPLETE
+                                else IngredientInputState.SEMI_COMPLETE
+                            action(
+                                beforeState,
+                                state,
+                                IngredientMetaData(quantity, dose, ingredientCurrent))
+                          },
+                          { Log.e("Fail to add Ingredient : ", " ", it) })
+                    })
+              }
             }
+            // Checked button for validating the ingredient
+            if (state == IngredientInputState.SEMI_COMPLETE ||
+                state == IngredientInputState.COMPLETE) {
+              Spacer(modifier = Modifier.width(8.dp))
+              IconButton(
+                  modifier = Modifier.padding(top = 4.dp).testTag("CheckIconButton"),
+                  onClick = {
+                    if (state == IngredientInputState.COMPLETE) {
+                      isChecked = true
+                    }
+                  }) {
+                    Icon(
+                        imageVector = Icons.Outlined.Check,
+                        contentDescription = null,
+                        modifier = Modifier.size(28.dp))
+                  }
+            }
+          }
 
-            // Second row for the quantity and dose (and delete button)
-            Row(
-                modifier = Modifier.fillMaxWidth().padding(bottom = 8.dp),
-                verticalAlignment = Alignment.CenterVertically,
-                horizontalArrangement = Arrangement.Start
-            ) {
+          // Second row for the quantity and dose (and delete button)
+          Row(
+              modifier = Modifier.fillMaxWidth().padding(bottom = 8.dp),
+              verticalAlignment = Alignment.CenterVertically,
+              horizontalArrangement = Arrangement.Start) {
                 // Quantity
                 OutlinedTextField(
                     colors = colorOfInputBoxes(state),
                     isError = quantity == 0.0 && state != IngredientInputState.EMPTY,
                     value = if (quantity == 0.0) " " else quantity.toString(),
                     onValueChange = { // Check if the input is a valid number
-                        if (it.isNotEmpty() && it.toDoubleOrNull() != null && it.toDouble() >= 0.0) {
-                            quantity = it.toDouble()
-                            if (quantity != 0.0) {
-                                action(
-                                    state,
-                                    state,
-                                    IngredientMetaData(quantity, dose, ingredientCurrent)
-                                )
-                            }
+                      if (it.isNotEmpty() && it.toDoubleOrNull() != null && it.toDouble() >= 0.0) {
+                        quantity = it.toDouble()
+                        if (quantity != 0.0) {
+                          action(
+                              state, state, IngredientMetaData(quantity, dose, ingredientCurrent))
                         }
+                      }
                     },
                     singleLine = true,
                     modifier = Modifier.weight(1f).height(60.dp).testTag("QuantityInput"),
                     placeholder = { Text(text = "...") },
                     label = {
-                        Text(
-                            text = "Quantity",
-                            modifier = Modifier.background(color = Color.Transparent)
-                        )
+                      Text(
+                          text = "Quantity",
+                          modifier = Modifier.background(color = Color.Transparent))
                     })
-
 
                 Spacer(modifier = Modifier.width(8.dp))
 
@@ -365,47 +342,44 @@ fun IngredientInput(
                     modifier = Modifier.weight(1f).height(60.dp).testTag("DoseBox"),
                     expanded = expanded,
                     onExpandedChange = { expanded = !expanded }) {
-                    OutlinedTextField(
-                        colors = colorOfInputBoxes(state),
-                        isError = dose == MeasureUnit.EMPTY && state != IngredientInputState.EMPTY,
-                        readOnly = true,
-                        value = if (dose != MeasureUnit.EMPTY) dose.toString() else " ",
-                        onValueChange = {},
-                        label = { Text("Dose") },
-                        modifier = Modifier.menuAnchor().testTag("DoseInput")
-                    )
-                    ExposedDropdownMenu(
-                        modifier = Modifier.height(120.dp),
-                        expanded = expanded,
-                        onDismissRequest = { expanded = false }) {
-                        MeasureUnit.values().forEach { selectionOption ->
-                            DropdownMenuItem(
-                                text = { Text(text = selectionOption.toString()) },
-                                onClick = {
+                      OutlinedTextField(
+                          colors = colorOfInputBoxes(state),
+                          isError =
+                              dose == MeasureUnit.EMPTY && state != IngredientInputState.EMPTY,
+                          readOnly = true,
+                          value = if (dose != MeasureUnit.EMPTY) dose.toString() else " ",
+                          onValueChange = {},
+                          label = { Text("Dose") },
+                          modifier = Modifier.menuAnchor().testTag("DoseInput"))
+                      ExposedDropdownMenu(
+                          modifier = Modifier.height(120.dp),
+                          expanded = expanded,
+                          onDismissRequest = { expanded = false }) {
+                            MeasureUnit.values().forEach { selectionOption ->
+                              DropdownMenuItem(
+                                  text = { Text(text = selectionOption.toString()) },
+                                  onClick = {
                                     dose = selectionOption
                                     expanded = false
                                     if (dose != MeasureUnit.EMPTY) {
-                                        val beforeState = state
-                                        state =
-                                            if (isComplete) IngredientInputState.COMPLETE
-                                            else IngredientInputState.SEMI_COMPLETE
-                                        action(
-                                            beforeState,
-                                            state,
-                                            IngredientMetaData(quantity, dose, ingredientCurrent)
-                                        )
+                                      val beforeState = state
+                                      state =
+                                          if (isComplete) IngredientInputState.COMPLETE
+                                          else IngredientInputState.SEMI_COMPLETE
+                                      action(
+                                          beforeState,
+                                          state,
+                                          IngredientMetaData(quantity, dose, ingredientCurrent))
                                     }
-                                })
-                        }
+                                  })
+                            }
+                          }
                     }
-
-                }
                 DeleteButton(state, quantity, dose, name, action)
-
-            }
+              }
         }
-    }
-    HorizontalDivider(modifier = Modifier.padding(top = 4.dp).testTag("IngredientDivider"))
+  }
+  HorizontalDivider(modifier = Modifier.padding(top = 4.dp).testTag("IngredientDivider"))
 }
 
 /** Composable function for displaying a delete button. */
@@ -435,7 +409,6 @@ fun DeleteButton(
         }
   }
 }
-
 
 /**
  * Function to determine the colors of input boxes based on input state.

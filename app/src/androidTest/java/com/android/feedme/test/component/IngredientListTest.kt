@@ -133,14 +133,12 @@ class IngredientListTest : TestCase() {
 
   @Test
   fun completeIngredientsCanBeChecked() {
-    composeTestRule.setContent { IngredientList() }
-
     composeTestRule.onNodeWithTag("LazyList").assertIsDisplayed()
 
     composeTestRule.onNodeWithTag("IngredientsBox").assertIsDisplayed()
     composeTestRule.onNodeWithTag("IngredientsInput").assertIsDisplayed().performTextInput("Item 1")
 
-    composeTestRule.onNodeWithText("Item 1").performClick()
+    composeTestRule.onNodeWithText("Sugar").performClick()
 
     composeTestRule.onAllNodesWithTag("QuantityInput")[0].assertIsDisplayed().performTextInput("2")
     composeTestRule.onAllNodesWithTag("DoseInput")[0].assertIsDisplayed().performClick()

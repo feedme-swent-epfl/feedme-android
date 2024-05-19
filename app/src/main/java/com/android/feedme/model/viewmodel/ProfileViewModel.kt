@@ -426,7 +426,7 @@ class ProfileViewModel : ViewModel() {
   /**
    * Adds a saved recipe to the current user's saved recipes.
    *
-   * @param recipes The list of recipes to add to the saved recipes.
+   * @param recipe The recipe to add to the saved recipes.
    */
   fun addSavedRecipes(recipe: String) {
     if (currentUserId == null) {
@@ -442,7 +442,7 @@ class ProfileViewModel : ViewModel() {
   /**
    * Removes a saved recipe from the current user's saved recipes.
    *
-   * @param recipes The list of recipes to remove from the saved recipes.
+   * @param recipe The recipe to remove from the saved recipes.
    */
   fun removeSavedRecipes(recipe: String) {
     if (currentUserId == null) {
@@ -472,5 +472,14 @@ class ProfileViewModel : ViewModel() {
           onResult(false)
           throw error("Can't check if recipe exists in the database")
         })
+  }
+
+  /**
+   * A function that forces saved recipes to be shown for testing purposes
+   *
+   * @param recipeIds: a list of recipes to show
+   */
+  fun setUserSavedRecipes(recipeIds: List<String>) {
+    _currentUserSavedRecipes.value = recipeIds
   }
 }

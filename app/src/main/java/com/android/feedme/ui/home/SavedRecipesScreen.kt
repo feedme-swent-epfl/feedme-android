@@ -20,7 +20,6 @@ import androidx.compose.ui.unit.sp
 import com.android.feedme.model.viewmodel.HomeViewModel
 import com.android.feedme.model.viewmodel.ProfileViewModel
 import com.android.feedme.model.viewmodel.RecipeViewModel
-import com.android.feedme.model.viewmodel.SearchViewModel
 import com.android.feedme.ui.navigation.BottomNavigationMenu
 import com.android.feedme.ui.navigation.NavigationActions
 import com.android.feedme.ui.navigation.Route
@@ -35,14 +34,13 @@ import com.android.feedme.ui.theme.TextBarColor
  *
  * @param navigationActions Provides navigation actions for handling user interactions with the
  * @param profileViewModel The view model that provides the profile data.
- * @param searchViewModel The view model that provides the search data.
  * @param recipeViewModel The view model that provides the recipe data.
+ * @param homeViewModel The view model that provides the home data.
  */
 @Composable
 fun SavedRecipesScreen(
     navigationActions: NavigationActions,
     profileViewModel: ProfileViewModel,
-    searchViewModel: SearchViewModel,
     recipeViewModel: RecipeViewModel,
     homeViewModel: HomeViewModel
 ) {

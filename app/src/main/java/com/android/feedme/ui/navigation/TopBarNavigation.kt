@@ -6,6 +6,7 @@ import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.width
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
 import androidx.compose.material3.Icon
@@ -72,8 +73,9 @@ fun TopBarNavigation(
                     }
                   }
 
+              // Title
               Text(
-                  modifier = Modifier.testTag("TitleText"),
+                  modifier = Modifier.testTag("TitleText").width(250.dp),
                   text = title,
                   fontSize = 20.sp,
                   fontWeight = FontWeight.Bold,

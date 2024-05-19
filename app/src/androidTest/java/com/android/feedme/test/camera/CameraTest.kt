@@ -133,38 +133,37 @@ class CameraTest : TestCase() {
         performClick()
       }
 
-      //      composeTestRule.onNodeWithTag("Error Snack Bar").assertIsDisplayed()
-      //      composeTestRule
-      //          .onNodeWithTag("Error Snack Bar")
-      //          .onChild()
-      //          .assertTextEquals("ERROR : No photo to analyse, please take a picture.")
-      //      composeTestRule.waitForIdle()
+      composeTestRule.onNodeWithTag("Error Snack Bar").assertIsDisplayed()
+      composeTestRule
+          .onNodeWithTag("Error Snack Bar")
+          .onChild()
+          .assertTextEquals("ERROR : No photo to analyse, please take a picture.")
+      composeTestRule.waitForIdle()
 
-      //      composeTestRule.waitUntil(timeoutMillis = 15000) {
-      //        composeTestRule.onNodeWithTag("Error Snack Bar").isNotDisplayed()
-      //      }
+      composeTestRule.waitUntil(timeoutMillis = 25000) {
+        composeTestRule.onNodeWithTag("Error Snack Bar").isNotDisplayed()
+      }
 
       photoButton {
         assertIsDisplayed()
         performClick()
       }
 
-      //      // Wait until the "Photo saved" text appears on the UI.
-      //      composeTestRule.waitUntil(timeoutMillis = 15000) {
-      //        composeTestRule.onNodeWithText("Photo saved", useUnmergedTree = true).isDisplayed()
-      //      }
+      // Wait until the "Photo saved" text appears on the UI.
+      composeTestRule.waitUntil(timeoutMillis = 25000) {
+        composeTestRule.onNodeWithText("Photo saved", useUnmergedTree = true).isDisplayed()
+      }
 
       mlTextButton { performClick() }
 
-      //      composeTestRule.waitUntil(timeoutMillis = 15000) {
-      //        composeTestRule.onNodeWithTag("Error Snack Bar", useUnmergedTree =
-      // true).isDisplayed()
-      //      }
-      //
-      //      composeTestRule
-      //          .onNodeWithTag("Error Snack Bar")
-      //          .onChild()
-      //          .assertTextEquals("Failed to identify text, please try again.")
+      composeTestRule.waitUntil(timeoutMillis = 25000) {
+        composeTestRule.onNodeWithTag("Error Snack Bar", useUnmergedTree = true).isDisplayed()
+      }
+
+      composeTestRule
+          .onNodeWithTag("Error Snack Bar")
+          .onChild()
+          .assertTextEquals("Failed to identify text, please try again.")
     }
   }
 
@@ -186,7 +185,7 @@ class CameraTest : TestCase() {
           .assertTextEquals("ERROR : No photo to analyse, please take a picture.")
       composeTestRule.waitForIdle()
 
-      composeTestRule.waitUntil(timeoutMillis = 18000) {
+      composeTestRule.waitUntil(timeoutMillis = 25000) {
         composeTestRule.onNodeWithTag("Error Snack Bar").isNotDisplayed()
       }
 
@@ -196,13 +195,13 @@ class CameraTest : TestCase() {
       }
 
       // Wait until the "Photo saved" text appears on the UI.
-      composeTestRule.waitUntil(timeoutMillis = 18000) {
+      composeTestRule.waitUntil(timeoutMillis = 25000) {
         composeTestRule.onNodeWithText("Photo saved", useUnmergedTree = true).isDisplayed()
       }
       composeTestRule.waitForIdle()
       mlBarcodeButton { performClick() }
 
-      composeTestRule.waitUntil(timeoutMillis = 18000) {
+      composeTestRule.waitUntil(timeoutMillis = 25000) {
         composeTestRule.onNodeWithTag("Error Snack Bar", useUnmergedTree = true).isDisplayed()
       }
 

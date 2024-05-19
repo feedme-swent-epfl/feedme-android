@@ -44,7 +44,6 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import androidx.lifecycle.viewmodel.compose.viewModel
 import com.android.feedme.R
 import com.android.feedme.model.viewmodel.InputViewModel
 import com.android.feedme.model.viewmodel.ProfileViewModel
@@ -79,7 +78,7 @@ fun RecipeInputScreen(
 ) {
   val title = remember { mutableStateOf("") }
   val description = remember { mutableStateOf("") }
-  val error by recipeViewModel.errorMessageVisible.collectAsState()
+  val error = recipeViewModel.errorMessageVisible.collectAsState()
   val snackbarHostStateError = remember { SnackbarHostState() }
 
   Scaffold(
@@ -131,7 +130,7 @@ fun RecipeInputScreen(
         // We display the error when the recipe is not correctly filled
         LaunchedEffect(Unit) {
           recipeViewModel.errorMessageVisible.collect {
-            if (error)
+            if (error.value)
                 snackbarHostStateError.showSnackbar(
                     message = "Error : Recipe not correctly filled in",
                     duration = SnackbarDuration.Short)
@@ -167,17 +166,15 @@ fun RecipeBox(
 /** Box containing the recipe picture, title, and description input fields. */
 @Composable
 fun RecipeInputTopContent(title: MutableState<String>, description: MutableState<String>) {
-  Column(
-      modifier = Modifier.heightIn(max = 150.dp),
-      verticalArrangement = Arrangement.Top) {
-        Row(
-            modifier = Modifier.fillMaxWidth().padding(vertical = 5.dp),
-            horizontalArrangement = Arrangement.Center,
-            verticalAlignment = Alignment.CenterVertically) {
-              RecipePicture()
-              TitleBox(title, description)
-            }
-      }
+  Column(modifier = Modifier.heightIn(max = 150.dp), verticalArrangement = Arrangement.Top) {
+    Row(
+        modifier = Modifier.fillMaxWidth().padding(vertical = 5.dp),
+        horizontalArrangement = Arrangement.Center,
+        verticalAlignment = Alignment.CenterVertically) {
+          RecipePicture()
+          TitleBox(title, description)
+        }
+  }
 }
 
 /** Composable function that displays the recipe picture. */

@@ -87,7 +87,7 @@ class FullRecipeTest : TestCase() {
     every { mockFirestore.collection("recipes") } returns mockCollectionReference
     every { mockFirestore.collection("profiles") } returns mockCollectionReference
     every { mockCollectionReference.document(any()) } returns mockDocumentReference
-
+    every { mockDocumentReference.id } returns ""
     every { mockDocumentReference.get() } returns Tasks.forResult(mockDocumentSnapshot)
     every { mockDocumentSnapshot.toObject(Recipe::class.java) } returns recipe
     every { mockDocumentSnapshot.toObject(Profile::class.java) } returns
@@ -96,7 +96,7 @@ class FullRecipeTest : TestCase() {
     every { mockDocumentReference.set(any()) } returns Tasks.forResult(null)
 
     recipeViewModel = RecipeViewModel()
-    recipeViewModel.setRecipe(recipe)
+
     recipeViewModel.selectRecipe(recipe)
 
     profileViewModel = ProfileViewModel()

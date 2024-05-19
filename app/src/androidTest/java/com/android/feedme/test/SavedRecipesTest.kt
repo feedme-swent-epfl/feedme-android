@@ -66,7 +66,7 @@ class SavedRecipesTest : TestCase() {
                   IngredientMetaData(
                       quantity = 2.0,
                       measure = MeasureUnit.ML,
-                      ingredient = Ingredient("Tomato", "Vegetables", "tomatoID"))),
+                      ingredient = Ingredient("Tomato", "Vegetables", true, true))),
           steps =
               listOf(
                   Step(
@@ -92,7 +92,7 @@ class SavedRecipesTest : TestCase() {
                   IngredientMetaData(
                       quantity = 2.0,
                       measure = MeasureUnit.ML,
-                      ingredient = Ingredient("Pasta", "Vegetable", "pastaID"))),
+                      ingredient = Ingredient("Pasta", "Vegetable", true, true))),
           steps =
               listOf(
                   Step(

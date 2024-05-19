@@ -6,8 +6,10 @@ import com.android.feedme.model.data.IngredientMetaData
 import com.android.feedme.model.data.Recipe
 import com.android.feedme.model.data.RecipeRepository
 import com.android.feedme.model.data.Step
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.launch
 
 /**
@@ -20,6 +22,9 @@ class RecipeViewModel : ViewModel() {
   private val repository = RecipeRepository.instance
   private val _recipe = MutableStateFlow<Recipe?>(null)
   val recipe: StateFlow<Recipe?> = _recipe
+  /** Keep track of whether an error message should be shown */
+  private val _errorMessageVisible = MutableStateFlow<Boolean>(false)
+  val errorMessageVisible = _errorMessageVisible.asStateFlow()
 
   /**
    * A function that selects a recipe to be displayed
@@ -43,14 +48,20 @@ class RecipeViewModel : ViewModel() {
       userid: String,
       imageUrl: String
   ): Boolean {
-    // TODO : is the check complete?
-    if (title.isEmpty() || ingredients.isEmpty() || steps.isEmpty() || userid.isEmpty())
-        return false
+    if (title.isEmpty() || ingredients.isEmpty() || steps.isEmpty() || userid.isEmpty()) {
+      _errorMessageVisible.value = true
+      // Launch a coroutine to hide the message after 3 seconds (3000 milliseconds)
+      viewModelScope.launch {
+        delay(3000)
+        _errorMessageVisible.value = false
+      }
+      return false
+    }
     _recipe.value =
         Recipe(
-            "",
+            "testId",
             title,
-            description ?: "",
+            description,
             ingredients.filterNotNull(),
             steps,
             emptyList(),
@@ -67,7 +78,7 @@ class RecipeViewModel : ViewModel() {
    */
   fun setRecipe(recipe: Recipe) {
     viewModelScope.launch {
-      repository.addRecipe(
+      repository.addRecipeTest(
           recipe,
           onSuccess = { _recipe.value = recipe },
           onFailure = {

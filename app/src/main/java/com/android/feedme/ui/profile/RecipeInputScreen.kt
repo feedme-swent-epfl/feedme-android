@@ -4,6 +4,7 @@ import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
@@ -21,9 +22,15 @@ import androidx.compose.material3.FloatingActionButton
 import androidx.compose.material3.Icon
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Scaffold
+import androidx.compose.material3.Snackbar
+import androidx.compose.material3.SnackbarDuration
+import androidx.compose.material3.SnackbarHost
+import androidx.compose.material3.SnackbarHostState
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.MutableState
+import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -70,8 +77,10 @@ fun RecipeInputScreen(
   val inputViewModel: InputViewModel = viewModel()
   val recipeStepViewModel: RecipeStepViewModel = viewModel()
   val recipeViewModel: RecipeViewModel = viewModel()
-  var title = remember { mutableStateOf("") }
-  var description = remember { mutableStateOf("") }
+  val title = remember { mutableStateOf("") }
+  val description = remember { mutableStateOf("") }
+  val error by recipeViewModel.errorMessageVisible.collectAsState()
+  val snackbarHostStateError = remember { SnackbarHostState() }
 
   Scaffold(
       modifier = Modifier.fillMaxSize().testTag("RecipeInputScreen"),
@@ -92,14 +101,36 @@ fun RecipeInputScreen(
                   inputViewModel.listOfIngredientMetadatas.value,
                   recipeStepViewModel.steps.value,
                   profileViewModel.currentUserId!!,
-                  ""))
-                  recipeViewModel.setRecipe(recipeViewModel.recipe.value!!)
+                  "")) {
+                recipeViewModel.setRecipe(recipeViewModel.recipe.value!!)
+                navigationActions.navigateTo(Route.PROFILE)
+              }
             }) {
               Icon(imageVector = Icons.Default.Check, contentDescription = "Validate Recipe Icon")
             }
       },
       content = { padding ->
         RecipeBox(padding, inputViewModel, recipeStepViewModel, title, description)
+        Box(
+            contentAlignment = Alignment.BottomCenter,
+            modifier = Modifier.padding(padding).fillMaxSize()) {
+              SnackbarHost(
+                  hostState = snackbarHostStateError,
+                  snackbar = { snackbarData ->
+                    Snackbar(
+                        modifier = Modifier.testTag("Error Snack Bar"),
+                        snackbarData = snackbarData,
+                        containerColor = Color.Red.copy(alpha = 0.5f),
+                        contentColor = Color.White)
+                  })
+            }
+        LaunchedEffect(Unit) {
+          recipeViewModel.errorMessageVisible.collect {
+            if (error)
+                snackbarHostStateError.showSnackbar(
+                    message = "Error", duration = SnackbarDuration.Short)
+          }
+        }
       })
 }
 

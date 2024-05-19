@@ -221,6 +221,8 @@ class IngredientsRepositoryTest {
           assertTrue(ingredients.first() == Ingredient("Sugar", "sugarId", false, true))
         },
         onFailure = { fail("Should not fail") })
+
+    shadowOf(Looper.getMainLooper()).idle()
   }
 
   @Test
@@ -234,6 +236,7 @@ class IngredientsRepositoryTest {
         mockQuery,
         onSuccess = { fail("Should not succeed") },
         onFailure = { assertEquals(exception, it) })
+    shadowOf(Looper.getMainLooper()).idle()
   }
 
   @Test

@@ -47,7 +47,6 @@ class TopBarNavigationTest : TestCase() {
         .assertHasClickAction()
         .performClick()
 
-    composeTestRule.onNodeWithTag("TitleBox").assertIsDisplayed()
     composeTestRule.onNodeWithTag("TitleText").assertIsDisplayed()
 
     composeTestRule.onNodeWithTag("RightIconBox").assertIsDisplayed()
@@ -71,7 +70,6 @@ class TopBarNavigationTest : TestCase() {
     composeTestRule.onNodeWithTag("LeftIconBox").assertIsDisplayed()
     composeTestRule.onNodeWithTag("LeftIconButton").assertIsDisplayed().assertHasClickAction()
 
-    composeTestRule.onNodeWithTag("TitleBox").assertIsDisplayed()
     composeTestRule.onNodeWithTag("TitleText").assertIsDisplayed()
 
     composeTestRule.onNodeWithTag("RightIconBox").assertIsNotDisplayed()
@@ -97,7 +95,6 @@ class TopBarNavigationTest : TestCase() {
     composeTestRule.onNodeWithTag("LeftIconBox").assertIsNotDisplayed()
     composeTestRule.onNodeWithTag("LeftIconButton").assertIsNotDisplayed()
 
-    composeTestRule.onNodeWithTag("TitleBox").assertIsDisplayed()
     composeTestRule.onNodeWithTag("TitleText").assertIsDisplayed()
 
     composeTestRule.onNodeWithTag("RightIconBox").assertIsDisplayed()

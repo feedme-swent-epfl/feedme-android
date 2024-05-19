@@ -78,7 +78,7 @@ class RecipeViewModel : ViewModel() {
    */
   fun setRecipe(recipe: Recipe) {
     viewModelScope.launch {
-      repository.addRecipeTest(
+      repository.addRecipe(
           recipe,
           onSuccess = { _recipe.value = recipe },
           onFailure = {

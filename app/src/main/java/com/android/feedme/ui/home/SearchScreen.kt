@@ -31,6 +31,7 @@ import com.android.feedme.model.viewmodel.RecipeViewModel
 import com.android.feedme.model.viewmodel.SearchViewModel
 import com.android.feedme.ui.navigation.BottomNavigationMenu
 import com.android.feedme.ui.navigation.NavigationActions
+import com.android.feedme.ui.navigation.Route
 import com.android.feedme.ui.navigation.TOP_LEVEL_DESTINATIONS
 import com.android.feedme.ui.navigation.TopBarNavigation
 import com.android.feedme.ui.profile.FriendsCard
@@ -171,7 +172,8 @@ fun FilteredContent(
               // TODO: will to be replaced with a single call to fetch all profiles if possible
               profileViewModel.fetchProfile(recipe.userid)
               val profile = profileViewModel.viewingUserProfile.collectAsState().value
-              RecipeCard(recipe, profile, navigationActions, recipeViewModel, profileViewModel)
+              RecipeCard(
+                  Route.HOME, recipe, profile, navigationActions, recipeViewModel, profileViewModel)
             }
         1 ->
             items(profiles) { profile -> FriendsCard(profile, navigationActions, profileViewModel) }

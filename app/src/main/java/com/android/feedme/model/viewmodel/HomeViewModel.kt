@@ -17,11 +17,20 @@ class HomeViewModel : ViewModel() {
   private val _recipes = MutableStateFlow<List<Recipe>>(emptyList())
   val recipes = _recipes.asStateFlow()
 
+  private val _savedRecipes = MutableStateFlow<List<Recipe>>(emptyList())
+  val savedRecipes = _savedRecipes.asStateFlow()
+
+  private val authListener =
+      FirebaseAuth.AuthStateListener {
+        FirebaseAuth.getInstance().uid?.let {
+          fetchRecipe("lasagna1")
+          fetchRecipe("pasta1")
+        }
+      }
+
   init {
-    FirebaseAuth.getInstance().uid?.let {
-      fetchRecipe("lasagna1")
-      fetchRecipe("pasta1")
-    }
+    // Listen to FirebaseAuth state changes
+    FirebaseAuth.getInstance().addAuthStateListener(authListener)
   }
 
   /**
@@ -47,55 +56,41 @@ class HomeViewModel : ViewModel() {
   }
 
   /**
-   * A function that fetches the recipes given their Ids
+   * A function that fetches the recipe during Login
    *
-   * @param ids: the unique IDs of the profiles we want to fetch
+   * @param ids: the unique ID of the recipe we want to fetch
    */
-  /*fun fetchRecipes(ids: List<String>) {
-    // Check if we actually need to fetch the recipes
-    val currentIds = _recipes.value.map { it.recipeId }.toSet()
-    if (currentIds != ids.toSet() && ids.isNotEmpty()) {
-      Log.d("LandingPageViewModel", "Fetching recipes: $ids")
-      viewModelScope.launch {
-        repository.getRecipes(
-            ids,
-            onSuccess = { recipes ->
-              // Avoid unnecessary updates
-              if (_recipes.value != recipes) {
-                _recipes.value = recipes
-              } else {
-                Log.d("LandingPageViewModel", "Recipes already fetched")
-              }
-            },
-            onFailure = {
-              // Handle failure
-              throw error("Recipes were not fetched")
-            })
-      }
-    } TODO : We will use this for recommendations (maybe)
-  }*/
-
-  /**
-   * A function that sets which recipes to show
-   *
-   * @param isFiltered: a boolean that indicates if the filtered recipes should be shown
-   */
-  /*fun setShowedRecipes(isFiltered: Boolean) {
-      _recipes.value =
-          if (isFiltered) {
-              _filteredRecipes.value
-          } else {
-              _recommendedRecipes.value
-          }
-  }*/
+  fun fetchSavedRecipes(ids: List<String>) {
+    viewModelScope.launch {
+      val recipeList = mutableListOf<Recipe>()
+      recipeRepository.getRecipes(
+          ids,
+          onSuccess = { recipe ->
+            recipeList += recipe
+            _savedRecipes.value = recipeList
+          },
+          onFailure = {
+            // Handle failure
+            Log.d("fetchRecipe", "Failed fetch of $ids")
+          })
+    }
+  }
 
   /**
    * A function that forces recipes to be shown for testing purposes
    *
    * @param recipes: a list of recipes to show
-   * @param isFiltered: a boolean that indicates if the filtered recipes should be shown
    */
   fun setRecipes(recipes: List<Recipe>) {
     _recipes.value = recipes
+  }
+
+  /**
+   * A function that forces saved recipes to be shown for testing purposes
+   *
+   * @param recipes: a list of recipes to show
+   */
+  fun setSavedRecipes(recipes: List<Recipe>) {
+    _savedRecipes.value = recipes
   }
 }

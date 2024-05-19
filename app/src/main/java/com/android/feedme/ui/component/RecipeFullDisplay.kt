@@ -14,6 +14,7 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Bookmark
 import androidx.compose.material.icons.outlined.Add
 import androidx.compose.material.icons.rounded.Star
 import androidx.compose.material.icons.twotone.Bookmark
@@ -25,6 +26,7 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -84,14 +86,27 @@ fun RecipeFullDisplay(
   recipe?.let { profileViewModel.fetchProfile(it.userid) }
   val profile = profileViewModel.viewingUserProfile.collectAsState().value
   var showDialog by remember { mutableStateOf(false) }
+
+  val isSaved = remember { mutableStateOf(false) }
+  // LaunchedEffect to trigger the Firestore check when the composable is first composed
+  LaunchedEffect(recipe) {
+    profileViewModel.savedRecipeExists(recipe!!.recipeId) { exists -> isSaved.value = exists }
+  }
   Scaffold(
       modifier = Modifier.fillMaxSize(),
       topBar = {
         TopBarNavigation(
             title = recipe?.title ?: "Not Found",
             navAction = navigationActions,
-            rightIcon = Icons.TwoTone.Bookmark,
-            rightIconOnClickAction = { null /* TODO() Save recipe offline*/ })
+            rightIcon = if (isSaved.value) Icons.Filled.Bookmark else Icons.TwoTone.Bookmark,
+            rightIconOnClickAction = {
+              if (isSaved.value) {
+                profileViewModel.removeSavedRecipes(recipe?.recipeId ?: Recipe().recipeId)
+              } else {
+                profileViewModel.addSavedRecipes(recipe?.recipeId ?: Recipe().recipeId)
+              }
+              isSaved.value = !isSaved.value
+            })
       },
       bottomBar = {
         BottomNavigationMenu(route, navigationActions::navigateTo, TOP_LEVEL_DESTINATIONS)

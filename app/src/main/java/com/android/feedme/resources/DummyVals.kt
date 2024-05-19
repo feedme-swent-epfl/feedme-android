@@ -6,7 +6,6 @@ import com.android.feedme.model.data.MeasureUnit
 import com.android.feedme.model.data.Recipe
 import com.android.feedme.model.data.Step
 
-
 val recipe1 =
     newRecipe(
         "lasagna1",
@@ -29,7 +28,7 @@ fun newRecipe(recipeId: String, title: String, url: String): Recipe {
               IngredientMetaData(
                   quantity = 2.0,
                   measure = MeasureUnit.ML,
-                  ingredient = Ingredient("Tomato", "Vegetables", false,false))),
+                  ingredient = Ingredient("Tomato", "Vegetables", false, false))),
       steps =
           listOf(
               Step(

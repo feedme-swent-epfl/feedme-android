@@ -24,8 +24,6 @@ class HomeViewModel : ViewModel() {
     FirebaseAuth.getInstance().uid?.let {
       fetchRecipe("lasagna1")
       fetchRecipe("pasta1")
-
-      fetchSavedRecipes(listOf("lasagna1", "pasta1"))
     }
   }
 
@@ -57,12 +55,13 @@ class HomeViewModel : ViewModel() {
    * @param ids: the unique ID of the recipe we want to fetch
    */
   fun fetchSavedRecipes(ids: List<String>) {
-
     viewModelScope.launch {
+      val recipeList = mutableListOf<Recipe>()
       recipeRepository.getRecipes(
           ids,
           onSuccess = { recipe ->
-            if (!_savedRecipes.value.contains(recipe[0])) _savedRecipes.value += recipe
+            recipeList += recipe
+            _savedRecipes.value = recipeList
           },
           onFailure = {
             // Handle failure

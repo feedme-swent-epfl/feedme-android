@@ -32,8 +32,9 @@ class RecipeRepository(private val db: FirebaseFirestore) {
   fun addRecipe(recipe: Recipe, onSuccess: () -> Unit, onFailure: (Exception) -> Unit) {
     // Convert Recipe to a map, replacing Ingredient objects with their IDs
     val recipeMap = recipeToMap(recipe)
-    db.collection(collectionPath)
-        .document(recipe.recipeId)
+    val newDocRef = db.collection(collectionPath).document()
+    recipe.recipeId = newDocRef.id
+    newDocRef
         .set(recipeMap)
         .addOnSuccessListener { onSuccess() }
         .addOnFailureListener { onFailure(it) }

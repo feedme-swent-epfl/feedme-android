@@ -83,7 +83,7 @@ class LandingTest : TestCase() {
                   IngredientMetaData(
                       quantity = 2.0,
                       measure = MeasureUnit.ML,
-                      ingredient = Ingredient("Pasta", "Vegetable", "pastaID"))),
+                      ingredient = Ingredient("Pasta", "Vegetable", true, true))),
           steps =
               listOf(
                   Step(

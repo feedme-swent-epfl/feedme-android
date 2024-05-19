@@ -72,18 +72,13 @@ fun TopBarNavigation(
                     }
                   }
 
-              // TitleBox
-              Box(
-                  modifier = Modifier.weight(1f).testTag("TitleBox"),
-                  contentAlignment = Alignment.Center) {
-                    Text(
-                        modifier = Modifier.testTag("TitleText"),
-                        text = title,
-                        fontSize = 20.sp,
-                        fontWeight = FontWeight.Bold,
-                        color = TextBarColor,
-                        textAlign = TextAlign.Center)
-                  }
+              Text(
+                  modifier = Modifier.testTag("TitleText"),
+                  text = title,
+                  fontSize = 20.sp,
+                  fontWeight = FontWeight.Bold,
+                  color = TextBarColor,
+                  textAlign = TextAlign.Center)
 
               // RightIconBox
               Box(

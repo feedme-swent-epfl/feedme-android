@@ -78,7 +78,7 @@ class RecipeViewModelTest {
             "recipeName",
             listOf(
                 IngredientMetaData(
-                    0.0, MeasureUnit.TEASPOON, Ingredient("test", "test", "testId"))),
+                    200.0, MeasureUnit.G, Ingredient("Ingredient 1", "TEST_TYPE", "ID_TYPE"))),
             listOf(
                 Step(1, "test", "test"),
             ),

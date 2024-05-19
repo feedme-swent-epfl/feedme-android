@@ -1,6 +1,7 @@
 package com.android.feedme.ui.component
 
 import android.annotation.SuppressLint
+import android.util.Log
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -30,6 +31,7 @@ import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextFieldColors
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.derivedStateOf
 import androidx.compose.runtime.getValue
@@ -49,11 +51,14 @@ import androidx.compose.ui.unit.sp
 import androidx.compose.ui.window.PopupProperties
 import com.android.feedme.model.data.Ingredient
 import com.android.feedme.model.data.IngredientMetaData
+import com.android.feedme.model.data.IngredientsRepository
 import com.android.feedme.model.data.MeasureUnit
 import com.android.feedme.model.viewmodel.InputViewModel
 import com.android.feedme.ui.theme.InValidInput
 import com.android.feedme.ui.theme.NoInput
 import com.android.feedme.ui.theme.ValidInput
+
+private val ingredientsRepository = IngredientsRepository.instance
 
 /**
  * Composable function for displaying a list of ingredients.
@@ -96,12 +101,23 @@ fun IngredientInput(
     ingredient: IngredientMetaData? = null,
     action: (IngredientInputState?, IngredientInputState?, IngredientMetaData?) -> Unit
 ) {
+
+  var ingredientCurrent by remember {
+    mutableStateOf(ingredient?.ingredient ?: Ingredient(" ", "NO_ID", false, false))
+  }
+
   var name by remember { mutableStateOf(ingredient?.ingredient?.name ?: " ") }
   var quantity by remember { mutableDoubleStateOf(ingredient?.quantity ?: 0.0) }
   var dose by remember { mutableStateOf(ingredient?.measure ?: MeasureUnit.EMPTY) }
 
   val isComplete by remember {
-    derivedStateOf { name.isNotBlank() && dose != MeasureUnit.EMPTY && quantity != 0.0 }
+    derivedStateOf {
+      name.isNotBlank() &&
+          dose != MeasureUnit.EMPTY &&
+          quantity != 0.0 &&
+          (ingredientCurrent.id != "NO_ID") &&
+          (ingredientCurrent.id != "")
+    }
   }
 
   var isChecked by remember { mutableStateOf(isComplete) }
@@ -115,8 +131,22 @@ fun IngredientInput(
   }
 
   var isDropdownVisible by remember { mutableStateOf(false) }
-  val suggestionIngredients =
-      listOf("Item 1", "Item 2", "Item 3", "Item 4", "Item 5") // Your list of items
+
+  var filteredIngredients by remember { mutableStateOf(emptyList<Ingredient>()) }
+
+  LaunchedEffect(name) {
+    if (name != " ") {
+      ingredientsRepository.getFilteredIngredients(
+          name,
+          { filteredIngredients = it },
+          {
+            Log.e(
+                "IngredientList ",
+                "Error Filtered Ingredients: Failed to retrieve Ingredient because ",
+                it)
+          })
+    }
+  }
 
   if (isChecked) {
     Row(
@@ -169,13 +199,16 @@ fun IngredientInput(
               OutlinedTextField(
                   colors = colorOfInputBoxes(state),
                   value = name,
-                  isError = name == " " && state != IngredientInputState.EMPTY,
+                  isError =
+                      (name == " " ||
+                          ingredientCurrent.id == "NO_ID" ||
+                          ingredientCurrent.id == "") && state != IngredientInputState.EMPTY,
                   onValueChange = {
                     name = it
                     isDropdownVisible = true
                   },
                   singleLine = true,
-                  modifier = Modifier.fillMaxWidth().testTag("IngredientsInput"),
+                  modifier = Modifier.padding(end = 0.dp).testTag("IngredientsInput"),
                   placeholder = { Text(text = "...") },
                   label = {
                     Text(
@@ -186,35 +219,74 @@ fun IngredientInput(
               DropdownMenu(
                   modifier = Modifier.height(120.dp),
                   expanded = isDropdownVisible && name.isNotEmpty(),
-                  onDismissRequest = { isDropdownVisible = false },
+                  onDismissRequest = {
+                    isDropdownVisible = false
+                    val beforeState = state
+                    if (name != " ") {
+                      ingredientCurrent =
+                          if (filteredIngredients.isNotEmpty()) {
+                            filteredIngredients[0]
+                          } else {
+                            Ingredient(name, "NO_ID", false, false)
+                          }
+                      state =
+                          if (isComplete) IngredientInputState.COMPLETE
+                          else IngredientInputState.SEMI_COMPLETE
+                      action(
+                          beforeState, state, IngredientMetaData(quantity, dose, ingredientCurrent))
+                    }
+                  },
                   properties =
                       PopupProperties(
                           focusable = false,
-                          dismissOnClickOutside = false,
-                          dismissOnBackPress = false),
+                          dismissOnClickOutside = true,
+                          dismissOnBackPress = true),
               ) {
-                suggestionIngredients.forEach { item ->
+                filteredIngredients.forEach { item ->
                   DropdownMenuItem(
                       modifier = Modifier.testTag("IngredientOption"),
-                      text = { Text(text = item) },
+                      text = { Text(text = item.name) },
                       onClick = {
-                        name = item
+                        name = item.name
                         isDropdownVisible = false
                         val beforeState = state
                         if (name != " ") {
+                          ingredientCurrent = item
                           state =
                               if (isComplete) IngredientInputState.COMPLETE
                               else IngredientInputState.SEMI_COMPLETE
                           action(
                               beforeState,
                               state,
-                              IngredientMetaData(quantity, dose, Ingredient(name, "", "")))
+                              IngredientMetaData(quantity, dose, ingredientCurrent))
                         }
                       })
                 }
+                DropdownMenuItem(
+                    modifier = Modifier.background(Color.LightGray).testTag("AddOption"),
+                    text = { Text(text = "Add Ingredient") },
+                    onClick = {
+                      // TODO check validty of addition with Chatgbt
+                      // TODO once the database is fix do pop up message to confirm addition to
+                      // database
+                      ingredientsRepository.addIngredient(
+                          Ingredient(name, "NO_ID", false, false),
+                          {
+                            isDropdownVisible = false
+                            val beforeState = state
+                            ingredientCurrent = it
+                            state =
+                                if (isComplete) IngredientInputState.COMPLETE
+                                else IngredientInputState.SEMI_COMPLETE
+                            action(
+                                beforeState,
+                                state,
+                                IngredientMetaData(quantity, dose, ingredientCurrent))
+                          },
+                          { Log.e("Fail to add Ingredient : ", " ", it) })
+                    })
               }
             }
-
             // Checked button for validating the ingredient
             if (state == IngredientInputState.SEMI_COMPLETE ||
                 state == IngredientInputState.COMPLETE) {
@@ -249,9 +321,7 @@ fun IngredientInput(
                         quantity = it.toDouble()
                         if (quantity != 0.0) {
                           action(
-                              state,
-                              state,
-                              IngredientMetaData(quantity, dose, Ingredient(name, "", "")))
+                              state, state, IngredientMetaData(quantity, dose, ingredientCurrent))
                         }
                       }
                     },
@@ -268,7 +338,6 @@ fun IngredientInput(
 
                 // Dose
                 var expanded by remember { mutableStateOf(false) }
-
                 ExposedDropdownMenuBox(
                     modifier = Modifier.weight(1f).height(60.dp).testTag("DoseBox"),
                     expanded = expanded,
@@ -300,14 +369,12 @@ fun IngredientInput(
                                       action(
                                           beforeState,
                                           state,
-                                          IngredientMetaData(
-                                              quantity, dose, Ingredient(name, "", "")))
+                                          IngredientMetaData(quantity, dose, ingredientCurrent))
                                     }
                                   })
                             }
                           }
                     }
-
                 DeleteButton(state, quantity, dose, name, action)
               }
         }
@@ -333,7 +400,7 @@ fun DeleteButton(
           action(
               state,
               IngredientInputState.EMPTY,
-              IngredientMetaData(quantity, dose, Ingredient(name, "", "")))
+              IngredientMetaData(quantity, dose, Ingredient(name, "", false, false)))
         }) {
           Icon(
               imageVector = Icons.Outlined.Close,

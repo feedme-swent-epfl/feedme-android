@@ -28,7 +28,7 @@ fun newRecipe(recipeId: String, title: String, url: String): Recipe {
               IngredientMetaData(
                   quantity = 2.0,
                   measure = MeasureUnit.ML,
-                  ingredient = Ingredient("Tomato", "Vegetables", "tomatoID"))),
+                  ingredient = Ingredient("Tomato", "Vegetables", false, false))),
       steps =
           listOf(
               Step(

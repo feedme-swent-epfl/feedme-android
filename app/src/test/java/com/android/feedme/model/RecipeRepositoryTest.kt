@@ -214,11 +214,11 @@ class RecipeRepositoryTest {
             ingredients =
                 listOf(
                     IngredientMetaData(
-                        1.0, MeasureUnit.CUP, Ingredient("Flour", "Baking", "flourId")),
+                        1.0, MeasureUnit.CUP, Ingredient("Flour", "flourId", false, false)),
                     IngredientMetaData(
                         2.0,
                         MeasureUnit.TABLESPOON,
-                        Ingredient("Cocoa Powder", "Baking", "cocoaId"))),
+                        Ingredient("Cocoa Powder", "cocoaId", false, false))),
             steps =
                 listOf(
                     Step(1, "Mix ingredients.", "Mix all dry ingredients together."),
@@ -246,10 +246,10 @@ class RecipeRepositoryTest {
   @Test
   fun addRecipe_Success2() {
     // Preparing the ingredients
-    val ingredient1 = Ingredient("Flour", "Dry", "1")
+    val ingredient1 = Ingredient("Flour", "1", false, false)
     val ingredientMetaData1 = IngredientMetaData(2.0, MeasureUnit.CUP, ingredient1)
 
-    val ingredient2 = Ingredient("Sugar", "Dry", "2")
+    val ingredient2 = Ingredient("Sugar", "2", false, false)
     val ingredientMetaData2 = IngredientMetaData(1.0, MeasureUnit.CUP, ingredient2)
 
     // Preparing the steps

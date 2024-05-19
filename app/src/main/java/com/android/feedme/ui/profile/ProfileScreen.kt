@@ -108,13 +108,14 @@ fun ProfileScreen(
       },
       // Floating Button to create a recipe
       floatingActionButton = {
-        FloatingActionButton(
-            modifier = Modifier.testTag("AddRecipeButton"),
-            containerColor = FabColor,
-            contentColor = TextBarColor,
-            onClick = { navigationActions.navigateTo(Screen.ADD_RECIPE) }) {
-              Icon(imageVector = Icons.Default.Add, contentDescription = "Add recipe Icon")
-            }
+        if (profileViewModel.currentUserId == profile.value?.id)
+            FloatingActionButton(
+                modifier = Modifier.testTag("AddRecipeButton"),
+                containerColor = FabColor,
+                contentColor = TextBarColor,
+                onClick = { navigationActions.navigateTo(Screen.ADD_RECIPE) }) {
+                  Icon(imageVector = Icons.Default.Add, contentDescription = "Add recipe Icon")
+                }
       },
       content = { padding ->
         ProfileBox(

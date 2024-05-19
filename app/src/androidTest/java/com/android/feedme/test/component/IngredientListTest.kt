@@ -4,6 +4,7 @@ import androidx.compose.ui.test.assertHasClickAction
 import androidx.compose.ui.test.assertIsDisplayed
 import androidx.compose.ui.test.assertIsNotDisplayed
 import androidx.compose.ui.test.junit4.createComposeRule
+import androidx.compose.ui.test.onAllNodesWithTag
 import androidx.compose.ui.test.onNodeWithTag
 import androidx.compose.ui.test.onNodeWithText
 import androidx.compose.ui.test.performClick
@@ -53,5 +54,37 @@ class IngredientListTest : TestCase() {
         .assertHasClickAction()
         .performClick()
     composeTestRule.onNodeWithTag("DeleteIconButton").assertIsNotDisplayed()
+  }
+
+  @Test
+  fun completeIngredientsCanBeChecked() {
+    composeTestRule.setContent { IngredientList() }
+
+    composeTestRule.onNodeWithTag("LazyList").assertIsDisplayed()
+
+    composeTestRule.onNodeWithTag("IngredientsBox").assertIsDisplayed()
+    composeTestRule.onNodeWithTag("IngredientsInput").assertIsDisplayed().performTextInput("Item 1")
+
+    composeTestRule.onNodeWithText("Item 1").performClick()
+
+    composeTestRule.onAllNodesWithTag("QuantityInput")[0].assertIsDisplayed().performTextInput("2")
+    composeTestRule.onAllNodesWithTag("DoseInput")[0].assertIsDisplayed().performClick()
+    composeTestRule.onNodeWithText("teaspoon").assertIsDisplayed().performClick()
+
+    composeTestRule
+        .onNodeWithTag("CheckIconButton")
+        .assertIsDisplayed()
+        .assertHasClickAction()
+        .performClick()
+
+    composeTestRule.waitForIdle()
+
+    composeTestRule.onNodeWithTag("IngredientName").assertIsDisplayed()
+    composeTestRule.onNodeWithTag("Quantity&Dose").assertIsDisplayed()
+
+    composeTestRule.onNodeWithTag("DeleteIconButton").assertIsDisplayed()
+    composeTestRule.onNodeWithTag("ModifyIconButton").assertIsDisplayed().performClick()
+
+    composeTestRule.waitForIdle()
   }
 }

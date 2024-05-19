@@ -133,12 +133,13 @@ fun IngredientInput(
                         fontStyle = FontStyle.Italic,
                         fontSize = 18.sp,
                         fontWeight = FontWeight.Bold),
-                modifier = Modifier.padding(bottom = 4.dp))
+                modifier = Modifier.padding(bottom = 4.dp).testTag("IngredientName"))
             Text(
                 text = "$quantity $dose",
                 style =
                     MaterialTheme.typography.bodyMedium.copy(
-                        fontStyle = FontStyle.Italic, fontSize = 16.sp, color = Color.Gray))
+                        fontStyle = FontStyle.Italic, fontSize = 16.sp, color = Color.Gray),
+                modifier = Modifier.testTag("Quantity&Dose"))
           }
           Row(
               horizontalArrangement = Arrangement.End,
@@ -219,7 +220,7 @@ fun IngredientInput(
                 state == IngredientInputState.COMPLETE) {
               Spacer(modifier = Modifier.width(8.dp))
               IconButton(
-                  modifier = Modifier.padding(top = 4.dp).testTag("DoneIconButton"),
+                  modifier = Modifier.padding(top = 4.dp).testTag("CheckIconButton"),
                   onClick = {
                     if (state == IngredientInputState.COMPLETE) {
                       isChecked = true

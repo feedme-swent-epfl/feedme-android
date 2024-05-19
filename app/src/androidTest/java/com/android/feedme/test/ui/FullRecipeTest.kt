@@ -135,12 +135,12 @@ class FullRecipeTest : TestCase() {
 
     composeTestRule.waitForIdle()
     composeTestRule
-        .onNodeWithContentDescription("Star Icon", useUnmergedTree = true)
+        .onNodeWithContentDescription("Right Icon", useUnmergedTree = true)
         .assertIsDisplayed()
         .performClick()
     composeTestRule.waitForIdle()
     composeTestRule
-        .onNodeWithContentDescription("Star Icon", useUnmergedTree = true)
+        .onNodeWithContentDescription("Right Icon", useUnmergedTree = true)
         .assertIsDisplayed()
         .performClick()
     composeTestRule.waitForIdle()

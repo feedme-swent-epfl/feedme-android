@@ -129,16 +129,22 @@ class FullRecipeTest : TestCase() {
     composeTestRule.onNodeWithTag("Step Description").assertIsDisplayed()
   }
 
-    @Test
-    fun trySaveRecipe() {
-        goToFullRecipeScreen()
+  @Test
+  fun trySaveRecipe() {
+    goToFullRecipeScreen()
 
-        composeTestRule.waitForIdle()
-        composeTestRule.onNodeWithContentDescription("Star Icon", useUnmergedTree = true).assertIsDisplayed().performClick()
-        composeTestRule.waitForIdle()
-        composeTestRule.onNodeWithContentDescription("Star Icon", useUnmergedTree = true).assertIsDisplayed().performClick()
-        composeTestRule.waitForIdle()
-    }
+    composeTestRule.waitForIdle()
+    composeTestRule
+        .onNodeWithContentDescription("Star Icon", useUnmergedTree = true)
+        .assertIsDisplayed()
+        .performClick()
+    composeTestRule.waitForIdle()
+    composeTestRule
+        .onNodeWithContentDescription("Star Icon", useUnmergedTree = true)
+        .assertIsDisplayed()
+        .performClick()
+    composeTestRule.waitForIdle()
+  }
 
   private fun goToFullRecipeScreen() {
     profileViewModel.setViewingProfile(Profile(id = "ID_DEFAULT_1"))

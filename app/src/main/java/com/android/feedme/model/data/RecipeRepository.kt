@@ -32,6 +32,8 @@ class RecipeRepository(private val db: FirebaseFirestore) {
   fun addRecipe(recipe: Recipe, onSuccess: () -> Unit, onFailure: (Exception) -> Unit) {
     // Convert Recipe to a map, replacing Ingredient objects with their IDs
     val recipeMap = recipeToMap(recipe)
+    val newDocRef = db.collection(collectionPath).document()
+    recipe.recipeId = newDocRef.id
     db.collection(collectionPath)
         .document(recipe.recipeId)
         .set(recipeMap)
@@ -42,6 +44,9 @@ class RecipeRepository(private val db: FirebaseFirestore) {
   fun addRecipeTest(recipe: Recipe, onSuccess: () -> Unit, onFailure: (Exception) -> Unit) {
     // Convert Recipe to a map, replacing Ingredient objects with their IDs
     val recipeMap = recipeToMap(recipe)
+    val newDocRef = db.collection("recipestest").document()
+    recipe.recipeId = newDocRef.id
+
     db.collection("recipestest")
         .document(recipe.recipeId)
         .set(recipeMap)

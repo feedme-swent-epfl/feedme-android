@@ -59,7 +59,7 @@ class RecipeViewModel : ViewModel() {
     }
     _recipe.value =
         Recipe(
-            "testId",
+            "DEFAULT_ID",
             title,
             description,
             ingredients.filterNotNull(),

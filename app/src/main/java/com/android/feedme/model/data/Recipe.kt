@@ -1,7 +1,7 @@
 package com.android.feedme.model.data
 
 data class Recipe(
-    val recipeId: String = "", // Unique identifier for the recipe
+    var recipeId: String = "DEFAULT_ID", // Unique identifier for the recipe
     val title: String = "", // Title of the recipe
     val description: String = "", // Description of the recipe for the thumbnail
     val ingredients: List<IngredientMetaData> =

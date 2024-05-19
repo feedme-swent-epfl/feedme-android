@@ -128,7 +128,8 @@ fun RecipeInputScreen(
           recipeViewModel.errorMessageVisible.collect {
             if (error)
                 snackbarHostStateError.showSnackbar(
-                    message = "Error", duration = SnackbarDuration.Short)
+                    message = "Error : Recipe not correctly filled in",
+                    duration = SnackbarDuration.Short)
           }
         }
       })

@@ -25,11 +25,13 @@ import androidx.compose.material3.ExposedDropdownMenuDefaults
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextFieldColors
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.derivedStateOf
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.movableContentOf
 import androidx.compose.runtime.mutableDoubleStateOf
@@ -40,7 +42,10 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.testTag
+import androidx.compose.ui.text.font.FontStyle
+import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
 import androidx.compose.ui.window.PopupProperties
 import com.android.feedme.model.data.Ingredient
 import com.android.feedme.model.data.IngredientMetaData
@@ -85,7 +90,6 @@ fun IngredientList(
  * @param ingredient the [IngredientMetaData] to display in the input fields.
  * @param action the action to perform on input changes.
  */
-@SuppressLint("SuspiciousIndentation")
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun IngredientInput(
@@ -97,7 +101,7 @@ fun IngredientInput(
   var dose by remember { mutableStateOf(ingredient?.measure ?: MeasureUnit.EMPTY) }
 
   val isComplete by remember {
-    mutableStateOf(name.isNotBlank() && dose != MeasureUnit.EMPTY && quantity != 0.0)
+    derivedStateOf { name.isNotBlank() && dose != MeasureUnit.EMPTY && quantity != 0.0 }
   }
 
   var isChecked by remember { mutableStateOf(isComplete) }
@@ -114,22 +118,49 @@ fun IngredientInput(
   val suggestionIngredients =
       listOf("Item 1", "Item 2", "Item 3", "Item 4", "Item 5") // Your list of items
 
-  if (isComplete) {
-    Row(modifier = Modifier.fillMaxWidth().padding(horizontal = 20.dp, vertical = 8.dp)) {
-      Column() {
-        Text(text = "Ingredient: $name")
-        Text(text = "Quantity: $quantity")
-        Text(text = "Dose: $dose")
-      }
-      IconButton(modifier = Modifier.testTag("ModifyIconButton"), onClick = { isChecked = false }) {
-        Icon(
-            imageVector = Icons.Outlined.ModeEdit,
-            contentDescription = null,
-            modifier = Modifier.size(48.dp).height(55.dp))
-      }
+  if (isChecked) {
+    Row(
+        modifier =
+            Modifier.fillMaxWidth()
+                .padding(horizontal = 20.dp, vertical = 8.dp)
+                .padding(start = 8.dp, top = 14.dp),
+        horizontalArrangement = Arrangement.SpaceBetween) {
+          Column {
+            Text(
+                text = "Ingredient: $name",
+                style =
+                    MaterialTheme.typography.bodyLarge.copy(
+                        fontStyle = FontStyle.Italic,
+                        fontSize = 18.sp,
+                        fontWeight = FontWeight.Bold),
+                modifier = Modifier.padding(bottom = 4.dp))
+            Text(
+                text = "Quantity: $quantity",
+                style =
+                    MaterialTheme.typography.bodyMedium.copy(
+                        fontStyle = FontStyle.Italic, fontSize = 16.sp, color = Color.Gray),
+                modifier = Modifier.padding(bottom = 2.dp))
+            Text(
+                text = "Dose: $dose",
+                style =
+                    MaterialTheme.typography.bodyMedium.copy(
+                        fontStyle = FontStyle.Italic, fontSize = 16.sp, color = Color.Gray))
+          }
+          Row(
+              horizontalArrangement = Arrangement.End,
+              verticalAlignment = Alignment.CenterVertically) {
+                IconButton(
+                    modifier = Modifier.testTag("ModifyIconButton"),
+                    onClick = { isChecked = false }) {
+                      Icon(
+                          imageVector = Icons.Outlined.ModeEdit,
+                          contentDescription = null,
+                          modifier = Modifier.size(48.dp).height(55.dp))
+                    }
 
-      DeleteButton(state, quantity, dose, name, action)
-    }
+                DeleteButton(state, quantity, dose, name, action)
+              }
+        }
   } else {
     // Column for the input fields
     Column(
@@ -194,7 +225,12 @@ fun IngredientInput(
                 state == IngredientInputState.COMPLETE) {
               Spacer(modifier = Modifier.width(8.dp))
               IconButton(
-                  modifier = Modifier.testTag("DoneIconButton"), onClick = { isChecked = true }) {
+                  modifier = Modifier.padding(top = 4.dp).testTag("DoneIconButton"),
+                  onClick = {
+                    if (state == IngredientInputState.COMPLETE) {
+                      isChecked = true
+                    }
+                  }) {
                     Icon(
                         imageVector = Icons.Outlined.CheckBox,
                         contentDescription = null,

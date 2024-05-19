@@ -3,6 +3,8 @@ package com.android.feedme.test.ui
 import androidx.compose.ui.test.assertIsDisplayed
 import androidx.compose.ui.test.junit4.createComposeRule
 import androidx.test.ext.junit.runners.AndroidJUnit4
+import com.android.feedme.model.data.ProfileRepository
+import com.android.feedme.model.data.RecipeRepository
 import com.android.feedme.model.viewmodel.InputViewModel
 import com.android.feedme.model.viewmodel.ProfileViewModel
 import com.android.feedme.model.viewmodel.RecipeStepViewModel
@@ -10,6 +12,7 @@ import com.android.feedme.model.viewmodel.RecipeViewModel
 import com.android.feedme.screen.RecipeInputTestScreen
 import com.android.feedme.ui.navigation.NavigationActions
 import com.android.feedme.ui.profile.RecipeInputScreen
+import com.google.firebase.firestore.FirebaseFirestore
 import io.github.kakaocup.compose.node.element.ComposeScreen
 import io.mockk.every
 import io.mockk.mockk
@@ -23,23 +26,25 @@ import org.junit.runner.RunWith
 class RecipeInputTest {
   @get:Rule val composeTestRule = createComposeRule()
 
+  private val mockFirestore = mockk<FirebaseFirestore>(relaxed = true)
   private val navigationActions: NavigationActions = mockk(relaxed = true)
 
   private val profileViewModel: ProfileViewModel = mockk(relaxed = true)
-  private val recipeViewModel: RecipeViewModel = mockk(relaxed = true)
-  private val inputViewModel: InputViewModel = mockk(relaxed = true)
-  private val recipeStepViewModel: RecipeStepViewModel = mockk(relaxed = true)
+
+  private lateinit var recipeRepository: RecipeRepository
+
 
   @Before
   fun setUp() {
-    every { recipeViewModel.errorMessageVisible } returns MutableStateFlow(false)
+    RecipeRepository.initialize(mockFirestore)
+    recipeRepository = RecipeRepository.instance
   }
 
   @Test
   fun recipeInputTestDisplayedAndValidates() {
     composeTestRule.setContent {
       RecipeInputScreen(
-          navigationActions, profileViewModel, recipeStepViewModel, inputViewModel, recipeViewModel)
+          navigationActions, profileViewModel)
     }
     composeTestRule.waitForIdle()
 

@@ -31,10 +31,8 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.collectAsState
-import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
-import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -44,6 +42,7 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.lifecycle.viewmodel.compose.viewModel
 import com.android.feedme.R
 import com.android.feedme.model.viewmodel.InputViewModel
 import com.android.feedme.model.viewmodel.ProfileViewModel
@@ -70,16 +69,17 @@ import com.android.feedme.ui.theme.TextBarColor
 @Composable
 fun RecipeInputScreen(
     navigationActions: NavigationActions,
-    profileViewModel: ProfileViewModel,
-    recipeStepViewModel: RecipeStepViewModel,
-    inputViewModel: InputViewModel,
-    recipeViewModel: RecipeViewModel
+    profileViewModel: ProfileViewModel
     // TODO: Integrate ViewModel with UI
 ) {
+    val recipeStepViewModel: RecipeStepViewModel = viewModel()
+    val inputViewModel: InputViewModel = viewModel()
+    val recipeViewModel: RecipeViewModel = viewModel()
+
   val title = remember { mutableStateOf("") }
   val description = remember { mutableStateOf("") }
   val error = recipeViewModel.errorMessageVisible.collectAsState()
-  val snackbarHostStateError = remember { SnackbarHostState() }
+  val snackBarHostStateError = remember { SnackbarHostState() }
 
   Scaffold(
       modifier = Modifier.fillMaxSize().testTag("RecipeInputScreen"),
@@ -118,7 +118,7 @@ fun RecipeInputScreen(
             contentAlignment = Alignment.BottomCenter,
             modifier = Modifier.padding(padding).fillMaxSize()) {
               SnackbarHost(
-                  hostState = snackbarHostStateError,
+                  hostState = snackBarHostStateError,
                   snackbar = { snackbarData ->
                     Snackbar(
                         modifier = Modifier.testTag("Error Snack Bar"),
@@ -131,7 +131,7 @@ fun RecipeInputScreen(
         LaunchedEffect(Unit) {
           recipeViewModel.errorMessageVisible.collect {
             if (error.value)
-                snackbarHostStateError.showSnackbar(
+                snackBarHostStateError.showSnackbar(
                     message = "Error : Recipe not correctly filled in",
                     duration = SnackbarDuration.Short)
           }

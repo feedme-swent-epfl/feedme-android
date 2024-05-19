@@ -208,7 +208,7 @@ fun IngredientInput(
                     isDropdownVisible = true
                   },
                   singleLine = true,
-                  modifier = Modifier.padding(end = 0.dp).testTag("IngredientsInput"),
+                  modifier = Modifier.fillMaxWidth().padding(end = 0.dp).testTag("IngredientsInput"),
                   placeholder = { Text(text = "...") },
                   label = {
                     Text(

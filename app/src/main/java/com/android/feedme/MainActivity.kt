@@ -124,14 +124,7 @@ class MainActivity : ComponentActivity() {
                     EditProfileScreen(navigationActions, profileViewModel)
                   }
                   composable(Screen.ADD_RECIPE) {
-                    val recipeViewModel = viewModel<RecipeViewModel>()
-                    val recipeStepViewModel = viewModel<RecipeStepViewModel>()
-                    RecipeInputScreen(
-                        navigationActions,
-                        profileViewModel,
-                        recipeStepViewModel,
-                        inputViewModel,
-                        recipeViewModel)
+                    RecipeInputScreen(navigationActions, profileViewModel)
                   }
                   composable(Screen.FRIENDS) { backStackEntry ->
                     backStackEntry.arguments?.getString("showFollowers")?.let {

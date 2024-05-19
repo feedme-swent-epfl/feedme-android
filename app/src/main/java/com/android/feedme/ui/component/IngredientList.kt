@@ -14,8 +14,8 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.outlined.CheckBox
-import androidx.compose.material.icons.outlined.Delete
+import androidx.compose.material.icons.outlined.Check
+import androidx.compose.material.icons.outlined.Close
 import androidx.compose.material.icons.outlined.ModeEdit
 import androidx.compose.material3.DropdownMenu
 import androidx.compose.material3.DropdownMenuItem
@@ -127,7 +127,7 @@ fun IngredientInput(
         horizontalArrangement = Arrangement.SpaceBetween) {
           Column {
             Text(
-                text = "Ingredient: $name",
+                text = name,
                 style =
                     MaterialTheme.typography.bodyLarge.copy(
                         fontStyle = FontStyle.Italic,
@@ -135,13 +135,7 @@ fun IngredientInput(
                         fontWeight = FontWeight.Bold),
                 modifier = Modifier.padding(bottom = 4.dp))
             Text(
-                text = "Quantity: $quantity",
-                style =
-                    MaterialTheme.typography.bodyMedium.copy(
-                        fontStyle = FontStyle.Italic, fontSize = 16.sp, color = Color.Gray),
-                modifier = Modifier.padding(bottom = 2.dp))
-            Text(
-                text = "Dose: $dose",
+                text = "$quantity $dose",
                 style =
                     MaterialTheme.typography.bodyMedium.copy(
                         fontStyle = FontStyle.Italic, fontSize = 16.sp, color = Color.Gray))
@@ -155,7 +149,7 @@ fun IngredientInput(
                       Icon(
                           imageVector = Icons.Outlined.ModeEdit,
                           contentDescription = null,
-                          modifier = Modifier.size(48.dp).height(55.dp))
+                          modifier = Modifier.size(28.dp))
                     }
 
                 DeleteButton(state, quantity, dose, name, action)
@@ -232,9 +226,9 @@ fun IngredientInput(
                     }
                   }) {
                     Icon(
-                        imageVector = Icons.Outlined.CheckBox,
+                        imageVector = Icons.Outlined.Check,
                         contentDescription = null,
-                        modifier = Modifier.size(48.dp).height(55.dp))
+                        modifier = Modifier.size(28.dp))
                   }
             }
           }
@@ -341,9 +335,9 @@ fun DeleteButton(
               IngredientMetaData(quantity, dose, Ingredient(name, "", "")))
         }) {
           Icon(
-              imageVector = Icons.Outlined.Delete,
+              imageVector = Icons.Outlined.Close,
               contentDescription = null,
-              modifier = Modifier.size(48.dp).height(55.dp))
+              modifier = Modifier.size(28.dp))
         }
   }
 }

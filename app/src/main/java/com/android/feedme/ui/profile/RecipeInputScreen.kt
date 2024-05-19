@@ -71,12 +71,12 @@ import com.android.feedme.ui.theme.TextBarColor
 @Composable
 fun RecipeInputScreen(
     navigationActions: NavigationActions,
-    profileViewModel: ProfileViewModel
+    profileViewModel: ProfileViewModel,
+    recipeStepViewModel: RecipeStepViewModel,
+    inputViewModel: InputViewModel,
+    recipeViewModel: RecipeViewModel
     // TODO: Integrate ViewModel with UI
 ) {
-  val inputViewModel: InputViewModel = viewModel()
-  val recipeStepViewModel: RecipeStepViewModel = viewModel()
-  val recipeViewModel: RecipeViewModel = viewModel()
   val title = remember { mutableStateOf("") }
   val description = remember { mutableStateOf("") }
   val error by recipeViewModel.errorMessageVisible.collectAsState()
@@ -168,7 +168,7 @@ fun RecipeBox(
 @Composable
 fun RecipeInputTopContent(title: MutableState<String>, description: MutableState<String>) {
   Column(
-      modifier = Modifier.testTag("RecipeInputBox").heightIn(max = 150.dp),
+      modifier = Modifier.heightIn(max = 150.dp),
       verticalArrangement = Arrangement.Top) {
         Row(
             modifier = Modifier.fillMaxWidth().padding(vertical = 5.dp),

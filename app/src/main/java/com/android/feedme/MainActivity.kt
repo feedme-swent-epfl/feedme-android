@@ -22,6 +22,7 @@ import com.android.feedme.model.viewmodel.AuthViewModel
 import com.android.feedme.model.viewmodel.HomeViewModel
 import com.android.feedme.model.viewmodel.InputViewModel
 import com.android.feedme.model.viewmodel.ProfileViewModel
+import com.android.feedme.model.viewmodel.RecipeStepViewModel
 import com.android.feedme.model.viewmodel.RecipeViewModel
 import com.android.feedme.model.viewmodel.SearchViewModel
 import com.android.feedme.resources.C
@@ -120,7 +121,9 @@ class MainActivity : ComponentActivity() {
                     EditProfileScreen(navigationActions, profileViewModel)
                   }
                   composable(Screen.ADD_RECIPE) {
-                    RecipeInputScreen(navigationActions, profileViewModel)
+                    val recipeViewModel = viewModel<RecipeViewModel>()
+                    val recipeStepViewModel = viewModel<RecipeStepViewModel>()
+                    RecipeInputScreen(navigationActions, profileViewModel, recipeStepViewModel, inputViewModel, recipeViewModel)
                   }
                   composable(Screen.FRIENDS) { backStackEntry ->
                     backStackEntry.arguments?.getString("showFollowers")?.let {

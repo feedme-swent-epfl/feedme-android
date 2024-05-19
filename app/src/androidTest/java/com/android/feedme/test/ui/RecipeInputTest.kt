@@ -17,7 +17,7 @@ class RecipeInputTest {
   @get:Rule val composeTestRule = createComposeRule()
 
   @Test
-  fun recipeInputTestDisplayed() {
+  fun recipeInputTestDisplayedAndValidates() {
     composeTestRule.setContent {
       RecipeInputScreen(
           mockk<NavigationActions>(relaxed = true), mockk<ProfileViewModel>(relaxed = true))
@@ -25,15 +25,37 @@ class RecipeInputTest {
     composeTestRule.waitForIdle()
 
     ComposeScreen.onComposeScreen<RecipeInputTestScreen>(composeTestRule) {
-      validateRecipe {
+      topBar {
         assertIsDisplayed()
-        assertHasClickAction()
+      }
+      bottomBar {
+        assertIsDisplayed()
+      }
+      recipeInputBox {
+        assertIsDisplayed()
       }
 
       recipePicture {
         assertIsDisplayed()
         assertHasClickAction()
       }
+
+      titleInput {
+        assertIsDisplayed()
+        // TODO add input
+      }
+      ingredientsInput {
+        assertIsDisplayed()
+      }
+        stepsInput {
+            assertIsDisplayed()
+        }
+
+      validateRecipe {
+        assertIsDisplayed()
+        assertHasClickAction()
+      }
+
     }
   }
 }

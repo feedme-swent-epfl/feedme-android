@@ -57,7 +57,7 @@ fun SearchBarFun(route: String, navigationActions: NavigationActions, viewModel:
     }
   }
 
-  // Search bar + filters icon
+  // Search bar
   SearchBar(
       modifier =
           Modifier.fillMaxWidth()

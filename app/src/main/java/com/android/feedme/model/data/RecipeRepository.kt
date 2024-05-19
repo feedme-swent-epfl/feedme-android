@@ -73,20 +73,25 @@ class RecipeRepository(private val db: FirebaseFirestore) {
    * @param onFailure A callback function invoked on failure to fetch the recipes, with an
    *   exception.
    */
-  /*fun getRecipes( TODO : We will use this for recommendations (maybe)
+  fun getRecipes(
       ids: List<String>,
       onSuccess: (List<Recipe>) -> Unit,
       onFailure: (Exception) -> Unit
   ) {
     db.collection(collectionPath)
-        .whereIn("id", ids)
+        .whereIn("recipeId", ids)
         .get()
-        .addOnSuccessListener { querySnapshot ->
-          val recipes = querySnapshot.toObjects(Recipe::class.java)
-          onSuccess(recipes)
+        .addOnSuccessListener {
+          it.documents.map { recipeMap ->
+            val data = recipeMap.data
+            if (data != null) {
+              val success = { recipe: Recipe? -> onSuccess(listOfNotNull(recipe)) }
+              mapToRecipe(data, success, onFailure)
+            }
+          }
         }
         .addOnFailureListener { exception -> onFailure(exception) }
-  }*/
+  }
 
   /**
    * Fetches all the recipes that contain the given query in their title.
@@ -148,7 +153,11 @@ class RecipeRepository(private val db: FirebaseFirestore) {
           "ingredient" to this.ingredient.toMap())
 
   private fun Ingredient.toMap(): Map<String, Any> =
-      mapOf("name" to this.name, "type" to this.type, "id" to this.id)
+      mapOf(
+          "name" to this.name,
+          "id" to this.id,
+          "vegan" to this.vegan,
+          "vegetarian" to this.vegetarian)
 
   private fun Step.toMap(): Map<String, Any> =
       mapOf(

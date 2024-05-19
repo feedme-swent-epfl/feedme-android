@@ -203,6 +203,7 @@ fun EditProfileContent(
                         profile.following,
                         profile.filter,
                         profile.recipeList,
+                        profile.savedRecipes,
                         profile.commentList))
                 navigationActions.navigateTo(Route.PROFILE)
               }

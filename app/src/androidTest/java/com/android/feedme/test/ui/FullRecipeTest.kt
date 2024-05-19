@@ -5,6 +5,7 @@ import androidx.compose.ui.test.junit4.createComposeRule
 import androidx.compose.ui.test.onNodeWithContentDescription
 import androidx.compose.ui.test.onNodeWithTag
 import androidx.compose.ui.test.onNodeWithText
+import androidx.compose.ui.test.performClick
 import androidx.test.ext.junit.runners.AndroidJUnit4
 import com.android.feedme.model.data.Ingredient
 import com.android.feedme.model.data.IngredientMetaData
@@ -45,7 +46,7 @@ class FullRecipeTest : TestCase() {
                   IngredientMetaData(
                       quantity = 2.0,
                       measure = MeasureUnit.ML,
-                      ingredient = Ingredient("Tomato", "Vegetables", "tomatoID"))),
+                      ingredient = Ingredient("Tomato", "tomatoID", false, false))),
           steps =
               listOf(
                   Step(
@@ -126,6 +127,23 @@ class FullRecipeTest : TestCase() {
     composeTestRule.onNodeWithTag("Horizontal Divider 2").assertIsDisplayed()
     composeTestRule.onNodeWithTag("Step Title").assertIsDisplayed()
     composeTestRule.onNodeWithTag("Step Description").assertIsDisplayed()
+  }
+
+  @Test
+  fun trySaveRecipe() {
+    goToFullRecipeScreen()
+
+    composeTestRule.waitForIdle()
+    composeTestRule
+        .onNodeWithContentDescription("Right Icon", useUnmergedTree = true)
+        .assertIsDisplayed()
+        .performClick()
+    composeTestRule.waitForIdle()
+    composeTestRule
+        .onNodeWithContentDescription("Right Icon", useUnmergedTree = true)
+        .assertIsDisplayed()
+        .performClick()
+    composeTestRule.waitForIdle()
   }
 
   private fun goToFullRecipeScreen() {

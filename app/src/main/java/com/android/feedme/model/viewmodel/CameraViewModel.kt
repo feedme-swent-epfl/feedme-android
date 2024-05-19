@@ -25,6 +25,7 @@ import com.android.feedme.ml.textExtraction
 import com.android.feedme.ml.textProcessing
 import com.android.feedme.model.data.Ingredient
 import com.android.feedme.model.data.IngredientMetaData
+import com.android.feedme.model.data.IngredientsRepository
 import com.android.feedme.model.data.MeasureUnit
 import kotlin.coroutines.resume
 import kotlin.coroutines.suspendCoroutine
@@ -216,13 +217,11 @@ class CameraViewModel : ViewModel() {
                   barcodeNumber,
                   { productInfo ->
                     if (productInfo != null) {
-                      // TODO How can i create new ingredients correctly or check if they already
-                      // exist ? => Sylvain PR ?
                       updateIngredientList(
                           IngredientMetaData(
                               0.0,
                               MeasureUnit.NONE,
-                              Ingredient(productInfo.productName, "Default", "DefaultID")))
+                              Ingredient(productInfo.productName, "NO_ID", false, false)))
                       continuation.resume(productInfo.productName)
                     } else {
                       _errorToDisplay.value = ERROR_BARCODE_PRODUCT_NAME
@@ -287,10 +286,31 @@ class CameraViewModel : ViewModel() {
    * @param ing The ingredient metadata to update the list with.
    */
   fun updateIngredientList(ing: IngredientMetaData) {
+    if (ing.ingredient.id != "TEST_ID") {
+      IngredientsRepository.instance.getExactFilteredIngredients(
+          ing.ingredient.name,
+          { ingredients ->
+            if (ingredients.isNotEmpty()) {
+              ing.ingredient = ingredients[0]
+            }
+            updateIngredientInList(ing)
+          },
+          {
+            Log.e("CameraViewModel", "Request to Database failed ", it)
+            updateIngredientInList(ing)
+          })
+    }
+    updateIngredientInList(ing)
+  }
+
+  /**
+   * Updates the ingredient in the list or adds it if it doesn't exist.
+   *
+   * @param ing The ingredient metadata to update or add to the list.
+   */
+  private fun updateIngredientInList(ing: IngredientMetaData) {
     val existingIngredient =
-        _listOfIngredientToInput.value.find {
-          it.ingredient.name == ing.ingredient.name
-        } // Todo change to id later
+        _listOfIngredientToInput.value.find { it.ingredient.name == ing.ingredient.name }
 
     if (existingIngredient != null) {
       // If the ingredient exists, update its quantity

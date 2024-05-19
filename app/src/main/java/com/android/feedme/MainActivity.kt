@@ -16,6 +16,7 @@ import androidx.navigation.compose.composable
 import androidx.navigation.compose.navigation
 import androidx.navigation.compose.rememberNavController
 import com.android.feedme.model.data.CommentRepository
+import com.android.feedme.model.data.IngredientsRepository
 import com.android.feedme.model.data.ProfileRepository
 import com.android.feedme.model.data.RecipeRepository
 import com.android.feedme.model.viewmodel.AuthViewModel
@@ -55,6 +56,7 @@ class MainActivity : ComponentActivity() {
     val firebase = FirebaseFirestore.getInstance()
     ProfileRepository.initialize(firebase)
     RecipeRepository.initialize(firebase)
+    IngredientsRepository.initialize(firebase)
     CommentRepository.initialize(firebase)
     setContent {
       feedmeAppTheme {
@@ -69,6 +71,7 @@ class MainActivity : ComponentActivity() {
               val searchViewModel: SearchViewModel = viewModel<SearchViewModel>()
               val authViewModel: AuthViewModel = viewModel<AuthViewModel>()
               val inputViewModel: InputViewModel = viewModel<InputViewModel>()
+              val homeViewModel: HomeViewModel = viewModel<HomeViewModel>()
 
               // Set up the nested navigation graph
               NavHost(navController = navController, startDestination = Route.AUTHENTICATION) {
@@ -88,7 +91,6 @@ class MainActivity : ComponentActivity() {
                   composable(Screen.HOME) {
                     // Create a shared view model for Recipe
                     val recipeViewModel = viewModel<RecipeViewModel>()
-                    val homeViewModel: HomeViewModel = viewModel<HomeViewModel>()
                     LandingPage(
                         navigationActions,
                         recipeViewModel,
@@ -101,7 +103,8 @@ class MainActivity : ComponentActivity() {
                 navigation(startDestination = Screen.SAVED, route = Route.SAVED) {
                   composable(Screen.SAVED) {
                     val recipeViewModel = viewModel<RecipeViewModel>()
-                    SavedRecipesScreen(navigationActions)
+                    SavedRecipesScreen(
+                        navigationActions, profileViewModel, recipeViewModel, homeViewModel)
                   }
                 }
 
@@ -147,6 +150,7 @@ class MainActivity : ComponentActivity() {
                     val backScreen =
                         when (it) {
                           Route.HOME -> Screen.HOME
+                          Route.SAVED -> Screen.SAVED
                           Route.PROFILE -> Screen.PROFILE
                           else -> {
                             ""

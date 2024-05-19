@@ -2,6 +2,8 @@ package com.android.feedme.model.viewmodel
 
 import android.net.Uri
 import android.util.Log
+import androidx.lifecycle.LiveData
+import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.android.feedme.model.data.Profile
@@ -26,10 +28,15 @@ class ProfileViewModel : ViewModel() {
   private val _currentUserProfile = MutableStateFlow<Profile?>(null)
   private val _currentUserFollowers = MutableStateFlow<List<Profile>>(listOf())
   private val _currentUserFollowing = MutableStateFlow<List<Profile>>(listOf())
+  private val _currentUserSavedRecipes = MutableStateFlow<List<String>>(listOf())
+  private val _isRecipeSaved = MutableLiveData<Boolean>()
   val currentUserProfile: StateFlow<Profile?> = _currentUserProfile
   val currentUserFollowers: StateFlow<List<Profile>> = _currentUserFollowers
   val currentUserFollowing: StateFlow<List<Profile>> = _currentUserFollowing
+  val currentUserSavedRecipes: StateFlow<List<String>> = _currentUserSavedRecipes
   val _imageUrl = MutableStateFlow<String?>(null)
+  val isRecipeSaved: LiveData<Boolean>
+    get() = _isRecipeSaved
 
   // Viewing User
   var viewingUserId: String? = null
@@ -101,6 +108,7 @@ class ProfileViewModel : ViewModel() {
                 _imageUrl.value = profile.imageUrl
                 fetchProfiles(profile.followers, _currentUserFollowers)
                 fetchProfiles(profile.following, _currentUserFollowing)
+                _currentUserSavedRecipes.value = profile.savedRecipes
               }
             },
             onFailure = {
@@ -413,5 +421,65 @@ class ProfileViewModel : ViewModel() {
         profileViewModel = profileViewModel,
         onFailure = { throw error("Can't upload profile picture to the database") },
         uri = picture)
+  }
+
+  /**
+   * Adds a saved recipe to the current user's saved recipes.
+   *
+   * @param recipe The recipe to add to the saved recipes.
+   */
+  fun addSavedRecipes(recipe: String) {
+    if (currentUserId == null) {
+      return
+    }
+    repository.addSavedRecipe(
+        currentUserId!!,
+        recipe,
+        { _currentUserSavedRecipes.value += recipe },
+        { throw error("Can't add recipe to the database") })
+  }
+
+  /**
+   * Removes a saved recipe from the current user's saved recipes.
+   *
+   * @param recipe The recipe to remove from the saved recipes.
+   */
+  fun removeSavedRecipes(recipe: String) {
+    if (currentUserId == null) {
+      return
+    }
+    repository.removeSavedRecipe(
+        currentUserId!!,
+        recipe,
+        { _currentUserSavedRecipes.value = _currentUserSavedRecipes.value.filter { it != recipe } },
+        { throw error("Can't remove recipe from the database") })
+  }
+
+  /**
+   * Checks if a recipe has already been saved by the current user.
+   *
+   * @param recipe The recipe to check.
+   */
+  fun savedRecipeExists(recipe: String, onResult: (Boolean) -> Unit) {
+    if (currentUserId == null) {
+      return
+    }
+    repository.savedRecipeExists(
+        currentUserId!!,
+        recipe,
+        { exists -> onResult(exists) },
+        { error ->
+          onResult(false)
+          throw error("Can't check if recipe exists in the database")
+        })
+  }
+
+  /**
+   * A function that forces saved recipes to be shown for testing purposes
+   *
+   * @param recipeIds: a list of recipes to show
+   */
+  fun setUserSavedRecipes(recipeIds: List<String>) {
+    _currentUserSavedRecipes.value = recipeIds
   }
 }

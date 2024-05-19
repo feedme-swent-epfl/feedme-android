@@ -170,10 +170,10 @@ fun FilteredContent(
             items(recipes) { recipe ->
               // Fetch the profile of the user who created the recipe
               // TODO: will to be replaced with a single call to fetch all profiles if possible
-              profileViewModel.fetchProfile(recipe.userid)
-              val profile = profileViewModel.viewingUserProfile.collectAsState().value
+              // profileViewModel.fetchProfile(recipe.userid)
+              // val profile = profileViewModel.viewingUserProfile.collectAsState().value
               RecipeCard(
-                  Route.HOME, recipe, profile, navigationActions, recipeViewModel, profileViewModel)
+                  Route.HOME, recipe, null, navigationActions, recipeViewModel, profileViewModel)
             }
         1 ->
             items(profiles) { profile -> FriendsCard(profile, navigationActions, profileViewModel) }

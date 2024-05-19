@@ -1,0 +1,61 @@
+Sprint	Title	URL	Assignees	Status	Task Type	Nature	Priority	Estimated time	Actual time
+	User is able to download grocery list of missing ingredients			Product Backlog	Backend	User Story	P2		
+	Fixing Code Complexity	https://github.com/feedme-swent-epfl/feedme-android/issues/204	mche3kek	Product Backlog	Backend	Maintenance	P1	5	
+	Google ML Kit : Image Labeling	https://github.com/feedme-swent-epfl/feedme-android/issues/64	JeannedeM	Product Backlog	Backend	Sprint Task	P2	12	
+Sprint 10	UI : add profile picture of user in the settings screen	https://github.com/feedme-swent-epfl/feedme-android/issues/214		Product Backlog	Frontend	Sprint Task	P2	2	
+	User is able to see personalized recipes suggestions			Sprint Backlog	Backend	User Story	P1		
+	User is able to take a picture of a handwritten text to identify ingredients			Sprint Backlog	Backend	User Story	P2		
+	User is able to use pictures to identify ingredients			Sprint Backlog	Backend	User Story	P2		
+	User is able to rate, comment recipes, and provide feedback to users			Sprint Backlog	Backend	User Story	P0		
+	User is able to use the app in offline mode			Sprint Backlog	Backend	User Story	P1		
+	User is able to  generate recipe based on inputed ingredient			Sprint Backlog	Backend	User Story	P0		
+	User can upload a recipe			Done in Sprint 8	Backend	User Story	P0		
+	User can save a recipe			Done in Sprint 8		User Story	P1		
+	User is able to search recipes			Done in Sprint 8	Backend	User Story	P0		
+Sprint 8	User is able to look for profiles with search bar			Done in Sprint 8	Backend	User Story	P0		
+Sprint 8	Fix UI for input ingredient screen	https://github.com/feedme-swent-epfl/feedme-android/issues/179	ohamz	Done in Sprint 8	Frontend	Sprint Task	P1	7	5.5
+Sprint 8	Research about how to label data for the recommendation algorithm	https://github.com/feedme-swent-epfl/feedme-android/issues/162	fdejean	Done in Sprint 8	Backend	Sprint Task	P1	7	5
+Sprint 8	Fix InputViewModel : Adding/Suggest Ingredients	https://github.com/feedme-swent-epfl/feedme-android/issues/181	FacerOfGod	Done in Sprint 8	Backend	Sprint Task	P1	10	28
+Sprint 7	UI for recipe creation	https://github.com/feedme-swent-epfl/feedme-android/issues/140	mche3kek	Done in Sprint 8	Frontend	Sprint Task	P0	6	8.5
+Sprint 8	Link the gallery in camera screen to the real phone Gallery	https://github.com/feedme-swent-epfl/feedme-android/issues/184	mche3kek	Done in Sprint 8	Backend	Sprint Task	P1	4	5
+Sprint 8	ViewModel for recipe creation	https://github.com/feedme-swent-epfl/feedme-android/issues/183	mche3kek	Done in Sprint 8	Backend	Sprint Task	P1	6	11
+Sprint 8	UI for user interaction with ML camera module	https://github.com/feedme-swent-epfl/feedme-android/issues/178	JeannedeM	Done in Sprint 8	Frontend	Sprint Task	P0	9	9
+Sprint 8	Fix extremely high number of queries problem when using the SearchBar	https://github.com/feedme-swent-epfl/feedme-android/issues/186	ohamz	Done in Sprint 8	Backend	Maintenance	P0	2	1.5
+Sprint 8	Parsing json files for ingredient input through barcode	https://github.com/feedme-swent-epfl/feedme-android/issues/144	JeannedeM	Done in Sprint 8	Backend	Sprint Task	P0	7	7
+Sprint 8	Save button action on recipe	https://github.com/feedme-swent-epfl/feedme-android/issues/170	xrsula	Done in Sprint 8	Frontend	Sprint Task	P0	3	12
+Sprint 8	Implement UI when Searching in Home page	https://github.com/feedme-swent-epfl/feedme-android/issues/165	ohamz	Done in Sprint 8	Frontend	Sprint Task	P0	6	7
+Sprint 8	Navigation to profile when clicking an user on a recipe	https://github.com/feedme-swent-epfl/feedme-android/issues/163	ohamz	Done in Sprint 8	Frontend	Sprint Task	P0	3	4
+Sprint 8	Save Recipe Page UI	https://github.com/feedme-swent-epfl/feedme-android/issues/161	xrsula	Done in Sprint 8	Frontend	Sprint Task	P1	4	4
+Sprint 8	ViewModel for the comments	https://github.com/feedme-swent-epfl/feedme-android/issues/97	0marwa	Done in Sprint 8	Backend	Sprint Task	P2	5	1
+Sprint 8	Clean up the Recipe Data Class + Display	https://github.com/feedme-swent-epfl/feedme-android/issues/171	0marwa	Done in Sprint 8	Frontend	Maintenance	P1	4	2.5
+Sprint 8	Update Figma for the milestone	https://github.com/feedme-swent-epfl/feedme-android/issues/172	0marwa	Done in Sprint 8	Figma	Sprint Task	P1	5	5
+Sprint 8	Bug Fix : App crash on start + quota exceeded	https://github.com/feedme-swent-epfl/feedme-android/issues/190	fdejean	Done in Sprint 8	Backend	Maintenance	P0	7	7
+Sprint 8	ViewMode for comment + Navigation to Create Comment	https://github.com/feedme-swent-epfl/feedme-android/issues/174	fdejean	Done in Sprint 8	Backend	Sprint Task	P0	5	5
+	User is able to take a picture of a typed text to identify ingredients			Done in Sprint 7	Backend	User Story	P0		
+Sprint 7	Fill database with recipes	https://github.com/feedme-swent-epfl/feedme-android/issues/152	0marwa	Done in Sprint 7	Backend	Sprint Task	P0	6	7.5
+Sprint 7	UI for creating a new comment on a recipe	https://github.com/feedme-swent-epfl/feedme-android/issues/159	0marwa	Done in Sprint 7	Frontend	Sprint Task	P0	5	5.5
+Sprint 7	TextProcessing for Text Recognition	https://github.com/feedme-swent-epfl/feedme-android/issues/154	FacerOfGod, JeannedeM	Done in Sprint 7	Backend	Sprint Task	P0	10	16
+Sprint 7	Implement the logic behind the search functionality of the searchbar	https://github.com/feedme-swent-epfl/feedme-android/issues/58	ohamz	Done in Sprint 7	Backend	Sprint Task	P2	8	13
+Sprint 7	Upload ingredients to database	https://github.com/feedme-swent-epfl/feedme-android/issues/142	xrsula	Done in Sprint 7	Backend	Sprint Task	P0	6	2
+Sprint 7	Reflexion on how to uniformize the ingredients inputted in the FindRecipe page 	https://github.com/feedme-swent-epfl/feedme-android/issues/145	xrsula	Done in Sprint 7	Figma	Sprint Task	P1	5	6
+Sprint 7	UI for Recipe Step Creation	https://github.com/feedme-swent-epfl/feedme-android/issues/141	fdejean	Done in Sprint 7	Frontend	Sprint Task	P0	4	6
+Sprint 7	ViewModel for Input of recipe Step Creation	https://github.com/feedme-swent-epfl/feedme-android/issues/146	fdejean	Done in Sprint 7	Backend	Sprint Task	P0	4	4
+Sprint 7	Error handling MLKit	https://github.com/feedme-swent-epfl/feedme-android/issues/158	JeannedeM	Done in Sprint 7	Backend	Maintenance	P2	4	3
+Sprint 7	Clean up of MLkit implementation	https://github.com/feedme-swent-epfl/feedme-android/issues/143	JeannedeM	Done in Sprint 7	Backend	Maintenance	P1	6	6
+Sprint 9	Fix profile picture and photo picker issues	https://github.com/feedme-swent-epfl/feedme-android/issues/207	mche3kek	Sprint Backlog	Backend	Maintenance	P0	5	
+Sprint 9	Make the input of ingredients more user-friendly	https://github.com/feedme-swent-epfl/feedme-android/issues/208	mche3kek	Sprint Backlog	Frontend	Sprint Task	P1	8	
+Sprint 9	Refactor navigation actions for logging and offline mode	https://github.com/feedme-swent-epfl/feedme-android/issues/211	ohamz	Sprint Backlog	Backend	Sprint Task	P0	6	
+Sprint 9	Implement the offline mode	https://github.com/feedme-swent-epfl/feedme-android/issues/194	ohamz	Sprint Backlog	Backend	Sprint Task	P0	7	
+Sprint 9	Update Back-end to support transaction to add a comment to user list and recipe list	https://github.com/feedme-swent-epfl/feedme-android/issues/177	fdejean	Sprint Backlog	Backend	Sprint Task	P0	5	
+Sprint 9	Logic : Implement the generating recipe system	https://github.com/feedme-swent-epfl/feedme-android/issues/203	fdejean	Sprint Backlog	Backend	Sprint Task	P0	9	
+Sprint 9	UI : Comment thumbnail display in profile page	https://github.com/feedme-swent-epfl/feedme-android/issues/196	0marwa	In Development	Frontend	Sprint Task	P0	6	
+Sprint 9	Research : do we add handwritten recognition or image rceognition in ML part	https://github.com/feedme-swent-epfl/feedme-android/issues/200	JeannedeM	In Development	Research	Sprint Task	P2	2	
+Sprint 9	Adapt Input ingredient viewModel to have a fridge button	https://github.com/feedme-swent-epfl/feedme-android/issues/202	FacerOfGod	Sprint Backlog	Backend	Sprint Task	P1	10	
+Sprint 9	UI : display screen for generate recipe base on inputed ingredients	https://github.com/feedme-swent-epfl/feedme-android/issues/192	ohamz	Sprint Backlog	Frontend	Sprint Task	P0	4	
+Sprint 9	UI : popup to ask user : "strict ingredient" or "extra ingredient allowed"	https://github.com/feedme-swent-epfl/feedme-android/issues/201	xrsula	Sprint Backlog	Frontend	Sprint Task	P0	7	
+Sprint 9	UI : add tags for recipe difficulty on recipe cards	https://github.com/feedme-swent-epfl/feedme-android/issues/198	0marwa	Sprint Backlog	Frontend	Sprint Task	P1	5	
+Sprint 9	Implement photo upload to comments	https://github.com/feedme-swent-epfl/feedme-android/issues/212	0marwa	Sprint Backlog	Backend	Sprint Task	P0	5	
+Sprint 9	UI : Fix the following title on profile page	https://github.com/feedme-swent-epfl/feedme-android/issues/199	xrsula	Sprint Backlog	Bug	Sprint Task	P0	1	
+Sprint 9	Logic : fetch on landing page the best rated recipe	https://github.com/feedme-swent-epfl/feedme-android/issues/193	ohamz	Sprint Backlog	Backend	Sprint Task	P0	4	
+Sprint 9	New ML method depending on the reseach result		JeannedeM	Sprint Backlog	Backend	Sprint Task	P1	10	
+Sprint 9	UI : Fix page title in Top Bar	https://github.com/feedme-swent-epfl/feedme-android/issues/213	FacerOfGod	Sprint Backlog	Bug	Maintenance	P2	1	

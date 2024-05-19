@@ -69,6 +69,11 @@ class ProfileTest {
         assertHasClickAction()
       }
 
+      addRecipe {
+        assertIsDisplayed()
+        assertHasClickAction()
+      }
+
       shareButton {
         assertIsDisplayed()
         assertHasClickAction()

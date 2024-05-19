@@ -161,10 +161,25 @@ fun IngredientInput(
           DropdownMenu(
               modifier = Modifier.height(120.dp),
               expanded = isDropdownVisible && name.isNotEmpty(),
-              onDismissRequest = { isDropdownVisible = false },
+              onDismissRequest = {
+                isDropdownVisible = false
+                val beforeState = state
+                if (name != " ") {
+                  ingredientCurrent =
+                      if (filteredIngredients.isNotEmpty()) {
+                        filteredIngredients[0]
+                      } else {
+                        Ingredient(name, "NO_ID", false, false)
+                      }
+                  state =
+                      if (isComplete) IngredientInputState.COMPLETE
+                      else IngredientInputState.SEMI_COMPLETE
+                  action(beforeState, state, IngredientMetaData(quantity, dose, ingredientCurrent))
+                }
+              },
               properties =
                   PopupProperties(
-                      focusable = false, dismissOnClickOutside = false, dismissOnBackPress = false),
+                      focusable = false, dismissOnClickOutside = true, dismissOnBackPress = false),
           ) {
             filteredIngredients.forEach { item ->
               DropdownMenuItem(
@@ -190,9 +205,21 @@ fun IngredientInput(
                 text = { Text(text = "Add Ingredient") },
                 onClick = {
                   // TODO check validty of addition with Chatgbt
+                  // TODO once the database is fix do pop up message to confirm addition to database
                   ingredientsRepository.addIngredient(
                       Ingredient(name, "NO_ID", false, false),
-                      { ingredientCurrent = it },
+                      {
+                        isDropdownVisible = false
+                        val beforeState = state
+                        ingredientCurrent = it
+                        state =
+                            if (isComplete) IngredientInputState.COMPLETE
+                            else IngredientInputState.SEMI_COMPLETE
+                        action(
+                            beforeState,
+                            state,
+                            IngredientMetaData(quantity, dose, ingredientCurrent))
+                      },
                       { Log.e("Fail to add Ingredient : ", " ", it) })
                 })
           }

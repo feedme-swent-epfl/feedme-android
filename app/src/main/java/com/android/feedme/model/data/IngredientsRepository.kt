@@ -56,6 +56,7 @@ class IngredientsRepository(val db: FirebaseFirestore) {
   ) {
     val newDocRef = db.collection(collectionPath).document()
     ingredient.id = newDocRef.id // Assign the generated ID to the comment
+    ingredient.name = ingredient.name.trim() // Assign the generated ID to the comment
     newDocRef
         .set(ingredient)
         .addOnSuccessListener {

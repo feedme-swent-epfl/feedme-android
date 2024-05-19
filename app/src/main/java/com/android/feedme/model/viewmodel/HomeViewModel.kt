@@ -20,11 +20,18 @@ class HomeViewModel : ViewModel() {
   private val _savedRecipes = MutableStateFlow<List<Recipe>>(emptyList())
   val savedRecipes = _savedRecipes.asStateFlow()
 
-  init {
-    FirebaseAuth.getInstance().uid?.let {
-      fetchRecipe("lasagna1")
-      fetchRecipe("pasta1")
+  private val authListener =
+    FirebaseAuth.AuthStateListener {
+      FirebaseAuth.getInstance().uid?.let {
+        fetchRecipe("lasagna1")
+        fetchRecipe("pasta1")
+      }
     }
+
+  init {
+    // Listen to FirebaseAuth state changes
+    FirebaseAuth.getInstance().addAuthStateListener(authListener)
+
   }
 
   /**

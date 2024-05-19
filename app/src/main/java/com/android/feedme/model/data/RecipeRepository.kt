@@ -34,8 +34,7 @@ class RecipeRepository(private val db: FirebaseFirestore) {
     val recipeMap = recipeToMap(recipe)
     val newDocRef = db.collection(collectionPath).document()
     recipe.recipeId = newDocRef.id
-    db.collection(collectionPath)
-        .document(recipe.recipeId)
+    newDocRef
         .set(recipeMap)
         .addOnSuccessListener { onSuccess() }
         .addOnFailureListener { onFailure(it) }

@@ -63,6 +63,7 @@ class RecipeRepositoryTest {
 
     // Here's the critical part: ensure a Task<Void> is returned
     `when`(mockDocumentReference.set(any())).thenReturn(Tasks.forResult(null))
+    `when`(mockDocumentReference.id).thenReturn("testRecipeId") // Mock the ID property
   }
 
   @Test

@@ -1,6 +1,11 @@
 package com.android.feedme.test.ui
 
+import androidx.compose.ui.test.assertIsDisplayed
+import androidx.compose.ui.test.assertTextEquals
+import androidx.compose.ui.test.isNotDisplayed
 import androidx.compose.ui.test.junit4.createComposeRule
+import androidx.compose.ui.test.onChild
+import androidx.compose.ui.test.onNodeWithTag
 import androidx.test.ext.junit.runners.AndroidJUnit4
 import com.android.feedme.model.data.IngredientsRepository
 import com.android.feedme.model.data.RecipeRepository
@@ -56,10 +61,14 @@ class RecipeInputTest {
 
       titleInput {
         assertIsDisplayed()
-        // TODO add input
+        performTextInput("Test Recipe")
+      }
+      descriptionInput {
+        assertIsDisplayed()
+        performTextInput("Test Description")
       }
       ingredientsInput { assertIsDisplayed() }
-      // stepsInput { assertIsDisplayed() }
+      stepsInput { assertIsDisplayed() }
 
       validateRecipe {
         assertIsDisplayed()
@@ -68,28 +77,29 @@ class RecipeInputTest {
     }
   }
 
-  //  @Test
-  //  fun recipeViewModelValidateFails() {
-  //        composeTestRule.setContent {
-  //          RecipeInputScreen(
-  //              mockk<NavigationActions>(relaxed = true), mockk<ProfileViewModel>(relaxed = true))
-  //        }
-  //        composeTestRule.waitForIdle()
-  //
-  //        ComposeScreen.onComposeScreen<RecipeInputTestScreen>(composeTestRule) {
-  //          validateRecipe {
-  //            assertIsDisplayed()
-  //            performClick()
-  //          }
-  //          composeTestRule.onNodeWithTag("Error Snack Bar").assertIsDisplayed()
-  //          composeTestRule
-  //              .onNodeWithTag("Error Snack Bar")
-  //              .onChild()
-  //              .assertTextEquals("Error : Recipe not correctly filled in")
-  //          composeTestRule.waitForIdle()
-  //
-  //          composeTestRule.waitUntil(timeoutMillis = 25000) {
-  //            composeTestRule.onNodeWithTag("Error Snack Bar").isNotDisplayed()
-  //          }
-  //  }
+  @Test
+  fun recipeViewModelValidateFails() {
+    composeTestRule.setContent {
+      RecipeInputScreen(
+          mockk<NavigationActions>(relaxed = true), mockk<ProfileViewModel>(relaxed = true))
+    }
+    composeTestRule.waitForIdle()
+
+    ComposeScreen.onComposeScreen<RecipeInputTestScreen>(composeTestRule) {
+      validateRecipe {
+        assertIsDisplayed()
+        performClick()
+      }
+      composeTestRule.onNodeWithTag("Error Snack Bar").assertIsDisplayed()
+      composeTestRule
+          .onNodeWithTag("Error Snack Bar")
+          .onChild()
+          .assertTextEquals("Error : Recipe not correctly filled in")
+      composeTestRule.waitForIdle()
+
+      composeTestRule.waitUntil(timeoutMillis = 25000) {
+        composeTestRule.onNodeWithTag("Error Snack Bar").isNotDisplayed()
+      }
+    }
+  }
 }

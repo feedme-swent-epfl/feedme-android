@@ -53,6 +53,7 @@ class RecipeStepInputTest {
 
       descriptionField.performClick()
       descriptionField.performTextInput("Sample Description")
+      titleField.performClick() // loss focus
       assert(recipeStepViewModel.steps.value.first().stepNumber == 1)
       assert(recipeStepViewModel.steps.value.first().title == "Sample Title")
       assert(recipeStepViewModel.steps.value.first().description == "Sample Description")

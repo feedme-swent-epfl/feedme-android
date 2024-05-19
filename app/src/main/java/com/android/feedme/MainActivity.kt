@@ -28,7 +28,6 @@ import com.android.feedme.resources.C
 import com.android.feedme.ui.auth.LoginScreen
 import com.android.feedme.ui.auth.WelcomeScreen
 import com.android.feedme.ui.camera.CameraScreen
-import com.android.feedme.ui.camera.GalleryScreen
 import com.android.feedme.ui.component.RecipeFullDisplay
 import com.android.feedme.ui.find.FindRecipeScreen
 import com.android.feedme.ui.home.LandingPage
@@ -40,6 +39,7 @@ import com.android.feedme.ui.navigation.Screen
 import com.android.feedme.ui.profile.EditProfileScreen
 import com.android.feedme.ui.profile.FriendsScreen
 import com.android.feedme.ui.profile.ProfileScreen
+import com.android.feedme.ui.profile.RecipeInputScreen
 import com.android.feedme.ui.settings.SettingsScreen
 import com.android.feedme.ui.theme.feedmeAppTheme
 import com.google.firebase.firestore.FirebaseFirestore
@@ -109,7 +109,6 @@ class MainActivity : ComponentActivity() {
                     FindRecipeScreen(navigationActions, inputViewModel)
                   }
                   composable(Screen.CAMERA) { CameraScreen(navigationActions, inputViewModel) }
-                  composable(Screen.GALLERY) { GalleryScreen(navigationActions, 15) }
                 }
 
                 navigation(startDestination = Screen.PROFILE, route = Route.PROFILE) {
@@ -119,6 +118,9 @@ class MainActivity : ComponentActivity() {
                   }
                   composable(Screen.EDIT_PROFILE) {
                     EditProfileScreen(navigationActions, profileViewModel)
+                  }
+                  composable(Screen.ADD_RECIPE) {
+                    RecipeInputScreen(navigationActions, profileViewModel)
                   }
                   composable(Screen.FRIENDS) { backStackEntry ->
                     backStackEntry.arguments?.getString("showFollowers")?.let {

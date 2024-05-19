@@ -67,14 +67,10 @@ import com.android.feedme.ui.theme.TextBarColor
  * @param profileViewModel: ProfileViewModel object to interact with profile data
  */
 @Composable
-fun RecipeInputScreen(
-    navigationActions: NavigationActions,
-    profileViewModel: ProfileViewModel
-    // TODO: Integrate ViewModel with UI
-) {
-    val recipeStepViewModel: RecipeStepViewModel = viewModel()
-    val inputViewModel: InputViewModel = viewModel()
-    val recipeViewModel: RecipeViewModel = viewModel()
+fun RecipeInputScreen(navigationActions: NavigationActions, profileViewModel: ProfileViewModel) {
+  val recipeStepViewModel: RecipeStepViewModel = viewModel()
+  val inputViewModel: InputViewModel = viewModel()
+  val recipeViewModel: RecipeViewModel = viewModel()
 
   val title = remember { mutableStateOf("") }
   val description = remember { mutableStateOf("") }

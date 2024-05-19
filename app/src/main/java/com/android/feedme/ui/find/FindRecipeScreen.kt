@@ -36,7 +36,8 @@ import com.android.feedme.ui.navigation.Route
 import com.android.feedme.ui.navigation.Screen
 import com.android.feedme.ui.navigation.TOP_LEVEL_DESTINATIONS
 import com.android.feedme.ui.navigation.TopBarNavigation
-import com.android.feedme.ui.theme.FindRecipeIcons
+import com.android.feedme.ui.theme.FabColor
+import com.android.feedme.ui.theme.TextBarColor
 
 /**
  * Composable function for the Create Screen.
@@ -48,16 +49,17 @@ fun FindRecipeScreen(navigationActions: NavigationActions, inputViewModel: Input
 
   Scaffold(
       modifier = Modifier.testTag("FindRecipeScreen"),
-      topBar = { TopBarNavigation(title = "Find Recipe") },
+      topBar = { TopBarNavigation(title = "Generate Recipe") },
       floatingActionButton = {
         Column {
           FloatingActionButton(
+              containerColor = FabColor,
+              contentColor = TextBarColor,
               onClick = { navigationActions.navigateTo(Screen.CAMERA) },
               content = {
                 Icon(
                     imageVector = Icons.Default.PhotoCamera,
                     contentDescription = "Camera Icon",
-                    tint = FindRecipeIcons,
                     modifier = Modifier.size(24.dp))
               },
               modifier = Modifier.testTag("CameraButton"))
@@ -65,12 +67,13 @@ fun FindRecipeScreen(navigationActions: NavigationActions, inputViewModel: Input
           Spacer(modifier = Modifier.height(10.dp))
 
           FloatingActionButton(
+              containerColor = FabColor,
+              contentColor = TextBarColor,
               onClick = { /*TODO Validate the ingredients*/},
               content = {
                 Icon(
                     imageVector = Icons.Default.Check,
                     contentDescription = "Camera Icon",
-                    tint = FindRecipeIcons,
                     modifier = Modifier.size(24.dp))
               },
               modifier = Modifier.testTag("ValidateButton"))

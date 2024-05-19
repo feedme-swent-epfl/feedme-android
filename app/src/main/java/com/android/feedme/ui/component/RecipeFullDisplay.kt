@@ -55,6 +55,8 @@ import com.android.feedme.ui.navigation.Screen
 import com.android.feedme.ui.navigation.TOP_LEVEL_DESTINATIONS
 import com.android.feedme.ui.navigation.TopBarNavigation
 import com.android.feedme.ui.theme.BlueUsername
+import com.android.feedme.ui.theme.FabColor
+import com.android.feedme.ui.theme.TextBarColor
 import com.android.feedme.ui.theme.YellowStar
 import com.android.feedme.ui.theme.YellowStarBlackOutline
 
@@ -96,6 +98,8 @@ fun RecipeFullDisplay(
       },
       floatingActionButton = {
         FloatingActionButton(
+            containerColor = FabColor,
+            contentColor = TextBarColor,
             onClick = { showDialog = true },
             content = { Icon(imageVector = Icons.Outlined.Add, contentDescription = "Add") })
       },

@@ -40,6 +40,7 @@ import com.android.feedme.ui.navigation.Screen
 import com.android.feedme.ui.profile.EditProfileScreen
 import com.android.feedme.ui.profile.FriendsScreen
 import com.android.feedme.ui.profile.ProfileScreen
+import com.android.feedme.ui.profile.RecipeInputScreen
 import com.android.feedme.ui.settings.SettingsScreen
 import com.android.feedme.ui.theme.feedmeAppTheme
 import com.google.firebase.firestore.FirebaseFirestore
@@ -119,6 +120,9 @@ class MainActivity : ComponentActivity() {
                   }
                   composable(Screen.EDIT_PROFILE) {
                     EditProfileScreen(navigationActions, profileViewModel)
+                  }
+                  composable(Screen.ADD_RECIPE) {
+                    RecipeInputScreen(navigationActions, profileViewModel)
                   }
                   composable(Screen.FRIENDS) { backStackEntry ->
                     backStackEntry.arguments?.getString("showFollowers")?.let {

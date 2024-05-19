@@ -46,12 +46,6 @@ import com.android.feedme.ui.theme.InValidInput
 import com.android.feedme.ui.theme.NoInput
 import com.android.feedme.ui.theme.ValidInput
 
-@Preview
-@Composable
-fun preview(){
-    IngredientList(InputViewModel())
-}
-
 /**
  * Composable function for displaying a list of ingredients.
  *

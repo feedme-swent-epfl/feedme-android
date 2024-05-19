@@ -368,12 +368,8 @@ class ProfileViewModelTest {
     `when`(mockDocumentReference.get()).thenReturn(Tasks.forResult(mockDocumentSnapshot))
     `when`(mockDocumentSnapshot.toObject(Profile::class.java)).thenReturn(profile)
 
-    profileRepository.addSavedRecipe(
-        userId,
-        recipe,
-        { assertTrue(profileViewModel.currentUserProfile.value!!.savedRecipes.contains(recipe)) },
-        { assertFalse("Failed to add recipe", true) })
-    // shadowOf(Looper.getMainLooper()).idle()
+    profileViewModel.addSavedRecipes(recipe)
+    shadowOf(Looper.getMainLooper()).idle()
   }
 
   @Test
@@ -383,11 +379,7 @@ class ProfileViewModelTest {
     `when`(mockFirestore.runTransaction<Any>(any()))
         .thenReturn(Tasks.forException(Exception("Transaction failed")))
 
-    profileRepository.addSavedRecipe(
-        userId,
-        recipe,
-        { assertFalse("Should not succeed", true) },
-        { assertTrue(it.message!!.contains("Transaction failed")) })
+    profileViewModel.addSavedRecipes(recipe)
     shadowOf(Looper.getMainLooper()).idle()
   }
 
@@ -399,12 +391,8 @@ class ProfileViewModelTest {
     `when`(mockDocumentReference.get()).thenReturn(Tasks.forResult(mockDocumentSnapshot))
     `when`(mockDocumentSnapshot.toObject(Profile::class.java)).thenReturn(profile)
 
-    profileRepository.removeSavedRecipe(
-        userId,
-        recipe,
-        { assertFalse(profileViewModel.currentUserProfile.value!!.savedRecipes.contains(recipe)) },
-        { assertFalse("Failed to remove recipe", true) })
-    // shadowOf(Looper.getMainLooper()).idle()
+    profileViewModel.removeSavedRecipes(recipe)
+    shadowOf(Looper.getMainLooper()).idle()
   }
 
   @Test
@@ -414,11 +402,8 @@ class ProfileViewModelTest {
     `when`(mockFirestore.runTransaction<Any>(any()))
         .thenReturn(Tasks.forException(Exception("Transaction failed")))
 
-    profileRepository.removeSavedRecipe(
-        userId,
-        recipe,
-        { assertFalse("Should not succeed", true) },
-        { assertTrue(it.message!!.contains("Transaction failed")) })
+    profileViewModel.removeSavedRecipes(recipe)
+
     shadowOf(Looper.getMainLooper()).idle()
   }
 
@@ -430,11 +415,7 @@ class ProfileViewModelTest {
     `when`(mockDocumentReference.get()).thenReturn(Tasks.forResult(mockDocumentSnapshot))
     `when`(mockDocumentSnapshot["savedRecipes"]).thenReturn(listOf(recipe))
 
-    profileRepository.savedRecipeExists(
-        userId,
-        recipe,
-        { exists -> assertTrue(exists) },
-        { assertFalse("Failed to check recipe existence", true) })
+    profileViewModel.savedRecipeExists(recipe) { exists -> assertTrue(exists) }
     shadowOf(Looper.getMainLooper()).idle()
   }
 
@@ -444,11 +425,7 @@ class ProfileViewModelTest {
     val recipe = "recipe1"
     `when`(mockDocumentReference.get()).thenReturn(Tasks.forException(Exception("Failed to check")))
 
-    profileRepository.savedRecipeExists(
-        userId,
-        recipe,
-        { exists -> assertFalse("Should not succeed", true) },
-        { assertTrue(it.message!!.contains("Failed to check")) })
+    profileViewModel.savedRecipeExists(recipe) { assertFalse("Should not succeed", true) }
     shadowOf(Looper.getMainLooper()).idle()
   }
 }

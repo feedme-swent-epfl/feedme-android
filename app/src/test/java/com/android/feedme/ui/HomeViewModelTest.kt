@@ -115,6 +115,8 @@ class HomeViewModelTest {
     `when`(mockDocumentSnapshot.exists()).thenReturn(true)
     `when`(mockDocumentSnapshot.data).thenReturn(recipeMap)
 
+    `when`(mockCollectionReference.orderBy("rating", Query.Direction.DESCENDING))
+        .thenReturn(mockQuery)
     `when`(mockCollectionReference.whereIn("recipeId", listOf(recipeId))).thenReturn(mockQuery)
     `when`(mockQuery.limit(6)).thenReturn(mockQuery)
 

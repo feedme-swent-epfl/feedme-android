@@ -75,7 +75,7 @@ class RecipeRepository(private val db: FirebaseFirestore) {
    * @param onFailure A callback function invoked on failure to fetch the recipes, with an
    *   exception.
    */
-  fun getRecipes(
+  fun getSavedRecipes(
       ids: List<String>,
       onSuccess: (List<Recipe>) -> Unit,
       onFailure: (Exception) -> Unit

@@ -65,7 +65,7 @@ class HomeViewModel : ViewModel() {
   fun fetchSavedRecipes(ids: List<String>) {
     viewModelScope.launch {
       val recipeList = mutableListOf<Recipe>()
-      recipeRepository.getRecipes(
+      recipeRepository.getSavedRecipes(
           ids,
           onSuccess = { recipe ->
             recipeList += recipe

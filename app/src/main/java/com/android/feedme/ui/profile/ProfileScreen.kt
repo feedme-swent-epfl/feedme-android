@@ -161,13 +161,14 @@ fun ProfileBox(
               horizontalArrangement = Arrangement.Center,
               verticalAlignment = Alignment.CenterVertically) {
                 UserProfilePicture(profileViewModel)
-                Spacer(modifier = Modifier.width(20.dp))
+                Spacer(modifier = Modifier.width(20.dp).padding(padding))
                 UserNameBox(profile ?: Profile())
-                Spacer(modifier = Modifier.width(5.dp))
+                Spacer(modifier = Modifier.width(5.dp).padding(padding))
                 Row(
                     horizontalArrangement = Arrangement.Center,
                     verticalAlignment = Alignment.CenterVertically) {
                       FollowersButton(profile ?: Profile(), navigationActions)
+                      Spacer(modifier = Modifier.width(10.dp).padding(padding))
                       FollowingButton(profile ?: Profile(), navigationActions)
                     }
               }

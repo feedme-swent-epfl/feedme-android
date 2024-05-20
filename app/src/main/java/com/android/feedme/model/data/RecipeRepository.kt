@@ -1,5 +1,6 @@
 package com.android.feedme.model.data
 
+import android.util.Log
 import com.google.firebase.firestore.DocumentSnapshot
 import com.google.firebase.firestore.FirebaseFirestore
 
@@ -168,11 +169,30 @@ class RecipeRepository(private val db: FirebaseFirestore) {
       onSuccess: (Recipe?) -> Unit,
       onFailure: (Exception) -> Unit
   ) {
-    // Attempt to safely extract the list of ingredient IDs
+    // Extract the raw ingredients list
     val rawIngredientsList = map["ingredients"]
-    val ingredientIds =
+    Log.d("RecipeRepository", "raw Ids $rawIngredientsList")
+
+    // Parse ingredient meta data
+    val ingredientMetaDataList =
         if (rawIngredientsList is List<*>) {
-          rawIngredientsList.mapNotNull { (it as? Map<*, *>)?.get("ingredientId") as? String }
+          rawIngredientsList.mapNotNull { rawIngredient ->
+            (rawIngredient as? Map<*, *>)?.let { ingredientMap ->
+              val quantity = (ingredientMap["quantity"] as? Number)?.toDouble()
+              val measure = ingredientMap["measure"] as? MeasureUnit ?: MeasureUnit.NONE
+              val ingredientDetails = ingredientMap["ingredient"] as? Map<*, *>
+
+              if (quantity != null && ingredientDetails != null) {
+                val name = ingredientDetails["name"] as? String ?: ""
+                val vegetarian = ingredientDetails["vegetarian"] as? Boolean ?: false
+                val vegan = ingredientDetails["vegan"] as? Boolean ?: false
+                val id = ingredientDetails["id"] as? String ?: ""
+
+                val ingredient = Ingredient(name, id, vegetarian, vegan)
+                IngredientMetaData(quantity, measure, ingredient)
+              } else null
+            }
+          }
         } else {
           listOf()
         }
@@ -186,46 +206,42 @@ class RecipeRepository(private val db: FirebaseFirestore) {
           listOf()
         }
 
-    ingredientsRepository.getIngredients(
-        ingredientIds,
-        onSuccess = { ingredients ->
-          try {
-            // Safely process the steps
-            val rawStepsList = map["steps"]
-            val steps =
-                if (rawStepsList is List<*>) {
-                  rawStepsList.mapNotNull { rawStep ->
-                    (rawStep as? Map<*, *>)?.let { stepMap ->
-                      val stepNumber = (stepMap["stepNumber"] as? Number)?.toInt()
-                      val description = stepMap["description"] as? String
-                      val title = stepMap["title"] as? String
-                      if (stepNumber != null && description != null && title != null) {
-                        Step(stepNumber, description, title)
-                      } else null
-                    }
-                  }
-                } else {
-                  listOf()
-                }
-
-            // Construct the Recipe object
-            val recipe =
-                Recipe(
-                    recipeId = map["recipeId"] as? String ?: "",
-                    title = map["title"] as? String ?: "",
-                    description = map["description"] as? String ?: "",
-                    ingredients = ingredients,
-                    steps = steps,
-                    tags = tags,
-                    rating = (map["rating"] as? Number)?.toDouble() ?: 0.0,
-                    userid = map["userid"] as? String ?: "",
-                    imageUrl = map["imageUrl"] as? String ?: "")
-
-            onSuccess(recipe)
-          } catch (e: Exception) {
-            onFailure(e)
+    try {
+      // Safely process the steps
+      val rawStepsList = map["steps"]
+      val steps =
+          if (rawStepsList is List<*>) {
+            rawStepsList.mapNotNull { rawStep ->
+              (rawStep as? Map<*, *>)?.let { stepMap ->
+                val stepNumber = (stepMap["stepNumber"] as? Number)?.toInt()
+                val description = stepMap["description"] as? String
+                val title = stepMap["title"] as? String
+                if (stepNumber != null && description != null && title != null) {
+                  Step(stepNumber, description, title)
+                } else null
+              }
+            }
+          } else {
+            listOf()
           }
-        },
-        onFailure = onFailure)
+
+      // Construct the Recipe object
+      val recipe =
+          Recipe(
+              recipeId = map["recipeId"] as? String ?: "",
+              title = map["title"] as? String ?: "",
+              description = map["description"] as? String ?: "",
+              ingredients = ingredientMetaDataList,
+              steps = steps,
+              tags = tags,
+              rating = (map["rating"] as? Number)?.toDouble() ?: 0.0,
+              userid = map["userid"] as? String ?: "",
+              imageUrl = map["imageUrl"] as? String ?: "")
+      Log.d("RecipeRepository", " Recipe fetched success $recipe ")
+
+      onSuccess(recipe)
+    } catch (e: Exception) {
+      onFailure(e)
+    }
   }
 }

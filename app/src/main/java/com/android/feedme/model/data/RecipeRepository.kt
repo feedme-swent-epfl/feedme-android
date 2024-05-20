@@ -164,49 +164,49 @@ class RecipeRepository(private val db: FirebaseFirestore) {
       mapOf(
           "stepNumber" to this.stepNumber, "description" to this.description, "title" to this.title)
 
-  private fun mapToRecipe(
+  fun mapToRecipe(
       map: Map<String, Any>,
       onSuccess: (Recipe?) -> Unit,
       onFailure: (Exception) -> Unit
   ) {
-    // Extract the raw ingredients list
-    val rawIngredientsList = map["ingredients"]
-    Log.d("RecipeRepository", "raw Ids $rawIngredientsList")
-
-    // Parse ingredient meta data
-    val ingredientMetaDataList =
-        if (rawIngredientsList is List<*>) {
-          rawIngredientsList.mapNotNull { rawIngredient ->
-            (rawIngredient as? Map<*, *>)?.let { ingredientMap ->
-              val quantity = (ingredientMap["quantity"] as? Number)?.toDouble()
-              val measure = stringToMeasureUnit(ingredientMap["measure"] as? String)
-              val ingredientDetails = ingredientMap["ingredient"] as? Map<*, *>
-
-              if (quantity != null && ingredientDetails != null) {
-                val name = ingredientDetails["name"] as? String ?: ""
-                val vegetarian = ingredientDetails["vegetarian"] as? Boolean ?: false
-                val vegan = ingredientDetails["vegan"] as? Boolean ?: false
-                val id = ingredientDetails["id"] as? String ?: ""
-
-                val ingredient = Ingredient(name, id, vegetarian, vegan)
-                IngredientMetaData(quantity, measure, ingredient)
-              } else null
-            }
-          }
-        } else {
-          listOf()
-        }
-
-    // Safely process the tags
-    val rawTagsList = map["tags"]
-    val tags =
-        if (rawTagsList is List<*>) {
-          rawTagsList.mapNotNull { it as? String }
-        } else {
-          listOf()
-        }
-
     try {
+      // Extract the raw ingredients list
+      val rawIngredientsList = map["ingredients"]
+      Log.d("RecipeRepository", "raw Ids $rawIngredientsList")
+
+      // Parse ingredient meta data
+      val ingredientMetaDataList =
+          if (rawIngredientsList is List<*>) {
+            rawIngredientsList.mapNotNull { rawIngredient ->
+              (rawIngredient as? Map<*, *>)?.let { ingredientMap ->
+                val quantity = (ingredientMap["quantity"] as? Number)?.toDouble()
+                val measure = stringToMeasureUnit(ingredientMap["measure"] as? String)
+                val ingredientDetails = ingredientMap["ingredient"] as? Map<*, *>
+
+                if (quantity != null && ingredientDetails != null) {
+                  val name = ingredientDetails["name"] as? String ?: ""
+                  val vegetarian = ingredientDetails["vegetarian"] as? Boolean ?: false
+                  val vegan = ingredientDetails["vegan"] as? Boolean ?: false
+                  val id = ingredientDetails["id"] as? String ?: ""
+
+                  val ingredient = Ingredient(name, id, vegetarian, vegan)
+                  IngredientMetaData(quantity, measure, ingredient)
+                } else null
+              }
+            }
+          } else {
+            listOf()
+          }
+
+      // Safely process the tags
+      val rawTagsList = map["tags"]
+      val tags =
+          if (rawTagsList is List<*>) {
+            rawTagsList.mapNotNull { it as? String }
+          } else {
+            listOf()
+          }
+
       // Safely process the steps
       val rawStepsList = map["steps"]
       val steps =

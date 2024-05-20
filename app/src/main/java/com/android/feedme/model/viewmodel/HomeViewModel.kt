@@ -26,16 +26,10 @@ class HomeViewModel : ViewModel() {
   private val _savedRecipes = MutableStateFlow<List<Recipe>>(emptyList())
   val savedRecipes = _savedRecipes.asStateFlow()
 
-    private var lastRecipe: DocumentSnapshot? = null
+  private var lastRecipe: DocumentSnapshot? = null
 
-
-    private val authListener =
-      FirebaseAuth.AuthStateListener {
-        FirebaseAuth.getInstance().uid?.let {
-          fetchRecipe("lasagna1")
-          fetchRecipe("pasta1")
-        }
-      }
+  private val authListener =
+      FirebaseAuth.AuthStateListener { FirebaseAuth.getInstance().uid?.let { fetchRecipes() } }
 
   init {
     // Listen to FirebaseAuth state changes
@@ -48,7 +42,6 @@ class HomeViewModel : ViewModel() {
    * @param id: the unique ID of the recipe we want to fetch
    */
   fun fetchRecipe(id: String) {
-
     viewModelScope.launch {
       recipeRepository.getRecipe(
           id,
@@ -85,26 +78,26 @@ class HomeViewModel : ViewModel() {
     }
   }
 
-    /** A function that fetches the recipes */
-    fun fetchRecipes() {
-        viewModelScope.launch {
-            recipeRepository.getRatedRecipes(
-                lastRecipe,
-                onSuccess = { recipes, lastRec ->
-                    lastRecipe = lastRec
-                    _recipes.value += recipes
-                },
-                onFailure = {
-                    // Handle failure
-                    throw error("Recipes could not be fetched")
-                })
-        }
+  /** A function that fetches the recipes */
+  fun fetchRecipes() {
+    viewModelScope.launch {
+      recipeRepository.getRatedRecipes(
+          lastRecipe,
+          onSuccess = { recipes, lastRec ->
+            lastRecipe = lastRec
+            _recipes.value += recipes
+          },
+          onFailure = {
+            // Handle failure
+            throw error("Recipes could not be fetched")
+          })
     }
+  }
 
-    /** A function that fetches more recipes */
-    fun loadMoreRecipes() {
-        fetchRecipes()
-    }
+  /** A function that fetches more recipes */
+  fun loadMoreRecipes() {
+    fetchRecipes()
+  }
 
   /**
    * A function that forces recipes to be shown for testing purposes

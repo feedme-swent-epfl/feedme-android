@@ -14,6 +14,7 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
@@ -32,7 +33,7 @@ fun LoadMoreButton(loadMore: () -> Unit) {
       horizontalArrangement = Arrangement.Center,
       verticalAlignment = Alignment.CenterVertically) {
         OutlinedButton(
-            modifier = Modifier.fillMaxHeight().width(200.dp),
+            modifier = Modifier.fillMaxHeight().width(200.dp).testTag("Load More Button"),
             onClick = { loadMore() },
             shape = RoundedCornerShape(20.dp),
             border = ButtonDefaults.outlinedButtonBorder.copy(width = 2.dp)) {
@@ -43,7 +44,8 @@ fun LoadMoreButton(loadMore: () -> Unit) {
                       TextStyle(
                           fontSize = 16.sp,
                           fontWeight = FontWeight.SemiBold,
-                          letterSpacing = 0.15.sp))
+                          letterSpacing = 0.15.sp),
+                  modifier = Modifier.testTag("Load More Text"))
             }
       }
 }

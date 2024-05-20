@@ -133,6 +133,8 @@ fun RecipeDisplay(
               items(recipes.value) { recipe ->
 
                 // Fetch the profile of the user who created the recipe
+                // TODO: fix bug when calling fetchProfile before displaying RecipeCard and
+                //  uncomment userName is test
                 // profileViewModel.fetchProfile(recipe.userid)
                 // val profile = profileViewModel.viewingUserProfile.collectAsState().value
 

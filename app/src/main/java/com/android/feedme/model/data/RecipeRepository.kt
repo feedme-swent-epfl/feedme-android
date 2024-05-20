@@ -179,7 +179,7 @@ class RecipeRepository(private val db: FirebaseFirestore) {
           rawIngredientsList.mapNotNull { rawIngredient ->
             (rawIngredient as? Map<*, *>)?.let { ingredientMap ->
               val quantity = (ingredientMap["quantity"] as? Number)?.toDouble()
-              val measure = ingredientMap["measure"] as? MeasureUnit ?: MeasureUnit.NONE
+              val measure = stringToMeasureUnit(ingredientMap["measure"] as? String)
               val ingredientDetails = ingredientMap["ingredient"] as? Map<*, *>
 
               if (quantity != null && ingredientDetails != null) {
@@ -242,6 +242,21 @@ class RecipeRepository(private val db: FirebaseFirestore) {
       onSuccess(recipe)
     } catch (e: Exception) {
       onFailure(e)
+    }
+  }
+
+  fun stringToMeasureUnit(measure: String?): MeasureUnit {
+    return when (measure?.uppercase()) {
+      "TEASPOON" -> MeasureUnit.TEASPOON
+      "TABLESPOON" -> MeasureUnit.TABLESPOON
+      "CUP" -> MeasureUnit.CUP
+      "G" -> MeasureUnit.G
+      "KG" -> MeasureUnit.KG
+      "L" -> MeasureUnit.L
+      "ML" -> MeasureUnit.ML
+      "PIECES" -> MeasureUnit.PIECES
+      "NONE" -> MeasureUnit.NONE
+      else -> MeasureUnit.EMPTY
     }
   }
 }

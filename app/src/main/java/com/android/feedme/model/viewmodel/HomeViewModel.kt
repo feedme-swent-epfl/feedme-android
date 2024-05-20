@@ -6,10 +6,16 @@ import androidx.lifecycle.viewModelScope
 import com.android.feedme.model.data.Recipe
 import com.android.feedme.model.data.RecipeRepository
 import com.google.firebase.auth.FirebaseAuth
+import com.google.firebase.firestore.DocumentSnapshot
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.launch
 
+/**
+ * A class that generates the home view model
+ *
+ * This class is responsible for fetching the recipes and updating the UI with the fetched recipes
+ */
 class HomeViewModel : ViewModel() {
 
   private val recipeRepository = RecipeRepository.instance
@@ -20,7 +26,10 @@ class HomeViewModel : ViewModel() {
   private val _savedRecipes = MutableStateFlow<List<Recipe>>(emptyList())
   val savedRecipes = _savedRecipes.asStateFlow()
 
-  private val authListener =
+    private var lastRecipe: DocumentSnapshot? = null
+
+
+    private val authListener =
       FirebaseAuth.AuthStateListener {
         FirebaseAuth.getInstance().uid?.let {
           fetchRecipe("lasagna1")
@@ -75,6 +84,27 @@ class HomeViewModel : ViewModel() {
           })
     }
   }
+
+    /** A function that fetches the recipes */
+    fun fetchRecipes() {
+        viewModelScope.launch {
+            recipeRepository.getRatedRecipes(
+                lastRecipe,
+                onSuccess = { recipes, lastRec ->
+                    lastRecipe = lastRec
+                    _recipes.value += recipes
+                },
+                onFailure = {
+                    // Handle failure
+                    throw error("Recipes could not be fetched")
+                })
+        }
+    }
+
+    /** A function that fetches more recipes */
+    fun loadMoreRecipes() {
+        fetchRecipes()
+    }
 
   /**
    * A function that forces recipes to be shown for testing purposes

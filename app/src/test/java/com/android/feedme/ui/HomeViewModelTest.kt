@@ -17,6 +17,7 @@ import junit.framework.TestCase.assertTrue
 import org.junit.Before
 import org.junit.Test
 import org.junit.runner.RunWith
+import org.mockito.ArgumentMatchers.any
 import org.mockito.Mock
 import org.mockito.Mockito
 import org.mockito.Mockito.anyString
@@ -126,6 +127,25 @@ class HomeViewModelTest {
   @Test
   fun getRecipe_Success() {
     homeViewModel.fetchRecipe("lasagna1")
+    shadowOf(Looper.getMainLooper()).idle()
+
+    println(homeViewModel.recipes.value)
+    assertTrue(homeViewModel.recipes.value.first().recipeId == recipeId)
+  }
+
+  @Test
+  fun getRecipes_Success() {
+    homeViewModel.fetchRecipes()
+    shadowOf(Looper.getMainLooper()).idle()
+
+    println(homeViewModel.recipes.value)
+    assertTrue(homeViewModel.recipes.value.first().recipeId == recipeId)
+  }
+
+  @Test
+  fun loadMoreRecipes_Success() {
+    homeViewModel.fetchRecipes()
+    homeViewModel.loadMoreRecipes()
     shadowOf(Looper.getMainLooper()).idle()
 
     println(homeViewModel.recipes.value)

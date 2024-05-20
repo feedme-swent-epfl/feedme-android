@@ -9,6 +9,7 @@ import com.google.firebase.FirebaseApp
 import com.google.firebase.firestore.CollectionReference
 import com.google.firebase.firestore.DocumentReference
 import com.google.firebase.firestore.DocumentSnapshot
+import com.google.firebase.firestore.FieldPath
 import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.firestore.Query
 import com.google.firebase.firestore.QuerySnapshot
@@ -69,8 +70,9 @@ class IngredientsRepositoryTest {
     `when`(mockCollectionReference.document()).thenReturn(mockDocumentReference)
     `when`(mockDocumentReference.id).thenReturn("TEST_ID")
 
-    // Ensure `whereIn` mock setup is included
-    `when`(mockCollectionReference.whereIn(anyString(), anyList())).thenReturn(mockQuery)
+    // Mock `whereIn` using `FieldPath.documentId()`
+    `when`(mockCollectionReference.whereIn(Mockito.eq(FieldPath.documentId()), anyList()))
+        .thenReturn(mockQuery)
   }
 
   @Test
@@ -111,7 +113,10 @@ class IngredientsRepositoryTest {
 
     // Setup responses for fetching ingredients using whereIn
     `when`(mockFirestore.collection("ingredients")).thenReturn(mockCollectionReference)
-    `when`(mockCollectionReference.whereIn("id", ingredientIds)).thenReturn(mockQuery)
+    `when`(
+            mockCollectionReference.whereIn(
+                Mockito.eq(FieldPath.documentId()), Mockito.eq(ingredientIds)))
+        .thenReturn(mockQuery)
     `when`(mockQuery.get()).thenReturn(Tasks.forResult(mockQuerySnapshot))
 
     // Mock the query snapshot to return the sugar and flour documents
@@ -181,7 +186,10 @@ class IngredientsRepositoryTest {
 
     // Setup mocks to simulate a failure for the whereIn query
     `when`(mockFirestore.collection("ingredients")).thenReturn(mockCollectionReference)
-    `when`(mockCollectionReference.whereIn("id", ingredientIds)).thenReturn(mockQuery)
+    `when`(
+            mockCollectionReference.whereIn(
+                Mockito.eq(FieldPath.documentId()), Mockito.eq(ingredientIds)))
+        .thenReturn(mockQuery)
     `when`(mockQuery.get()).thenReturn(Tasks.forException(exception))
 
     var failureCalled = false

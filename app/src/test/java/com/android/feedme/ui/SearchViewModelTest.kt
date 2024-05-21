@@ -137,7 +137,8 @@ class SearchViewModelTest {
     // for searchRecipes
     `when`(mockCollectionReference.whereGreaterThanOrEqualTo("title", query)).thenReturn(mockQuery)
     `when`(mockQuery.whereLessThan("title", query + "\uf8ff")).thenReturn(mockQuery)
-    `when`(mockCollectionReference.whereArrayContainsAny(eq("tags"), any())).thenReturn(mockQuery)
+    `when`(mockCollectionReference.whereArrayContainsAny(eq("searchItems"), any()))
+        .thenReturn(mockQuery)
 
     // for searchProfiles
     `when`(mockCollectionReference.whereGreaterThanOrEqualTo("username", queryUser))
@@ -146,7 +147,6 @@ class SearchViewModelTest {
 
     `when`(mockQuery.limit(6)).thenReturn(mockQuery)
     `when`(mockQuery.limit(10)).thenReturn(mockQuery)
-    `when`(mockQuery.limit(6)).thenReturn(mockQuery)
 
     `when`(mockQuery.get()).thenReturn(Tasks.forResult(mockQuerySnapshot))
     `when`(mockQuerySnapshot.documents).thenReturn(listOf(mockDocumentSnapshot))

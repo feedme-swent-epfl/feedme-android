@@ -97,6 +97,7 @@ class ProfileViewModel : ViewModel() {
     }
   }
 
+  /** A function that fetches the profile of the current user */
   fun fetchCurrentUserProfile() {
     currentUserId?.let { userId ->
       viewModelScope.launch {
@@ -124,6 +125,7 @@ class ProfileViewModel : ViewModel() {
    * A function that set local profile in the database
    *
    * @param profile: the profile to set in the database
+   * @param isCurrent: a boolean to determine if the profile is the current user's profile
    */
   fun setProfile(profile: Profile, isCurrent: Boolean = true) {
     viewModelScope.launch {
@@ -309,6 +311,10 @@ class ProfileViewModel : ViewModel() {
    * together.
    *
    * @param targetUser The Profile of the user being unfollowed.
+   * @param onSuccess A callback function invoked on successful unfollowing of the user.
+   * @param onFailure A callback function invoked on failure to unfollow the user, with an
+   *   exception.
+   * @throws IllegalStateException If the current user ID is null.
    */
   fun unfollowUser(
       targetUser: Profile,
@@ -362,6 +368,9 @@ class ProfileViewModel : ViewModel() {
    * list. This method is transactional, ensuring that both operations succeed or fail together.
    *
    * @param follower The Profile of the follower to remove.
+   * @param onSuccess A callback function invoked on successful removal of the follower.
+   * @param onFailure A callback function invoked on failure to remove the follower, with an
+   *   exception.
    */
   fun removeFollower(
       follower: Profile,
@@ -459,6 +468,7 @@ class ProfileViewModel : ViewModel() {
    * Checks if a recipe has already been saved by the current user.
    *
    * @param recipe The recipe to check.
+   * @param onResult A callback function invoked with the result of the check.
    */
   fun savedRecipeExists(recipe: String, onResult: (Boolean) -> Unit) {
     if (currentUserId == null) {

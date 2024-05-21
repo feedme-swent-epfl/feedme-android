@@ -50,6 +50,7 @@ import com.android.feedme.model.viewmodel.HomeViewModel
 import com.android.feedme.model.viewmodel.ProfileViewModel
 import com.android.feedme.model.viewmodel.RecipeViewModel
 import com.android.feedme.model.viewmodel.SearchViewModel
+import com.android.feedme.ui.component.LoadMoreButton
 import com.android.feedme.ui.component.SearchBarFun
 import com.android.feedme.ui.navigation.BottomNavigationMenu
 import com.android.feedme.ui.navigation.NavigationActions
@@ -80,9 +81,6 @@ fun LandingPage(
     profileViewModel: ProfileViewModel,
     searchViewModel: SearchViewModel
 ) {
-
-  val recipes = homeViewModel.recipes.collectAsState()
-
   Scaffold(
       modifier = Modifier.fillMaxSize().testTag("LandingScreen"),
       topBar = { TopBarNavigation(title = "FeedMe") },
@@ -93,7 +91,7 @@ fun LandingPage(
         RecipeDisplay(
             it,
             navigationActions,
-            recipes.value,
+            homeViewModel,
             searchViewModel,
             recipeViewModel,
             profileViewModel)
@@ -105,7 +103,7 @@ fun LandingPage(
  *
  * @param paddingValues : the padding values for the screen
  * @param navigationActions : the navigation actions for the screen
- * @param recipes : the list of [Recipe] to be displayed
+ * @param homeViewModel : the [HomeViewModel] instance
  * @param searchViewModel : the [SearchViewModel] instance
  * @param recipeViewModel : the [RecipeViewModel] instance
  * @param profileViewModel : the [ProfileViewModel] instance
@@ -114,11 +112,12 @@ fun LandingPage(
 fun RecipeDisplay(
     paddingValues: PaddingValues,
     navigationActions: NavigationActions,
-    recipes: List<Recipe>,
+    homeViewModel: HomeViewModel,
     searchViewModel: SearchViewModel,
     recipeViewModel: RecipeViewModel,
     profileViewModel: ProfileViewModel
 ) {
+  val recipes = homeViewModel.recipes.collectAsState()
 
   Column(
       modifier =
@@ -131,21 +130,20 @@ fun RecipeDisplay(
         LazyColumn(
             modifier =
                 Modifier.testTag("RecipeList").padding(top = 8.dp).background(TextBarColor)) {
-              items(recipes) { recipe ->
+              items(recipes.value) { recipe ->
 
                 // Fetch the profile of the user who created the recipe
-                profileViewModel.fetchProfile(recipe.userid)
-                val profile = profileViewModel.viewingUserProfile.collectAsState().value
+                // TODO: fix bug when calling fetchProfile before displaying RecipeCard and
+                //  uncomment userName is test
+                // profileViewModel.fetchProfile(recipe.userid)
+                // val profile = profileViewModel.viewingUserProfile.collectAsState().value
 
                 // Recipe card
                 RecipeCard(
-                    Route.HOME,
-                    recipe,
-                    profile,
-                    navigationActions,
-                    recipeViewModel,
-                    profileViewModel)
+                    Route.HOME, recipe, null, navigationActions, recipeViewModel, profileViewModel)
               }
+
+              item { LoadMoreButton(homeViewModel::loadMoreRecipes) }
             }
       }
 }

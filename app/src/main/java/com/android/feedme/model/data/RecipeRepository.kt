@@ -2,6 +2,7 @@ package com.android.feedme.model.data
 
 import com.google.firebase.firestore.DocumentSnapshot
 import com.google.firebase.firestore.FirebaseFirestore
+import com.google.firebase.firestore.Query
 
 class RecipeRepository(private val db: FirebaseFirestore) {
 
@@ -66,14 +67,14 @@ class RecipeRepository(private val db: FirebaseFirestore) {
   }
 
   /**
-   * Fetch all the recipes of the given List of Ids
+   * Fetches the recipes saved by the user from Firestore. The recipes are fetched by their IDs.
    *
    * @param ids The list of recipe IDs to fetch.
    * @param onSuccess A callback function invoked with the list of recipes on success.
    * @param onFailure A callback function invoked on failure to fetch the recipes, with an
    *   exception.
    */
-  fun getRecipes(
+  fun getSavedRecipes(
       ids: List<String>,
       onSuccess: (List<Recipe>) -> Unit,
       onFailure: (Exception) -> Unit
@@ -94,9 +95,49 @@ class RecipeRepository(private val db: FirebaseFirestore) {
   }
 
   /**
+   * Fetches the top rated recipes from Firestore. The recipes are ordered by their rating in
+   * descending order.
+   *
+   * @param lastRecipe The last recipe fetched in the previous query. If null, fetches the first
+   *   page of recipes.
+   * @param onSuccess A callback function invoked with the list of recipes on success.
+   * @param onFailure A callback function invoked on failure to fetch the recipes, with an
+   *   exception.
+   */
+  fun getRatedRecipes(
+      lastRecipe: DocumentSnapshot?,
+      onSuccess: (List<Recipe>, DocumentSnapshot?) -> Unit,
+      onFailure: (Exception) -> Unit
+  ) {
+    var queryRef =
+        db.collection(collectionPath).orderBy("rating", Query.Direction.DESCENDING).limit(6)
+
+    if (lastRecipe != null) {
+      queryRef = queryRef.startAfter(lastRecipe)
+    }
+
+    queryRef
+        .get()
+        .addOnSuccessListener {
+          it.documents.map { recipeMap ->
+            val data = recipeMap.data
+            if (data != null) {
+              val success = { recipe: Recipe? ->
+                onSuccess(listOfNotNull(recipe), it.documents.lastOrNull())
+              }
+              mapToRecipe(data, success, onFailure)
+            }
+          }
+        }
+        .addOnFailureListener { onFailure(it) }
+  }
+
+  /**
    * Fetches all the recipes that contain the given query in their title.
    *
    * @param query The query string to search for in the recipe titles.
+   * @param lastRecipe The last recipe fetched in the previous query. If null, fetches the first
+   *   page of recipes.
    * @param onSuccess A callback function invoked with the list of recipes on success.
    * @param onFailure A callback function invoked on failure to fetch the recipes, with an
    *   exception.
@@ -111,7 +152,7 @@ class RecipeRepository(private val db: FirebaseFirestore) {
         db.collection(collectionPath)
             .whereGreaterThanOrEqualTo("title", query)
             .whereLessThan("title", query + "\uf8ff")
-            .limit(10) // Limit the number of documents fetched
+            .limit(6) // Limit the number of documents fetched
 
     if (lastRecipe != null) {
       queryRef = queryRef.startAfter(lastRecipe)

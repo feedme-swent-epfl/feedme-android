@@ -17,6 +17,7 @@ import junit.framework.TestCase.assertTrue
 import org.junit.Before
 import org.junit.Test
 import org.junit.runner.RunWith
+import org.mockito.ArgumentMatchers.any
 import org.mockito.Mock
 import org.mockito.Mockito
 import org.mockito.Mockito.anyString
@@ -114,6 +115,8 @@ class HomeViewModelTest {
     `when`(mockDocumentSnapshot.exists()).thenReturn(true)
     `when`(mockDocumentSnapshot.data).thenReturn(recipeMap)
 
+    `when`(mockCollectionReference.orderBy("rating", Query.Direction.DESCENDING))
+        .thenReturn(mockQuery)
     `when`(mockCollectionReference.whereIn("recipeId", listOf(recipeId))).thenReturn(mockQuery)
     `when`(mockQuery.limit(6)).thenReturn(mockQuery)
 
@@ -126,6 +129,25 @@ class HomeViewModelTest {
   @Test
   fun getRecipe_Success() {
     homeViewModel.fetchRecipe("lasagna1")
+    shadowOf(Looper.getMainLooper()).idle()
+
+    println(homeViewModel.recipes.value)
+    assertTrue(homeViewModel.recipes.value.first().recipeId == recipeId)
+  }
+
+  @Test
+  fun getRecipes_Success() {
+    homeViewModel.fetchRecipes()
+    shadowOf(Looper.getMainLooper()).idle()
+
+    println(homeViewModel.recipes.value)
+    assertTrue(homeViewModel.recipes.value.first().recipeId == recipeId)
+  }
+
+  @Test
+  fun loadMoreRecipes_Success() {
+    homeViewModel.fetchRecipes()
+    homeViewModel.loadMoreRecipes()
     shadowOf(Looper.getMainLooper()).idle()
 
     println(homeViewModel.recipes.value)

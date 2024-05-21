@@ -15,7 +15,6 @@ import com.android.feedme.model.data.Step
 import com.android.feedme.model.viewmodel.HomeViewModel
 import com.android.feedme.model.viewmodel.ProfileViewModel
 import com.android.feedme.model.viewmodel.RecipeViewModel
-import com.android.feedme.screen.SavedRecipesScreen
 import com.android.feedme.ui.home.SavedRecipesScreen
 import com.android.feedme.ui.navigation.NavigationActions
 import com.google.android.gms.tasks.Tasks
@@ -26,7 +25,6 @@ import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.firestore.Query
 import com.google.firebase.firestore.QuerySnapshot
 import com.kaspersky.kaspresso.testcases.api.testcase.TestCase
-import io.github.kakaocup.compose.node.element.ComposeScreen
 import io.mockk.every
 import io.mockk.mockk
 import org.junit.Before
@@ -148,14 +146,12 @@ class SavedRecipesTest : TestCase() {
 
   @Test
   fun mainComponentsEmptyAreDisplayed() {
-    ComposeScreen.onComposeScreen<SavedRecipesScreen>(composeTestRule) {
-      composeTestRule.setContent {
-        SavedRecipesScreen(navAction, profileViewModel, recipeViewModel, homeViewModel)
-      }
-      composeTestRule.onNodeWithTag("SavedScreen").assertIsDisplayed()
-      composeTestRule.onNodeWithTag("SavedScreenBox").assertIsDisplayed()
-      composeTestRule.onNodeWithTag("SavedScreenText").assertIsDisplayed()
+    composeTestRule.setContent {
+      SavedRecipesScreen(navAction, profileViewModel, recipeViewModel, homeViewModel)
     }
+    composeTestRule.onNodeWithTag("SavedScreen").assertIsDisplayed()
+    composeTestRule.onNodeWithTag("SavedScreenBox").assertIsDisplayed()
+    composeTestRule.onNodeWithTag("SavedScreenText").assertIsDisplayed()
   }
 
   @Test
@@ -167,13 +163,12 @@ class SavedRecipesTest : TestCase() {
     // TODO : uncomment and fix the test
     // profileViewModel.setUserSavedRecipes(listOf(recipe2.recipeId))
     // homeViewModel.setSavedRecipes(listOf(recipe2))
-    ComposeScreen.onComposeScreen<SavedRecipesScreen>(composeTestRule) {
-      composeTestRule.setContent {
-        SavedRecipesScreen(navAction, profileViewModel, recipeViewModel, homeViewModel)
-      }
-      // TODO : uncomment and fix the test
-      // composeTestRule.onNodeWithTag("RecipeCard").assertIsDisplayed()
+    composeTestRule.setContent {
+      SavedRecipesScreen(navAction, profileViewModel, recipeViewModel, homeViewModel)
     }
+    // TODO : uncomment and fix the test
+    // composeTestRule.onNodeWithTag("RecipeCard").assertIsDisplayed()
+
   }
 
   private val recipe2Map: Map<String, Any> =

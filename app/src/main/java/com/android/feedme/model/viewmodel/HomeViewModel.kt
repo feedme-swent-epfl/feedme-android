@@ -42,6 +42,7 @@ class HomeViewModel : ViewModel() {
    * @param id: the unique ID of the recipe we want to fetch
    */
   fun fetchRecipe(id: String) {
+
     viewModelScope.launch {
       recipeRepository.getRecipe(
           id,

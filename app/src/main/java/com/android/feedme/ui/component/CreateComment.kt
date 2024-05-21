@@ -51,7 +51,6 @@ fun CreateComment(
     commentViewModel: CommentViewModel,
     onDismiss: () -> Unit
 ) {
-
   var commentTitle by remember { mutableStateOf("") }
   var rating by remember { mutableStateOf("") }
   var description by remember { mutableStateOf("") }

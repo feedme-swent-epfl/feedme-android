@@ -45,24 +45,19 @@ class SmallThumbnailsDisplayTest {
                     IngredientMetaData(
                         quantity = 2.0,
                         measure = MeasureUnit.ML,
-                        ingredient = Ingredient("Tomato", "Vegetables", "tomatoID"))),
+                        ingredient = Ingredient("Tomato", "tomatoID", false, false))),
             steps = listOf(Step(1, "a", "Step1")),
             tags = listOf("Meat"),
             rating = 4.5,
             userid = "PasDavid",
-            "https://external-content.duckduckgo.com/iu/?u=https%3A%2F%2Fwww.mamablip.com%2Fstorage%2FLasagna%2520with%2520Meat%2520and%2520Tomato%2520Sauce_3481612355355.jpg&f=1&nofb=1&ipt=8e887ba99ce20a85fb867dabbe0206c1146ebf2f13548b5653a2778e3ea18c54&ipo=images")
+        )
 
     composeTestRule.setContent { SmallThumbnailsDisplay(listOf(recipe1), navMock) }
     composeTestRule.waitForIdle()
 
     composeTestRule.onNodeWithTag("RecipeSmallCard").assertIsDisplayed()
 
-    // Check whether the Image or the warning message is displayed
-    /*try {
-      composeTestRule.onNodeWithTag("Recipe Image").assertIsDisplayed()
-    } catch (e: AssertionError) {
-      composeTestRule.onNodeWithText("Fail Image Download")
-    }*/
+    composeTestRule.onNodeWithTag("Fail Image Download", useUnmergedTree = true).assertIsDisplayed()
 
     composeTestRule
         .onNodeWithContentDescription("Star Icon", useUnmergedTree = true)

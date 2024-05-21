@@ -12,17 +12,17 @@ class CommentTest {
     // Given
     val comment =
         Comment(
-            authorId = "user123",
+            userId = "user123",
+            commentId = "user123",
             recipeId = "recipe456",
             photoURL = "https://example.com/photo.jpg",
             rating = 4.5,
-            time = 120.0,
             title = "Delicious!",
             content = "This recipe is fantastic!",
             creationDate = Date.from(Instant.now()))
 
     // Then
-    assertEquals("user123", comment.authorId)
+    assertEquals("user123", comment.commentId)
     assertEquals("recipe456", comment.recipeId)
     assertEquals("https://example.com/photo.jpg", comment.photoURL)
     assertEquals(4.5, comment.rating, 0.0)

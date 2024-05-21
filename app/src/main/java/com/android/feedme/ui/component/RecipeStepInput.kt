@@ -1,6 +1,5 @@
 package com.android.feedme.ui.component
 
-import android.util.Log
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
@@ -14,6 +13,9 @@ import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.focus.FocusRequester
+import androidx.compose.ui.focus.focusRequester
+import androidx.compose.ui.focus.onFocusChanged
 import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
@@ -57,13 +59,9 @@ fun StepList(
       itemsIndexed(steps, key = { _, step -> step.hashCode() }) { index, step ->
         StepInput(
             step = step,
-            onStepChanged = { newStep ->
-              recipeStepViewModel.updateStep(index, newStep)
-              Log.d("StepList", "Step changed: $newStep")
-            },
+            onStepChanged = { newStep -> recipeStepViewModel.updateStep(index, newStep) },
             onDeleteStep = {
               recipeStepViewModel.deleteStep(step) // Pass index instead of step number or object
-              Log.d("StepList", "Step deleted: $it")
             })
       }
     }
@@ -85,6 +83,9 @@ fun StepInput(step: Step, onStepChanged: (Step) -> Unit, onDeleteStep: (Step) ->
   var descriptionError by remember { mutableStateOf(step.description.isBlank()) }
   var expanded by remember { mutableStateOf(descriptionError) }
 
+  val titleFocusRequester = remember { FocusRequester() }
+  val descriptionFocusRequester = remember { FocusRequester() }
+
   Column(modifier = Modifier.padding(horizontal = 20.dp, vertical = 8.dp).testTag("stepInput")) {
     Row(
         verticalAlignment = Alignment.CenterVertically,
@@ -96,13 +97,18 @@ fun StepInput(step: Step, onStepChanged: (Step) -> Unit, onDeleteStep: (Step) ->
               onValueChange = {
                 title = it
                 titleError = it.isBlank() // Validate title input
-                onStepChanged(Step(step.stepNumber, description, title))
               },
               singleLine = true,
               isError = titleError,
               label = { Text("Title") },
               modifier =
                   Modifier.weight(1f)
+                      .focusRequester(titleFocusRequester)
+                      .onFocusChanged {
+                        if (!it.isFocused) {
+                          onStepChanged(Step(step.stepNumber, description, title))
+                        }
+                      }
                       .testTag("StepInputTitle") // Give the text field flexible space
               )
           IconButton(
@@ -134,12 +140,19 @@ fun StepInput(step: Step, onStepChanged: (Step) -> Unit, onDeleteStep: (Step) ->
           onValueChange = {
             description = it
             descriptionError = it.isBlank() // Validate description input
-            onStepChanged(Step(step.stepNumber, description, title))
           },
           isError = descriptionError,
           label = { Text("Description") },
           modifier =
-              Modifier.fillMaxWidth().padding(horizontal = 8.dp).testTag("StepInputDescription"))
+              Modifier.fillMaxWidth()
+                  .padding(horizontal = 8.dp)
+                  .focusRequester(descriptionFocusRequester)
+                  .onFocusChanged {
+                    if (!it.isFocused) {
+                      onStepChanged(Step(step.stepNumber, description, title))
+                    }
+                  }
+                  .testTag("StepInputDescription"))
     }
 
     if (expanded && descriptionError) {

@@ -7,9 +7,7 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
-import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.OutlinedButton
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Tab
 import androidx.compose.material3.TabRow
@@ -29,8 +27,10 @@ import com.android.feedme.model.data.Recipe
 import com.android.feedme.model.viewmodel.ProfileViewModel
 import com.android.feedme.model.viewmodel.RecipeViewModel
 import com.android.feedme.model.viewmodel.SearchViewModel
+import com.android.feedme.ui.component.LoadMoreButton
 import com.android.feedme.ui.navigation.BottomNavigationMenu
 import com.android.feedme.ui.navigation.NavigationActions
+import com.android.feedme.ui.navigation.Route
 import com.android.feedme.ui.navigation.TOP_LEVEL_DESTINATIONS
 import com.android.feedme.ui.navigation.TopBarNavigation
 import com.android.feedme.ui.profile.FriendsCard
@@ -169,18 +169,15 @@ fun FilteredContent(
             items(recipes) { recipe ->
               // Fetch the profile of the user who created the recipe
               // TODO: will to be replaced with a single call to fetch all profiles if possible
-              profileViewModel.fetchProfile(recipe.userid)
-              val profile = profileViewModel.viewingUserProfile.collectAsState().value
-              RecipeCard(recipe, profile, navigationActions, recipeViewModel, profileViewModel)
+              // profileViewModel.fetchProfile(recipe.userid)
+              // val profile = profileViewModel.viewingUserProfile.collectAsState().value
+              RecipeCard(
+                  Route.HOME, recipe, null, navigationActions, recipeViewModel, profileViewModel)
             }
         1 ->
             items(profiles) { profile -> FriendsCard(profile, navigationActions, profileViewModel) }
       }
-      item {
-        OutlinedButton(onClick = { loadMore() }, shape = RoundedCornerShape(20.dp)) {
-          Text("Load More")
-        }
-      }
+      item { LoadMoreButton(loadMore) }
     }
   }
 }

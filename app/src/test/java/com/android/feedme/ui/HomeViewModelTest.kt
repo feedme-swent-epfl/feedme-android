@@ -11,10 +11,13 @@ import com.google.firebase.firestore.CollectionReference
 import com.google.firebase.firestore.DocumentReference
 import com.google.firebase.firestore.DocumentSnapshot
 import com.google.firebase.firestore.FirebaseFirestore
+import com.google.firebase.firestore.Query
+import com.google.firebase.firestore.QuerySnapshot
 import junit.framework.TestCase.assertTrue
 import org.junit.Before
 import org.junit.Test
 import org.junit.runner.RunWith
+import org.mockito.ArgumentMatchers.any
 import org.mockito.Mock
 import org.mockito.Mockito
 import org.mockito.Mockito.anyString
@@ -40,6 +43,9 @@ class HomeViewModelTest {
 
   @Mock private lateinit var homeViewModel: HomeViewModel
   private lateinit var recipeRepository: RecipeRepository
+
+  @Mock private lateinit var mockQuery: Query
+  @Mock private lateinit var mockQuerySnapshot: QuerySnapshot
 
   private val recipeId = "lasagna1"
   private val recipeMap: Map<String, Any> =
@@ -109,6 +115,14 @@ class HomeViewModelTest {
     `when`(mockDocumentSnapshot.exists()).thenReturn(true)
     `when`(mockDocumentSnapshot.data).thenReturn(recipeMap)
 
+    `when`(mockCollectionReference.orderBy("rating", Query.Direction.DESCENDING))
+        .thenReturn(mockQuery)
+    `when`(mockCollectionReference.whereIn("recipeId", listOf(recipeId))).thenReturn(mockQuery)
+    `when`(mockQuery.limit(6)).thenReturn(mockQuery)
+
+    `when`(mockQuery.get()).thenReturn(Tasks.forResult(mockQuerySnapshot))
+    `when`(mockQuerySnapshot.documents).thenReturn(listOf(mockDocumentSnapshot))
+
     homeViewModel = HomeViewModel()
   }
 
@@ -119,5 +133,33 @@ class HomeViewModelTest {
 
     println(homeViewModel.recipes.value)
     assertTrue(homeViewModel.recipes.value.first().recipeId == recipeId)
+  }
+
+  @Test
+  fun getRecipes_Success() {
+    homeViewModel.fetchRecipes()
+    shadowOf(Looper.getMainLooper()).idle()
+
+    println(homeViewModel.recipes.value)
+    assertTrue(homeViewModel.recipes.value.first().recipeId == recipeId)
+  }
+
+  @Test
+  fun loadMoreRecipes_Success() {
+    homeViewModel.fetchRecipes()
+    homeViewModel.loadMoreRecipes()
+    shadowOf(Looper.getMainLooper()).idle()
+
+    println(homeViewModel.recipes.value)
+    assertTrue(homeViewModel.recipes.value.first().recipeId == recipeId)
+  }
+
+  @Test
+  fun getSavedRecipes_Success() {
+    homeViewModel.fetchSavedRecipes(listOf("lasagna1"))
+    shadowOf(Looper.getMainLooper()).idle()
+
+    println(homeViewModel.savedRecipes.value)
+    assertTrue(homeViewModel.savedRecipes.value.first().recipeId == recipeId)
   }
 }

@@ -10,7 +10,7 @@ class RecipeTest {
     // Given
     val steps = listOf(Step(1, "Mix ingredients", "Mixing"))
     val ingredients =
-        listOf(IngredientMetaData(1.0, MeasureUnit.CUP, Ingredient("Flour", "Dry", "1")))
+        listOf(IngredientMetaData(1.0, MeasureUnit.CUP, Ingredient("Flour", "1", false, false)))
     val recipe =
         Recipe(
             recipeId = "1",

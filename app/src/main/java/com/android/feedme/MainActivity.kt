@@ -15,6 +15,8 @@ import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.navigation
 import androidx.navigation.compose.rememberNavController
+import com.android.feedme.model.data.CommentRepository
+import com.android.feedme.model.data.IngredientsRepository
 import com.android.feedme.model.data.ProfileRepository
 import com.android.feedme.model.data.RecipeRepository
 import com.android.feedme.model.viewmodel.AuthViewModel
@@ -27,7 +29,6 @@ import com.android.feedme.resources.C
 import com.android.feedme.ui.auth.LoginScreen
 import com.android.feedme.ui.auth.WelcomeScreen
 import com.android.feedme.ui.camera.CameraScreen
-import com.android.feedme.ui.camera.GalleryScreen
 import com.android.feedme.ui.component.RecipeFullDisplay
 import com.android.feedme.ui.find.FindRecipeScreen
 import com.android.feedme.ui.home.LandingPage
@@ -39,6 +40,7 @@ import com.android.feedme.ui.navigation.Screen
 import com.android.feedme.ui.profile.EditProfileScreen
 import com.android.feedme.ui.profile.FriendsScreen
 import com.android.feedme.ui.profile.ProfileScreen
+import com.android.feedme.ui.profile.RecipeInputScreen
 import com.android.feedme.ui.settings.SettingsScreen
 import com.android.feedme.ui.theme.feedmeAppTheme
 import com.google.firebase.firestore.FirebaseFirestore
@@ -53,6 +55,8 @@ class MainActivity : ComponentActivity() {
     val firebase = FirebaseFirestore.getInstance()
     ProfileRepository.initialize(firebase)
     RecipeRepository.initialize(firebase)
+    IngredientsRepository.initialize(firebase)
+    CommentRepository.initialize(firebase)
     setContent {
       feedmeAppTheme {
         // A surface container using the 'background' color from the theme
@@ -66,6 +70,7 @@ class MainActivity : ComponentActivity() {
               val searchViewModel: SearchViewModel = viewModel<SearchViewModel>()
               val authViewModel: AuthViewModel = viewModel<AuthViewModel>()
               val inputViewModel: InputViewModel = viewModel<InputViewModel>()
+              val homeViewModel: HomeViewModel = viewModel<HomeViewModel>()
 
               // Set up the nested navigation graph
               NavHost(navController = navController, startDestination = Route.AUTHENTICATION) {
@@ -85,7 +90,6 @@ class MainActivity : ComponentActivity() {
                   composable(Screen.HOME) {
                     // Create a shared view model for Recipe
                     val recipeViewModel = viewModel<RecipeViewModel>()
-                    val homeViewModel: HomeViewModel = viewModel<HomeViewModel>()
                     LandingPage(
                         navigationActions,
                         recipeViewModel,
@@ -98,7 +102,8 @@ class MainActivity : ComponentActivity() {
                 navigation(startDestination = Screen.SAVED, route = Route.SAVED) {
                   composable(Screen.SAVED) {
                     val recipeViewModel = viewModel<RecipeViewModel>()
-                    SavedRecipesScreen(navigationActions)
+                    SavedRecipesScreen(
+                        navigationActions, profileViewModel, recipeViewModel, homeViewModel)
                   }
                 }
 
@@ -107,7 +112,6 @@ class MainActivity : ComponentActivity() {
                     FindRecipeScreen(navigationActions, inputViewModel)
                   }
                   composable(Screen.CAMERA) { CameraScreen(navigationActions, inputViewModel) }
-                  composable(Screen.GALLERY) { GalleryScreen(navigationActions, 15) }
                 }
 
                 navigation(startDestination = Screen.PROFILE, route = Route.PROFILE) {
@@ -117,6 +121,9 @@ class MainActivity : ComponentActivity() {
                   }
                   composable(Screen.EDIT_PROFILE) {
                     EditProfileScreen(navigationActions, profileViewModel)
+                  }
+                  composable(Screen.ADD_RECIPE) {
+                    RecipeInputScreen(navigationActions, profileViewModel)
                   }
                   composable(Screen.FRIENDS) { backStackEntry ->
                     backStackEntry.arguments?.getString("showFollowers")?.let {
@@ -135,6 +142,7 @@ class MainActivity : ComponentActivity() {
                     val backScreen =
                         when (it) {
                           Route.HOME -> Screen.HOME
+                          Route.SAVED -> Screen.SAVED
                           Route.PROFILE -> Screen.PROFILE
                           else -> {
                             ""

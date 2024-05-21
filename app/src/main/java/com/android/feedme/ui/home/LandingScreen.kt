@@ -18,6 +18,7 @@ import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Bookmark
 import androidx.compose.material.icons.outlined.BookmarkBorder
 import androidx.compose.material.icons.outlined.Share
 import androidx.compose.material.icons.rounded.Star
@@ -29,7 +30,10 @@ import androidx.compose.material3.IconButton
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
@@ -46,6 +50,7 @@ import com.android.feedme.model.viewmodel.HomeViewModel
 import com.android.feedme.model.viewmodel.ProfileViewModel
 import com.android.feedme.model.viewmodel.RecipeViewModel
 import com.android.feedme.model.viewmodel.SearchViewModel
+import com.android.feedme.ui.component.LoadMoreButton
 import com.android.feedme.ui.component.SearchBarFun
 import com.android.feedme.ui.navigation.BottomNavigationMenu
 import com.android.feedme.ui.navigation.NavigationActions
@@ -76,9 +81,6 @@ fun LandingPage(
     profileViewModel: ProfileViewModel,
     searchViewModel: SearchViewModel
 ) {
-
-  val recipes = homeViewModel.recipes.collectAsState()
-
   Scaffold(
       modifier = Modifier.fillMaxSize().testTag("LandingScreen"),
       topBar = { TopBarNavigation(title = "FeedMe") },
@@ -89,7 +91,7 @@ fun LandingPage(
         RecipeDisplay(
             it,
             navigationActions,
-            recipes.value,
+            homeViewModel,
             searchViewModel,
             recipeViewModel,
             profileViewModel)
@@ -101,7 +103,7 @@ fun LandingPage(
  *
  * @param paddingValues : the padding values for the screen
  * @param navigationActions : the navigation actions for the screen
- * @param recipes : the list of [Recipe] to be displayed
+ * @param homeViewModel : the [HomeViewModel] instance
  * @param searchViewModel : the [SearchViewModel] instance
  * @param recipeViewModel : the [RecipeViewModel] instance
  * @param profileViewModel : the [ProfileViewModel] instance
@@ -110,11 +112,12 @@ fun LandingPage(
 fun RecipeDisplay(
     paddingValues: PaddingValues,
     navigationActions: NavigationActions,
-    recipes: List<Recipe>,
+    homeViewModel: HomeViewModel,
     searchViewModel: SearchViewModel,
     recipeViewModel: RecipeViewModel,
     profileViewModel: ProfileViewModel
 ) {
+  val recipes = homeViewModel.recipes.collectAsState()
 
   Column(
       modifier =
@@ -127,15 +130,20 @@ fun RecipeDisplay(
         LazyColumn(
             modifier =
                 Modifier.testTag("RecipeList").padding(top = 8.dp).background(TextBarColor)) {
-              items(recipes) { recipe ->
+              items(recipes.value) { recipe ->
 
                 // Fetch the profile of the user who created the recipe
-                profileViewModel.fetchProfile(recipe.userid)
-                val profile = profileViewModel.viewingUserProfile.collectAsState().value
+                // TODO: fix bug when calling fetchProfile before displaying RecipeCard and
+                //  uncomment userName is test
+                // profileViewModel.fetchProfile(recipe.userid)
+                // val profile = profileViewModel.viewingUserProfile.collectAsState().value
 
                 // Recipe card
-                RecipeCard(recipe, profile, navigationActions, recipeViewModel, profileViewModel)
+                RecipeCard(
+                    Route.HOME, recipe, null, navigationActions, recipeViewModel, profileViewModel)
               }
+
+              item { LoadMoreButton(homeViewModel::loadMoreRecipes) }
             }
       }
 }
@@ -151,6 +159,7 @@ fun RecipeDisplay(
  */
 @Composable
 fun RecipeCard(
+    route: String,
     recipe: Recipe,
     profile: Profile?,
     navigationActions: NavigationActions,
@@ -165,7 +174,7 @@ fun RecipeCard(
                     // Set the selected recipe in the view model and navigate to the
                     // recipe screen
                     recipeViewModel.selectRecipe(recipe)
-                    navigationActions.navigateTo("Recipe/${Route.HOME}")
+                    navigationActions.navigateTo("Recipe/${route}")
                   })
               .testTag("RecipeCard"),
       elevation = CardDefaults.elevatedCardElevation()) {
@@ -227,13 +236,42 @@ fun RecipeCard(
                     }
                 Spacer(modifier = Modifier.weight(1f))
                 // Save icon
+                val isSaved = remember { mutableStateOf(false) }
+
+                // LaunchedEffect to trigger the Firestore check when the composable is first
+                // composed
+                LaunchedEffect(recipe) {
+                  profileViewModel.savedRecipeExists(recipe.recipeId) { exists ->
+                    isSaved.value = exists
+                  }
+                }
+
                 IconButton(
-                    onClick = { /* TODO() add saving logic here */},
+                    onClick = {
+                      if (isSaved.value) {
+                        profileViewModel.removeSavedRecipes(recipe.recipeId)
+                        isSaved.value = false // Update: now it reflects the change correctly
+                      } else {
+                        profileViewModel.addSavedRecipes(recipe.recipeId)
+                        isSaved.value = true // Update: now it reflects the change correctly
+                      }
+                    },
                     modifier = Modifier.testTag("SaveIcon")) {
                       Icon(
-                          imageVector = Icons.Outlined.BookmarkBorder,
+                          imageVector =
+                              if (isSaved.value) {
+                                Icons.Filled.Bookmark
+                              } else {
+                                Icons.Outlined.BookmarkBorder
+                              },
                           contentDescription = "Bookmark Icon on Recipe Card",
-                          modifier = Modifier.size(34.dp).padding(start = 4.dp))
+                          modifier = Modifier.size(34.dp).padding(start = 4.dp),
+                          tint =
+                              if (isSaved.value) {
+                                YellowStar
+                              } else {
+                                YellowStarBlackOutline
+                              })
                     }
               }
               Row(verticalAlignment = Alignment.CenterVertically) {

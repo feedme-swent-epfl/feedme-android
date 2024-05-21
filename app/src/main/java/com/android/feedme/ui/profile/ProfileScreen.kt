@@ -14,7 +14,11 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.shape.CircleShape
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Add
 import androidx.compose.material3.ButtonDefaults
+import androidx.compose.material3.FloatingActionButton
+import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedButton
 import androidx.compose.material3.Scaffold
@@ -44,7 +48,8 @@ import com.android.feedme.model.data.Profile
 import com.android.feedme.model.data.Recipe
 import com.android.feedme.model.viewmodel.ProfileViewModel
 import com.android.feedme.model.viewmodel.RecipeViewModel
-import com.android.feedme.resources.recipe
+import com.android.feedme.resources.recipe1
+import com.android.feedme.resources.recipe2
 import com.android.feedme.ui.component.SmallThumbnailsDisplay
 import com.android.feedme.ui.navigation.BottomNavigationMenu
 import com.android.feedme.ui.navigation.NavigationActions
@@ -53,6 +58,7 @@ import com.android.feedme.ui.navigation.Screen
 import com.android.feedme.ui.navigation.TOP_LEVEL_DESTINATIONS
 import com.android.feedme.ui.navigation.TopBarNavigation
 import com.android.feedme.ui.theme.DarkGrey
+import com.android.feedme.ui.theme.FabColor
 import com.android.feedme.ui.theme.FollowButton
 import com.android.feedme.ui.theme.FollowButtonBorder
 import com.android.feedme.ui.theme.FollowingButton
@@ -75,7 +81,7 @@ fun ProfileScreen(
     recipeViewModel: RecipeViewModel = RecipeViewModel()
 ) {
 
-  val recipeList = listOf(recipe, recipe, recipe, recipe, recipe)
+  val recipeList = listOf(recipe1, recipe2, recipe2, recipe1, recipe1)
 
   val profile =
       if (profileViewModel.isViewingProfile()) profileViewModel.viewingUserProfile.collectAsState()
@@ -100,6 +106,17 @@ fun ProfileScreen(
               navigationActions.navigateTo(top)
             },
             TOP_LEVEL_DESTINATIONS)
+      },
+      // Floating Button to create a recipe
+      floatingActionButton = {
+        if (profileViewModel.currentUserId == profile.value?.id)
+            FloatingActionButton(
+                modifier = Modifier.testTag("AddRecipeButton"),
+                containerColor = FabColor,
+                contentColor = TextBarColor,
+                onClick = { navigationActions.navigateTo(Screen.ADD_RECIPE) }) {
+                  Icon(imageVector = Icons.Default.Add, contentDescription = "Add recipe Icon")
+                }
       },
       content = { padding ->
         ProfileBox(
@@ -144,9 +161,8 @@ fun ProfileBox(
               horizontalArrangement = Arrangement.Center,
               verticalAlignment = Alignment.CenterVertically) {
                 UserProfilePicture(profileViewModel)
-                Spacer(modifier = Modifier.width(20.dp))
+                Spacer(modifier = Modifier.width(20.dp).padding(padding))
                 UserNameBox(profile ?: Profile())
-                Spacer(modifier = Modifier.width(5.dp))
                 Row(
                     horizontalArrangement = Arrangement.Center,
                     verticalAlignment = Alignment.CenterVertically) {
@@ -241,7 +257,7 @@ fun FollowingButton(profile: Profile, navigationActions: NavigationActions) {
         Column(
             horizontalAlignment = Alignment.CenterHorizontally,
             verticalArrangement = Arrangement.Center) {
-              Text(text = "Following", style = textStyle(10, 20, 600))
+              Text(text = "Following", style = textStyle(10, 20, 600), maxLines = 1)
               Spacer(modifier = Modifier.height(5.dp))
               Text(text = profile.following.size.toString(), style = textStyle(10, 30, 600))
             }

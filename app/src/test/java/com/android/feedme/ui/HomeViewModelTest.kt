@@ -146,7 +146,7 @@ class HomeViewModelTest {
   @Test
   fun loadMoreRecipes_Success() {
     homeViewModel.fetchRatedRecipes()
-      homeViewModel.loadMoreRecipes()
+    homeViewModel.loadMoreRecipes()
     shadowOf(Looper.getMainLooper()).idle()
 
     println(homeViewModel.recipes.value)

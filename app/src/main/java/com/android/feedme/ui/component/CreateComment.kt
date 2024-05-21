@@ -52,7 +52,16 @@ import com.android.feedme.ui.theme.TemplateColor
 import com.android.feedme.ui.theme.YellowStar
 import com.android.feedme.ui.theme.deleteButtonColor
 
-/** Composable function to enable comment creation */
+/**
+ * Displays a window for creating a comment, allowing the user to input a title, description, and
+ * rating. The comment can then be published or canceled.
+ *
+ * @param profileViewModel The ViewModel associated with the user's profile.
+ * @param recipeViewModel The ViewModel associated with the recipe for which the comment is being
+ *   made.
+ * @param commentViewModel The ViewModel managing the comments.
+ * @param onDismiss Callback function to be called when the user cancels the comment creation.
+ */
 @Composable
 fun CreateComment(
     profileViewModel: ProfileViewModel,
@@ -61,7 +70,6 @@ fun CreateComment(
     onDismiss: () -> Unit
 ) {
   var commentTitle by remember { mutableStateOf("") }
-  var text by remember { mutableStateOf("") }
   var rating by remember { mutableStateOf(0.0) }
   var description by remember { mutableStateOf("") }
 
@@ -100,14 +108,17 @@ fun CreateComment(
                         verticalAlignment = Alignment.CenterVertically,
                         horizontalArrangement = Arrangement.Center,
                         modifier =
-                            Modifier.fillMaxWidth().padding(top = 35.dp).testTag("rateStars")) {
+                            Modifier.fillMaxWidth()
+                                .padding(start = 5.dp, top = 35.dp)
+                                .testTag("rateStars")) {
                           repeat(5) { index ->
                             val isSelected = index + 1 <= rating
                             val isHalfSelected = index + 0.5 == rating
-                              val iconTint = when {
+                            val iconTint =
+                                when {
                                   isSelected || isHalfSelected -> YellowStar
                                   else -> Color.Black
-                              }
+                                }
 
                             Icon(
                                 tint = iconTint,

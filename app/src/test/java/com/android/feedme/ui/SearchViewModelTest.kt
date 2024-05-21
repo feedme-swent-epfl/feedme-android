@@ -21,6 +21,7 @@ import org.junit.Test
 import org.junit.runner.RunWith
 import org.mockito.ArgumentMatchers.any
 import org.mockito.ArgumentMatchers.anyString
+import org.mockito.ArgumentMatchers.eq
 import org.mockito.Mock
 import org.mockito.Mockito
 import org.mockito.Mockito.`when`
@@ -136,6 +137,8 @@ class SearchViewModelTest {
     // for searchRecipes
     `when`(mockCollectionReference.whereGreaterThanOrEqualTo("title", query)).thenReturn(mockQuery)
     `when`(mockQuery.whereLessThan("title", query + "\uf8ff")).thenReturn(mockQuery)
+    `when`(mockCollectionReference.whereArrayContainsAny(eq("searchItems"), any()))
+        .thenReturn(mockQuery)
 
     // for searchProfiles
     `when`(mockCollectionReference.whereGreaterThanOrEqualTo("username", queryUser))

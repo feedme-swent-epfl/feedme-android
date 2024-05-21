@@ -90,7 +90,9 @@ fun RecipeFullDisplay(
   val isSaved = remember { mutableStateOf(false) }
   // LaunchedEffect to trigger the Firestore check when the composable is first composed
   LaunchedEffect(recipe) {
-    profileViewModel.savedRecipeExists(recipe!!.recipeId) { exists -> isSaved.value = exists }
+    if (recipe != null) {
+      profileViewModel.savedRecipeExists(recipe.recipeId) { exists -> isSaved.value = exists }
+    }
   }
   Scaffold(
       modifier = Modifier.fillMaxSize(),

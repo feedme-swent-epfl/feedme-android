@@ -17,7 +17,6 @@ import junit.framework.TestCase.assertTrue
 import org.junit.Before
 import org.junit.Test
 import org.junit.runner.RunWith
-import org.mockito.ArgumentMatchers.any
 import org.mockito.Mock
 import org.mockito.Mockito
 import org.mockito.Mockito.anyString
@@ -137,7 +136,7 @@ class HomeViewModelTest {
 
   @Test
   fun getRecipes_Success() {
-    homeViewModel.fetchRecipes()
+    homeViewModel.fetchRatedRecipes()
     shadowOf(Looper.getMainLooper()).idle()
 
     println(homeViewModel.recipes.value)
@@ -146,7 +145,7 @@ class HomeViewModelTest {
 
   @Test
   fun loadMoreRecipes_Success() {
-    homeViewModel.fetchRecipes()
+    homeViewModel.fetchRatedRecipes()
     homeViewModel.loadMoreRecipes()
     shadowOf(Looper.getMainLooper()).idle()
 

@@ -198,11 +198,128 @@ class RecipeRepositoryTest {
   }
 
   @Test
+  fun mapToRecipe_Failure() {
+    val invalidRecipeMap: Map<String, Any> =
+        mapOf(
+            "recipeId" to "1",
+            "title" to "Chocolate Cake",
+            "description" to "A deliciously rich chocolate cake.",
+            "ingredients" to "invalid ingredients data",
+            "steps" to
+                listOf(
+                    mapOf(
+                        "stepNumber" to 1,
+                        "description" to "Mix dry ingredients.",
+                        "title" to "Prepare Dry Mix")),
+            "tags" to listOf("dessert", "chocolate", "cake"),
+            "rating" to 4.5,
+            "userid" to "user123",
+            "imageUrl" to "http://example.com/chocolate_cake.jpg")
+
+    var recipeResult: Recipe? = null
+    var failureCalled = false
+
+    recipeRepository.mapToRecipe(
+        invalidRecipeMap,
+        onSuccess = { recipe -> recipeResult = recipe },
+        onFailure = { failureCalled = true })
+
+    shadowOf(Looper.getMainLooper()).idle()
+    recipeResult?.ingredients?.let { assertTrue(it.isEmpty()) }
+    assertFalse("Failure callback should be called", failureCalled)
+  }
+
+  @Test
   fun testSingletonInitialization() {
     val mockFirestore = mock(FirebaseFirestore::class.java)
     RecipeRepository.initialize(mockFirestore)
 
     assertNotNull("Singleton instance should be initialized", RecipeRepository.instance)
+  }
+
+  @Test
+  fun mapToRecipe_Success() {
+    val recipeMap: Map<String, Any> =
+        mapOf(
+            "recipeId" to "1",
+            "title" to "Chocolate Cake",
+            "description" to "A deliciously rich chocolate cake.",
+            "ingredients" to
+                listOf(
+                    mapOf(
+                        "quantity" to 2.0,
+                        "measure" to "CUP",
+                        "ingredient" to
+                            mapOf(
+                                "name" to "Flour",
+                                "id" to "flourId",
+                                "vegetarian" to true,
+                                "vegan" to true)),
+                    mapOf(
+                        "quantity" to 1.0,
+                        "measure" to "CUP",
+                        "ingredient" to
+                            mapOf(
+                                "name" to "Sugar",
+                                "id" to "sugarId",
+                                "vegetarian" to true,
+                                "vegan" to true))),
+            "steps" to
+                listOf(
+                    mapOf(
+                        "stepNumber" to 1,
+                        "description" to "Mix dry ingredients.",
+                        "title" to "Prepare Dry Mix"),
+                    mapOf(
+                        "stepNumber" to 2,
+                        "description" to "Blend with wet ingredients.",
+                        "title" to "Mix Ingredients"),
+                    mapOf(
+                        "stepNumber" to 3,
+                        "description" to "Pour into pan and bake.",
+                        "title" to "Bake")),
+            "tags" to listOf("dessert", "chocolate", "cake"),
+            "rating" to 4.5,
+            "userid" to "user123",
+            "imageUrl" to "http://example.com/chocolate_cake.jpg")
+
+    var recipeResult: Recipe? = null
+    var failureCalled = false
+
+    recipeRepository.mapToRecipe(
+        recipeMap,
+        onSuccess = { recipe -> recipeResult = recipe },
+        onFailure = { failureCalled = true })
+
+    shadowOf(Looper.getMainLooper()).idle()
+
+    assertNotNull("Recipe should not be null", recipeResult)
+    assertEquals("Recipe ID does not match", "1", recipeResult?.recipeId)
+    assertEquals("Title does not match", "Chocolate Cake", recipeResult?.title)
+    assertEquals(
+        "Description does not match",
+        "A deliciously rich chocolate cake.",
+        recipeResult?.description)
+    assertEquals("Tags do not match", listOf("dessert", "chocolate", "cake"), recipeResult?.tags)
+    assertEquals("Rating does not match", 4.5, recipeResult?.rating)
+    assertEquals("User ID does not match", "user123", recipeResult?.userid)
+    assertEquals(
+        "Image URL does not match", "http://example.com/chocolate_cake.jpg", recipeResult?.imageUrl)
+    assertFalse("Failure callback should not be called", failureCalled)
+
+    val ingredients = recipeResult?.ingredients
+    assertNotNull("Ingredients should not be null", ingredients)
+    assertEquals("Ingredients list size incorrect", 2, ingredients?.size)
+    assertEquals(
+        "First ingredient name does not match", "Flour", ingredients?.get(0)?.ingredient?.name)
+    assertEquals("First ingredient quantity does not match", 2.0, ingredients?.get(0)?.quantity)
+    assertEquals(
+        "First ingredient measure does not match", MeasureUnit.CUP, ingredients?.get(0)?.measure)
+
+    val steps = recipeResult?.steps
+    assertNotNull("Steps should not be null", steps)
+    assertEquals("Steps list size incorrect", 3, steps?.size)
+    assertEquals("First step title does not match", "Prepare Dry Mix", steps?.get(0)?.title)
   }
 
   @Test

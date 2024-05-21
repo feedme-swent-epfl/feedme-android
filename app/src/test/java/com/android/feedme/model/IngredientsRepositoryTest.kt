@@ -3,13 +3,13 @@ package com.android.feedme.model
 import android.os.Looper
 import androidx.test.core.app.ApplicationProvider
 import com.android.feedme.model.data.Ingredient
-import com.android.feedme.model.data.IngredientMetaData
 import com.android.feedme.model.data.IngredientsRepository
 import com.google.android.gms.tasks.Tasks
 import com.google.firebase.FirebaseApp
 import com.google.firebase.firestore.CollectionReference
 import com.google.firebase.firestore.DocumentReference
 import com.google.firebase.firestore.DocumentSnapshot
+import com.google.firebase.firestore.FieldPath
 import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.firestore.Query
 import com.google.firebase.firestore.QuerySnapshot
@@ -20,6 +20,7 @@ import junit.framework.TestCase.fail
 import org.junit.Before
 import org.junit.Test
 import org.junit.runner.RunWith
+import org.mockito.ArgumentMatchers.anyList
 import org.mockito.Mock
 import org.mockito.Mockito
 import org.mockito.Mockito.anyString
@@ -65,10 +66,13 @@ class IngredientsRepositoryTest {
         .thenReturn(mockCollectionReference)
     `when`(mockCollectionReference.limit(5)).thenReturn(mockQuery)
     `when`(mockCollectionReference.limit(1)).thenReturn(mockQuery)
-
     `when`(mockCollectionReference.document(anyString())).thenReturn(mockDocumentReference)
     `when`(mockCollectionReference.document()).thenReturn(mockDocumentReference)
     `when`(mockDocumentReference.id).thenReturn("TEST_ID")
+
+    // Mock `whereIn` using `FieldPath.documentId()`
+    `when`(mockCollectionReference.whereIn(Mockito.eq(FieldPath.documentId()), anyList()))
+        .thenReturn(mockQuery)
   }
 
   @Test
@@ -107,39 +111,38 @@ class IngredientsRepositoryTest {
     val sugar = Ingredient("Sugar", "sugarId", false, false)
     val flour = Ingredient("Flour", "flourId", false, false)
 
-    // Setup responses for fetching each ingredient by ID
+    // Setup responses for fetching ingredients using whereIn
     `when`(mockFirestore.collection("ingredients")).thenReturn(mockCollectionReference)
+    `when`(
+            mockCollectionReference.whereIn(
+                Mockito.eq(FieldPath.documentId()), Mockito.eq(ingredientIds)))
+        .thenReturn(mockQuery)
+    `when`(mockQuery.get()).thenReturn(Tasks.forResult(mockQuerySnapshot))
 
-    // Mock fetching sugar and flour documents
+    // Mock the query snapshot to return the sugar and flour documents
     val sugarDocumentSnapshot = Mockito.mock(DocumentSnapshot::class.java)
     val flourDocumentSnapshot = Mockito.mock(DocumentSnapshot::class.java)
 
     `when`(sugarDocumentSnapshot.toObject(Ingredient::class.java)).thenReturn(sugar)
     `when`(flourDocumentSnapshot.toObject(Ingredient::class.java)).thenReturn(flour)
-
-    // Simulate fetching ingredients
-    `when`(mockCollectionReference.document("sugarId")).thenReturn(mockDocumentReference)
-    `when`(mockCollectionReference.document("flourId")).thenReturn(mockDocumentReference)
-
-    `when`(mockDocumentReference.get())
-        .thenReturn(Tasks.forResult(sugarDocumentSnapshot))
-        .thenReturn(Tasks.forResult(flourDocumentSnapshot))
+    `when`(mockQuerySnapshot.documents)
+        .thenReturn(listOf(sugarDocumentSnapshot, flourDocumentSnapshot))
 
     // Capturing onSuccess callback execution
-    var ingredientsMetaDataResult: List<IngredientMetaData>? = null
+    var ingredientsResult: List<Ingredient>? = null
     ingredientsRepository.getIngredients(
         ingredientIds,
-        onSuccess = { ingredients -> ingredientsMetaDataResult = ingredients },
-        onFailure = { /* Should NOT HAPPENED */})
+        onSuccess = { ingredients -> ingredientsResult = ingredients },
+        onFailure = { fail("Failure callback should not be called") })
 
     // Wait for async tasks to complete
     shadowOf(Looper.getMainLooper()).idle()
 
     // Assertions
-    assertNotNull("IngredientsMetaData result should not be null", ingredientsMetaDataResult)
-    assertEquals("IngredientsMetaData list size incorrect", 2, ingredientsMetaDataResult?.size)
-
-    // Further assertions can be made regarding the contents of the ingredientsMetaDataResult list
+    assertNotNull("Ingredients result should not be null", ingredientsResult)
+    assertEquals("Ingredients list size incorrect", 2, ingredientsResult?.size)
+    assertTrue("Expected ingredient not found", ingredientsResult?.contains(sugar) ?: false)
+    assertTrue("Expected ingredient not found", ingredientsResult?.contains(flour) ?: false)
   }
 
   @Test
@@ -181,8 +184,13 @@ class IngredientsRepositoryTest {
     val ingredientIds = listOf("sugarId", "flourId")
     val exception = Exception("Firestore fetch failed")
 
-    // Setup mocks to simulate a failure for any fetch attempt
-    `when`(mockDocumentReference.get()).thenReturn(Tasks.forException(exception))
+    // Setup mocks to simulate a failure for the whereIn query
+    `when`(mockFirestore.collection("ingredients")).thenReturn(mockCollectionReference)
+    `when`(
+            mockCollectionReference.whereIn(
+                Mockito.eq(FieldPath.documentId()), Mockito.eq(ingredientIds)))
+        .thenReturn(mockQuery)
+    `when`(mockQuery.get()).thenReturn(Tasks.forException(exception))
 
     var failureCalled = false
 

@@ -5,4 +5,7 @@ data class Ingredient(
     var id: String = "NO_ID",
     val vegan: Boolean,
     val vegetarian: Boolean
-)
+) {
+  // No-argument constructor for Firestore
+  constructor() : this("", "", false, false)
+}

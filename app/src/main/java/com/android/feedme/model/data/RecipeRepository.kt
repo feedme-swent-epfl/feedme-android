@@ -1,5 +1,6 @@
 package com.android.feedme.model.data
 
+import android.util.Log
 import com.google.firebase.firestore.DocumentSnapshot
 import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.firestore.Query
@@ -204,69 +205,99 @@ class RecipeRepository(private val db: FirebaseFirestore) {
       mapOf(
           "stepNumber" to this.stepNumber, "description" to this.description, "title" to this.title)
 
-  private fun mapToRecipe(
+  fun mapToRecipe(
       map: Map<String, Any>,
       onSuccess: (Recipe?) -> Unit,
       onFailure: (Exception) -> Unit
   ) {
-    // Attempt to safely extract the list of ingredient IDs
-    val rawIngredientsList = map["ingredients"]
-    val ingredientIds =
-        if (rawIngredientsList is List<*>) {
-          rawIngredientsList.mapNotNull { (it as? Map<*, *>)?.get("ingredientId") as? String }
-        } else {
-          listOf()
-        }
+    try {
+      // Extract the raw ingredients list
+      val rawIngredientsList = map["ingredients"]
+      Log.d("RecipeRepository", "raw Ids $rawIngredientsList")
 
-    // Safely process the tags
-    val rawTagsList = map["tags"]
-    val tags =
-        if (rawTagsList is List<*>) {
-          rawTagsList.mapNotNull { it as? String }
-        } else {
-          listOf()
-        }
+      // Parse ingredient meta data
+      val ingredientMetaDataList =
+          if (rawIngredientsList is List<*>) {
+            rawIngredientsList.mapNotNull { rawIngredient ->
+              (rawIngredient as? Map<*, *>)?.let { ingredientMap ->
+                val quantity = (ingredientMap["quantity"] as? Number)?.toDouble()
+                val measure = stringToMeasureUnit(ingredientMap["measure"] as? String)
+                val ingredientDetails = ingredientMap["ingredient"] as? Map<*, *>
 
-    ingredientsRepository.getIngredients(
-        ingredientIds,
-        onSuccess = { ingredients ->
-          try {
-            // Safely process the steps
-            val rawStepsList = map["steps"]
-            val steps =
-                if (rawStepsList is List<*>) {
-                  rawStepsList.mapNotNull { rawStep ->
-                    (rawStep as? Map<*, *>)?.let { stepMap ->
-                      val stepNumber = (stepMap["stepNumber"] as? Number)?.toInt()
-                      val description = stepMap["description"] as? String
-                      val title = stepMap["title"] as? String
-                      if (stepNumber != null && description != null && title != null) {
-                        Step(stepNumber, description, title)
-                      } else null
-                    }
-                  }
-                } else {
-                  listOf()
-                }
+                if (quantity != null && ingredientDetails != null) {
+                  val name = ingredientDetails["name"] as? String ?: ""
+                  val vegetarian = ingredientDetails["vegetarian"] as? Boolean ?: false
+                  val vegan = ingredientDetails["vegan"] as? Boolean ?: false
+                  val id = ingredientDetails["id"] as? String ?: ""
 
-            // Construct the Recipe object
-            val recipe =
-                Recipe(
-                    recipeId = map["recipeId"] as? String ?: "",
-                    title = map["title"] as? String ?: "",
-                    description = map["description"] as? String ?: "",
-                    ingredients = ingredients,
-                    steps = steps,
-                    tags = tags,
-                    rating = (map["rating"] as? Number)?.toDouble() ?: 0.0,
-                    userid = map["userid"] as? String ?: "",
-                    imageUrl = map["imageUrl"] as? String ?: "")
-
-            onSuccess(recipe)
-          } catch (e: Exception) {
-            onFailure(e)
+                  val ingredient = Ingredient(name, id, vegetarian, vegan)
+                  IngredientMetaData(quantity, measure, ingredient)
+                } else null
+              }
+            }
+          } else {
+            listOf()
           }
-        },
-        onFailure = onFailure)
+
+      // Safely process the tags
+      val rawTagsList = map["tags"]
+      val tags =
+          if (rawTagsList is List<*>) {
+            rawTagsList.mapNotNull { it as? String }
+          } else {
+            listOf()
+          }
+
+      // Safely process the steps
+      val rawStepsList = map["steps"]
+      val steps =
+          if (rawStepsList is List<*>) {
+            rawStepsList.mapNotNull { rawStep ->
+              (rawStep as? Map<*, *>)?.let { stepMap ->
+                val stepNumber = (stepMap["stepNumber"] as? Number)?.toInt()
+                val description = stepMap["description"] as? String
+                val title = stepMap["title"] as? String
+                if (stepNumber != null && description != null && title != null) {
+                  Step(stepNumber, description, title)
+                } else null
+              }
+            }
+          } else {
+            listOf()
+          }
+
+      // Construct the Recipe object
+      val recipe =
+          Recipe(
+              recipeId = map["recipeId"] as? String ?: "",
+              title = map["title"] as? String ?: "",
+              description = map["description"] as? String ?: "",
+              ingredients = ingredientMetaDataList,
+              steps = steps,
+              tags = tags,
+              rating = (map["rating"] as? Number)?.toDouble() ?: 0.0,
+              userid = map["userid"] as? String ?: "",
+              imageUrl = map["imageUrl"] as? String ?: "")
+      Log.d("RecipeRepository", " Recipe fetched success $recipe ")
+
+      onSuccess(recipe)
+    } catch (e: Exception) {
+      onFailure(e)
+    }
+  }
+
+  fun stringToMeasureUnit(measure: String?): MeasureUnit {
+    return when (measure?.uppercase()) {
+      "TEASPOON" -> MeasureUnit.TEASPOON
+      "TABLESPOON" -> MeasureUnit.TABLESPOON
+      "CUP" -> MeasureUnit.CUP
+      "G" -> MeasureUnit.G
+      "KG" -> MeasureUnit.KG
+      "L" -> MeasureUnit.L
+      "ML" -> MeasureUnit.ML
+      "PIECES" -> MeasureUnit.PIECES
+      "NONE" -> MeasureUnit.NONE
+      else -> MeasureUnit.EMPTY
+    }
   }
 }

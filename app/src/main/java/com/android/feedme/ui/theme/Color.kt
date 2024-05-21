@@ -39,3 +39,4 @@ val InValidInput = Color(0xFFFFE1E1)
 val ValidInput = Color(0xFFE2FDC7)
 
 val CameraButtonsBackground = Color(0xFFC0C0C0)
+val deleteButtonColor = Color(0xffaf0f32)

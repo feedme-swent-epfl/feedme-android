@@ -15,7 +15,7 @@ import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Bookmark
-import androidx.compose.material.icons.outlined.Add
+import androidx.compose.material.icons.outlined.AddComment
 import androidx.compose.material.icons.rounded.Star
 import androidx.compose.material.icons.twotone.Bookmark
 import androidx.compose.material.icons.twotone.Star
@@ -34,6 +34,7 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.scale
 import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.text.SpanStyle
 import androidx.compose.ui.text.TextStyle
@@ -116,7 +117,12 @@ fun RecipeFullDisplay(
             containerColor = FabColor,
             contentColor = TextBarColor,
             onClick = { showDialog = true },
-            content = { Icon(imageVector = Icons.Outlined.Add, contentDescription = "Add") })
+            content = {
+              Icon(
+                  imageVector = Icons.Outlined.AddComment,
+                  modifier = Modifier.size(26.dp).scale(scaleX = -1f, scaleY = 1f),
+                  contentDescription = "Add")
+            })
       },
       content = { padding ->
         if (recipe != null) {

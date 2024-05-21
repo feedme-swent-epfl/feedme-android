@@ -136,8 +136,15 @@ class HomeViewModelTest {
   }
 
   @Test
+<<<<<<< HEAD
   fun getRecipes_Success() {
     homeViewModel.fetchRecipes()
+=======
+<<<<<<< Updated upstream
+=======
+  fun getRecipes_Success() {
+    homeViewModel.fetchRatedRecipes()
+>>>>>>> 22a7ebb (added a functionality that works with tags)
     shadowOf(Looper.getMainLooper()).idle()
 
     println(homeViewModel.recipes.value)
@@ -146,7 +153,11 @@ class HomeViewModelTest {
 
   @Test
   fun loadMoreRecipes_Success() {
+<<<<<<< HEAD
     homeViewModel.fetchRecipes()
+=======
+    homeViewModel.fetchRatedRecipes()
+>>>>>>> 22a7ebb (added a functionality that works with tags)
     homeViewModel.loadMoreRecipes()
     shadowOf(Looper.getMainLooper()).idle()
 
@@ -155,6 +166,10 @@ class HomeViewModelTest {
   }
 
   @Test
+<<<<<<< HEAD
+=======
+>>>>>>> Stashed changes
+>>>>>>> 22a7ebb (added a functionality that works with tags)
   fun getSavedRecipes_Success() {
     homeViewModel.fetchSavedRecipes(listOf("lasagna1"))
     shadowOf(Looper.getMainLooper()).idle()

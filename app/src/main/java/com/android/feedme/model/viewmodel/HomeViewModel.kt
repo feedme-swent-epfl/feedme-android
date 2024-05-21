@@ -96,9 +96,8 @@ class HomeViewModel : ViewModel() {
 
   /** A function that fetches more recipes */
   fun loadMoreRecipes() {
-    fetchRecipes()
+      fetchRecipes()
   }
-
   /**
    * A function that forces recipes to be shown for testing purposes
    *

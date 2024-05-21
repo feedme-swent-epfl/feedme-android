@@ -149,6 +149,7 @@ class RecipeRepository(private val db: FirebaseFirestore) {
       onSuccess: (List<Recipe>, DocumentSnapshot?) -> Unit,
       onFailure: (Exception) -> Unit
   ) {
+    // Prefix search query
     var queryRef =
         db.collection(collectionPath)
             .whereGreaterThanOrEqualTo("title", query)
@@ -161,15 +162,66 @@ class RecipeRepository(private val db: FirebaseFirestore) {
 
     queryRef
         .get()
-        .addOnSuccessListener {
-          it.documents.map { recipeMap ->
+        .addOnSuccessListener { prefixSnapshot ->
+          val prefixRecipes = mutableListOf<Recipe>()
+          val prefixDocs = prefixSnapshot.documents
+
+          prefixDocs.forEach { recipeMap ->
             val data = recipeMap.data
             if (data != null) {
-              val success = { recipe: Recipe? ->
-                onSuccess(listOfNotNull(recipe), it.documents.lastOrNull())
-              }
-              mapToRecipe(data, success, onFailure)
+              mapToRecipe(
+                  data,
+                  { recipe ->
+                    if (recipe != null) {
+                      prefixRecipes.add(recipe)
+                    }
+                  },
+                  onFailure)
             }
+          }
+
+          if (prefixRecipes.size < 6) {
+            // Substring search query if we need more results
+            var searchTermQueryRef =
+                db.collection(collectionPath)
+                    .whereArrayContainsAny("tags", listOf(query))
+                    .limit((6 - prefixRecipes.size).toLong())
+
+            if (lastRecipe != null) {
+              searchTermQueryRef = searchTermQueryRef.startAfter(lastRecipe)
+            }
+
+            searchTermQueryRef
+                .get()
+                .addOnSuccessListener { searchTermSnapshot ->
+                  val searchTermRecipes = mutableListOf<Recipe>()
+                  val searchTermDocs = searchTermSnapshot.documents
+
+                  searchTermDocs.forEach { recipeMap ->
+                    val data = recipeMap.data
+                    if (data != null) {
+                      mapToRecipe(
+                          data,
+                          { recipe ->
+                            if (recipe != null) {
+                              searchTermRecipes.add(recipe)
+                            }
+                          },
+                          onFailure)
+                    }
+                  }
+
+                  // Combine and remove duplicates
+                  val combinedRecipes =
+                      (prefixRecipes + searchTermRecipes).distinctBy { it.recipeId }
+                  val lastDoc =
+                      if (searchTermDocs.isNotEmpty()) searchTermDocs.last()
+                      else prefixDocs.lastOrNull()
+                  onSuccess(combinedRecipes, lastDoc)
+                }
+                .addOnFailureListener { onFailure(it) }
+          } else {
+            onSuccess(prefixRecipes, prefixDocs.lastOrNull())
           }
         }
         .addOnFailureListener { onFailure(it) }

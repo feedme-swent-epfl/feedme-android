@@ -3,7 +3,6 @@ package com.android.feedme.ui.component
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
-import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -18,7 +17,8 @@ import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.outlined.StarOutline
+import androidx.compose.material.icons.rounded.Star
+import androidx.compose.material.icons.twotone.Star
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Icon
 import androidx.compose.material3.OutlinedButton
@@ -33,17 +33,22 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.text.font.FontStyle
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import coil.compose.AsyncImage
 import com.android.feedme.model.data.Comment
 import com.android.feedme.model.viewmodel.CommentViewModel
 import com.android.feedme.model.viewmodel.ProfileViewModel
 import com.android.feedme.model.viewmodel.RecipeViewModel
 import com.android.feedme.ui.theme.TemplateColor
+import com.android.feedme.ui.theme.YellowStar
+import com.android.feedme.ui.theme.YellowStarBlackOutline
 
 /** Composable function to enable comment creation */
 @Composable
@@ -59,97 +64,140 @@ fun CreateComment(
   var description by remember { mutableStateOf("") }
 
   Box(
-      Modifier
-          .fillMaxSize()
-          .padding(16.dp)
-          .background(Color.Transparent)
-          .testTag("OuterBox"),
+      Modifier.fillMaxSize().padding(16.dp).background(Color.Transparent).testTag("OuterBox"),
       contentAlignment = Alignment.Center) {
         Column(
             modifier =
-            Modifier
-                .width(350.dp)
-                .background(Color.White, RoundedCornerShape(16.dp))
-                .border(2.dp, TemplateColor, RoundedCornerShape(16.dp))
-                .padding(16.dp)
-                .testTag("InnerCol"),
+                Modifier.width(350.dp)
+                    .background(Color.White, RoundedCornerShape(16.dp))
+                    .border(2.dp, TemplateColor, RoundedCornerShape(16.dp))
+                    .padding(16.dp)
+                    .testTag("InnerCol"),
             verticalArrangement = Arrangement.spacedBy(12.dp),
             horizontalAlignment = Alignment.CenterHorizontally) {
 
-              // Picture + title + rating and time
-              Row(
-                  modifier = Modifier.fillMaxWidth(),
-                  horizontalArrangement = Arrangement.Absolute.Left,
-                  verticalAlignment = Alignment.CenterVertically) {
-                    // Clickable plus icon -- temporary until i implement the picture uploading
-                    // process
-                    Box(
-                        Modifier
-                            .size(50.dp)
-                            .background(Color.LightGray, CircleShape)
-                            .clickable { /* TODO() onImageUpload() */ }
-                            .testTag("PhotoIcon"),
-                        contentAlignment = Alignment.Center) {
-                          Text("+", fontSize = 30.sp, fontWeight = FontWeight.Bold)
-                        }
-                    Spacer(modifier = Modifier.padding(end = 10.dp))
+              Row(modifier = Modifier.fillMaxWidth()) {
+                  // Picture
+                // TODO Change that and call the function UserProfilePicture(profileViewModel)
+                AsyncImage(
+                    modifier =
+                        Modifier.width(100.dp)
+                            .height(100.dp)
+                            .clip(CircleShape)
+                            .border(1.dp, color = Color.LightGray, shape = CircleShape)
+                            .testTag("ProfileIcon"),
+                    model =
+                        "https://external-content.duckduckgo.com/iu/?u=https%3A%2F%2Fwww." +
+                                "generation-souvenirs.com%2F38509-thickbox_default%2Fpeluche-" +
+                                "bisounours-rose-toucalin-30-cm.jpg&f=1&nofb=1&ipt=411c19cdad14" +
+                                "03db0340c05652681d988095a71011a275f235f20faced305a21&ipo=images",
+                    contentDescription = "User Profile Image",
+                    contentScale = ContentScale.FillBounds)
 
-                    Column(
-                        verticalArrangement = Arrangement.spacedBy(20.dp),
-                        horizontalAlignment = Alignment.CenterHorizontally) {
-
-                          // Title input
-                          OutlinedTextField(
-                              value = commentTitle,
-                              onValueChange = { commentTitle = it },
-                              label = { Text("Enter the title of the comment") },
-                              modifier = Modifier
-                                  .fillMaxWidth()
-                                  .testTag("TitleField"),
-                              shape = RoundedCornerShape(20.dp))
-
-                          // Rating input
-                          Row(
-                              modifier = Modifier
-                                  .fillMaxWidth()
-                                  .padding(end = 15.dp),
-                              horizontalArrangement = Arrangement.Absolute.Right,
-                              verticalAlignment = Alignment.CenterVertically) {
-                                // the input
-                                TextField(
-                                    value = rating,
-                                    onValueChange = { rating = it },
-                                    modifier =
-                                    Modifier
-                                        .width(20.dp)
-                                        .height(30.dp)
-                                        .background(color = Color.LightGray)
-                                        .testTag("RatingField"),
-                                    shape = RoundedCornerShape(20.dp),
-                                    colors =
-                                        OutlinedTextFieldDefaults.colors(cursorColor = Color.Black))
-                                // rating icon
-                                Icon(
-                                    imageVector = Icons.Outlined.StarOutline,
-                                    contentDescription = "RatingIcon",
-                                    modifier =
-                                    Modifier
-                                        .size(34.dp)
-                                        .padding(start = 6.dp)
-                                        .testTag("RatingStar"))
-                              }
-                        }
+                  Row(
+                      modifier = Modifier
+                          .fillMaxWidth()
+                          .padding(end = 15.dp),
+                      horizontalArrangement = Arrangement.Absolute.Right,
+                      verticalAlignment = Alignment.CenterVertically) {
+                      // the input
+                      TextField(
+                          value = rating,
+                          onValueChange = { rating = it },
+                          modifier =
+                          Modifier
+                              .width(20.dp)
+                              .height(30.dp)
+                              .background(color = Color.LightGray)
+                              .testTag("RatingField"),
+                          shape = RoundedCornerShape(20.dp),
+                          colors =
+                          OutlinedTextFieldDefaults.colors(cursorColor = Color.Black))
+                      // Star icon
+                      Icon(
+                          imageVector = Icons.Rounded.Star,
+                          contentDescription = "Star Icon",
+                          tint = YellowStar,
+                          modifier = Modifier.size(26.dp)
+                      )
                   }
+              }
+              // Picture + title + rating and time
+              /*Row(
+              modifier = Modifier.fillMaxWidth(),
+              horizontalArrangement = Arrangement.Absolute.Left,
+              verticalAlignment = Alignment.CenterVertically) {
+                // Clickable plus icon -- temporary until i implement the picture uploading
+                // process
+                Box(
+                    Modifier
+                        .size(50.dp)
+                        .background(Color.LightGray, CircleShape)
+                        .clickable { /* TODO() onImageUpload() */ }
+                        .testTag("PhotoIcon"),
+                    contentAlignment = Alignment.Center) {
+                      Text("+", fontSize = 30.sp, fontWeight = FontWeight.Bold)
+                    }
+                Spacer(modifier = Modifier.padding(end = 10.dp))
+
+                Column(
+                    verticalArrangement = Arrangement.spacedBy(20.dp),
+                    horizontalAlignment = Alignment.CenterHorizontally) {
+
+                      // Title input
+                      OutlinedTextField(
+                          value = commentTitle,
+                          onValueChange = { commentTitle = it },
+                          label = { Text("Enter the title of the comment") },
+                          modifier = Modifier
+                              .fillMaxWidth()
+                              .testTag("TitleField"),
+                          shape = RoundedCornerShape(20.dp))
+
+                      // Rating input
+                      Row(
+                          modifier = Modifier
+                              .fillMaxWidth()
+                              .padding(end = 15.dp),
+                          horizontalArrangement = Arrangement.Absolute.Right,
+                          verticalAlignment = Alignment.CenterVertically) {
+                            // the input
+                            TextField(
+                                value = rating,
+                                onValueChange = { rating = it },
+                                modifier =
+                                Modifier
+                                    .width(20.dp)
+                                    .height(30.dp)
+                                    .background(color = Color.LightGray)
+                                    .testTag("RatingField"),
+                                shape = RoundedCornerShape(20.dp),
+                                colors =
+                                    OutlinedTextFieldDefaults.colors(cursorColor = Color.Black))
+                            // rating icon
+                            Icon(
+                                imageVector = Icons.Outlined.StarOutline,
+                                contentDescription = "RatingIcon",
+                                modifier =
+                                Modifier
+                                    .size(34.dp)
+                                    .padding(start = 6.dp)
+                                    .testTag("RatingStar"))
+                          }
+                    }
+              }*/
 
               // Description input
               OutlinedTextField(
                   value = description,
                   onValueChange = { description = it },
-                  placeholder = {Text(text = "Descritption", color = Color.LightGray, fontStyle = FontStyle.Italic)},
-                  modifier = Modifier
-                      .fillMaxWidth()
-                      .height(200.dp)
-                      .testTag("DescriptionField"),
+                  placeholder = {
+                    Text(
+                        text = "Descritption",
+                        color = Color.LightGray,
+                        fontStyle = FontStyle.Italic)
+                  },
+                  modifier = Modifier.fillMaxWidth().height(200.dp).testTag("DescriptionField"),
                   shape = RoundedCornerShape(10.dp))
 
               // Delete and Publish buttons
@@ -164,11 +212,7 @@ fun CreateComment(
                         colors = ButtonDefaults.buttonColors(Color.White),
                         border = BorderStroke(2.dp, Color.Red),
                         modifier =
-                        Modifier
-                            .width(150.dp)
-                            .height(35.dp)
-                            .weight(1f)
-                            .testTag("DeleteButton"),
+                            Modifier.width(150.dp).height(35.dp).weight(1f).testTag("DeleteButton"),
                         shape = RoundedCornerShape(20.dp)) {
                           Text(
                               "Cancel",
@@ -204,11 +248,10 @@ fun CreateComment(
                         colors = ButtonDefaults.buttonColors(Color.White),
                         border = BorderStroke(2.dp, TemplateColor),
                         modifier =
-                        Modifier
-                            .width(150.dp)
-                            .weight(1f)
-                            .height(35.dp)
-                            .testTag("PublishButton"),
+                            Modifier.width(150.dp)
+                                .weight(1f)
+                                .height(35.dp)
+                                .testTag("PublishButton"),
                         shape = RoundedCornerShape(20.dp)) {
                           Text(
                               "Publish",

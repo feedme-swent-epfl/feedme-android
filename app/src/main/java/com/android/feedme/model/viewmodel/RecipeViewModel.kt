@@ -22,6 +22,7 @@ class RecipeViewModel : ViewModel() {
   private val repository = RecipeRepository.instance
   private val _recipe = MutableStateFlow<Recipe?>(null)
   val recipe: StateFlow<Recipe?> = _recipe
+
   /** Keep track of whether an error message should be shown */
   private val _errorMessageVisible = MutableStateFlow(false)
   val errorMessageVisible = _errorMessageVisible.asStateFlow()

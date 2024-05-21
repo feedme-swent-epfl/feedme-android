@@ -21,16 +21,12 @@ class HomeViewModel : ViewModel() {
   val savedRecipes = _savedRecipes.asStateFlow()
 
   private val authListener =
-<<<<<<< Updated upstream
       FirebaseAuth.AuthStateListener {
         FirebaseAuth.getInstance().uid?.let {
           fetchRecipe("lasagna1")
           fetchRecipe("pasta1")
         }
       }
-=======
-      FirebaseAuth.AuthStateListener { FirebaseAuth.getInstance().uid?.let { fetchRatedRecipes() } }
->>>>>>> Stashed changes
 
   init {
     // Listen to FirebaseAuth state changes
@@ -80,30 +76,6 @@ class HomeViewModel : ViewModel() {
     }
   }
 
-<<<<<<< Updated upstream
-=======
-  /** A function that fetches the recipes */
-  fun fetchRatedRecipes() {
-    viewModelScope.launch {
-      recipeRepository.getRatedRecipes(
-          lastRecipe,
-          onSuccess = { recipes, lastRec ->
-            lastRecipe = lastRec
-            _recipes.value += recipes
-          },
-          onFailure = {
-            // Handle failure
-            throw error("Recipes could not be fetched")
-          })
-    }
-  }
-
-  /** A function that fetches more recipes */
-  fun loadMoreRecipes() {
-    fetchRatedRecipes()
-  }
-
->>>>>>> Stashed changes
   /**
    * A function that forces recipes to be shown for testing purposes
    *

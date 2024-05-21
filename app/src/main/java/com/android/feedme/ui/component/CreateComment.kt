@@ -35,6 +35,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.testTag
+import androidx.compose.ui.text.font.FontStyle
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
@@ -58,15 +59,20 @@ fun CreateComment(
   var description by remember { mutableStateOf("") }
 
   Box(
-      Modifier.fillMaxSize().padding(16.dp).background(Color.Transparent).testTag("OuterBox"),
+      Modifier
+          .fillMaxSize()
+          .padding(16.dp)
+          .background(Color.Transparent)
+          .testTag("OuterBox"),
       contentAlignment = Alignment.Center) {
         Column(
             modifier =
-                Modifier.width(350.dp)
-                    .background(Color.White, RoundedCornerShape(16.dp))
-                    .border(2.dp, TemplateColor, RoundedCornerShape(16.dp))
-                    .padding(16.dp)
-                    .testTag("InnerCol"),
+            Modifier
+                .width(350.dp)
+                .background(Color.White, RoundedCornerShape(16.dp))
+                .border(2.dp, TemplateColor, RoundedCornerShape(16.dp))
+                .padding(16.dp)
+                .testTag("InnerCol"),
             verticalArrangement = Arrangement.spacedBy(12.dp),
             horizontalAlignment = Alignment.CenterHorizontally) {
 
@@ -78,9 +84,10 @@ fun CreateComment(
                     // Clickable plus icon -- temporary until i implement the picture uploading
                     // process
                     Box(
-                        Modifier.size(50.dp)
+                        Modifier
+                            .size(50.dp)
                             .background(Color.LightGray, CircleShape)
-                            .clickable { /* TODO() onImageUpload() */}
+                            .clickable { /* TODO() onImageUpload() */ }
                             .testTag("PhotoIcon"),
                         contentAlignment = Alignment.Center) {
                           Text("+", fontSize = 30.sp, fontWeight = FontWeight.Bold)
@@ -96,12 +103,16 @@ fun CreateComment(
                               value = commentTitle,
                               onValueChange = { commentTitle = it },
                               label = { Text("Enter the title of the comment") },
-                              modifier = Modifier.fillMaxWidth().testTag("TitleField"),
+                              modifier = Modifier
+                                  .fillMaxWidth()
+                                  .testTag("TitleField"),
                               shape = RoundedCornerShape(20.dp))
 
                           // Rating input
                           Row(
-                              modifier = Modifier.fillMaxWidth().padding(end = 15.dp),
+                              modifier = Modifier
+                                  .fillMaxWidth()
+                                  .padding(end = 15.dp),
                               horizontalArrangement = Arrangement.Absolute.Right,
                               verticalAlignment = Alignment.CenterVertically) {
                                 // the input
@@ -109,10 +120,11 @@ fun CreateComment(
                                     value = rating,
                                     onValueChange = { rating = it },
                                     modifier =
-                                        Modifier.width(20.dp)
-                                            .height(30.dp)
-                                            .background(color = Color.LightGray)
-                                            .testTag("RatingField"),
+                                    Modifier
+                                        .width(20.dp)
+                                        .height(30.dp)
+                                        .background(color = Color.LightGray)
+                                        .testTag("RatingField"),
                                     shape = RoundedCornerShape(20.dp),
                                     colors =
                                         OutlinedTextFieldDefaults.colors(cursorColor = Color.Black))
@@ -121,9 +133,10 @@ fun CreateComment(
                                     imageVector = Icons.Outlined.StarOutline,
                                     contentDescription = "RatingIcon",
                                     modifier =
-                                        Modifier.size(34.dp)
-                                            .padding(start = 6.dp)
-                                            .testTag("RatingStar"))
+                                    Modifier
+                                        .size(34.dp)
+                                        .padding(start = 6.dp)
+                                        .testTag("RatingStar"))
                               }
                         }
                   }
@@ -132,9 +145,12 @@ fun CreateComment(
               OutlinedTextField(
                   value = description,
                   onValueChange = { description = it },
-                  label = { Text("Description") },
-                  modifier = Modifier.fillMaxWidth().height(200.dp).testTag("DescriptionField"),
-                  shape = RoundedCornerShape(16.dp))
+                  placeholder = {Text(text = "Descritption", color = Color.LightGray, fontStyle = FontStyle.Italic)},
+                  modifier = Modifier
+                      .fillMaxWidth()
+                      .height(200.dp)
+                      .testTag("DescriptionField"),
+                  shape = RoundedCornerShape(10.dp))
 
               // Delete and Publish buttons
               Row(
@@ -148,10 +164,11 @@ fun CreateComment(
                         colors = ButtonDefaults.buttonColors(Color.White),
                         border = BorderStroke(2.dp, Color.Red),
                         modifier =
-                            Modifier.width(150.dp)
-                                .height(35.dp)
-                                .weight(1f)
-                                .testTag("DeleteButton"),
+                        Modifier
+                            .width(150.dp)
+                            .height(35.dp)
+                            .weight(1f)
+                            .testTag("DeleteButton"),
                         shape = RoundedCornerShape(20.dp)) {
                           Text(
                               "Cancel",
@@ -187,10 +204,11 @@ fun CreateComment(
                         colors = ButtonDefaults.buttonColors(Color.White),
                         border = BorderStroke(2.dp, TemplateColor),
                         modifier =
-                            Modifier.width(150.dp)
-                                .weight(1f)
-                                .height(35.dp)
-                                .testTag("PublishButton"),
+                        Modifier
+                            .width(150.dp)
+                            .weight(1f)
+                            .height(35.dp)
+                            .testTag("PublishButton"),
                         shape = RoundedCornerShape(20.dp)) {
                           Text(
                               "Publish",

@@ -133,6 +133,28 @@ class HomeViewModelTest {
   }
 
   @Test
+<<<<<<< Updated upstream
+=======
+  fun getRecipes_Success() {
+    homeViewModel.fetchRatedRecipes()
+    shadowOf(Looper.getMainLooper()).idle()
+
+    println(homeViewModel.recipes.value)
+    assertTrue(homeViewModel.recipes.value.first().recipeId == recipeId)
+  }
+
+  @Test
+  fun loadMoreRecipes_Success() {
+    homeViewModel.fetchRatedRecipes()
+    homeViewModel.loadMoreRecipes()
+    shadowOf(Looper.getMainLooper()).idle()
+
+    println(homeViewModel.recipes.value)
+    assertTrue(homeViewModel.recipes.value.first().recipeId == recipeId)
+  }
+
+  @Test
+>>>>>>> Stashed changes
   fun getSavedRecipes_Success() {
     homeViewModel.fetchSavedRecipes(listOf("lasagna1"))
     shadowOf(Looper.getMainLooper()).idle()

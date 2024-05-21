@@ -12,6 +12,7 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.layout.wrapContentWidth
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material.icons.Icons
@@ -163,12 +164,10 @@ fun ProfileBox(
                 UserProfilePicture(profileViewModel)
                 Spacer(modifier = Modifier.width(20.dp).padding(padding))
                 UserNameBox(profile ?: Profile())
-                Spacer(modifier = Modifier.width(5.dp).padding(padding))
                 Row(
                     horizontalArrangement = Arrangement.Center,
                     verticalAlignment = Alignment.CenterVertically) {
                       FollowersButton(profile ?: Profile(), navigationActions)
-                      Spacer(modifier = Modifier.width(10.dp).padding(padding))
                       FollowingButton(profile ?: Profile(), navigationActions)
                     }
               }
@@ -259,7 +258,7 @@ fun FollowingButton(profile: Profile, navigationActions: NavigationActions) {
         Column(
             horizontalAlignment = Alignment.CenterHorizontally,
             verticalArrangement = Arrangement.Center) {
-              Text(text = "Following", style = textStyle(10, 20, 600))
+              Text(text = "Following", style = textStyle(10, 20, 600), maxLines = 1)
               Spacer(modifier = Modifier.height(5.dp))
               Text(text = profile.following.size.toString(), style = textStyle(10, 30, 600))
             }

@@ -29,7 +29,7 @@ class HomeViewModel : ViewModel() {
   private var lastRecipe: DocumentSnapshot? = null
 
   private val authListener =
-      FirebaseAuth.AuthStateListener { FirebaseAuth.getInstance().uid?.let { fetchRecipes() } }
+      FirebaseAuth.AuthStateListener { FirebaseAuth.getInstance().uid?.let { fetchRatedRecipes() } }
 
   init {
     // Listen to FirebaseAuth state changes
@@ -79,8 +79,8 @@ class HomeViewModel : ViewModel() {
     }
   }
 
-  /** A function that fetches the recipes */
-  fun fetchRecipes() {
+  /** A function that fetches the recipes based on their ratings */
+  fun fetchRatedRecipes() {
     viewModelScope.launch {
       recipeRepository.getRatedRecipes(
           lastRecipe,
@@ -97,7 +97,7 @@ class HomeViewModel : ViewModel() {
 
   /** A function that fetches more recipes */
   fun loadMoreRecipes() {
-      fetchRecipes()
+      fetchRatedRecipes()
   }
   /**
    * A function that forces recipes to be shown for testing purposes

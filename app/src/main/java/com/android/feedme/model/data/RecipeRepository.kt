@@ -4,6 +4,8 @@ import android.util.Log
 import com.google.firebase.firestore.DocumentSnapshot
 import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.firestore.Query
+import java.util.Locale
+
 
 class RecipeRepository(private val db: FirebaseFirestore) {
 
@@ -152,8 +154,7 @@ class RecipeRepository(private val db: FirebaseFirestore) {
     // Prefix search query
     var queryRef =
         db.collection(collectionPath)
-            .whereGreaterThanOrEqualTo("title", query)
-            .whereLessThan("title", query + "\uf8ff")
+            .whereArrayContainsAny("searchItems", listOf(query.lowercase(Locale.ROOT)))
             .limit(6) // Limit the number of documents fetched
 
     if (lastRecipe != null) {
@@ -162,67 +163,25 @@ class RecipeRepository(private val db: FirebaseFirestore) {
 
     queryRef
         .get()
-        .addOnSuccessListener { prefixSnapshot ->
-          val prefixRecipes = mutableListOf<Recipe>()
-          val prefixDocs = prefixSnapshot.documents
+        .addOnSuccessListener { snapshot ->
+          val recipes = mutableListOf<Recipe>()
+          val docs = snapshot.documents
 
-          prefixDocs.forEach { recipeMap ->
+          docs.forEach { recipeMap ->
             val data = recipeMap.data
             if (data != null) {
               mapToRecipe(
                   data,
                   { recipe ->
                     if (recipe != null) {
-                      prefixRecipes.add(recipe)
+                      recipes.add(recipe)
                     }
                   },
                   onFailure)
             }
           }
 
-          if (prefixRecipes.size < 6) {
-            // Substring search query if we need more results
-            var searchTermQueryRef =
-                db.collection(collectionPath)
-                    .whereArrayContainsAny("tags", listOf(query))
-                    .limit((6 - prefixRecipes.size).toLong())
-
-            if (lastRecipe != null) {
-              searchTermQueryRef = searchTermQueryRef.startAfter(lastRecipe)
-            }
-
-            searchTermQueryRef
-                .get()
-                .addOnSuccessListener { searchTermSnapshot ->
-                  val searchTermRecipes = mutableListOf<Recipe>()
-                  val searchTermDocs = searchTermSnapshot.documents
-
-                  searchTermDocs.forEach { recipeMap ->
-                    val data = recipeMap.data
-                    if (data != null) {
-                      mapToRecipe(
-                          data,
-                          { recipe ->
-                            if (recipe != null) {
-                              searchTermRecipes.add(recipe)
-                            }
-                          },
-                          onFailure)
-                    }
-                  }
-
-                  // Combine and remove duplicates
-                  val combinedRecipes =
-                      (prefixRecipes + searchTermRecipes).distinctBy { it.recipeId }
-                  val lastDoc =
-                      if (searchTermDocs.isNotEmpty()) searchTermDocs.last()
-                      else prefixDocs.lastOrNull()
-                  onSuccess(combinedRecipes, lastDoc)
-                }
-                .addOnFailureListener { onFailure(it) }
-          } else {
-            onSuccess(prefixRecipes, prefixDocs.lastOrNull())
-          }
+          onSuccess(recipes, docs.lastOrNull())
         }
         .addOnFailureListener { onFailure(it) }
   }
@@ -338,7 +297,7 @@ class RecipeRepository(private val db: FirebaseFirestore) {
     }
   }
 
-  fun stringToMeasureUnit(measure: String?): MeasureUnit {
+  private fun stringToMeasureUnit(measure: String?): MeasureUnit {
     return when (measure?.uppercase()) {
       "TEASPOON" -> MeasureUnit.TEASPOON
       "TABLESPOON" -> MeasureUnit.TABLESPOON

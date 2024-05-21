@@ -67,8 +67,7 @@ class RecipeRepository(private val db: FirebaseFirestore) {
   }
 
   /**
-   * Fetches the top rated recipes from Firestore. The recipes are ordered by their rating in
-   * descending order.
+   * Fetches the recipes saved by the user from Firestore. The recipes are fetched by their IDs.
    *
    * @param ids The list of recipe IDs to fetch.
    * @param onSuccess A callback function invoked with the list of recipes on success.

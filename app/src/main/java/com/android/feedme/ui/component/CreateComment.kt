@@ -3,6 +3,7 @@ package com.android.feedme.ui.component
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -17,15 +18,16 @@ import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.automirrored.rounded.StarHalf
+import androidx.compose.material.icons.filled.Star
 import androidx.compose.material.icons.rounded.Star
+import androidx.compose.material.icons.rounded.StarBorder
 import androidx.compose.material.icons.twotone.Star
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Icon
 import androidx.compose.material3.OutlinedButton
 import androidx.compose.material3.OutlinedTextField
-import androidx.compose.material3.OutlinedTextFieldDefaults
 import androidx.compose.material3.Text
-import androidx.compose.material3.TextField
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -48,7 +50,7 @@ import com.android.feedme.model.viewmodel.ProfileViewModel
 import com.android.feedme.model.viewmodel.RecipeViewModel
 import com.android.feedme.ui.theme.TemplateColor
 import com.android.feedme.ui.theme.YellowStar
-import com.android.feedme.ui.theme.YellowStarBlackOutline
+import com.android.feedme.ui.theme.deleteButtonColor
 
 /** Composable function to enable comment creation */
 @Composable
@@ -58,9 +60,9 @@ fun CreateComment(
     commentViewModel: CommentViewModel,
     onDismiss: () -> Unit
 ) {
-
   var commentTitle by remember { mutableStateOf("") }
-  var rating by remember { mutableStateOf("") }
+  var text by remember { mutableStateOf("") }
+  var rating by remember { mutableStateOf(0.0) }
   var description by remember { mutableStateOf("") }
 
   Box(
@@ -70,132 +72,84 @@ fun CreateComment(
             modifier =
                 Modifier.width(350.dp)
                     .background(Color.White, RoundedCornerShape(16.dp))
-                    .border(2.dp, TemplateColor, RoundedCornerShape(16.dp))
+                    .border(2.dp, Color.Gray, RoundedCornerShape(16.dp))
                     .padding(16.dp)
                     .testTag("InnerCol"),
             verticalArrangement = Arrangement.spacedBy(12.dp),
             horizontalAlignment = Alignment.CenterHorizontally) {
-
-              Row(modifier = Modifier.fillMaxWidth()) {
-                  // Picture
-                // TODO Change that and call the function UserProfilePicture(profileViewModel)
-                AsyncImage(
-                    modifier =
-                        Modifier.width(100.dp)
-                            .height(100.dp)
-                            .clip(CircleShape)
-                            .border(1.dp, color = Color.LightGray, shape = CircleShape)
-                            .testTag("ProfileIcon"),
-                    model =
-                        "https://external-content.duckduckgo.com/iu/?u=https%3A%2F%2Fwww." +
+              Row(
+                  modifier = Modifier.fillMaxWidth(),
+                  horizontalArrangement = Arrangement.SpaceBetween) {
+                    // TODO Change that and call the function UserProfilePicture(profileViewModel)
+                    AsyncImage(
+                        modifier =
+                            Modifier.width(100.dp)
+                                .height(100.dp)
+                                .clip(CircleShape)
+                                .border(1.dp, color = Color.LightGray, shape = CircleShape)
+                                .testTag("ProfileIcon"),
+                        model =
+                            "https://external-content.duckduckgo.com/iu/?u=https%3A%2F%2Fwww." +
                                 "generation-souvenirs.com%2F38509-thickbox_default%2Fpeluche-" +
                                 "bisounours-rose-toucalin-30-cm.jpg&f=1&nofb=1&ipt=411c19cdad14" +
                                 "03db0340c05652681d988095a71011a275f235f20faced305a21&ipo=images",
-                    contentDescription = "User Profile Image",
-                    contentScale = ContentScale.FillBounds)
+                        contentDescription = "User Profile Image",
+                        contentScale = ContentScale.FillBounds)
 
-                  Row(
-                      modifier = Modifier
-                          .fillMaxWidth()
-                          .padding(end = 15.dp),
-                      horizontalArrangement = Arrangement.Absolute.Right,
-                      verticalAlignment = Alignment.CenterVertically) {
-                      // the input
-                      TextField(
-                          value = rating,
-                          onValueChange = { rating = it },
-                          modifier =
-                          Modifier
-                              .width(20.dp)
-                              .height(30.dp)
-                              .background(color = Color.LightGray)
-                              .testTag("RatingField"),
-                          shape = RoundedCornerShape(20.dp),
-                          colors =
-                          OutlinedTextFieldDefaults.colors(cursorColor = Color.Black))
-                      // Star icon
-                      Icon(
-                          imageVector = Icons.Rounded.Star,
-                          contentDescription = "Star Icon",
-                          tint = YellowStar,
-                          modifier = Modifier.size(26.dp)
-                      )
-                  }
-              }
-              // Picture + title + rating and time
-              /*Row(
-              modifier = Modifier.fillMaxWidth(),
-              horizontalArrangement = Arrangement.Absolute.Left,
-              verticalAlignment = Alignment.CenterVertically) {
-                // Clickable plus icon -- temporary until i implement the picture uploading
-                // process
-                Box(
-                    Modifier
-                        .size(50.dp)
-                        .background(Color.LightGray, CircleShape)
-                        .clickable { /* TODO() onImageUpload() */ }
-                        .testTag("PhotoIcon"),
-                    contentAlignment = Alignment.Center) {
-                      Text("+", fontSize = 30.sp, fontWeight = FontWeight.Bold)
-                    }
-                Spacer(modifier = Modifier.padding(end = 10.dp))
+                    Row(
+                        verticalAlignment = Alignment.CenterVertically,
+                        horizontalArrangement = Arrangement.Center,
+                        modifier =
+                            Modifier.fillMaxWidth().padding(top = 35.dp).testTag("rateStars")) {
+                          repeat(5) { index ->
+                            val isSelected = index + 1 <= rating
+                            val isHalfSelected = index + 0.5 == rating
+                              val iconTint = when {
+                                  isSelected || isHalfSelected -> YellowStar
+                                  else -> Color.Black
+                              }
 
-                Column(
-                    verticalArrangement = Arrangement.spacedBy(20.dp),
-                    horizontalAlignment = Alignment.CenterHorizontally) {
-
-                      // Title input
-                      OutlinedTextField(
-                          value = commentTitle,
-                          onValueChange = { commentTitle = it },
-                          label = { Text("Enter the title of the comment") },
-                          modifier = Modifier
-                              .fillMaxWidth()
-                              .testTag("TitleField"),
-                          shape = RoundedCornerShape(20.dp))
-
-                      // Rating input
-                      Row(
-                          modifier = Modifier
-                              .fillMaxWidth()
-                              .padding(end = 15.dp),
-                          horizontalArrangement = Arrangement.Absolute.Right,
-                          verticalAlignment = Alignment.CenterVertically) {
-                            // the input
-                            TextField(
-                                value = rating,
-                                onValueChange = { rating = it },
-                                modifier =
-                                Modifier
-                                    .width(20.dp)
-                                    .height(30.dp)
-                                    .background(color = Color.LightGray)
-                                    .testTag("RatingField"),
-                                shape = RoundedCornerShape(20.dp),
-                                colors =
-                                    OutlinedTextFieldDefaults.colors(cursorColor = Color.Black))
-                            // rating icon
                             Icon(
-                                imageVector = Icons.Outlined.StarOutline,
-                                contentDescription = "RatingIcon",
+                                tint = iconTint,
+                                imageVector =
+                                    when {
+                                      isSelected -> Icons.Rounded.Star
+                                      isHalfSelected -> Icons.AutoMirrored.Rounded.StarHalf
+                                      else -> Icons.Rounded.StarBorder
+                                    },
+                                contentDescription = "",
                                 modifier =
-                                Modifier
-                                    .size(34.dp)
-                                    .padding(start = 6.dp)
-                                    .testTag("RatingStar"))
+                                    Modifier.clickable {
+                                          rating =
+                                              when {
+                                                isSelected ->
+                                                    if (isHalfSelected) index.toDouble()
+                                                    else index.toFloat() + 0.5
+                                                else -> index.toDouble() + 1
+                                              }
+                                        }
+                                        .size(30.dp)
+                                        .testTag("star$index"))
                           }
-                    }
-              }*/
+                        }
+                  }
+              // Title
+              OutlinedTextField(
+                  value = commentTitle,
+                  onValueChange = { commentTitle = it },
+                  placeholder = {
+                    Text(text = "Title", color = Color.LightGray, fontStyle = FontStyle.Italic)
+                  },
+                  modifier = Modifier.fillMaxWidth().testTag("TitleField"),
+                  shape = RoundedCornerShape(10.dp))
 
-              // Description input
+              // Description
               OutlinedTextField(
                   value = description,
                   onValueChange = { description = it },
                   placeholder = {
                     Text(
-                        text = "Descritption",
-                        color = Color.LightGray,
-                        fontStyle = FontStyle.Italic)
+                        text = "Description", color = Color.LightGray, fontStyle = FontStyle.Italic)
                   },
                   modifier = Modifier.fillMaxWidth().height(200.dp).testTag("DescriptionField"),
                   shape = RoundedCornerShape(10.dp))
@@ -203,27 +157,25 @@ fun CreateComment(
               // Delete and Publish buttons
               Row(
                   modifier = Modifier.fillMaxWidth(),
-                  horizontalArrangement = Arrangement.Absolute.Center,
+                  horizontalArrangement = Arrangement.SpaceEvenly,
                   verticalAlignment = Alignment.CenterVertically) {
-
-                    // delete button
+                    // Delete button
                     OutlinedButton(
                         onClick = { onDismiss() },
                         colors = ButtonDefaults.buttonColors(Color.White),
-                        border = BorderStroke(2.dp, Color.Red),
-                        modifier =
-                            Modifier.width(150.dp).height(35.dp).weight(1f).testTag("DeleteButton"),
+                        border = BorderStroke(2.dp, deleteButtonColor),
+                        modifier = Modifier.weight(1f).height(35.dp).testTag("DeleteButton"),
                         shape = RoundedCornerShape(20.dp)) {
                           Text(
                               "Cancel",
-                              color = Color.Red,
+                              color = deleteButtonColor,
                               fontWeight = FontWeight.Medium,
                               fontSize = 16.sp)
                         }
 
                     Spacer(modifier = Modifier.width(10.dp))
 
-                    // publish button
+                    // Publish button
                     OutlinedButton(
                         onClick = {
                           val com =
@@ -232,26 +184,20 @@ fun CreateComment(
                                   profileViewModel.currentUserId ?: "ID_DEFAULT",
                                   recipeViewModel.recipe.value?.recipeId ?: "ID_DEFAULT",
                                   "URL_DEFAULT",
-                                  rating.toDoubleOrNull() ?: 0.0,
+                                  rating,
                                   commentTitle,
                                   description,
                                   java.util.Date())
-                          if (commentTitle.isNotEmpty() &&
-                              description.isNotEmpty() &&
-                              rating.isNotEmpty()) {
+                          if (commentTitle.isNotEmpty() && description.isNotEmpty()) {
                             commentViewModel.addComment(com) {
-                              // Add the comment Id to profile and recipe locally and in the db
+                              // TODO Add the comment Id to profile and recipe locally and in the db
                             }
                           }
                           onDismiss()
                         },
                         colors = ButtonDefaults.buttonColors(Color.White),
                         border = BorderStroke(2.dp, TemplateColor),
-                        modifier =
-                            Modifier.width(150.dp)
-                                .weight(1f)
-                                .height(35.dp)
-                                .testTag("PublishButton"),
+                        modifier = Modifier.weight(1f).height(35.dp).testTag("PublishButton"),
                         shape = RoundedCornerShape(20.dp)) {
                           Text(
                               "Publish",

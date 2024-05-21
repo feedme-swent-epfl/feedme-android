@@ -4,6 +4,7 @@ import android.util.Log
 import com.google.firebase.firestore.DocumentSnapshot
 import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.firestore.Query
+import com.google.firebase.firestore.QuerySnapshot
 import java.util.Locale
 
 class RecipeRepository(private val db: FirebaseFirestore) {
@@ -78,21 +79,13 @@ class RecipeRepository(private val db: FirebaseFirestore) {
    */
   fun getSavedRecipes(
       ids: List<String>,
-      onSuccess: (List<Recipe>) -> Unit,
+      onSuccess: (List<Recipe>, DocumentSnapshot?) -> Unit,
       onFailure: (Exception) -> Unit
   ) {
     db.collection(collectionPath)
         .whereIn("recipeId", ids)
         .get()
-        .addOnSuccessListener {
-          it.documents.map { recipeMap ->
-            val data = recipeMap.data
-            if (data != null) {
-              val success = { recipe: Recipe? -> onSuccess(listOfNotNull(recipe)) }
-              mapToRecipe(data, success, onFailure)
-            }
-          }
-        }
+        .addOnSuccessListener { addSuccessListener(it, onSuccess, onFailure) }
         .addOnFailureListener { exception -> onFailure(exception) }
   }
 
@@ -121,17 +114,7 @@ class RecipeRepository(private val db: FirebaseFirestore) {
 
     queryRef
         .get()
-        .addOnSuccessListener {
-          it.documents.map { recipeMap ->
-            val data = recipeMap.data
-            if (data != null) {
-              val success = { recipe: Recipe? ->
-                onSuccess(listOfNotNull(recipe), it.documents.lastOrNull())
-              }
-              mapToRecipe(data, success, onFailure)
-            }
-          }
-        }
+        .addOnSuccessListener { addSuccessListener(it, onSuccess, onFailure) }
         .addOnFailureListener { onFailure(it) }
   }
 
@@ -163,27 +146,39 @@ class RecipeRepository(private val db: FirebaseFirestore) {
 
     queryRef
         .get()
-        .addOnSuccessListener { snapshot ->
-          val recipes = mutableListOf<Recipe>()
-          val docs = snapshot.documents
-
-          docs.forEach { recipeMap ->
-            val data = recipeMap.data
-            if (data != null) {
-              mapToRecipe(
-                  data,
-                  { recipe ->
-                    if (recipe != null) {
-                      recipes.add(recipe)
-                    }
-                  },
-                  onFailure)
-            }
-          }
-
-          onSuccess(recipes, docs.lastOrNull())
-        }
+        .addOnSuccessListener { addSuccessListener(it, onSuccess, onFailure) }
         .addOnFailureListener { onFailure(it) }
+  }
+
+  /**
+   * A helper function that adds the recipes to the list of recipes
+   *
+   * @param snapshot: the snapshot of the query
+   * @param onSuccess: the callback function to be called on success
+   * @param onFailure: the callback function to be called on failure
+   */
+  private fun addSuccessListener(
+      snapshot: QuerySnapshot,
+      onSuccess: (List<Recipe>, DocumentSnapshot?) -> Unit,
+      onFailure: (Exception) -> Unit
+  ) {
+    val recipes = mutableListOf<Recipe>()
+    val docs = snapshot.documents
+
+    docs.forEach { recipeMap ->
+      val data = recipeMap.data
+      if (data != null) {
+        mapToRecipe(
+            data,
+            { recipe ->
+              if (recipe != null) {
+                recipes.add(recipe)
+              }
+            },
+            onFailure)
+      }
+    }
+    onSuccess(recipes, docs.lastOrNull())
   }
 
   private fun recipeToMap(recipe: Recipe): Map<String, Any> {

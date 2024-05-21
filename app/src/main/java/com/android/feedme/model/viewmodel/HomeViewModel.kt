@@ -68,7 +68,7 @@ class HomeViewModel : ViewModel() {
       val recipeList = mutableListOf<Recipe>()
       recipeRepository.getSavedRecipes(
           ids,
-          onSuccess = { recipe ->
+          onSuccess = { recipe, _ ->
             recipeList += recipe
             _savedRecipes.value = recipeList
           },

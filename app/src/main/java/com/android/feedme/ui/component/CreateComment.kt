@@ -86,7 +86,7 @@ fun CreateComment(
             verticalArrangement = Arrangement.spacedBy(12.dp),
             horizontalAlignment = Alignment.CenterHorizontally) {
               Row(
-                  modifier = Modifier.fillMaxWidth(),
+                  modifier = Modifier.fillMaxWidth().testTag("FirstRow"),
                   horizontalArrangement = Arrangement.SpaceBetween) {
                     // TODO Change that and call the function UserProfilePicture(profileViewModel)
                     AsyncImage(
@@ -110,7 +110,7 @@ fun CreateComment(
                         modifier =
                             Modifier.fillMaxWidth()
                                 .padding(start = 5.dp, top = 35.dp)
-                                .testTag("rateStars")) {
+                                .testTag("StarRow")) {
                           repeat(5) { index ->
                             val isSelected = index + 1 <= rating
                             val isHalfSelected = index + 0.5 == rating
@@ -167,7 +167,7 @@ fun CreateComment(
 
               // Delete and Publish buttons
               Row(
-                  modifier = Modifier.fillMaxWidth(),
+                  modifier = Modifier.fillMaxWidth().testTag("ButtonRow"),
                   horizontalArrangement = Arrangement.SpaceEvenly,
                   verticalAlignment = Alignment.CenterVertically) {
                     // Delete button

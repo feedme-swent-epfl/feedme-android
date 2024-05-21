@@ -7,6 +7,14 @@ import com.google.firebase.firestore.Query
 import com.google.firebase.firestore.QuerySnapshot
 import java.util.Locale
 
+/**
+ * Repository class for managing Recipe data.
+ *
+ * This class provides methods for adding, fetching, and updating Recipe objects in Firestore. It
+ * also handles serialization and deserialization of Recipe objects to and from Firestore.
+ *
+ * @property db The Firestore database instance.
+ */
 class RecipeRepository(private val db: FirebaseFirestore) {
 
   private val ingredientsRepository = IngredientsRepository(db)
@@ -82,6 +90,7 @@ class RecipeRepository(private val db: FirebaseFirestore) {
       onSuccess: (List<Recipe>, DocumentSnapshot?) -> Unit,
       onFailure: (Exception) -> Unit
   ) {
+    // Fetch the recipes with the given IDs
     db.collection(collectionPath)
         .whereIn("recipeId", ids)
         .get()
@@ -104,10 +113,11 @@ class RecipeRepository(private val db: FirebaseFirestore) {
       onSuccess: (List<Recipe>, DocumentSnapshot?) -> Unit,
       onFailure: (Exception) -> Unit
   ) {
-    // Prefix search query
+    // Create a query to fetch the top rated recipes
     var queryRef =
         db.collection(collectionPath).orderBy("rating", Query.Direction.DESCENDING).limit(6)
 
+    // If lastRecipe is not null, start the query after the last recipe fetched
     if (lastRecipe != null) {
       queryRef = queryRef.startAfter(lastRecipe)
     }
@@ -134,12 +144,13 @@ class RecipeRepository(private val db: FirebaseFirestore) {
       onSuccess: (List<Recipe>, DocumentSnapshot?) -> Unit,
       onFailure: (Exception) -> Unit
   ) {
-    // Prefix search query
+    // Create Query for recipes that contain the input query in their title
     var queryRef =
         db.collection(collectionPath)
             .whereArrayContainsAny("searchItems", listOf(query.lowercase(Locale.ROOT)))
             .limit(6) // Limit the number of documents fetched
 
+    // If lastRecipe is not null, start the query after the last recipe fetched
     if (lastRecipe != null) {
       queryRef = queryRef.startAfter(lastRecipe)
     }
@@ -166,8 +177,10 @@ class RecipeRepository(private val db: FirebaseFirestore) {
     val docs = snapshot.documents
 
     docs.forEach { recipeMap ->
+      // Extract the data from the document
       val data = recipeMap.data
       if (data != null) {
+        // Convert the data to a Recipe object
         mapToRecipe(
             data,
             { recipe ->
@@ -178,6 +191,7 @@ class RecipeRepository(private val db: FirebaseFirestore) {
             onFailure)
       }
     }
+    // Call the success callback with the list of recipes
     onSuccess(recipes, docs.lastOrNull())
   }
 

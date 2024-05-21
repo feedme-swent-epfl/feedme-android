@@ -1,5 +1,6 @@
 package com.android.feedme.ui.component
 
+import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
@@ -145,14 +146,15 @@ fun CreateComment(
                     OutlinedButton(
                         onClick = { onDismiss() },
                         colors = ButtonDefaults.buttonColors(Color.White),
+                        border = BorderStroke(2.dp, Color.Red),
                         modifier =
                             Modifier.width(150.dp)
-                                .height(48.dp)
-                                .border(2.dp, Color.Red, shape = RoundedCornerShape(20.dp))
+                                .height(35.dp)
+                                .weight(1f)
                                 .testTag("DeleteButton"),
                         shape = RoundedCornerShape(20.dp)) {
                           Text(
-                              "Delete",
+                              "Cancel",
                               color = Color.Red,
                               fontWeight = FontWeight.Medium,
                               fontSize = 16.sp)
@@ -183,17 +185,19 @@ fun CreateComment(
                           onDismiss()
                         },
                         colors = ButtonDefaults.buttonColors(Color.White),
+                        border = BorderStroke(2.dp, TemplateColor),
                         modifier =
                             Modifier.width(150.dp)
-                                .height(48.dp)
-                                .border(2.dp, TemplateColor, shape = RoundedCornerShape(20.dp))
+                                .weight(1f)
+                                .height(35.dp)
                                 .testTag("PublishButton"),
                         shape = RoundedCornerShape(20.dp)) {
                           Text(
                               "Publish",
                               color = TemplateColor,
                               fontWeight = FontWeight.Medium,
-                              fontSize = 16.sp)
+                              fontSize = 16.sp,
+                              maxLines = 1)
                         }
                   }
             }

@@ -92,7 +92,9 @@ fun FindRecipeScreen(navigationActions: NavigationActions, inputViewModel: Input
                   horizontalArrangement = Arrangement.SpaceBetween,
                   modifier = Modifier.fillMaxWidth()) {
                     Button(
-                        onClick = { /* Handle strict ingredients validation */},
+                        onClick = { /* Handle strict ingredients validation */
+                          showDialog.value = false
+                        },
                         modifier = Modifier.weight(1f)) {
                           Text(
                               text = "Strict",
@@ -104,7 +106,9 @@ fun FindRecipeScreen(navigationActions: NavigationActions, inputViewModel: Input
                         }
                     Spacer(modifier = Modifier.width(8.dp))
                     Button(
-                        onClick = { /* Handle extra ingredients validation */},
+                        onClick = { /* Handle extra ingredients validation */
+                          showDialog.value = false
+                        },
                         modifier = Modifier.weight(1f)) {
                           Text(
                               text = "Extra",

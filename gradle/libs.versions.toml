@@ -4,6 +4,7 @@ coilCompose = "2.6.0"
 composeBomVersion = "2024.03.00"
 firebaseBom = "32.8.0"
 gson = "2.10.1"
+imageLabeling = "17.0.8"
 junitJunit = "4.12"
 kaspressoAllureSupport = "1.4.3"
 kaspressoComposeSupport = "1.5.5"
@@ -52,6 +53,7 @@ androidx-espresso-intents = { module = "androidx.test.espresso:espresso-intents"
 coil-compose = { module = "io.coil-kt:coil-compose", version.ref = "coilCompose" }
 firebase-bom = { module = "com.google.firebase:firebase-bom", version.ref = "firebaseBom" }
 gson = { module = "com.google.code.gson:gson", version.ref = "gson" }
+image-labeling = { module = "com.google.mlkit:image-labeling", version.ref = "imageLabeling" }
 junit = { group = "junit", name = "junit", version.ref = "junit" }
 androidx-junit = { group = "androidx.test.ext", name = "junit", version.ref = "junitVersion" }
 androidx-espresso-core = { group = "androidx.test.espresso", name = "espresso-core", version.ref = "espressoCore" }

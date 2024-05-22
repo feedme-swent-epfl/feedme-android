@@ -201,6 +201,9 @@ dependencies {
     implementation(libs.gson)
     implementation(libs.kotlinx.serialization.json)
     implementation(libs.kotlinx.serialization.json)
+    //ML kit image labelling
+    implementation(libs.image.labeling)
+
 
     // ---------------- CameraX --------------------
     implementation(libs.camera.core)

@@ -66,27 +66,27 @@ fun FindRecipeScreen(navigationActions: NavigationActions, inputViewModel: Input
     Dialog(onDismissRequest = { showDialog.value = false }) {
       Surface(shape = MaterialTheme.shapes.medium, color = MaterialTheme.colorScheme.background) {
         Column(
-            modifier = Modifier.padding(16.dp).fillMaxWidth(),
+            modifier = Modifier.padding(16.dp).fillMaxWidth().testTag("Dialog"),
             horizontalAlignment = Alignment.CenterHorizontally) {
               Icon(
                   imageVector = Icons.Default.Info,
                   contentDescription = "Information Icon",
                   tint = MaterialTheme.colorScheme.primary,
-                  modifier = Modifier.size(40.dp).padding(end = 8.dp))
+                  modifier = Modifier.size(40.dp).padding(end = 8.dp).testTag("InfoIcon"))
 
               Text(
-                  modifier = Modifier.fillMaxWidth(),
+                  modifier = Modifier.fillMaxWidth().testTag("InfoText1"),
                   text = "Please validate how you want to generate the recipes.",
                   textAlign = TextAlign.Center)
               Text(
-                  modifier = Modifier.fillMaxWidth(),
+                  modifier = Modifier.fillMaxWidth().testTag("InfoText2"),
                   text =
                       "If you choose strict, the recipe will only include the ingredients you have chosen to input.",
                   textAlign = TextAlign.Center)
               Text(
                   text =
                       "If you choose extra, the recipe will include the ingredients you have inputted and may include additional ingredients.",
-                  modifier = Modifier.padding(bottom = 16.dp).fillMaxWidth(),
+                  modifier = Modifier.padding(bottom = 16.dp).fillMaxWidth().testTag("InfoText3"),
                   textAlign = TextAlign.Center)
               Row(
                   horizontalArrangement = Arrangement.SpaceBetween,
@@ -95,7 +95,7 @@ fun FindRecipeScreen(navigationActions: NavigationActions, inputViewModel: Input
                         onClick = { /* Handle strict ingredients validation */
                           showDialog.value = false
                         },
-                        modifier = Modifier.weight(1f)) {
+                        modifier = Modifier.weight(1f).testTag("StrictButton")) {
                           Text(
                               text = "Strict",
                               style =
@@ -109,7 +109,7 @@ fun FindRecipeScreen(navigationActions: NavigationActions, inputViewModel: Input
                         onClick = { /* Handle extra ingredients validation */
                           showDialog.value = false
                         },
-                        modifier = Modifier.weight(1f)) {
+                        modifier = Modifier.weight(1f).testTag("ExtraButton")) {
                           Text(
                               text = "Extra",
                               style =
@@ -129,7 +129,7 @@ fun FindRecipeScreen(navigationActions: NavigationActions, inputViewModel: Input
                           fontWeight = FontWeight.Bold,
                           textDecoration = TextDecoration.Underline),
                   modifier =
-                      Modifier.align(Alignment.CenterHorizontally).clickable {
+                      Modifier.align(Alignment.CenterHorizontally).testTag("CancelText").clickable {
                         showDialog.value = false
                       })
             }

@@ -1,6 +1,9 @@
 package com.android.feedme.test
 
+import androidx.compose.ui.test.assertHasClickAction
+import androidx.compose.ui.test.assertIsDisplayed
 import androidx.compose.ui.test.junit4.createComposeRule
+import androidx.compose.ui.test.onNodeWithTag
 import androidx.test.ext.junit.runners.AndroidJUnit4
 import com.android.feedme.model.data.Ingredient
 import com.android.feedme.model.data.IngredientsRepository
@@ -38,7 +41,28 @@ class FindRecipeTest : TestCase() {
       validateButton {
         assertIsDisplayed()
         assertHasClickAction()
+        performClick()
       }
+
+      composeTestRule.waitForIdle()
+
+      composeTestRule.onNodeWithTag("Dialog", useUnmergedTree = true).assertIsDisplayed()
+      composeTestRule.onNodeWithTag("InfoIcon", useUnmergedTree = true).assertIsDisplayed()
+      composeTestRule.onNodeWithTag("InfoText1", useUnmergedTree = true).assertIsDisplayed()
+      composeTestRule.onNodeWithTag("InfoText2", useUnmergedTree = true).assertIsDisplayed()
+      composeTestRule.onNodeWithTag("InfoText3", useUnmergedTree = true).assertIsDisplayed()
+      composeTestRule
+          .onNodeWithTag("StrictButton", useUnmergedTree = true)
+          .assertIsDisplayed()
+          .assertHasClickAction()
+      composeTestRule
+          .onNodeWithTag("ExtraButton", useUnmergedTree = true)
+          .assertIsDisplayed()
+          .assertHasClickAction()
+      composeTestRule
+          .onNodeWithTag("CancelText", useUnmergedTree = true)
+          .assertIsDisplayed()
+          .assertHasClickAction()
     }
   }
 

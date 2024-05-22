@@ -60,75 +60,78 @@ import com.android.feedme.ui.theme.TextBarColor
 @Composable
 fun FindRecipeScreen(navigationActions: NavigationActions, inputViewModel: InputViewModel) {
 
-    val showDialog = remember { mutableStateOf(false) }
+  val showDialog = remember { mutableStateOf(false) }
 
-    if (showDialog.value) {
-        Dialog(onDismissRequest = { showDialog.value = false }) {
-            Surface(
-                shape = MaterialTheme.shapes.medium,
-                color = MaterialTheme.colorScheme.background
-            ) {
-                Column(
-                    modifier = Modifier
-                        .padding(16.dp)
-                        .fillMaxWidth(),
-                    horizontalAlignment = Alignment.CenterHorizontally
-                ) {
-                    Icon(
-                        imageVector = Icons.Default.Info,
-                        contentDescription = "Information Icon",
-                        tint = MaterialTheme.colorScheme.primary,
-                        modifier = Modifier.size(40.dp).padding(end = 8.dp)
+  if (showDialog.value) {
+    Dialog(onDismissRequest = { showDialog.value = false }) {
+      Surface(shape = MaterialTheme.shapes.medium, color = MaterialTheme.colorScheme.background) {
+        Column(
+            modifier = Modifier.padding(16.dp).fillMaxWidth(),
+            horizontalAlignment = Alignment.CenterHorizontally) {
+              Icon(
+                  imageVector = Icons.Default.Info,
+                  contentDescription = "Information Icon",
+                  tint = MaterialTheme.colorScheme.primary,
+                  modifier = Modifier.size(40.dp).padding(end = 8.dp))
 
-                    )
-                    Text(modifier = Modifier.fillMaxWidth(), text = "Please validate how you want to generate the recipes.", textAlign = TextAlign.Center)
-                    Text(modifier = Modifier.fillMaxWidth(), text = "If you choose strict, the recipe will only include the ingredients you have chosen to input.", textAlign = TextAlign.Center)
-                    Text(text = "If you choose extra, the recipe will include the ingredients you have inputted and may include additional ingredients.",
-                        modifier = Modifier.padding(bottom = 16.dp).fillMaxWidth(),
-                        textAlign = TextAlign.Center)
-                    Row(
-                        horizontalArrangement = Arrangement.SpaceBetween,
-                        modifier = Modifier.fillMaxWidth()
-                    ) {
-                        Button(
-                            onClick = { /* Handle strict ingredients validation */ },
-                            modifier = Modifier.weight(1f)
-                        ) {
-                            Text(text = "Strict",
-                                style = TextStyle(
-                                    color = TextBarColor,
-                                    fontSize = 18.sp,
-                                ))
+              Text(
+                  modifier = Modifier.fillMaxWidth(),
+                  text = "Please validate how you want to generate the recipes.",
+                  textAlign = TextAlign.Center)
+              Text(
+                  modifier = Modifier.fillMaxWidth(),
+                  text =
+                      "If you choose strict, the recipe will only include the ingredients you have chosen to input.",
+                  textAlign = TextAlign.Center)
+              Text(
+                  text =
+                      "If you choose extra, the recipe will include the ingredients you have inputted and may include additional ingredients.",
+                  modifier = Modifier.padding(bottom = 16.dp).fillMaxWidth(),
+                  textAlign = TextAlign.Center)
+              Row(
+                  horizontalArrangement = Arrangement.SpaceBetween,
+                  modifier = Modifier.fillMaxWidth()) {
+                    Button(
+                        onClick = { /* Handle strict ingredients validation */},
+                        modifier = Modifier.weight(1f)) {
+                          Text(
+                              text = "Strict",
+                              style =
+                                  TextStyle(
+                                      color = TextBarColor,
+                                      fontSize = 18.sp,
+                                  ))
                         }
-                        Spacer(modifier = Modifier.width(8.dp))
-                        Button(
-                            onClick = { /* Handle extra ingredients validation */ },
-                            modifier = Modifier.weight(1f)
-                        ) {
-                            Text(text = "Extra",
-                                style = TextStyle(
-                                    color = TextBarColor,
-                                    fontSize = 18.sp,
-                                ))
+                    Spacer(modifier = Modifier.width(8.dp))
+                    Button(
+                        onClick = { /* Handle extra ingredients validation */},
+                        modifier = Modifier.weight(1f)) {
+                          Text(
+                              text = "Extra",
+                              style =
+                                  TextStyle(
+                                      color = TextBarColor,
+                                      fontSize = 18.sp,
+                                  ))
                         }
-                    }
-                    Spacer(modifier = Modifier.height(16.dp))
-                    Text(
-                        text = "Cancel",
-                        style = TextStyle(
-                            color = Color.Red,
-                            fontSize = 14.sp,
-                            fontWeight = FontWeight.Bold,
-                            textDecoration = TextDecoration.Underline
-                        ),
-                        modifier = Modifier
-                            .align(Alignment.CenterHorizontally)
-                            .clickable { showDialog.value = false }
-                    )
-                }
+                  }
+              Spacer(modifier = Modifier.height(16.dp))
+              Text(
+                  text = "Cancel",
+                  style =
+                      TextStyle(
+                          color = Color.Red,
+                          fontSize = 14.sp,
+                          fontWeight = FontWeight.Bold,
+                          textDecoration = TextDecoration.Underline),
+                  modifier =
+                      Modifier.align(Alignment.CenterHorizontally).clickable {
+                        showDialog.value = false
+                      })
             }
-        }
+      }
     }
+  }
 
   Scaffold(
       modifier = Modifier.testTag("FindRecipeScreen"),

@@ -24,6 +24,7 @@ import androidx.compose.material3.Switch
 import androidx.compose.material3.SwitchDefaults
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
@@ -62,12 +63,13 @@ fun FindRecipeScreen(
     profileViewModel: ProfileViewModel
 ) {
 
-  val showDialog = remember { mutableStateOf(true) }
+  val checkMark = remember { mutableStateOf(false) }
   val isStrict = remember { mutableStateOf(true) }
-  val dontShowDialog = remember { mutableStateOf(false) }
+  val dialog = profileViewModel.showDialog.collectAsState()
+  val showDialog = remember { mutableStateOf(true) }
 
-  if (showDialog.value) {
-    Dialog(onDismissRequest = { showDialog.value = false }) {
+  if (showDialog.value && dialog.value) {
+    Dialog(onDismissRequest = { profileViewModel.setDialog(!checkMark.value) }) {
       Surface(shape = MaterialTheme.shapes.medium, color = MaterialTheme.colorScheme.background) {
         Column(
             modifier = Modifier.padding(16.dp).fillMaxWidth().testTag("Dialog"),
@@ -80,7 +82,7 @@ fun FindRecipeScreen(
 
               Text(
                   modifier = Modifier.fillMaxWidth().testTag("InfoText1"),
-                  text = "Please validate how you want to generate the recipes.",
+                  text = "There is a toggle that you can use to generate different recipes.",
                   textAlign = TextAlign.Center)
               Text(
                   modifier = Modifier.fillMaxWidth().testTag("InfoText2"),
@@ -92,16 +94,14 @@ fun FindRecipeScreen(
                       "If you choose extra, the recipe will include the ingredients you have inputted and may include additional ingredients.",
                   modifier = Modifier.padding(bottom = 16.dp).fillMaxWidth().testTag("InfoText3"),
                   textAlign = TextAlign.Center)
-              Spacer(modifier = Modifier.height(16.dp))
+              Spacer(modifier = Modifier.height(6.dp))
               Row(
                   verticalAlignment = Alignment.CenterVertically,
                   modifier = Modifier.padding(bottom = 16.dp)) {
                     Checkbox(
-                        checked = dontShowDialog.value,
-                        onCheckedChange = {
-                          dontShowDialog.value = it
-                          profileViewModel.setDialog(!dontShowDialog.value)
-                        })
+                        modifier = Modifier.testTag("CheckBox"),
+                        checked = checkMark.value,
+                        onCheckedChange = { checkMark.value = it })
                     Text("Don't show next time")
                   }
               Text(
@@ -109,9 +109,12 @@ fun FindRecipeScreen(
                   style =
                       TextStyle(color = Color.Red, fontSize = 14.sp, fontWeight = FontWeight.Bold),
                   modifier =
-                      Modifier.align(Alignment.CenterHorizontally).clickable {
-                        showDialog.value = false
-                      })
+                      Modifier.align(Alignment.CenterHorizontally)
+                          .testTag("DismissText")
+                          .clickable {
+                            profileViewModel.setDialog(!checkMark.value)
+                            showDialog.value = false
+                          })
             }
       }
     }
@@ -139,7 +142,7 @@ fun FindRecipeScreen(
           FloatingActionButton(
               containerColor = FabColor,
               contentColor = TextBarColor,
-              onClick = { showDialog.value = true },
+              onClick = { checkMark.value = true },
               content = {
                 Icon(
                     imageVector = Icons.Default.Check,
@@ -188,8 +191,9 @@ fun FindRecipeScreen(
                         text = "Strict",
                         style = MaterialTheme.typography.bodyMedium,
                         fontWeight = FontWeight.Bold,
-                        modifier = Modifier.padding(end = 8.dp))
+                        modifier = Modifier.padding(end = 8.dp).testTag("StrictText"))
                     Switch(
+                        modifier = Modifier.testTag("ToggleSwitch"),
                         checked = !isStrict.value,
                         onCheckedChange = { isChecked ->
                           isStrict.value = !isChecked
@@ -207,7 +211,7 @@ fun FindRecipeScreen(
                         text = "Extra",
                         style = MaterialTheme.typography.bodyMedium,
                         fontWeight = FontWeight.Bold,
-                        modifier = Modifier.padding(start = 8.dp))
+                        modifier = Modifier.padding(start = 8.dp).testTag("ExtraText"))
                   }
               IngredientList(inputViewModel)
             }

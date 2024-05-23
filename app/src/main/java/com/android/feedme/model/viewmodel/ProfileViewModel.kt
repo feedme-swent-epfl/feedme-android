@@ -111,6 +111,7 @@ class ProfileViewModel : ViewModel() {
                 fetchProfiles(profile.followers, _currentUserFollowers)
                 fetchProfiles(profile.following, _currentUserFollowing)
                 _currentUserSavedRecipes.value = profile.savedRecipes
+                _showDialog.value = profile.showDialog
               }
             },
             onFailure = {
@@ -486,11 +487,17 @@ class ProfileViewModel : ViewModel() {
   }
 
   fun setDialog(showDialog: Boolean) {
-    _showDialog.value = showDialog
+    if (currentUserId == null) {
+      return
+    }
     repository.modifyShowDialog(
         currentUserId!!,
         showDialog,
         { _showDialog.value = showDialog },
         { throw error("Can't set dialog in the database") })
+  }
+
+  fun getDialog(): Boolean {
+    return _showDialog.value
   }
 }

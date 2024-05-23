@@ -46,7 +46,7 @@ fun SavedRecipesScreen(
 ) {
   Scaffold(
       modifier = Modifier.fillMaxSize().testTag("SavedScreen"),
-      topBar = { TopBarNavigation(title = "FeedMe") },
+      topBar = { TopBarNavigation(title = "Saved Recipe") },
       bottomBar = {
         BottomNavigationMenu(Route.SAVED, navigationActions::navigateTo, TOP_LEVEL_DESTINATIONS)
       },

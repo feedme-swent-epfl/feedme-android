@@ -81,6 +81,11 @@ class ProfileViewModel : ViewModel() {
    * @param id: the unique ID of the profile we want to fetch
    */
   fun fetchProfile(id: String) {
+    if (id == "") {
+      _viewingUserProfile.value = null
+      return
+    }
+
     viewModelScope.launch {
       repository.getProfile(
           id,

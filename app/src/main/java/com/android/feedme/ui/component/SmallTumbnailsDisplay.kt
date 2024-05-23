@@ -50,7 +50,7 @@ import com.android.feedme.ui.theme.YellowStarBlackOutline
 fun SmallThumbnailsDisplay(
     listRecipe: List<Recipe>,
     navigationActions: NavigationActions,
-    recipeViewModel: RecipeViewModel = RecipeViewModel()
+    recipeViewModel: RecipeViewModel
 ) {
   // Calculate the width of each image based on the screen width, we want to display 2 images per
   // line
@@ -65,6 +65,9 @@ fun SmallThumbnailsDisplay(
       userScrollEnabled = false,
       modifier = Modifier.height(gridHeight.dp)) {
         items(listRecipe.size) { i ->
+          // Fetch the profile of the user who created the recipe
+          recipeViewModel.fetchProfile(listRecipe[i].userid)
+
           Card(
               modifier =
                   Modifier.padding(8.dp)

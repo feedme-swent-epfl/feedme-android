@@ -84,8 +84,9 @@ fun RecipeFullDisplay(
   val recipe = recipeViewModel.recipe.collectAsState().value
 
   // Fetch the profile of the user who created the recipe
-  recipe?.let { profileViewModel.fetchProfile(it.userid) }
-  val profile = profileViewModel.viewingUserProfile.collectAsState().value
+  val profiles by recipeViewModel.profiles.collectAsState()
+  val profile = if (recipe != null) profiles[recipe.userid] else null
+
   var showDialog by remember { mutableStateOf(false) }
 
   val isSaved = remember { mutableStateOf(false) }

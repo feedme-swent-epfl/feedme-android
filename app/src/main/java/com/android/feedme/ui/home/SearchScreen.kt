@@ -13,6 +13,7 @@ import androidx.compose.material3.Tab
 import androidx.compose.material3.TabRow
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableIntStateOf
@@ -34,6 +35,7 @@ import com.android.feedme.ui.navigation.Route
 import com.android.feedme.ui.navigation.TOP_LEVEL_DESTINATIONS
 import com.android.feedme.ui.navigation.TopBarNavigation
 import com.android.feedme.ui.profile.FriendsCard
+import kotlinx.coroutines.flow.map
 
 /**
  * Composable function for the Search Screen. This function displays the search screen with the
@@ -168,11 +170,12 @@ fun FilteredContent(
         0 ->
             items(recipes) { recipe ->
               // Fetch the profile of the user who created the recipe
-              // TODO: will to be replaced with a single call to fetch all profiles if possible
-              // profileViewModel.fetchProfile(recipe.userid)
-              // val profile = profileViewModel.viewingUserProfile.collectAsState().value
+              LaunchedEffect(recipe.userid) { recipeViewModel.fetchProfile(recipe.userid) }
+              val profile by
+                  recipeViewModel.profiles.map { it[recipe.userid] }.collectAsState(initial = null)
+
               RecipeCard(
-                  Route.HOME, recipe, null, navigationActions, recipeViewModel, profileViewModel)
+                  Route.HOME, recipe, profile, navigationActions, recipeViewModel, profileViewModel)
             }
         1 ->
             items(profiles) { profile -> FriendsCard(profile, navigationActions, profileViewModel) }

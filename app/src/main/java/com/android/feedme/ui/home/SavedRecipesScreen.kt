@@ -10,7 +10,9 @@ import androidx.compose.foundation.lazy.items
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.testTag
@@ -26,6 +28,7 @@ import com.android.feedme.ui.navigation.Route
 import com.android.feedme.ui.navigation.TOP_LEVEL_DESTINATIONS
 import com.android.feedme.ui.navigation.TopBarNavigation
 import com.android.feedme.ui.theme.TextBarColor
+import kotlinx.coroutines.flow.map
 
 /**
  * Composable that displays the saved recipes screen. If the user has saved recipes, it displays the
@@ -62,15 +65,17 @@ fun SavedRecipesScreen(
                 items(recipes) { recipe ->
 
                   // Fetch the profile of the user who created the recipe
-                  // TODO: fix later - TO STAY COMMENTED FOR NOW
-                  // profileViewModel.fetchProfile(recipe.userid)
-                  // val profile = profileViewModel.viewingUserProfile.collectAsState().value
+                  LaunchedEffect(recipe.userid) { recipeViewModel.fetchProfile(recipe.userid) }
+                  val profile by
+                      recipeViewModel.profiles
+                          .map { it[recipe.userid] }
+                          .collectAsState(initial = null)
 
                   // Recipe card
                   RecipeCard(
                       Route.SAVED,
                       recipe,
-                      null,
+                      profile,
                       navigationActions,
                       recipeViewModel,
                       profileViewModel)

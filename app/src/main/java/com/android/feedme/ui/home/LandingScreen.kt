@@ -32,6 +32,7 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
@@ -63,6 +64,7 @@ import com.android.feedme.ui.theme.TemplateColor
 import com.android.feedme.ui.theme.TextBarColor
 import com.android.feedme.ui.theme.YellowStar
 import com.android.feedme.ui.theme.YellowStarBlackOutline
+import kotlinx.coroutines.flow.map
 
 /**
  * Composable function that generates the landing page / landing screen
@@ -108,6 +110,7 @@ fun LandingPage(
  * @param recipeViewModel : the [RecipeViewModel] instance
  * @param profileViewModel : the [ProfileViewModel] instance
  */
+@SuppressLint("StateFlowValueCalledInComposition")
 @Composable
 fun RecipeDisplay(
     paddingValues: PaddingValues,
@@ -131,16 +134,20 @@ fun RecipeDisplay(
             modifier =
                 Modifier.testTag("RecipeList").padding(top = 8.dp).background(TextBarColor)) {
               items(recipes.value) { recipe ->
-
-                // Fetch the profile of the user who created the recipe
-                // TODO: fix bug when calling fetchProfile before displaying RecipeCard and
-                //  uncomment userName is test
-                // profileViewModel.fetchProfile(recipe.userid)
-                // val profile = profileViewModel.viewingUserProfile.collectAsState().value
+                LaunchedEffect(recipe.userid) { recipeViewModel.fetchProfile(recipe.userid) }
+                val profile by
+                    recipeViewModel.profiles
+                        .map { it[recipe.userid] }
+                        .collectAsState(initial = null)
 
                 // Recipe card
                 RecipeCard(
-                    Route.HOME, recipe, null, navigationActions, recipeViewModel, profileViewModel)
+                    Route.HOME,
+                    recipe,
+                    profile,
+                    navigationActions,
+                    recipeViewModel,
+                    profileViewModel)
               }
 
               item { LoadMoreButton(homeViewModel::loadMoreRecipes) }
@@ -157,6 +164,7 @@ fun RecipeDisplay(
  * @param recipeViewModel The [RecipeViewModel] instance of the recipe ViewModel.
  * @param profileViewModel The [ProfileViewModel] instance of the profile ViewModel.
  */
+@SuppressLint("StateFlowValueCalledInComposition")
 @Composable
 fun RecipeCard(
     route: String,
@@ -171,6 +179,9 @@ fun RecipeCard(
           Modifier.padding(16.dp)
               .clickable(
                   onClick = {
+                    if (profile != null) {
+                      profileViewModel.setViewingProfile(profile)
+                    }
                     // Set the selected recipe in the view model and navigate to the
                     // recipe screen
                     recipeViewModel.selectRecipe(recipe)

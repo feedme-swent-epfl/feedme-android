@@ -1,5 +1,6 @@
 package com.android.feedme.ui.camera
 
+import android.annotation.SuppressLint
 import android.graphics.Bitmap
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
@@ -45,6 +46,7 @@ import com.android.feedme.ui.theme.CameraButtonsBackground
  * images and viewing them in a gallery. Utilizes CameraX for camera operations and Jetpack Compose
  * for the UI components.
  */
+@SuppressLint("StateFlowValueCalledInComposition")
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun DisplayPicture(
@@ -59,6 +61,7 @@ fun DisplayPicture(
   ///// Machine Learning Part /////
 
   val bitmaps by cameraViewModel.bitmaps.collectAsState()
+  val photo by cameraViewModel.photo.collectAsState()
 
   val listOfIngredientToInput = cameraViewModel.listOfIngredientToInput.collectAsState()
 
@@ -68,11 +71,7 @@ fun DisplayPicture(
         TopBarNavigation(
             title = "Analyze Picture",
             navAction = navigationActions,
-            backArrowOnClickAction = {
-              inputViewModel.addToList(listOfIngredientToInput.value.toMutableList())
-              // cameraViewModel.empty()
-              navigationActions.goBack()
-            })
+            backArrowOnClickAction = { navigationActions.navigateTo(Screen.CAMERA) })
       },
       sheetPeekHeight = 0.dp,
       sheetContent = {}) { padding ->
@@ -90,10 +89,7 @@ fun DisplayPicture(
                 // Button for text recognition
                 if (textRecognitionMode.value) {
                   IconButton(
-                      onClick = {
-                        cameraViewModel.textRecognitionButtonPressed()
-                        navigationActions.navigateTo(Screen.CAMERA)
-                      },
+                      onClick = { cameraViewModel.textRecognitionButtonPressed() },
                       modifier =
                           Modifier.size(56.dp)
                               .background(CameraButtonsBackground, shape = CircleShape)
@@ -108,10 +104,7 @@ fun DisplayPicture(
                 if (barcodeRecognition.value) {
                   val barcodeScannerPainter = painterResource(id = R.drawable.barcode_scanner)
                   IconButton(
-                      onClick = {
-                        cameraViewModel.barcodeScanButtonPressed()
-                        navigationActions.navigateTo(Screen.CAMERA)
-                      },
+                      onClick = { cameraViewModel.barcodeScanButtonPressed() },
                       modifier =
                           Modifier.size(56.dp)
                               .background(CameraButtonsBackground, shape = CircleShape)
@@ -123,6 +116,11 @@ fun DisplayPicture(
                             modifier = Modifier.size(25.dp),
                             tint = BottomIconColorSelected)
                       }
+                }
+
+                if (photo) {
+                  inputViewModel.addToList(listOfIngredientToInput.value.toMutableList())
+                  navigationActions.navigateTo(Screen.CAMERA)
                 }
               }
         }

@@ -106,8 +106,8 @@ fun CameraScreen(
             title = "Camera",
             navAction = navigationActions,
             backArrowOnClickAction = {
-              // cameraViewModel.empty()
-              navigationActions.goBack()
+              cameraViewModel.empty()
+              navigationActions.navigateTo(Screen.FIND_RECIPE)
             })
       },
       scaffoldState = scaffoldState,
@@ -159,6 +159,7 @@ fun CameraScreen(
               }
           // Show the message "Photo Saved" box if the photo was taken
           if (photoSavedMessageVisible) {
+            cameraViewModel.empty()
             navigationActions.navigateTo(Screen.ANALYZE_PICTURE)
           }
 

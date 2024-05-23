@@ -64,6 +64,10 @@ class CameraViewModel : ViewModel() {
   private val _photoSavedMessageVisible = MutableStateFlow<Boolean>(false)
   val photoSavedMessageVisible = _photoSavedMessageVisible.asStateFlow()
 
+  /** Keep track of whether the photo saved message should be shown */
+  private val _photo = MutableStateFlow<Boolean>(false)
+  val photo = _photo.asStateFlow()
+
   /** Contains the last photo taken by user */
   private val _lastPhoto = MutableStateFlow<PhotoState>(PhotoState.NoPhoto)
   // Could be useful later if lastPhoto needs to be accessed outside the view model
@@ -149,8 +153,17 @@ class CameraViewModel : ViewModel() {
     _photoSavedMessageVisible.value = true
     // Launch a coroutine to hide the message after 3 seconds (3000 milliseconds)
     viewModelScope.launch {
-      delay(3000)
+      delay(500)
       _photoSavedMessageVisible.value = false
+    }
+  }
+
+  fun onAnalyzeDone() {
+    _photo.value = true
+    // Launch a coroutine to hide the message after 3 seconds (3000 milliseconds)
+    viewModelScope.launch {
+      delay(500)
+      _photo.value = false
     }
   }
 
@@ -165,6 +178,7 @@ class CameraViewModel : ViewModel() {
         when (val photoState = _lastPhoto.value) {
           is PhotoState.NoPhoto -> {
             _errorToDisplay.value = ERROR_NO_PHOTO
+            onAnalyzeDone()
           }
           is PhotoState.Photo -> {
             if (photoState.bitmap != _lastAnalyzedPhoto.value) {
@@ -172,6 +186,7 @@ class CameraViewModel : ViewModel() {
               val result = performTextRecognition(photoState.bitmap)
               if (result != null) {
                 _informationToDisplay.value = result
+                onAnalyzeDone()
               }
             }
           }
@@ -189,11 +204,13 @@ class CameraViewModel : ViewModel() {
         when (val photoState = _lastPhoto.value) {
           is PhotoState.NoPhoto -> {
             _errorToDisplay.value = ERROR_NO_PHOTO
+            onAnalyzeDone()
           }
           is PhotoState.Photo -> {
             val result = performBarCodeScanning(photoState.bitmap)
             if (result != null) {
               _informationToDisplay.value = "$result added to your ingredient list."
+              onAnalyzeDone()
             }
           }
         }
@@ -226,17 +243,20 @@ class CameraViewModel : ViewModel() {
                       continuation.resume(productInfo.productName)
                     } else {
                       _errorToDisplay.value = ERROR_BARCODE_PRODUCT_NAME
+                      onAnalyzeDone()
                       continuation.resume(null)
                     }
                   },
                   {
                     _errorToDisplay.value = ERROR_BARCODE_PRODUCT_NAME
+                    onAnalyzeDone()
                     continuation.resume(null)
                   })
             }
           },
           {
             _errorToDisplay.value = ERROR_NO_BARCODE
+            onAnalyzeDone()
             continuation.resume(null)
           })
     }
@@ -270,12 +290,14 @@ class CameraViewModel : ViewModel() {
                   e.message?.let {
                     Log.d("ML", it)
                     _errorToDisplay.value = ERROR_INGREDIENT_IN_TEXT
+                    onAnalyzeDone()
                   }
                   continuation.resume(null)
                 })
           },
           {
             _errorToDisplay.value = ERROR_NO_TEXT
+            onAnalyzeDone()
             continuation.resume(null)
           })
     }
@@ -326,8 +348,7 @@ class CameraViewModel : ViewModel() {
   }
 
   fun empty() {
-    _bitmaps.value = emptyList()
-    _lastPhoto.value = PhotoState.NoPhoto
     _errorToDisplay.value = null
+    _informationToDisplay.value = null
   }
 }

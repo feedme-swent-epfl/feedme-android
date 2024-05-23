@@ -1,7 +1,5 @@
 package com.android.feedme.ui.find
 
-import androidx.compose.foundation.Image
-import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
@@ -12,17 +10,18 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
-import androidx.compose.foundation.layout.width
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Check
 import androidx.compose.material.icons.filled.Info
 import androidx.compose.material.icons.filled.PhotoCamera
-import androidx.compose.material3.Button
+import androidx.compose.material3.Checkbox
 import androidx.compose.material3.FloatingActionButton
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Surface
+import androidx.compose.material3.Switch
+import androidx.compose.material3.SwitchDefaults
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.mutableStateOf
@@ -30,18 +29,15 @@ import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.testTag
-import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
-import androidx.compose.ui.text.style.TextDecoration
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.compose.ui.window.Dialog
-import com.android.feedme.R
 import com.android.feedme.model.viewmodel.InputViewModel
+import com.android.feedme.model.viewmodel.ProfileViewModel
 import com.android.feedme.ui.component.IngredientList
 import com.android.feedme.ui.navigation.BottomNavigationMenu
 import com.android.feedme.ui.navigation.NavigationActions
@@ -49,7 +45,9 @@ import com.android.feedme.ui.navigation.Route
 import com.android.feedme.ui.navigation.Screen
 import com.android.feedme.ui.navigation.TOP_LEVEL_DESTINATIONS
 import com.android.feedme.ui.navigation.TopBarNavigation
+import com.android.feedme.ui.theme.DarkGrey
 import com.android.feedme.ui.theme.FabColor
+import com.android.feedme.ui.theme.OffWhite
 import com.android.feedme.ui.theme.TextBarColor
 
 /**
@@ -58,9 +56,15 @@ import com.android.feedme.ui.theme.TextBarColor
  * @param navigationActions actions for navigating to different screens.
  */
 @Composable
-fun FindRecipeScreen(navigationActions: NavigationActions, inputViewModel: InputViewModel) {
+fun FindRecipeScreen(
+    navigationActions: NavigationActions,
+    inputViewModel: InputViewModel,
+    profileViewModel: ProfileViewModel
+) {
 
-  val showDialog = remember { mutableStateOf(false) }
+  val showDialog = remember { mutableStateOf(true) }
+  val isStrict = remember { mutableStateOf(true) }
+  val dontShowDialog = remember { mutableStateOf(false) }
 
   if (showDialog.value) {
     Dialog(onDismissRequest = { showDialog.value = false }) {
@@ -88,48 +92,24 @@ fun FindRecipeScreen(navigationActions: NavigationActions, inputViewModel: Input
                       "If you choose extra, the recipe will include the ingredients you have inputted and may include additional ingredients.",
                   modifier = Modifier.padding(bottom = 16.dp).fillMaxWidth().testTag("InfoText3"),
                   textAlign = TextAlign.Center)
-              Row(
-                  horizontalArrangement = Arrangement.SpaceBetween,
-                  modifier = Modifier.fillMaxWidth()) {
-                    Button(
-                        onClick = { /* Handle strict ingredients validation */
-                          showDialog.value = false
-                        },
-                        modifier = Modifier.weight(1f).testTag("StrictButton")) {
-                          Text(
-                              text = "Strict",
-                              style =
-                                  TextStyle(
-                                      color = TextBarColor,
-                                      fontSize = 18.sp,
-                                  ))
-                        }
-                    Spacer(modifier = Modifier.width(8.dp))
-                    Button(
-                        onClick = { /* Handle extra ingredients validation */
-                          showDialog.value = false
-                        },
-                        modifier = Modifier.weight(1f).testTag("ExtraButton")) {
-                          Text(
-                              text = "Extra",
-                              style =
-                                  TextStyle(
-                                      color = TextBarColor,
-                                      fontSize = 18.sp,
-                                  ))
-                        }
-                  }
               Spacer(modifier = Modifier.height(16.dp))
+              Row(
+                  verticalAlignment = Alignment.CenterVertically,
+                  modifier = Modifier.padding(bottom = 16.dp)) {
+                    Checkbox(
+                        checked = dontShowDialog.value,
+                        onCheckedChange = {
+                          dontShowDialog.value = it
+                          profileViewModel.setDialog(!dontShowDialog.value)
+                        })
+                    Text("Don't show next time")
+                  }
               Text(
-                  text = "Cancel",
+                  text = "Dismiss",
                   style =
-                      TextStyle(
-                          color = Color.Red,
-                          fontSize = 14.sp,
-                          fontWeight = FontWeight.Bold,
-                          textDecoration = TextDecoration.Underline),
+                      TextStyle(color = Color.Red, fontSize = 14.sp, fontWeight = FontWeight.Bold),
                   modifier =
-                      Modifier.align(Alignment.CenterHorizontally).testTag("CancelText").clickable {
+                      Modifier.align(Alignment.CenterHorizontally).clickable {
                         showDialog.value = false
                       })
             }
@@ -188,17 +168,47 @@ fun FindRecipeScreen(navigationActions: NavigationActions, inputViewModel: Input
               )
 
               // Line separator
-              Image(
-                  modifier =
-                      Modifier.border(width = 4.dp, color = Color.Gray)
-                          .padding(4.dp)
-                          .width(180.dp)
-                          .height(0.dp),
-                  painter = painterResource(id = R.drawable.line_8),
-                  contentDescription = "Line Separator",
-                  contentScale = ContentScale.None)
+              //              Image(
+              //                  modifier =
+              //                      Modifier.border(width = 4.dp, color = Color.Gray)
+              //                          .padding(4.dp)
+              //                          .width(180.dp)
+              //                          .height(0.dp),
+              //                  painter = painterResource(id = R.drawable.line_8),
+              //                  contentDescription = "Line Separator",
+              //                  contentScale = ContentScale.None)
 
               // List Of Ingredients
+
+              Row(
+                  verticalAlignment = Alignment.CenterVertically,
+                  horizontalArrangement = Arrangement.Center,
+                  modifier = Modifier.fillMaxWidth()) {
+                    Text(
+                        text = "Strict",
+                        style = MaterialTheme.typography.bodyMedium,
+                        fontWeight = FontWeight.Bold,
+                        modifier = Modifier.padding(end = 8.dp))
+                    Switch(
+                        checked = !isStrict.value,
+                        onCheckedChange = { isChecked ->
+                          isStrict.value = !isChecked
+                          // Handle toggle change
+                          if (isStrict.value) {
+                            // Handle strict ingredients validation
+                          } else {
+                            // Handle extra ingredients validation
+                          }
+                        },
+                        colors =
+                            SwitchDefaults.colors(
+                                checkedThumbColor = OffWhite, uncheckedThumbColor = DarkGrey))
+                    Text(
+                        text = "Extra",
+                        style = MaterialTheme.typography.bodyMedium,
+                        fontWeight = FontWeight.Bold,
+                        modifier = Modifier.padding(start = 8.dp))
+                  }
               IngredientList(inputViewModel)
             }
       }

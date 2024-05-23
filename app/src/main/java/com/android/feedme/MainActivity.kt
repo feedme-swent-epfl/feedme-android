@@ -109,7 +109,7 @@ class MainActivity : ComponentActivity() {
 
                 navigation(startDestination = Screen.FIND_RECIPE, route = Route.FIND_RECIPE) {
                   composable(Screen.FIND_RECIPE) {
-                    FindRecipeScreen(navigationActions, inputViewModel)
+                    FindRecipeScreen(navigationActions, inputViewModel, profileViewModel)
                   }
                   composable(Screen.CAMERA) { CameraScreen(navigationActions, inputViewModel) }
                 }

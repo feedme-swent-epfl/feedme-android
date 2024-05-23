@@ -12,5 +12,6 @@ data class Profile(
     val filter: List<String> = listOf(), // Setting of allergies / setting
     val recipeList: List<String> = listOf(), // Assuming this is a list of recipe IDs
     var savedRecipes: List<String> = listOf(), // Assuming this is a list of recipe IDs
-    val commentList: List<String> = listOf()
+    val commentList: List<String> = listOf(),
+    var showDialog: Boolean = true,
 )

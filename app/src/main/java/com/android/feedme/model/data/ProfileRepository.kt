@@ -473,4 +473,24 @@ class ProfileRepository(private val db: FirebaseFirestore) {
         }
         .addOnFailureListener { onFailure(it) }
   }
+
+  fun modifyShowDialog(
+      userId: String,
+      showDialog: Boolean,
+      onSuccess: () -> Unit,
+      onFailure: (Exception) -> Unit
+  ) {
+    handleFirestoreTransaction(
+        {
+          val userRef = db.collection(collectionPath).document(userId)
+          val currentUser =
+              this.get(userRef).toObject(Profile::class.java)
+                  ?: return@handleFirestoreTransaction null
+          currentUser.showDialog = showDialog
+          update(userRef, "showDialog", showDialog)
+          set(userRef, currentUser)
+        },
+        onSuccess = { onSuccess() },
+        onFailure = { onFailure(it) })
+  }
 }

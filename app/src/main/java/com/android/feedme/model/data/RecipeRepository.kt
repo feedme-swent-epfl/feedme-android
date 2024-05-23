@@ -18,7 +18,7 @@ import java.util.Locale
 class RecipeRepository(private val db: FirebaseFirestore) {
 
   private val ingredientsRepository = IngredientsRepository(db)
-  private val collectionPath = "recipes"
+  val collectionPath = "recipesFinal"
 
   companion object {
     // Placeholder for the singleton instance
@@ -258,6 +258,8 @@ class RecipeRepository(private val db: FirebaseFirestore) {
           } else {
             listOf()
           }
+
+      Log.d("RecipeRepository", "IngredientMetaData : $ingredientMetaDataList")
 
       // Safely process the tags
       val rawTagsList = map["tags"]

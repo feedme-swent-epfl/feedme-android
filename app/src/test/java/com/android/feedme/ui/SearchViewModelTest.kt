@@ -118,7 +118,8 @@ class SearchViewModelTest {
     recipeRepository = RecipeRepository.instance
     profileRepository = ProfileRepository.instance
 
-    `when`(mockFirestore.collection("recipes")).thenReturn(mockCollectionReference)
+    `when`(mockFirestore.collection(recipeRepository.collectionPath))
+        .thenReturn(mockCollectionReference)
     `when`(mockFirestore.collection("profiles")).thenReturn(mockCollectionReference)
     `when`(mockFirestore.collection("ingredients")).thenReturn(mockIngredientsCollectionReference)
 

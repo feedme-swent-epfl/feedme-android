@@ -28,7 +28,6 @@ import com.android.feedme.ui.navigation.Route
 import com.android.feedme.ui.navigation.TOP_LEVEL_DESTINATIONS
 import com.android.feedme.ui.navigation.TopBarNavigation
 import com.android.feedme.ui.theme.TextBarColor
-import kotlinx.coroutines.flow.map
 
 /**
  * Composable that displays the saved recipes screen. If the user has saved recipes, it displays the
@@ -66,10 +65,8 @@ fun SavedRecipesScreen(
 
                   // Fetch the profile of the user who created the recipe
                   LaunchedEffect(recipe.userid) { recipeViewModel.fetchProfile(recipe.userid) }
-                  val profile by
-                      recipeViewModel.profiles
-                          .map { it[recipe.userid] }
-                          .collectAsState(initial = null)
+                  val profiles by recipeViewModel.profiles.collectAsState()
+                  val profile = profiles[recipe.userid]
 
                   // Recipe card
                   RecipeCard(

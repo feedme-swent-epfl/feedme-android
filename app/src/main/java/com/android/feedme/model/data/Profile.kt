@@ -13,5 +13,5 @@ data class Profile(
     val recipeList: List<String> = listOf(), // Assuming this is a list of recipe IDs
     var savedRecipes: List<String> = listOf(), // Assuming this is a list of recipe IDs
     val commentList: List<String> = listOf(),
-    val showDialog: Boolean = true,
+    var showDialog: Boolean = true, // Shows or hides the pop-up in the generation of recipes
 )

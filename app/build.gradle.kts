@@ -1,3 +1,5 @@
+import com.android.build.api.dsl.AaptOptions
+import com.android.build.api.dsl.AndroidResources
 import java.io.FileInputStream
 import java.util.Properties
 
@@ -18,7 +20,7 @@ android {
     namespace = "com.android.feedme"
     compileSdk = 34
 
-
+ androidResources
     defaultConfig {
         applicationId = "com.android.feedme"
         minSdk = 28
@@ -35,6 +37,9 @@ android {
         localProps.load(project.rootProject.file("local.properties").inputStream())
         buildConfigField("String", "CHATGBT_API_KEY", "\"${localProps.getProperty("CHATGBT_API_KEY")}\"")
 
+    }
+    aaptOptions {
+        noCompress += "tflite"
     }
 
     val keystorePropertiesFile = rootProject.file("keystore.properties")
@@ -93,7 +98,6 @@ android {
     packaging {
         resources {
             excludes += "/META-INF/{AL2.0,LGPL2.1}"
-
             merges += "META-INF/LICENSE.md"
             merges += "META-INF/LICENSE-notice.md"
         }

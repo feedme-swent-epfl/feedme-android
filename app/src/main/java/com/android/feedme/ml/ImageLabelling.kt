@@ -2,11 +2,14 @@ package com.android.feedme.ml
 
 import android.graphics.Bitmap
 import android.util.Log
+import com.google.mlkit.common.model.LocalModel
 import com.google.mlkit.vision.common.InputImage
 import com.google.mlkit.vision.label.ImageLabel
 import com.google.mlkit.vision.label.ImageLabeling
 import com.google.mlkit.vision.label.defaults.ImageLabelerOptions
 import com.google.mlkit.vision.text.Text
+
+val localModel = LocalModel.Builder().setAssetFilePath("Model1.tflite").build()
 
 fun labelExtraction(bitmap : Bitmap,
                      onSuccess: (String) -> Unit = {},

@@ -153,16 +153,16 @@ class CameraViewModel : ViewModel() {
     _photoSavedMessageVisible.value = true
     // Launch a coroutine to hide the message after 3 seconds (3000 milliseconds)
     viewModelScope.launch {
-      delay(500)
+      delay(50)
       _photoSavedMessageVisible.value = false
     }
   }
 
-  fun onAnalyzeDone() {
+  private fun onAnalyzeDone() {
     _photo.value = true
     // Launch a coroutine to hide the message after 3 seconds (3000 milliseconds)
     viewModelScope.launch {
-      delay(500)
+      delay(50)
       _photo.value = false
     }
   }

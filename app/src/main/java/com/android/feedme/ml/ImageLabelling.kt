@@ -33,6 +33,7 @@ fun labelProcessing(labelList : List<ImageLabel>): String {
         text = label.text
         println(text)
         confidence = label.confidence
+        println(confidence)
         index = label.index
     }
     return text

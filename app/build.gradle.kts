@@ -202,7 +202,7 @@ dependencies {
     implementation(libs.kotlinx.serialization.json)
     implementation(libs.kotlinx.serialization.json)
     //ML kit image labelling
-    implementation(libs.image.labeling)
+    implementation(libs.mlkit.detection.custom)
 
 
     // ---------------- CameraX --------------------

@@ -61,7 +61,6 @@ import com.android.feedme.ui.theme.FabColor
 import com.android.feedme.ui.theme.TextBarColor
 import com.android.feedme.ui.theme.YellowStar
 import com.android.feedme.ui.theme.YellowStarBlackOutline
-import kotlinx.coroutines.flow.map
 
 /**
  * Displays a full recipe view. The screen contains the [TopBarNavigation], the
@@ -84,7 +83,8 @@ fun RecipeFullDisplay(
   val recipe = recipeViewModel.recipe.collectAsState().value
 
   // Fetch the profile of the user who created the recipe
-  val profile by recipeViewModel.profiles.map { it[recipe?.userid] }.collectAsState(initial = null)
+  val profiles by recipeViewModel.profiles.collectAsState()
+  val profile = if (recipe != null) profiles[recipe.userid] else null
 
   var showDialog by remember { mutableStateOf(false) }
 

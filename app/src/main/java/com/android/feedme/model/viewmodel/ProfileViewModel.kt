@@ -486,6 +486,11 @@ class ProfileViewModel : ViewModel() {
     _currentUserSavedRecipes.value = recipeIds
   }
 
+  /**
+   * A function that sets the dialog to be shown or not
+   *
+   * @param showDialog: a boolean that determines if the dialog should be shown
+   */
   fun setDialog(showDialog: Boolean) {
     if (currentUserId == null) {
       return
@@ -495,9 +500,5 @@ class ProfileViewModel : ViewModel() {
         showDialog,
         { _showDialog.value = showDialog },
         { throw error("Can't set dialog in the database") })
-  }
-
-  fun getDialog(): Boolean {
-    return _showDialog.value
   }
 }

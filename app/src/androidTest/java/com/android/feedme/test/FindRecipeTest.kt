@@ -4,6 +4,7 @@ import androidx.compose.ui.test.assertHasClickAction
 import androidx.compose.ui.test.assertIsDisplayed
 import androidx.compose.ui.test.junit4.createComposeRule
 import androidx.compose.ui.test.onNodeWithTag
+import androidx.compose.ui.test.performClick
 import androidx.test.ext.junit.runners.AndroidJUnit4
 import com.android.feedme.model.data.Ingredient
 import com.android.feedme.model.data.IngredientsRepository
@@ -99,6 +100,24 @@ class FindRecipeTest : TestCase() {
           .onNodeWithTag("DismissText", useUnmergedTree = true)
           .assertIsDisplayed()
           .assertHasClickAction()
+    }
+  }
+
+  @Test
+  fun testDialog() {
+    goToFindRecipeScreen()
+
+    ComposeScreen.onComposeScreen<FindRecipeScreen>(composeTestRule) {
+      composeTestRule
+          .onNodeWithTag("CheckBox", useUnmergedTree = true)
+          .assertIsDisplayed()
+          .performClick()
+      composeTestRule.waitForIdle()
+      composeTestRule
+          .onNodeWithTag("DismissText", useUnmergedTree = true)
+          .assertIsDisplayed()
+          .performClick()
+      composeTestRule.waitForIdle()
     }
   }
 

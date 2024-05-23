@@ -456,4 +456,38 @@ class ProfileViewModelTest {
       assertTrue(e.message!!.contains("Can't check if recipe exists in the database"))
     }
   }
+
+  @Test
+  fun showDialog_Success() {
+    val userId = "1"
+    profileViewModel.currentUserId = userId
+
+    `when`(mockFirestore.runTransaction<Any>(any())).thenAnswer { invocation ->
+      val transactionFunction = invocation.arguments[0] as Transaction.Function<*>
+      transactionFunction.apply(mockTransaction)
+      Tasks.forResult(null)
+    }
+    `when`(mockTransaction.get(any(DocumentReference::class.java))).thenReturn(mockDocumentSnapshot)
+
+    profileViewModel.setDialog(false)
+    shadowOf(Looper.getMainLooper()).idle()
+
+    assertTrue(!profileViewModel.showDialog.value)
+  }
+
+  @Test
+  fun showDialog_Failure() {
+    val userId = "1"
+    profileViewModel.currentUserId = userId
+
+    `when`(mockFirestore.runTransaction<Any>(any()))
+        .thenReturn(Tasks.forException(Exception("Transaction failed")))
+
+    try {
+      profileViewModel.setDialog(false)
+      shadowOf(Looper.getMainLooper()).idle()
+    } catch (e: Exception) {
+      assertTrue(e.message!!.contains("Can't set dialog in the database"))
+    }
+  }
 }

@@ -30,11 +30,13 @@ class ProfileViewModel : ViewModel() {
   private val _currentUserFollowing = MutableStateFlow<List<Profile>>(listOf())
   private val _currentUserSavedRecipes = MutableStateFlow<List<String>>(listOf())
   private val _isRecipeSaved = MutableLiveData<Boolean>()
+  private val _showDialog = MutableStateFlow(true)
   val currentUserProfile: StateFlow<Profile?> = _currentUserProfile
   val currentUserFollowers: StateFlow<List<Profile>> = _currentUserFollowers
   val currentUserFollowing: StateFlow<List<Profile>> = _currentUserFollowing
   val currentUserSavedRecipes: StateFlow<List<String>> = _currentUserSavedRecipes
   val _imageUrl = MutableStateFlow<String?>(null)
+  val showDialog: StateFlow<Boolean> = _showDialog
   val isRecipeSaved: LiveData<Boolean>
     get() = _isRecipeSaved
 
@@ -110,6 +112,7 @@ class ProfileViewModel : ViewModel() {
                 fetchProfiles(profile.followers, _currentUserFollowers)
                 fetchProfiles(profile.following, _currentUserFollowing)
                 _currentUserSavedRecipes.value = profile.savedRecipes
+                _showDialog.value = profile.showDialog
               }
             },
             onFailure = {
@@ -491,5 +494,21 @@ class ProfileViewModel : ViewModel() {
    */
   fun setUserSavedRecipes(recipeIds: List<String>) {
     _currentUserSavedRecipes.value = recipeIds
+  }
+
+  /**
+   * A function that sets the dialog to be shown or not
+   *
+   * @param showDialog: a boolean that determines if the dialog should be shown
+   */
+  fun setDialog(showDialog: Boolean) {
+    if (currentUserId == null) {
+      return
+    }
+    repository.modifyShowDialog(
+        currentUserId!!,
+        showDialog,
+        { _showDialog.value = showDialog },
+        { throw error("Can't set dialog in the database") })
   }
 }

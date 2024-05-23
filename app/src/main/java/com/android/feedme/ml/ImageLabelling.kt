@@ -4,10 +4,9 @@ import android.graphics.Bitmap
 import android.util.Log
 import com.google.mlkit.common.model.LocalModel
 import com.google.mlkit.vision.common.InputImage
-import com.google.mlkit.vision.label.ImageLabel
-import com.google.mlkit.vision.label.ImageLabeling
-import com.google.mlkit.vision.label.defaults.ImageLabelerOptions
-import com.google.mlkit.vision.text.Text
+import com.google.mlkit.vision.objects.DetectedObject
+import com.google.mlkit.vision.objects.ObjectDetection
+import com.google.mlkit.vision.objects.custom.CustomObjectDetectorOptions
 
 val localModel = LocalModel.Builder().setAssetFilePath("Model1.tflite").build()
 
@@ -16,28 +15,39 @@ fun labelExtraction(bitmap : Bitmap,
                      onFailure: (Exception) -> Unit = {}){
 
     val image = InputImage.fromBitmap(bitmap, 0)
-    val labeler = ImageLabeling.getClient(ImageLabelerOptions.DEFAULT_OPTIONS)
-    labeler.process(image)
-        .addOnSuccessListener { labels ->
-            val processedLabel = labelProcessing(labels)
-            onSuccess(processedLabel)
+    val customObjectDetectorOptions =
+        CustomObjectDetectorOptions.Builder(localModel)
+            .setDetectorMode(CustomObjectDetectorOptions.SINGLE_IMAGE_MODE)
+            .enableMultipleObjects()
+            .enableClassification()
+            .setClassificationConfidenceThreshold(0.5f)
+            .setMaxPerObjectLabelCount(3)
+            .build()
+    val objectDetector =
+        ObjectDetection.getClient(customObjectDetectorOptions)
+
+    objectDetector
+        .process(image)
+        .addOnSuccessListener { results ->
+            onSuccess(labelProcessing(results))
         }
-        .addOnFailureListener { e ->
+        .addOnFailureListener{e ->
             e.message?.let { Log.e("Image Labeling", it) }
             onFailure(e)
         }
 }
 
-fun labelProcessing(labelList : List<ImageLabel>): String {
+fun labelProcessing(listObject : List<DetectedObject>): String {
     var text = ""
-    var confidence = 0.0f
-    var index = 0
-    for (label in labelList) {
-        text = label.text
-        println(text)
-        confidence = label.confidence
-        println(confidence)
-        index = label.index
+    for (detectedObject in listObject) {
+        val boundingBox = detectedObject.boundingBox
+        for (label in detectedObject.labels) {
+            text = label.text
+            println(text)
+            val index = label.index
+            val confidence = label.confidence
+            println(confidence)
+        }
     }
     return text
 }

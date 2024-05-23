@@ -170,19 +170,6 @@ fun FindRecipeScreen(
                   fontWeight = FontWeight.Bold,
               )
 
-              // Line separator
-              //              Image(
-              //                  modifier =
-              //                      Modifier.border(width = 4.dp, color = Color.Gray)
-              //                          .padding(4.dp)
-              //                          .width(180.dp)
-              //                          .height(0.dp),
-              //                  painter = painterResource(id = R.drawable.line_8),
-              //                  contentDescription = "Line Separator",
-              //                  contentScale = ContentScale.None)
-
-              // List Of Ingredients
-
               Row(
                   verticalAlignment = Alignment.CenterVertically,
                   horizontalArrangement = Arrangement.Center,
@@ -195,15 +182,7 @@ fun FindRecipeScreen(
                     Switch(
                         modifier = Modifier.testTag("ToggleSwitch"),
                         checked = !isStrict.value,
-                        onCheckedChange = { isChecked ->
-                          isStrict.value = !isChecked
-                          // Handle toggle change
-                          if (isStrict.value) {
-                            // Handle strict ingredients validation
-                          } else {
-                            // Handle extra ingredients validation
-                          }
-                        },
+                        onCheckedChange = { isChecked -> isStrict.value = !isChecked },
                         colors =
                             SwitchDefaults.colors(
                                 checkedThumbColor = OffWhite, uncheckedThumbColor = DarkGrey))

@@ -64,7 +64,6 @@ import com.android.feedme.ui.theme.TemplateColor
 import com.android.feedme.ui.theme.TextBarColor
 import com.android.feedme.ui.theme.YellowStar
 import com.android.feedme.ui.theme.YellowStarBlackOutline
-import kotlinx.coroutines.flow.map
 
 /**
  * Composable function that generates the landing page / landing screen
@@ -134,11 +133,10 @@ fun RecipeDisplay(
             modifier =
                 Modifier.testTag("RecipeList").padding(top = 8.dp).background(TextBarColor)) {
               items(recipes.value) { recipe ->
+                // Fetch the profile of the user who created the recipe
                 LaunchedEffect(recipe.userid) { recipeViewModel.fetchProfile(recipe.userid) }
-                val profile by
-                    recipeViewModel.profiles
-                        .map { it[recipe.userid] }
-                        .collectAsState(initial = null)
+                val profiles by recipeViewModel.profiles.collectAsState()
+                val profile = profiles[recipe.userid]
 
                 // Recipe card
                 RecipeCard(

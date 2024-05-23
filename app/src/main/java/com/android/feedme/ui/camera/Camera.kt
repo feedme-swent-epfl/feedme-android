@@ -15,26 +15,20 @@ import androidx.camera.core.ImageProxy
 import androidx.camera.view.CameraController
 import androidx.camera.view.LifecycleCameraController
 import androidx.camera.view.PreviewView
-import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
-import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
-import androidx.compose.foundation.lazy.staggeredgrid.LazyVerticalStaggeredGrid
-import androidx.compose.foundation.lazy.staggeredgrid.StaggeredGridCells
-import androidx.compose.foundation.lazy.staggeredgrid.items
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Photo
 import androidx.compose.material.icons.filled.PhotoCamera
-import androidx.compose.material.icons.twotone.TextFields
 import androidx.compose.material3.BottomSheetScaffold
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
@@ -49,30 +43,25 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.graphics.asImageBitmap
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalLifecycleOwner
 import androidx.compose.ui.platform.testTag
-import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.viewinterop.AndroidView
 import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
-import androidx.lifecycle.viewmodel.compose.viewModel
-import com.android.feedme.R
 import com.android.feedme.model.viewmodel.CameraViewModel
 import com.android.feedme.model.viewmodel.InputViewModel
 import com.android.feedme.ui.navigation.NavigationActions
+import com.android.feedme.ui.navigation.Screen
 import com.android.feedme.ui.navigation.TopBarNavigation
-import com.android.feedme.ui.theme.BottomIconColorSelected
 import com.android.feedme.ui.theme.CameraButtonsBackground
+import kotlinx.coroutines.*
 
 /**
  * A composable function representing the camera screen.
@@ -82,14 +71,13 @@ import com.android.feedme.ui.theme.CameraButtonsBackground
  * images and viewing them in a gallery. Utilizes CameraX for camera operations and Jetpack Compose
  * for the UI components.
  */
-@OptIn(ExperimentalMaterial3Api::class)
+@OptIn(ExperimentalMaterial3Api::class, ExperimentalCoroutinesApi::class)
 @Composable
-fun CameraScreen(navigationActions: NavigationActions, inputViewModel: InputViewModel) {
-  ///// Machine Learning Part /////
-  // Switch off and on the text recognition functionality
-  val textRecognitionMode = remember { mutableStateOf(true) }
-  val barcodeRecognition = remember { mutableStateOf(true) }
-  ///// Machine Learning Part /////
+fun CameraScreen(
+    navigationActions: NavigationActions,
+    inputViewModel: InputViewModel,
+    cameraViewModel: CameraViewModel
+) {
 
   val applicationContext = LocalContext.current
   // Request camera permission if not already granted
@@ -107,8 +95,7 @@ fun CameraScreen(navigationActions: NavigationActions, inputViewModel: InputView
       setEnabledUseCases(CameraController.IMAGE_CAPTURE)
     }
   }
-  val cameraViewModel = viewModel<CameraViewModel>()
-  val bitmaps by cameraViewModel.bitmaps.collectAsState()
+  val imageTaken by cameraViewModel.imageTaken.collectAsState()
   val photoSavedMessageVisible by cameraViewModel.photoSavedMessageVisible.collectAsState()
   val pickImage = cameraViewModel.galleryLauncher()
 
@@ -123,16 +110,11 @@ fun CameraScreen(navigationActions: NavigationActions, inputViewModel: InputView
         TopBarNavigation(
             title = "Camera",
             navAction = navigationActions,
-            backArrowOnClickAction = {
-              inputViewModel.addToList(listOfIngredientToInput.value.toMutableList())
-              navigationActions.goBack()
-            })
+            backArrowOnClickAction = { navigationActions.goBack() })
       },
       scaffoldState = scaffoldState,
       sheetPeekHeight = 0.dp,
-      sheetContent = {
-        PhotoBottomSheetContent(bitmaps = bitmaps, modifier = Modifier.fillMaxWidth())
-      }) { padding ->
+      sheetContent = {}) { padding ->
         Box(modifier = Modifier.fillMaxSize().padding(padding)) {
           CameraPreview(controller = controller, modifier = Modifier.fillMaxSize())
 
@@ -151,8 +133,11 @@ fun CameraScreen(navigationActions: NavigationActions, inputViewModel: InputView
                             .testTag("GalleryButton"),
                     // Open the local gallery when the gallery button is clicked
                     onClick = {
+                      cameraViewModel.imageTaken.value = true
                       pickImage.launch(
                           PickVisualMediaRequest(ActivityResultContracts.PickVisualMedia.ImageOnly))
+                      while (imageTaken) {}
+                      navigationActions.navigateTo(Screen.ANALYZE_PICTURE)
                     }) {
                       Icon(imageVector = Icons.Default.Photo, contentDescription = "Open gallery")
                     }
@@ -165,48 +150,20 @@ fun CameraScreen(navigationActions: NavigationActions, inputViewModel: InputView
                             .testTag("PhotoButton"),
                     // Take a photo when the photo button is clicked
                     onClick = {
+                      cameraViewModel.imageTaken.value = true
                       takePhoto(
                           controller = controller,
                           onPhotoTaken = cameraViewModel::onTakePhoto,
                           showText = cameraViewModel::onPhotoSaved,
                           context = applicationContext,
                       )
+                      while (imageTaken) {}
+                      navigationActions.navigateTo(Screen.ANALYZE_PICTURE)
                     }) {
                       Icon(
                           imageVector = Icons.Default.PhotoCamera,
                           contentDescription = "Take photo")
                     }
-                // Button for text recognition
-                if (textRecognitionMode.value) {
-                  IconButton(
-                      onClick = { cameraViewModel.textRecognitionButtonPressed() },
-                      modifier =
-                          Modifier.size(56.dp)
-                              .background(CameraButtonsBackground, shape = CircleShape)
-                              .padding(10.dp)
-                              .testTag("MLTextButton")) {
-                        Icon(
-                            imageVector = Icons.TwoTone.TextFields,
-                            contentDescription = "Display text after ML")
-                      }
-                }
-                // Button for barcode scanner
-                if (barcodeRecognition.value) {
-                  val barcodeScannerPainter = painterResource(id = R.drawable.barcode_scanner)
-                  IconButton(
-                      onClick = { cameraViewModel.barcodeScanButtonPressed() },
-                      modifier =
-                          Modifier.size(56.dp)
-                              .background(CameraButtonsBackground, shape = CircleShape)
-                              .padding(10.dp)
-                              .testTag("MLBarcodeButton")) {
-                        Icon(
-                            painter = barcodeScannerPainter,
-                            contentDescription = "Barcode Scanner",
-                            modifier = Modifier.size(25.dp),
-                            tint = BottomIconColorSelected)
-                      }
-                }
               }
           // Show the message "Photo Saved" box if the photo was taken
           if (photoSavedMessageVisible) {
@@ -225,6 +182,7 @@ fun CameraScreen(navigationActions: NavigationActions, inputViewModel: InputView
                       modifier = Modifier.testTag("PhotoSavedMessage"))
                 }
           }
+
           // Snack bar host for info messages (green)
           SnackbarHost(
               hostState = snackbarHostStateInfo,
@@ -320,29 +278,4 @@ fun CameraPreview(controller: LifecycleCameraController, modifier: Modifier = Mo
         }
       },
       modifier = modifier.testTag("CameraPreview"))
-}
-
-@Composable
-fun PhotoBottomSheetContent(bitmaps: List<Bitmap>, modifier: Modifier = Modifier) {
-  // Show a message if there are no photos
-  if (bitmaps.isEmpty()) {
-    Box(modifier = modifier.padding(16.dp), contentAlignment = Alignment.Center) {
-      Text(text = "There are no photos yet")
-    }
-  } else {
-    // Display the photos in a grid
-    LazyVerticalStaggeredGrid(
-        columns = StaggeredGridCells.Fixed(2),
-        horizontalArrangement = Arrangement.spacedBy(16.dp),
-        verticalItemSpacing = 16.dp,
-        contentPadding = PaddingValues(16.dp),
-        modifier = modifier) {
-          items(bitmaps) { bitmap ->
-            Image(
-                bitmap = bitmap.asImageBitmap(),
-                contentDescription = "Photo",
-                modifier = Modifier.clip(RoundedCornerShape(10.dp)))
-          }
-        }
-  }
 }

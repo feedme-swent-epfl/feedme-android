@@ -20,6 +20,7 @@ import com.android.feedme.model.data.IngredientsRepository
 import com.android.feedme.model.data.ProfileRepository
 import com.android.feedme.model.data.RecipeRepository
 import com.android.feedme.model.viewmodel.AuthViewModel
+import com.android.feedme.model.viewmodel.CameraViewModel
 import com.android.feedme.model.viewmodel.HomeViewModel
 import com.android.feedme.model.viewmodel.InputViewModel
 import com.android.feedme.model.viewmodel.ProfileViewModel
@@ -29,6 +30,7 @@ import com.android.feedme.resources.C
 import com.android.feedme.ui.auth.LoginScreen
 import com.android.feedme.ui.auth.WelcomeScreen
 import com.android.feedme.ui.camera.CameraScreen
+import com.android.feedme.ui.camera.DisplayPicture
 import com.android.feedme.ui.component.RecipeFullDisplay
 import com.android.feedme.ui.find.FindRecipeScreen
 import com.android.feedme.ui.home.LandingPage
@@ -71,6 +73,7 @@ class MainActivity : ComponentActivity() {
               val authViewModel: AuthViewModel = viewModel<AuthViewModel>()
               val inputViewModel: InputViewModel = viewModel<InputViewModel>()
               val homeViewModel: HomeViewModel = viewModel<HomeViewModel>()
+              val cameraViewModel: CameraViewModel = viewModel<CameraViewModel>()
 
               // Set up the nested navigation graph
               NavHost(navController = navController, startDestination = Route.AUTHENTICATION) {
@@ -111,7 +114,12 @@ class MainActivity : ComponentActivity() {
                   composable(Screen.FIND_RECIPE) {
                     FindRecipeScreen(navigationActions, inputViewModel)
                   }
-                  composable(Screen.CAMERA) { CameraScreen(navigationActions, inputViewModel) }
+                  composable(Screen.CAMERA) {
+                    CameraScreen(navigationActions, inputViewModel, cameraViewModel)
+                  }
+                  composable(Screen.ANALYZE_PICTURE) {
+                    DisplayPicture(navigationActions, inputViewModel, cameraViewModel)
+                  }
                 }
 
                 navigation(startDestination = Screen.PROFILE, route = Route.PROFILE) {

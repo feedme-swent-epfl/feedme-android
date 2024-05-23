@@ -80,6 +80,8 @@ class CameraViewModel : ViewModel() {
   private val _errorToDisplay = MutableStateFlow<String?>(null)
   val errorToDisplay = _errorToDisplay.asStateFlow()
 
+  val imageTaken = MutableStateFlow<Boolean>(false)
+
   /** Number of ingredient to be added to the input screen after one text recognition scan * */
   private val _nbOfIngredientAdded = MutableStateFlow<Int>(0)
 
@@ -93,6 +95,7 @@ class CameraViewModel : ViewModel() {
   fun onTakePhoto(bitmap: Bitmap) {
     _bitmaps.value += bitmap
     _lastPhoto.value = PhotoState.Photo(bitmap)
+    imageTaken.value = false
   }
 
   @Composable
@@ -108,6 +111,7 @@ class CameraViewModel : ViewModel() {
             val source = ImageDecoder.createSource(context.contentResolver, uri)
             _bitmaps.value += ImageDecoder.decodeBitmap(source)
             _lastPhoto.value = PhotoState.Photo(ImageDecoder.decodeBitmap(source))
+            imageTaken.value = false
           }
         })
   }
@@ -302,7 +306,6 @@ class CameraViewModel : ViewModel() {
     }
     updateIngredientInList(ing)
   }
-
   /**
    * Updates the ingredient in the list or adds it if it doesn't exist.
    *

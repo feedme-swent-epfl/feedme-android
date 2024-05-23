@@ -85,7 +85,8 @@ class FullRecipeTest : TestCase() {
     recipeRepository = RecipeRepository.instance
     profileRepository = ProfileRepository.instance
 
-    every { mockFirestore.collection("recipes") } returns mockCollectionReference
+    every { mockFirestore.collection(recipeRepository.collectionPath) } returns
+        mockCollectionReference
     every { mockFirestore.collection("profiles") } returns mockCollectionReference
     every { mockCollectionReference.document(any()) } returns mockDocumentReference
     every { mockDocumentReference.id } returns ""

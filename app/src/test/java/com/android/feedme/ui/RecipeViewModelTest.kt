@@ -49,7 +49,8 @@ class RecipeViewModelTest {
 
     recipeRepository = RecipeRepository.instance
 
-    Mockito.`when`(mockFirestore.collection("recipes")).thenReturn(mockCollectionReference)
+    Mockito.`when`(mockFirestore.collection(recipeRepository.collectionPath))
+        .thenReturn(mockCollectionReference)
     Mockito.`when`(mockFirestore.collection("ingredients"))
         .thenReturn(mockIngredientsCollectionReference)
 

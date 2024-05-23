@@ -48,7 +48,8 @@ class RecipeRepositoryTest {
 
     recipeRepository = RecipeRepository(mockFirestore)
 
-    `when`(mockFirestore.collection("recipes")).thenReturn(mockCollectionReference)
+    `when`(mockFirestore.collection(recipeRepository.collectionPath))
+        .thenReturn(mockCollectionReference)
     `when`(mockCollectionReference.document(anyString())).thenReturn(mockDocumentReference)
 
     // Additional mocking for ingredients collection
@@ -57,7 +58,8 @@ class RecipeRepositoryTest {
         .thenReturn(mockDocumentReference)
     `when`(mockDocumentReference.get()).thenReturn(Tasks.forResult(mockIngredientDocumentSnapshot))
 
-    `when`(mockFirestore.collection("recipes")).thenReturn(mockCollectionReference)
+    `when`(mockFirestore.collection(recipeRepository.collectionPath))
+        .thenReturn(mockCollectionReference)
     `when`(mockCollectionReference.document()).thenReturn(mockDocumentReference)
     `when`(mockDocumentReference.id).thenReturn("testRecipeId")
     `when`(mockDocumentReference.set(any())).thenReturn(Tasks.forResult<Void>(null))

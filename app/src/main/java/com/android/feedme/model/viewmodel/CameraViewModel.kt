@@ -21,6 +21,8 @@ import androidx.lifecycle.viewModelScope
 import com.android.feedme.ml.analyzeTextForIngredients
 import com.android.feedme.ml.barcodeScan
 import com.android.feedme.ml.extractProductInfoFromBarcode
+import com.android.feedme.ml.labelExtraction
+import com.android.feedme.ml.labelProcessing
 import com.android.feedme.ml.textExtraction
 import com.android.feedme.ml.textProcessing
 import com.android.feedme.model.data.Ingredient
@@ -176,6 +178,20 @@ class CameraViewModel : ViewModel() {
           }
         }
       }
+
+    fun imageLabellingButtonPressed() =
+        viewModelScope.launch {
+            when(val photoState = _lastPhoto.value) {
+                is PhotoState.NoPhoto -> {
+                    _errorToDisplay.value = ERROR_NO_PHOTO
+                }
+                is PhotoState.Photo -> {
+                    labelExtraction(photoState.bitmap, {processedLabel ->
+                        _informationToDisplay.value = processedLabel
+                    })
+                }
+            }
+        }
 
   /**
    * This function is called when user clicks on barcode scanning button. Then depending on the

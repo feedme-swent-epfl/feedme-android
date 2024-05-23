@@ -67,6 +67,7 @@ import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.android.feedme.R
+import com.android.feedme.ml.labelExtraction
 import com.android.feedme.model.viewmodel.CameraViewModel
 import com.android.feedme.model.viewmodel.InputViewModel
 import com.android.feedme.ui.navigation.NavigationActions
@@ -150,9 +151,9 @@ fun CameraScreen(navigationActions: NavigationActions, inputViewModel: InputView
                             .padding(10.dp)
                             .testTag("GalleryButton"),
                     // Open the local gallery when the gallery button is clicked
-                    onClick = {
-                      pickImage.launch(
-                          PickVisualMediaRequest(ActivityResultContracts.PickVisualMedia.ImageOnly))
+                    onClick = { cameraViewModel.imageLabellingButtonPressed()
+                      //pickImage.launch(
+                          //PickVisualMediaRequest(ActivityResultContracts.PickVisualMedia.ImageOnly))
                     }) {
                       Icon(imageVector = Icons.Default.Photo, contentDescription = "Open gallery")
                     }

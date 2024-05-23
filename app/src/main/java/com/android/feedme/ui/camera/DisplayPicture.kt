@@ -32,6 +32,7 @@ import com.android.feedme.R
 import com.android.feedme.model.viewmodel.CameraViewModel
 import com.android.feedme.model.viewmodel.InputViewModel
 import com.android.feedme.ui.navigation.NavigationActions
+import com.android.feedme.ui.navigation.Screen
 import com.android.feedme.ui.navigation.TopBarNavigation
 import com.android.feedme.ui.theme.BottomIconColorSelected
 import com.android.feedme.ui.theme.CameraButtonsBackground
@@ -69,6 +70,7 @@ fun DisplayPicture(
             navAction = navigationActions,
             backArrowOnClickAction = {
               inputViewModel.addToList(listOfIngredientToInput.value.toMutableList())
+              // cameraViewModel.empty()
               navigationActions.goBack()
             })
       },
@@ -90,7 +92,7 @@ fun DisplayPicture(
                   IconButton(
                       onClick = {
                         cameraViewModel.textRecognitionButtonPressed()
-                        navigationActions.goBack()
+                        navigationActions.navigateTo(Screen.CAMERA)
                       },
                       modifier =
                           Modifier.size(56.dp)
@@ -108,7 +110,7 @@ fun DisplayPicture(
                   IconButton(
                       onClick = {
                         cameraViewModel.barcodeScanButtonPressed()
-                        navigationActions.goBack()
+                        navigationActions.navigateTo(Screen.CAMERA)
                       },
                       modifier =
                           Modifier.size(56.dp)

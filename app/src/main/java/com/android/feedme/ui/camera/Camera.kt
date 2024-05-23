@@ -25,7 +25,6 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.shape.CircleShape
-import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Photo
 import androidx.compose.material.icons.filled.PhotoCamera
@@ -37,7 +36,6 @@ import androidx.compose.material3.Snackbar
 import androidx.compose.material3.SnackbarDuration
 import androidx.compose.material3.SnackbarHost
 import androidx.compose.material3.SnackbarHostState
-import androidx.compose.material3.Text
 import androidx.compose.material3.rememberBottomSheetScaffoldState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
@@ -95,11 +93,8 @@ fun CameraScreen(
       setEnabledUseCases(CameraController.IMAGE_CAPTURE)
     }
   }
-  val imageTaken by cameraViewModel.imageTaken.collectAsState()
   val photoSavedMessageVisible by cameraViewModel.photoSavedMessageVisible.collectAsState()
   val pickImage = cameraViewModel.galleryLauncher()
-
-  val listOfIngredientToInput = cameraViewModel.listOfIngredientToInput.collectAsState()
 
   val snackbarHostStateInfo = remember { SnackbarHostState() }
   val snackbarHostStateError = remember { SnackbarHostState() }
@@ -110,7 +105,10 @@ fun CameraScreen(
         TopBarNavigation(
             title = "Camera",
             navAction = navigationActions,
-            backArrowOnClickAction = { navigationActions.goBack() })
+            backArrowOnClickAction = {
+              // cameraViewModel.empty()
+              navigationActions.goBack()
+            })
       },
       scaffoldState = scaffoldState,
       sheetPeekHeight = 0.dp,
@@ -133,11 +131,8 @@ fun CameraScreen(
                             .testTag("GalleryButton"),
                     // Open the local gallery when the gallery button is clicked
                     onClick = {
-                      cameraViewModel.imageTaken.value = true
                       pickImage.launch(
                           PickVisualMediaRequest(ActivityResultContracts.PickVisualMedia.ImageOnly))
-                      while (imageTaken) {}
-                      navigationActions.navigateTo(Screen.ANALYZE_PICTURE)
                     }) {
                       Icon(imageVector = Icons.Default.Photo, contentDescription = "Open gallery")
                     }
@@ -150,15 +145,12 @@ fun CameraScreen(
                             .testTag("PhotoButton"),
                     // Take a photo when the photo button is clicked
                     onClick = {
-                      cameraViewModel.imageTaken.value = true
                       takePhoto(
                           controller = controller,
                           onPhotoTaken = cameraViewModel::onTakePhoto,
                           showText = cameraViewModel::onPhotoSaved,
                           context = applicationContext,
                       )
-                      while (imageTaken) {}
-                      navigationActions.navigateTo(Screen.ANALYZE_PICTURE)
                     }) {
                       Icon(
                           imageVector = Icons.Default.PhotoCamera,
@@ -167,20 +159,7 @@ fun CameraScreen(
               }
           // Show the message "Photo Saved" box if the photo was taken
           if (photoSavedMessageVisible) {
-            Log.d("CameraScreen", "Photo saved message visible")
-            // Show the message box
-            Box(
-                modifier =
-                    Modifier.padding(16.dp)
-                        .background(
-                            Color.Black.copy(alpha = 0.7f), shape = RoundedCornerShape(8.dp))
-                        .padding(horizontal = 24.dp, vertical = 16.dp)
-                        .align(Alignment.BottomCenter)) {
-                  Text(
-                      text = "Photo saved",
-                      color = Color.White,
-                      modifier = Modifier.testTag("PhotoSavedMessage"))
-                }
+            navigationActions.navigateTo(Screen.ANALYZE_PICTURE)
           }
 
           // Snack bar host for info messages (green)

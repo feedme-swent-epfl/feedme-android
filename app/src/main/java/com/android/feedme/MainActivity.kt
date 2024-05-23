@@ -63,14 +63,16 @@ class MainActivity : ComponentActivity() {
         Surface(
             modifier = Modifier.fillMaxSize().semantics { testTag = C.Tag.main_screen_container },
             color = MaterialTheme.colorScheme.background) {
-              // Navigation host for the app
-              val navController = rememberNavController()
-              val navigationActions = NavigationActions(navController)
+              // ViewModels for the app
               val profileViewModel: ProfileViewModel = viewModel<ProfileViewModel>()
               val searchViewModel: SearchViewModel = viewModel<SearchViewModel>()
               val authViewModel: AuthViewModel = viewModel<AuthViewModel>()
               val inputViewModel: InputViewModel = viewModel<InputViewModel>()
               val homeViewModel: HomeViewModel = viewModel<HomeViewModel>()
+
+              // Navigation host for the app
+              val navController = rememberNavController()
+              val navigationActions = NavigationActions(navController, profileViewModel)
 
               // Set up the nested navigation graph
               NavHost(navController = navController, startDestination = Route.AUTHENTICATION) {

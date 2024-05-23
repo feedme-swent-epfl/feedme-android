@@ -179,9 +179,6 @@ fun RecipeCard(
           Modifier.padding(16.dp)
               .clickable(
                   onClick = {
-                    if (profile != null) {
-                      profileViewModel.setViewingProfile(profile)
-                    }
                     // Set the selected recipe in the view model and navigate to the
                     // recipe screen
                     recipeViewModel.selectRecipe(recipe)

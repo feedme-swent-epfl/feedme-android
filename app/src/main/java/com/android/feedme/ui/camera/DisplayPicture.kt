@@ -39,12 +39,9 @@ import com.android.feedme.ui.theme.BottomIconColorSelected
 import com.android.feedme.ui.theme.CameraButtonsBackground
 
 /**
- * A composable function representing the camera screen.
+ * A composable function representing the analyzing picture screen.
  *
- * This function displays a UI for camera functionality, allowing users to capture photos. It
- * manages camera permissions, sets up a live camera preview, and includes UI elements for capturing
- * images and viewing them in a gallery. Utilizes CameraX for camera operations and Jetpack Compose
- * for the UI components.
+ * This function displays a UI for analyzing functionality, allowing users to anaylze their photo.
  */
 @SuppressLint("StateFlowValueCalledInComposition")
 @OptIn(ExperimentalMaterial3Api::class)
@@ -61,8 +58,9 @@ fun DisplayPicture(
   ///// Machine Learning Part /////
 
   val bitmaps by cameraViewModel.bitmaps.collectAsState()
-  val photo by cameraViewModel.photo.collectAsState()
+  val analyzed by cameraViewModel.analyzed.collectAsState()
 
+  // List containing the ingredients analyzed to display
   val listOfIngredientToInput = cameraViewModel.listOfIngredientToInput.collectAsState()
 
   BottomSheetScaffold(
@@ -118,7 +116,9 @@ fun DisplayPicture(
                       }
                 }
 
-                if (photo) {
+                // Once the photo is analyzed, we can add the ingredients and go back to the camera
+                // screen
+                if (analyzed) {
                   inputViewModel.addToList(listOfIngredientToInput.value.toMutableList())
                   cameraViewModel.emptyIngredients()
                   navigationActions.navigateTo(Screen.CAMERA)
@@ -128,6 +128,11 @@ fun DisplayPicture(
       }
 }
 
+/**
+ * A composable function representing the display of the image to be analyzed.
+ *
+ * This function displays the image to be analyzed.
+ */
 @Composable
 fun Display(bitmaps: List<Bitmap>, modifier: Modifier = Modifier) {
   if (bitmaps.isEmpty()) return

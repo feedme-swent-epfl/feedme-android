@@ -1,12 +1,7 @@
 package com.android.feedme.model.viewmodel
 
-import android.Manifest
-import android.app.Activity
-import android.content.Context
-import android.content.pm.PackageManager
 import android.graphics.Bitmap
 import android.graphics.ImageDecoder
-import android.os.Build
 import android.util.Log
 import androidx.activity.compose.ManagedActivityResultLauncher
 import androidx.activity.compose.rememberLauncherForActivityResult
@@ -14,8 +9,6 @@ import androidx.activity.result.PickVisualMediaRequest
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.platform.LocalContext
-import androidx.core.app.ActivityCompat
-import androidx.core.content.ContextCompat
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.android.feedme.ml.analyzeTextForIngredients
@@ -36,11 +29,12 @@ import kotlinx.coroutines.launch
 
 class CameraViewModel : ViewModel() {
 
-  val ERROR_NO_PHOTO = "ERROR : No photo to analyse, please take a picture."
-  val ERROR_NO_BARCODE = "Failed to identify barcode, please try again."
-  val ERROR_BARCODE_PRODUCT_NAME = "Failed to extract product name from barcode, please try again."
-  val ERROR_NO_TEXT = "Failed to identify text, please try again."
-  val ERROR_INGREDIENT_IN_TEXT = "Failed to extract ingredients from text, please try again."
+  private val ERROR_NO_BARCODE = "Failed to identify barcode, please try again."
+  private val ERROR_BARCODE_PRODUCT_NAME =
+      "Failed to extract product name from barcode, please try again."
+  private val ERROR_NO_TEXT = "Failed to identify text, please try again."
+  private val ERROR_INGREDIENT_IN_TEXT =
+      "Failed to extract ingredients from text, please try again."
 
   /** This sealed class is used to model the different states that a photo can be in. */
   sealed class PhotoState() {
@@ -60,13 +54,13 @@ class CameraViewModel : ViewModel() {
   private val _bitmaps = MutableStateFlow<List<Bitmap>>(emptyList())
   val bitmaps = _bitmaps.asStateFlow()
 
-  /** Keep track of whether the photo saved message should be shown */
-  private val _photoSavedMessageVisible = MutableStateFlow<Boolean>(false)
-  val photoSavedMessageVisible = _photoSavedMessageVisible.asStateFlow()
+  /** Keep track of whether we should switch to the analyze screen */
+  private val _photoTaken = MutableStateFlow(false)
+  val photoTaken = _photoTaken.asStateFlow()
 
-  /** Keep track of whether the photo saved message should be shown */
-  private val _photo = MutableStateFlow<Boolean>(false)
-  val photo = _photo.asStateFlow()
+  /** Keep track of whether we should switch to the camera screen */
+  private val _analyzed = MutableStateFlow(false)
+  val analyzed = _analyzed.asStateFlow()
 
   /** Contains the last photo taken by user */
   private val _lastPhoto = MutableStateFlow<PhotoState>(PhotoState.NoPhoto)
@@ -103,8 +97,6 @@ class CameraViewModel : ViewModel() {
   fun galleryLauncher(): ManagedActivityResultLauncher<PickVisualMediaRequest, out Any?> {
     val context = LocalContext.current
 
-    if (!hasRequiredPermissions(context)) askForPermission(context)
-
     return rememberLauncherForActivityResult(
         ActivityResultContracts.PickVisualMedia(),
         onResult = { uri ->
@@ -117,53 +109,28 @@ class CameraViewModel : ViewModel() {
         })
   }
 
-  private fun hasRequiredPermissions(context: Context): Boolean {
-    return if (Build.VERSION.SDK_INT >= 34)
-        ContextCompat.checkSelfPermission(
-            context, Manifest.permission.READ_MEDIA_VISUAL_USER_SELECTED) ==
-            PackageManager.PERMISSION_GRANTED ||
-            ContextCompat.checkSelfPermission(context, Manifest.permission.READ_MEDIA_IMAGES) ==
-                PackageManager.PERMISSION_GRANTED
-    else if (Build.VERSION.SDK_INT < 33)
-        ContextCompat.checkSelfPermission(context, Manifest.permission.READ_EXTERNAL_STORAGE) ==
-            PackageManager.PERMISSION_GRANTED
-    else
-        ContextCompat.checkSelfPermission(context, Manifest.permission.READ_MEDIA_IMAGES) ==
-            PackageManager.PERMISSION_GRANTED
-  }
-
-  private fun askForPermission(context: Context) {
-    val permission =
-        if (Build.VERSION.SDK_INT >= 34)
-            arrayOf(
-                Manifest.permission.READ_MEDIA_IMAGES,
-                Manifest.permission.READ_MEDIA_VISUAL_USER_SELECTED)
-        else if (Build.VERSION.SDK_INT < 33) arrayOf((Manifest.permission.READ_EXTERNAL_STORAGE))
-        else arrayOf(Manifest.permission.READ_MEDIA_IMAGES)
-
-    return ActivityCompat.requestPermissions(context as Activity, permission, 0)
-  }
-
   /**
-   * This function is called when the user taps the save button in the CameraScreen. It sets the
-   * [_photoSavedMessageVisible] state to true, which triggers a message to be shown to the user.
-   * The message is hidden after 3 seconds.
+   * This function is called when the user selects a picture in the CameraScreen. It sets the
+   * [_photoTaken] state to true, which triggers the navigation to the AnalyzeScreen.
    */
   fun onPhotoSaved() {
-    _photoSavedMessageVisible.value = true
+    _photoTaken.value = true
     // Launch a coroutine to hide the message after 3 seconds (3000 milliseconds)
     viewModelScope.launch {
       delay(50)
-      _photoSavedMessageVisible.value = false
+      _photoTaken.value = false
     }
   }
 
+  /**
+   * This function is called when the user analyzed a picture in the CameraScreen. It sets the
+   * [_analyzed] state to true, which triggers the navigation to the Camera.
+   */
   private fun onAnalyzeDone() {
-    _photo.value = true
-    // Launch a coroutine to hide the message after 3 seconds (3000 milliseconds)
+    _analyzed.value = true
     viewModelScope.launch {
       delay(50)
-      _photo.value = false
+      _analyzed.value = false
     }
   }
 
@@ -349,11 +316,16 @@ class CameraViewModel : ViewModel() {
     }
   }
 
+  /**
+   * This function is used to empty the error and information to display after it has been
+   * processed.
+   */
   fun empty() {
     _errorToDisplay.value = null
     _informationToDisplay.value = null
   }
 
+  /** This function is used to empty the list of ingredients after it has been processed. */
   fun emptyIngredients() {
     _listOfIngredientToInput.value = emptyList()
   }

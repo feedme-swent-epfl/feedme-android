@@ -9,7 +9,6 @@ import androidx.compose.ui.test.performClick
 import androidx.test.ext.junit.runners.AndroidJUnit4
 import androidx.test.rule.GrantPermissionRule
 import com.android.feedme.model.viewmodel.CameraViewModel
-import com.android.feedme.model.viewmodel.InputViewModel
 import com.android.feedme.screen.CameraScreen
 import com.android.feedme.ui.camera.CameraScreen
 import com.android.feedme.ui.navigation.NavigationActions
@@ -79,9 +78,7 @@ class CameraTest : TestCase() {
     val navActions = mockk<NavigationActions>()
     every { navActions.canGoBack() } returns true
     every { navActions.navigateTo(Screen.FIND_RECIPE) } returns Unit
-    composeTestRule.setContent {
-      CameraScreen(navActions, mockk<InputViewModel>(), cameraViewModel)
-    }
+    composeTestRule.setContent { CameraScreen(navActions, cameraViewModel) }
     composeTestRule.waitForIdle()
   }
 }

@@ -6,6 +6,7 @@ import android.content.Context
 import android.content.pm.PackageManager
 import android.graphics.Bitmap
 import android.graphics.Matrix
+import android.os.Build
 import android.util.Log
 import androidx.activity.result.PickVisualMediaRequest
 import androidx.activity.result.contract.ActivityResultContracts
@@ -21,7 +22,6 @@ import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.shape.CircleShape
@@ -42,7 +42,6 @@ import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
-import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
@@ -54,7 +53,6 @@ import androidx.compose.ui.viewinterop.AndroidView
 import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
 import com.android.feedme.model.viewmodel.CameraViewModel
-import com.android.feedme.model.viewmodel.InputViewModel
 import com.android.feedme.ui.navigation.NavigationActions
 import com.android.feedme.ui.navigation.Screen
 import com.android.feedme.ui.navigation.TopBarNavigation
@@ -71,21 +69,15 @@ import kotlinx.coroutines.*
  */
 @OptIn(ExperimentalMaterial3Api::class, ExperimentalCoroutinesApi::class)
 @Composable
-fun CameraScreen(
-    navigationActions: NavigationActions,
-    inputViewModel: InputViewModel,
-    cameraViewModel: CameraViewModel
-) {
+fun CameraScreen(navigationActions: NavigationActions, cameraViewModel: CameraViewModel) {
 
   val applicationContext = LocalContext.current
   // Request camera permission if not already granted
   if (!hasRequiredPermissions(applicationContext)) {
     ActivityCompat.requestPermissions(
         applicationContext as Activity, arrayOf(Manifest.permission.CAMERA), 0)
+    askForPermission(applicationContext)
   }
-
-  // Set up the camera controller, view model, and coroutine scope
-  val scope = rememberCoroutineScope()
 
   val scaffoldState = rememberBottomSheetScaffoldState()
   val controller = remember {
@@ -93,7 +85,7 @@ fun CameraScreen(
       setEnabledUseCases(CameraController.IMAGE_CAPTURE)
     }
   }
-  val photoSavedMessageVisible by cameraViewModel.photoSavedMessageVisible.collectAsState()
+  val photoTaken by cameraViewModel.photoTaken.collectAsState()
   val pickImage = cameraViewModel.galleryLauncher()
 
   val snackbarHostStateInfo = remember { SnackbarHostState() }
@@ -157,8 +149,8 @@ fun CameraScreen(
                           contentDescription = "Take photo")
                     }
               }
-          // Show the message "Photo Saved" box if the photo was taken
-          if (photoSavedMessageVisible) {
+          // Switch to the analyze picture screen
+          if (photoTaken) {
             cameraViewModel.empty()
             navigationActions.navigateTo(Screen.ANALYZE_PICTURE)
           }
@@ -239,10 +231,39 @@ fun takePhoto(
       })
 }
 
-/** Check if the app has the required permissions to use the camera. */
+/** Check if the app has the required permissions to use the camera and the gallery. */
 private fun hasRequiredPermissions(context: Context): Boolean {
-  return ContextCompat.checkSelfPermission(context, Manifest.permission.CAMERA) ==
-      PackageManager.PERMISSION_GRANTED
+  return if (Build.VERSION.SDK_INT >= 34)
+      ContextCompat.checkSelfPermission(
+          context, Manifest.permission.READ_MEDIA_VISUAL_USER_SELECTED) ==
+          PackageManager.PERMISSION_GRANTED ||
+          ContextCompat.checkSelfPermission(context, Manifest.permission.READ_MEDIA_IMAGES) ==
+              PackageManager.PERMISSION_GRANTED &&
+              ContextCompat.checkSelfPermission(context, Manifest.permission.CAMERA) ==
+                  PackageManager.PERMISSION_GRANTED
+  else if (Build.VERSION.SDK_INT < 33)
+      ContextCompat.checkSelfPermission(context, Manifest.permission.READ_EXTERNAL_STORAGE) ==
+          PackageManager.PERMISSION_GRANTED &&
+          ContextCompat.checkSelfPermission(context, Manifest.permission.CAMERA) ==
+              PackageManager.PERMISSION_GRANTED
+  else
+      ContextCompat.checkSelfPermission(context, Manifest.permission.READ_MEDIA_IMAGES) ==
+          PackageManager.PERMISSION_GRANTED &&
+          ContextCompat.checkSelfPermission(context, Manifest.permission.CAMERA) ==
+              PackageManager.PERMISSION_GRANTED
+}
+
+/** Asks the required permissions to use the camera and the gallery. */
+private fun askForPermission(context: Context) {
+  val permission =
+      if (Build.VERSION.SDK_INT >= 34)
+          arrayOf(
+              Manifest.permission.READ_MEDIA_IMAGES,
+              Manifest.permission.READ_MEDIA_VISUAL_USER_SELECTED)
+      else if (Build.VERSION.SDK_INT < 33) arrayOf((Manifest.permission.READ_EXTERNAL_STORAGE))
+      else arrayOf(Manifest.permission.READ_MEDIA_IMAGES)
+
+  return ActivityCompat.requestPermissions(context as Activity, permission, 0)
 }
 
 /** Composable that displays the camera preview. */

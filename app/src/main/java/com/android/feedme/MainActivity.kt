@@ -116,9 +116,7 @@ class MainActivity : ComponentActivity() {
                   composable(Screen.FIND_RECIPE) {
                     FindRecipeScreen(navigationActions, inputViewModel, profileViewModel)
                   }
-                  composable(Screen.CAMERA) {
-                    CameraScreen(navigationActions, inputViewModel, cameraViewModel)
-                  }
+                  composable(Screen.CAMERA) { CameraScreen(navigationActions, cameraViewModel) }
                   composable(Screen.ANALYZE_PICTURE) {
                     DisplayPicture(navigationActions, inputViewModel, cameraViewModel)
                   }

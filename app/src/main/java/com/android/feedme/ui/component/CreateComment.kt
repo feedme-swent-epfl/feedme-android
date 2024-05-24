@@ -30,6 +30,7 @@ import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableDoubleStateOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
@@ -70,7 +71,7 @@ fun CreateComment(
     onDismiss: () -> Unit
 ) {
   var commentTitle by remember { mutableStateOf("") }
-  var rating by remember { mutableStateOf(0.0) }
+  var rating by remember { mutableDoubleStateOf(0.0) }
   var description by remember { mutableStateOf("") }
 
   Box(

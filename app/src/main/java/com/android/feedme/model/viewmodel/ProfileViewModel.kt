@@ -31,11 +31,12 @@ class ProfileViewModel : ViewModel() {
   private val _currentUserSavedRecipes = MutableStateFlow<List<String>>(listOf())
   private val _isRecipeSaved = MutableLiveData<Boolean>()
   private val _showDialog = MutableStateFlow(true)
+  private val _imageUrl = MutableStateFlow<String?>(null)
   val currentUserProfile: StateFlow<Profile?> = _currentUserProfile
   val currentUserFollowers: StateFlow<List<Profile>> = _currentUserFollowers
   val currentUserFollowing: StateFlow<List<Profile>> = _currentUserFollowing
   val currentUserSavedRecipes: StateFlow<List<String>> = _currentUserSavedRecipes
-  val _imageUrl = MutableStateFlow<String?>(null)
+  val imageUrl: StateFlow<String?> = _imageUrl
   val showDialog: StateFlow<Boolean> = _showDialog
   val isRecipeSaved: LiveData<Boolean>
     get() = _isRecipeSaved
@@ -436,6 +437,7 @@ class ProfileViewModel : ViewModel() {
   fun updateProfilePicture(profileViewModel: ProfileViewModel, picture: Uri) {
     repository.uploadProfilePicture(
         profileViewModel = profileViewModel,
+        onSuccess = { _imageUrl.value = picture.toString() },
         onFailure = { throw error("Can't upload profile picture to the database") },
         uri = picture)
   }

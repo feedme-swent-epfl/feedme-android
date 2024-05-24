@@ -124,7 +124,7 @@ fun CameraScreen(navigationActions: NavigationActions, inputViewModel: InputView
             title = "Camera",
             navAction = navigationActions,
             backArrowOnClickAction = {
-              inputViewModel.addToList(listOfIngredientToInput.value.toMutableList())
+              inputViewModel.addToList(listOfIngredientToInput.value.toList())
               navigationActions.goBack()
             })
       },

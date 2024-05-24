@@ -43,7 +43,7 @@ class InputViewModel : ViewModel() {
    *
    * @param newList The new list of [IngredientMetaData].
    */
-  fun addToList(newList: MutableList<IngredientMetaData>) {
+  fun addToList(newList: List<IngredientMetaData>) {
     _listOfIngredientMetadatas.value = newList.plus(_listOfIngredientMetadatas.value)
     _totalIngredientEntriesDisplayed.value += newList.size
     _totalCompleteIngredientMetadatas.value +=

@@ -69,8 +69,8 @@ private val ingredientsRepository = IngredientsRepository.instance
 @SuppressLint("StateFlowValueCalledInComposition")
 @Composable
 fun IngredientList(
-    inputViewModel: InputViewModel = InputViewModel(),
     modifier: Modifier = Modifier,
+    inputViewModel: InputViewModel = InputViewModel(),
 ) {
 
   val totalIngredients by inputViewModel.totalIngredientEntriesDisplayed.collectAsState()

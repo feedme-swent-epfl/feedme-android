@@ -68,6 +68,7 @@ class ProfileRepository(private val db: FirebaseFirestore) {
   fun uploadProfilePicture(
       profileViewModel: ProfileViewModel,
       uri: Uri,
+      onSuccess: () -> Unit,
       onFailure: (Exception) -> Unit
   ) {
     val storageRef =
@@ -83,8 +84,8 @@ class ProfileRepository(private val db: FirebaseFirestore) {
                 .document(profileViewModel.currentUserId!!)
                 .update("imageUrl", url)
                 .addOnFailureListener { exception -> onFailure(exception) }
-            profileViewModel._imageUrl.value = url
           }
+          onSuccess()
         }
         .addOnFailureListener { exception -> onFailure(exception) }
   }
@@ -215,10 +216,10 @@ class ProfileRepository(private val db: FirebaseFirestore) {
           val currentUserFRef = db.collection(collectionPath).document(currentUserId)
           val targetUserFRef = db.collection(collectionPath).document(toFollowId)
           val currentUser =
-              this.get(currentUserFRef).toObject(Profile::class.java)
+              this[currentUserFRef].toObject(Profile::class.java)
                   ?: return@handleFirestoreTransaction null
           val toFollowUser =
-              this.get(targetUserFRef).toObject(Profile::class.java)
+              this[targetUserFRef].toObject(Profile::class.java)
                   ?: return@handleFirestoreTransaction null
 
           // Update current user's following list
@@ -272,10 +273,10 @@ class ProfileRepository(private val db: FirebaseFirestore) {
           val currentUserRef = db.collection(collectionPath).document(currentUserId)
           val targetUserRef = db.collection(collectionPath).document(targetUserId)
           val currentUser =
-              this.get(currentUserRef).toObject(Profile::class.java)
+              this[currentUserRef].toObject(Profile::class.java)
                   ?: return@handleFirestoreTransaction null
           val targetUser =
-              this.get(targetUserRef).toObject(Profile::class.java)
+              this[targetUserRef].toObject(Profile::class.java)
                   ?: return@handleFirestoreTransaction null
 
           // Prepare the updated lists
@@ -409,8 +410,7 @@ class ProfileRepository(private val db: FirebaseFirestore) {
         {
           val userRef = db.collection(collectionPath).document(userId)
           val currentUser =
-              this.get(userRef).toObject(Profile::class.java)
-                  ?: return@handleFirestoreTransaction null
+              this[userRef].toObject(Profile::class.java) ?: return@handleFirestoreTransaction null
           val savedRecipes = currentUser.savedRecipes.toMutableList()
           savedRecipes.add(recipe)
           currentUser.savedRecipes = savedRecipes
@@ -439,8 +439,7 @@ class ProfileRepository(private val db: FirebaseFirestore) {
         {
           val userRef = db.collection(collectionPath).document(userId)
           val currentUser =
-              this.get(userRef).toObject(Profile::class.java)
-                  ?: return@handleFirestoreTransaction null
+              this[userRef].toObject(Profile::class.java) ?: return@handleFirestoreTransaction null
           val savedRecipes = currentUser.savedRecipes.toMutableList().filter { it != recipe }
           currentUser.savedRecipes = savedRecipes
           update(userRef, "savedRecipes", savedRecipes)
@@ -484,8 +483,7 @@ class ProfileRepository(private val db: FirebaseFirestore) {
         {
           val userRef = db.collection(collectionPath).document(userId)
           val currentUser =
-              this.get(userRef).toObject(Profile::class.java)
-                  ?: return@handleFirestoreTransaction null
+              this[userRef].toObject(Profile::class.java) ?: return@handleFirestoreTransaction null
           currentUser.showDialog = showDialog
           update(userRef, "showDialog", showDialog)
           set(userRef, currentUser)

@@ -154,7 +154,7 @@ fun RecipeBox(
       modifier = Modifier.padding(paddingValues).testTag("RecipeInputBox"),
       verticalArrangement = Arrangement.Top) {
         RecipeInputTopContent(title, description)
-        IngredientList(inputViewModel, Modifier.heightIn(max = 150.dp))
+        IngredientList(modifier = Modifier.heightIn(max = 150.dp), inputViewModel = inputViewModel)
         StepList(recipeStepViewModel = recipeStepViewModel)
       }
 }

@@ -232,4 +232,22 @@ class SearchViewModelTest {
     println(searchViewModel.filteredProfiles.value)
     assertTrue(searchViewModel.filteredProfiles.value.first().username == "user123")
   }
+
+  @Test
+  fun searchRecipes_Offline() {
+    searchViewModel.searchRecipes(query)
+    searchViewModel.loadMoreRecipes()
+    Shadows.shadowOf(Looper.getMainLooper()).idle()
+
+    assertTrue(searchViewModel.filteredRecipes.value.isEmpty())
+  }
+
+  @Test
+  fun searchProfiles_Offline() {
+    searchViewModel.searchProfiles(queryUser)
+    searchViewModel.loadMoreProfiles()
+    Shadows.shadowOf(Looper.getMainLooper()).idle()
+
+    assertTrue(searchViewModel.filteredProfiles.value.isEmpty())
+  }
 }

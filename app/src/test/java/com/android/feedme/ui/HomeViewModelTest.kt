@@ -196,4 +196,21 @@ class HomeViewModelTest {
     println(homeViewModel.savedRecipes.value)
     assertTrue(homeViewModel.savedRecipes.value.first().recipeId == recipeId)
   }
+
+  @Test
+  fun getRecipes_Offline() {
+    homeViewModel.fetchRecipe("lasagna1")
+    shadowOf(Looper.getMainLooper()).idle()
+
+    assertTrue(homeViewModel.recipes.value.isEmpty())
+  }
+
+  @Test
+  fun getRatedRecipes_Offline() {
+    homeViewModel.fetchRatedRecipes()
+    homeViewModel.loadMoreRecipes()
+    shadowOf(Looper.getMainLooper()).idle()
+
+    assertTrue(homeViewModel.recipes.value.isEmpty())
+  }
 }

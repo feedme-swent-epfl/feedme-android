@@ -101,10 +101,6 @@ class AuthViewModel : ViewModel() {
   /**
    * Creates a new profile and adds it to Firestore.
    *
-   * @param googleId The unique identifier for the Google user.
-   * @param name The display name of the user (nullable).
-   * @param email The email address of the user (nullable).
-   * @param photoUrl The URL of the user's profile photo (nullable).
    * @param onSuccess Callback to be invoked when the profile is successfully added.
    * @param onFailure Callback to be invoked when adding the profile fails with an exception.
    */

@@ -5,7 +5,6 @@ import android.net.ConnectivityManager
 import android.net.Network
 import android.net.NetworkCapabilities
 import android.os.Looper
-import android.widget.Toast
 import androidx.test.core.app.ApplicationProvider
 import com.android.feedme.model.data.Ingredient
 import com.android.feedme.model.data.IngredientMetaData
@@ -86,12 +85,6 @@ class RecipeRepositoryTest {
     // Mock the behavior of hasCapability to return true for internet capability
     `when`(mockNetworkCapabilities.hasCapability(NetworkCapabilities.NET_CAPABILITY_INTERNET))
         .thenReturn(true)
-    // Mock Toast to prevent actual Toast from showing in unit tests
-    mockStatic(Toast::class.java).use { mockedStatic ->
-      mockedStatic
-          .`when`<Any> { Toast.makeText(any(Context::class.java), anyString(), anyInt()) }
-          .thenReturn(mock(Toast::class.java))
-    }
   }
 
   @Test

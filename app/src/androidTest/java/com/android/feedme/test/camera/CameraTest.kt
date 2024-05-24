@@ -35,8 +35,8 @@ class CameraTest : TestCase() {
   @get:Rule
   val permissionRuleGallery: GrantPermissionRule =
       if (Build.VERSION.SDK_INT <= 32)
-          GrantPermissionRule.grant(android.Manifest.permission.READ_EXTERNAL_STORAGE)
-      else GrantPermissionRule.grant(android.Manifest.permission.READ_MEDIA_IMAGES)
+          GrantPermissionRule.grant(Manifest.permission.READ_EXTERNAL_STORAGE)
+      else GrantPermissionRule.grant(Manifest.permission.READ_MEDIA_IMAGES)
 
   private lateinit var cameraViewModel: CameraViewModel
 
@@ -66,7 +66,6 @@ class CameraTest : TestCase() {
   @Test
   fun cameraButtonIsClickable() {
     goToCameraScreen()
-
     ComposeScreen.onComposeScreen<CameraScreen>(composeTestRule) {
       photoButton {
         assertIsDisplayed()
@@ -79,10 +78,10 @@ class CameraTest : TestCase() {
   private fun goToCameraScreen() {
     val navActions = mockk<NavigationActions>()
     every { navActions.canGoBack() } returns true
-    every { navActions.navigateTo(Screen.FIND_RECIPE) } returns
-        composeTestRule.setContent {
-          CameraScreen(navActions, mockk<InputViewModel>(), cameraViewModel)
-        }
+    every { navActions.navigateTo(Screen.FIND_RECIPE) } returns Unit
+    composeTestRule.setContent {
+      CameraScreen(navActions, mockk<InputViewModel>(), cameraViewModel)
+    }
     composeTestRule.waitForIdle()
   }
 }

@@ -177,8 +177,9 @@ class CameraViewModel : ViewModel() {
       viewModelScope.launch {
         when (val photoState = _lastPhoto.value) {
           is PhotoState.NoPhoto -> {
-            _errorToDisplay.value = ERROR_NO_PHOTO
-            onAnalyzeDone()
+            //              case won't happen as the button is disabled when there is no photo
+            //              _errorToDisplay.value = ERROR_NO_PHOTO
+            //            onAnalyzeDone()
           }
           is PhotoState.Photo -> {
             if (photoState.bitmap != _lastAnalyzedPhoto.value) {
@@ -203,8 +204,9 @@ class CameraViewModel : ViewModel() {
       viewModelScope.launch {
         when (val photoState = _lastPhoto.value) {
           is PhotoState.NoPhoto -> {
-            _errorToDisplay.value = ERROR_NO_PHOTO
-            onAnalyzeDone()
+            //              case won't happen as the button is disabled when there is no photo
+            //              _errorToDisplay.value = ERROR_NO_PHOTO
+            //            onAnalyzeDone()
           }
           is PhotoState.Photo -> {
             val result = performBarCodeScanning(photoState.bitmap)

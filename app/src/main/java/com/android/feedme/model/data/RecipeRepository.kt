@@ -321,8 +321,6 @@ class RecipeRepository(private val db: FirebaseFirestore) {
             listOf()
           }
 
-      Log.d("RecipeRepository", "IngredientMetaData : $ingredientMetaDataList")
-
       // Safely process the tags
       val rawTagsList = map["tags"]
       val tags =
@@ -383,5 +381,134 @@ class RecipeRepository(private val db: FirebaseFirestore) {
       "NONE" -> MeasureUnit.NONE
       else -> MeasureUnit.EMPTY
     }
+  }
+
+  /**
+   * Fetches recipes that contain any of the given ingredient IDs and maps them to Recipe objects.
+   *
+   * @param ingredientIds The list of ingredient IDs to match against.
+   * @param onSuccess A callback function invoked with the list of fetched recipes.
+   * @param onFailure A callback function invoked on failure to fetch the recipes, with an
+   *   exception.
+   */
+  private fun fetchAndMapRecipes(
+      ingredientIds: List<String>,
+      onSuccess: (List<Recipe>) -> Unit,
+      onFailure: (Exception) -> Unit
+  ) {
+    if (ingredientIds.isEmpty()) {
+      onFailure(IllegalArgumentException())
+      return
+    }
+    db.collection(collectionPath)
+        .whereArrayContainsAny("ingredientIds", ingredientIds)
+        .get()
+        .addOnSuccessListener { querySnapshot ->
+          val allRecipes = mutableListOf<Recipe>()
+
+          val docs = querySnapshot.documents
+          docs.forEach { recipeMap ->
+            val data = recipeMap.data
+            if (data != null) {
+              mapToRecipe(
+                  data,
+                  { recipe ->
+                    if (recipe != null) {
+                      allRecipes.add(recipe)
+                    }
+                  },
+                  onFailure)
+            }
+          }
+
+          onSuccess(allRecipes)
+        }
+        .addOnFailureListener { exception -> onFailure(exception) }
+  }
+
+  /**
+   * Suggests recipes based on the given list of ingredient IDs and the user profile.
+   *
+   * @param ingredientIds The list of ingredient IDs to match against.
+   * @param profile The user profile to consider for preferences.
+   * @param onSuccess A callback function invoked with the ranked list of suggested recipes on
+   *   success.
+   * @param onFailure A callback function invoked on failure to fetch the recipes, with an
+   *   exception.
+   */
+  fun suggestRecipes(
+      ingredientIds: List<String>,
+      profile: Profile,
+      onSuccess: (List<Recipe>) -> Unit,
+      onFailure: (Exception) -> Unit
+  ) {
+    fetchAndMapRecipes(
+        ingredientIds,
+        { allRecipes ->
+          val rankedRecipes = rankRecipes(allRecipes, ingredientIds, profile)
+          onSuccess(rankedRecipes)
+        },
+        onFailure)
+  }
+
+  /**
+   * Suggests recipes based on the given list of ingredient IDs and the user profile in strict mode.
+   *
+   * @param ingredientIds The list of ingredient IDs to match exactly.
+   * @param profile The user profile to consider for preferences.
+   * @param onSuccess A callback function invoked with the ranked list of suggested recipes on
+   *   success.
+   * @param onFailure A callback function invoked on failure to fetch the recipes, with an
+   *   exception.
+   */
+  fun suggestRecipesStrict(
+      ingredientIds: List<String>,
+      profile: Profile,
+      onSuccess: (List<Recipe>) -> Unit,
+      onFailure: (Exception) -> Unit
+  ) {
+    fetchAndMapRecipes(
+        ingredientIds,
+        { allRecipes ->
+          val filteredRecipes =
+              allRecipes.filter { recipe ->
+                val recipeIngredientIds = recipe.ingredients.map { it.ingredient.id }
+                recipeIngredientIds.containsAll(ingredientIds) &&
+                    ingredientIds.containsAll(recipeIngredientIds)
+              }
+
+          val rankedRecipes = rankRecipes(filteredRecipes, ingredientIds, profile)
+          onSuccess(rankedRecipes)
+        },
+        onFailure)
+  }
+
+  /**
+   * Ranks recipes based on the number of matching ingredients, user preferences, and ratings.
+   *
+   * @param recipes The list of recipes to rank.
+   * @param ingredientIds The list of ingredient IDs to match against.
+   * @param profile The user profile to consider for preferences.
+   * @return A ranked list of recipes.
+   */
+  private fun rankRecipes(
+      recipes: List<Recipe>,
+      ingredientIds: List<String>,
+      profile: Profile
+  ): List<Recipe> {
+    return recipes.sortedWith(
+        compareByDescending { recipe ->
+          val matchingIngredientsCount =
+              recipe.ingredients.count { ingredientMetaData ->
+                ingredientIds.contains(ingredientMetaData.ingredient.id)
+              }
+
+          val userPreferencesScore = recipe.tags.count { tag -> profile.filter.contains(tag) }
+
+          val ratingScore = recipe.rating
+
+          // Combine the scores to form the final ranking score
+          matchingIngredientsCount + userPreferencesScore + ratingScore
+        })
   }
 }

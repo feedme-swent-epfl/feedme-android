@@ -20,9 +20,10 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.android.feedme.ml.analyzeTextForIngredients
 import com.android.feedme.ml.barcodeScan
+import com.android.feedme.ml.bestLabel
 import com.android.feedme.ml.extractProductInfoFromBarcode
-import com.android.feedme.ml.labelExtraction
 import com.android.feedme.ml.labelProcessing
+import com.android.feedme.ml.objectExtraction
 import com.android.feedme.ml.textExtraction
 import com.android.feedme.ml.textProcessing
 import com.android.feedme.model.data.Ingredient
@@ -43,6 +44,8 @@ class CameraViewModel : ViewModel() {
   val ERROR_BARCODE_PRODUCT_NAME = "Failed to extract product name from barcode, please try again."
   val ERROR_NO_TEXT = "Failed to identify text, please try again."
   val ERROR_INGREDIENT_IN_TEXT = "Failed to extract ingredients from text, please try again."
+  val ERROR_NO_LABEL = "Failed to found labels corresponding to this object, please try again."
+  val ERROR_NO_OBJECT = "Failed to extract object to classify from this photo, please try again."
 
   /** This sealed class is used to model the different states that a photo can be in. */
   sealed class PhotoState() {
@@ -179,19 +182,26 @@ class CameraViewModel : ViewModel() {
         }
       }
 
-    fun imageLabellingButtonPressed() =
-        viewModelScope.launch {
-            when(val photoState = _lastPhoto.value) {
-                is PhotoState.NoPhoto -> {
-                    _errorToDisplay.value = ERROR_NO_PHOTO
-                }
-                is PhotoState.Photo -> {
-                    labelExtraction(photoState.bitmap, {processedLabel ->
-                        _informationToDisplay.value = processedLabel
-                    })
-                }
+    /**
+     * This function is called when user clicks on object classification button. Then depending on the
+     * state of [_lastPhoto] it will call the [performObjectLabelling] function in an other thread to
+     * not block UI. Then it will update accordingly the value of [_informationToDisplay]. If no photo
+     * was taken before an error message is displayed.
+     */
+  fun imageLabellingButtonPressed() =
+      viewModelScope.launch {
+        when (val photoState = _lastPhoto.value) {
+          is PhotoState.NoPhoto -> {
+            _errorToDisplay.value = ERROR_NO_PHOTO
+          }
+          is PhotoState.Photo -> {
+            val result = performObjectLabelling(photoState.bitmap)
+            if (result != null) {
+              _informationToDisplay.value = "$result added to your ingredient list."
             }
+          }
         }
+      }
 
   /**
    * This function is called when user clicks on barcode scanning button. Then depending on the
@@ -213,6 +223,39 @@ class CameraViewModel : ViewModel() {
           }
         }
       }
+
+    /**
+     * Performs object labelling on the given bitmap.
+     *
+     * This function processes the given bitmap to detect objects and extracts labels from the detected objects.
+     * If the labelling is successful, it updates the ingredient list and returns the best label.
+     * If an error occurs or no labels are found, it updates the error message accordingly.
+     *
+     * @param bitmap The bitmap of the photo to label.
+     * @return A string representing the best labelling result, or null if labelling fails or no labels are found.
+     */
+  private fun performObjectLabelling(bitmap: Bitmap): String? {
+    val labelList = mutableMapOf<String, Float>()
+    var errorObjectOccured = false
+    objectExtraction(
+        bitmap = bitmap,
+        onSuccess = { detectedObjects -> labelList.putAll(labelProcessing(detectedObjects)) },
+        onFailure = {
+          _errorToDisplay.value = ERROR_NO_OBJECT
+          errorObjectOccured = true
+        })
+
+    if (labelList.isNotEmpty()) {
+      val label = bestLabel(labelList)
+      updateIngredientList(
+          IngredientMetaData(0.0, MeasureUnit.NONE, Ingredient(label, "NO_ID", false, false)))
+      return label
+    } else if (!errorObjectOccured) {
+      _errorToDisplay.value = ERROR_NO_LABEL
+      return null
+    }
+      return null
+  }
 
   /**
    * Performs [barcodeScan] and [extractProductNameFromBarcode] on the provided bitmap image. This

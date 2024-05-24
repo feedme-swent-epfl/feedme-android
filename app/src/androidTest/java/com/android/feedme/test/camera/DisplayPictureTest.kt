@@ -1,6 +1,7 @@
 package com.android.feedme.test.camera
 
 import android.Manifest
+import android.graphics.Bitmap
 import android.os.Build
 import androidx.compose.ui.test.assertIsDisplayed
 import androidx.compose.ui.test.junit4.createComposeRule
@@ -85,9 +86,24 @@ class DisplayPictureTest : TestCase() {
     val navActions = mockk<NavigationActions>()
     every { navActions.canGoBack() } returns true
     every { navActions.navigateTo(Screen.CAMERA) } returns Unit
+    cameraViewModel.onTakePhoto(createBlueBitmap())
     composeTestRule.setContent {
       DisplayPicture(navActions, mockk<InputViewModel>(), cameraViewModel)
     }
     composeTestRule.waitForIdle()
+  }
+
+  private fun createBlueBitmap(): Bitmap {
+    // Create a mutable bitmap with width 256 and height 256
+    val bitmap = Bitmap.createBitmap(256, 256, Bitmap.Config.ARGB_8888)
+
+    // Fill the bitmap with blue color
+    for (x in 0 until 256) {
+      for (y in 0 until 256) {
+        bitmap.setPixel(x, y, 0x0000FF)
+      }
+    }
+
+    return bitmap
   }
 }

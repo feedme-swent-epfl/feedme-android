@@ -97,7 +97,9 @@ class SettingsTest {
           .assertHasClickAction()
           .performClick()
 
-      verify(exactly = 1) { mockProfileViewModel.deleteCurrentUserProfile(any(), any()) }
+      verify(exactly = 1) {
+        mockProfileViewModel.deleteCurrentUserProfile(onSuccess = any(), onFailure = any())
+      }
     }
   }
 
@@ -124,7 +126,9 @@ class SettingsTest {
           .assertHasClickAction()
           .performClick()
 
-      verify(exactly = 1) { mockProfileViewModel.deleteCurrentUserProfile(any(), any()) }
+      verify(exactly = 1) {
+        mockProfileViewModel.deleteCurrentUserProfile(onSuccess = any(), onFailure = any())
+      }
     }
   }
 

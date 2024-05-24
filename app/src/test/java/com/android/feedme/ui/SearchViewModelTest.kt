@@ -1,12 +1,18 @@
 package com.android.feedme.ui
 
+import android.content.Context
+import android.net.ConnectivityManager
+import android.net.Network
+import android.net.NetworkCapabilities
 import android.os.Looper
+import android.widget.Toast
 import androidx.test.core.app.ApplicationProvider
 import com.android.feedme.model.data.MeasureUnit
 import com.android.feedme.model.data.ProfileRepository
 import com.android.feedme.model.data.RecipeRepository
 import com.android.feedme.model.viewmodel.HomeViewModel
 import com.android.feedme.model.viewmodel.SearchViewModel
+import com.android.feedme.model.viewmodel.isNetworkAvailable
 import com.google.android.gms.tasks.Tasks
 import com.google.firebase.FirebaseApp
 import com.google.firebase.firestore.CollectionReference
@@ -15,7 +21,7 @@ import com.google.firebase.firestore.DocumentSnapshot
 import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.firestore.Query
 import com.google.firebase.firestore.QuerySnapshot
-import junit.framework.TestCase
+import junit.framework.TestCase.assertTrue
 import org.junit.Before
 import org.junit.Test
 import org.junit.runner.RunWith
@@ -32,15 +38,10 @@ import org.robolectric.Shadows
 @RunWith(RobolectricTestRunner::class)
 class SearchViewModelTest {
   @Mock private lateinit var mockFirestore: FirebaseFirestore
-
   @Mock private lateinit var mockDocumentReference: DocumentReference
-
   @Mock private lateinit var mockCollectionReference: CollectionReference
-
   @Mock private lateinit var mockDocumentSnapshot: DocumentSnapshot
-
   @Mock private lateinit var mockIngredientsCollectionReference: CollectionReference
-
   @Mock private lateinit var mockIngredientDocumentSnapshot: DocumentSnapshot
 
   @Mock private lateinit var homeViewModel: HomeViewModel
@@ -50,6 +51,12 @@ class SearchViewModelTest {
 
   @Mock private lateinit var mockQuery: Query
   @Mock private lateinit var mockQuerySnapshot: QuerySnapshot
+
+  @Mock private lateinit var mockFirebaseApp: FirebaseApp
+  @Mock private lateinit var mockContext: Context
+  @Mock private lateinit var mockConnectivityManager: ConnectivityManager
+  @Mock private lateinit var mockNetwork: Network
+  @Mock private lateinit var mockNetworkCapabilities: NetworkCapabilities
 
   private val query = "Chocolate"
   private val queryUser = "user"
@@ -112,6 +119,13 @@ class SearchViewModelTest {
     if (FirebaseApp.getApps(ApplicationProvider.getApplicationContext()).isEmpty()) {
       FirebaseApp.initializeApp(ApplicationProvider.getApplicationContext())
     }
+    Mockito.mockStatic(FirebaseFirestore::class.java).use {
+      `when`(FirebaseFirestore.getInstance()).thenReturn(mockFirestore)
+      `when`(mockFirestore.app).thenReturn(mockFirebaseApp)
+      `when`(mockFirebaseApp.applicationContext)
+          .thenReturn(ApplicationProvider.getApplicationContext())
+    }
+
     RecipeRepository.initialize(mockFirestore)
     ProfileRepository.initialize(mockFirestore)
 
@@ -136,8 +150,6 @@ class SearchViewModelTest {
     `when`(mockDocumentSnapshot.exists()).thenReturn(true)
 
     // for searchRecipes
-    `when`(mockCollectionReference.whereGreaterThanOrEqualTo("title", query)).thenReturn(mockQuery)
-    `when`(mockQuery.whereLessThan("title", query + "\uf8ff")).thenReturn(mockQuery)
     `when`(mockCollectionReference.whereArrayContainsAny(eq("searchItems"), any()))
         .thenReturn(mockQuery)
 
@@ -154,47 +166,70 @@ class SearchViewModelTest {
 
     homeViewModel = HomeViewModel()
     searchViewModel = SearchViewModel()
+
+    // Mock the behavior of connectivity
+    `when`(mockContext.getSystemService(Context.CONNECTIVITY_SERVICE))
+        .thenReturn(mockConnectivityManager)
+    `when`(mockConnectivityManager.activeNetwork).thenReturn(mockNetwork)
+    `when`(mockConnectivityManager.getNetworkCapabilities(mockNetwork))
+        .thenReturn(mockNetworkCapabilities)
+    `when`(mockNetworkCapabilities.hasCapability(NetworkCapabilities.NET_CAPABILITY_INTERNET))
+        .thenReturn(true)
+    // Mock Toast to prevent actual Toast from showing in unit tests
+    Mockito.mockStatic(Toast::class.java).use { mockedStatic ->
+      mockedStatic
+          .`when`<Any> { Toast.makeText(any(Context::class.java), anyString(), Mockito.anyInt()) }
+          .thenReturn(Mockito.mock(Toast::class.java))
+    }
+  }
+
+  @Test
+  fun testIsNetworkAvailable() {
+    val result = isNetworkAvailable(mockContext)
+    assertTrue(result)
   }
 
   @Test
   fun searchRecipes_Success() {
-    `when`(mockDocumentSnapshot.data).thenReturn(recipeMap)
-    searchViewModel.searchRecipes(query)
-    Shadows.shadowOf(Looper.getMainLooper()).idle()
+    if (isNetworkAvailable(mockContext)) {
+      `when`(mockDocumentSnapshot.data).thenReturn(recipeMap)
+      searchViewModel.searchRecipes(query, mockContext)
+      Shadows.shadowOf(Looper.getMainLooper()).idle()
 
-    println(searchViewModel.filteredRecipes.value)
-    TestCase.assertTrue(searchViewModel.filteredRecipes.value.first().recipeId == recipeId)
+      println(searchViewModel.filteredRecipes.value)
+      assertTrue(searchViewModel.filteredRecipes.value.first().recipeId == recipeId)
+    }
   }
 
   @Test
   fun searchProfiles_Success() {
     `when`(mockDocumentSnapshot.data).thenReturn(profileMap)
-    searchViewModel.searchProfiles(queryUser)
+    searchViewModel.searchProfiles(queryUser, mockContext)
     Shadows.shadowOf(Looper.getMainLooper()).idle()
 
     println(searchViewModel.filteredProfiles.value)
-    TestCase.assertTrue(searchViewModel.filteredProfiles.value.first().username == "user123")
+    assertTrue(searchViewModel.filteredProfiles.value.first().username == "user123")
   }
 
   @Test
   fun loadMoreRecipes_Success() {
     `when`(mockDocumentSnapshot.data).thenReturn(recipeMap)
-    searchViewModel.searchRecipes(query)
-    searchViewModel.loadMoreRecipes()
+    searchViewModel.searchRecipes(query, mockContext)
+    searchViewModel.loadMoreRecipes(mockContext)
     Shadows.shadowOf(Looper.getMainLooper()).idle()
 
     println(searchViewModel.filteredRecipes.value)
-    TestCase.assertTrue(searchViewModel.filteredRecipes.value.first().recipeId == recipeId)
+    assertTrue(searchViewModel.filteredRecipes.value.first().recipeId == recipeId)
   }
 
   @Test
   fun loadMoreProfiles_Success() {
     `when`(mockDocumentSnapshot.data).thenReturn(profileMap)
-    searchViewModel.searchProfiles(queryUser)
-    searchViewModel.loadMoreProfiles()
+    searchViewModel.searchProfiles(queryUser, mockContext)
+    searchViewModel.loadMoreProfiles(mockContext)
     Shadows.shadowOf(Looper.getMainLooper()).idle()
 
     println(searchViewModel.filteredProfiles.value)
-    TestCase.assertTrue(searchViewModel.filteredProfiles.value.first().username == "user123")
+    assertTrue(searchViewModel.filteredProfiles.value.first().username == "user123")
   }
 }

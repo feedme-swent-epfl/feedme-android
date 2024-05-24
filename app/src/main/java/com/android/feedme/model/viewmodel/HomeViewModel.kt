@@ -1,5 +1,6 @@
 package com.android.feedme.model.viewmodel
 
+import android.content.Context
 import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
@@ -41,10 +42,12 @@ class HomeViewModel : ViewModel() {
    * A function that fetches the recipe during Login
    *
    * @param id: the unique ID of the recipe we want to fetch
+   * @param context: the context of the application
    */
-  fun fetchRecipe(id: String) {
-    val context = FirebaseFirestore.getInstance().app.applicationContext
-
+  fun fetchRecipe(
+      id: String,
+      context: Context = FirebaseFirestore.getInstance().app.applicationContext
+  ) {
     viewModelScope.launch {
       recipeRepository.getRecipe(
           id,
@@ -65,10 +68,12 @@ class HomeViewModel : ViewModel() {
    * A function that fetches the recipe during Login
    *
    * @param ids: the unique ID of the recipe we want to fetch
+   * @param context: the context of the application
    */
-  fun fetchSavedRecipes(ids: List<String>) {
-    val context = FirebaseFirestore.getInstance().app.applicationContext
-
+  fun fetchSavedRecipes(
+      ids: List<String>,
+      context: Context = FirebaseFirestore.getInstance().app.applicationContext
+  ) {
     viewModelScope.launch {
       val recipeList = mutableListOf<Recipe>()
       recipeRepository.getSavedRecipes(
@@ -85,10 +90,12 @@ class HomeViewModel : ViewModel() {
     }
   }
 
-  /** A function that fetches the recipes based on their ratings */
-  fun fetchRatedRecipes() {
-    val context = FirebaseFirestore.getInstance().app.applicationContext
-
+  /**
+   * A function that fetches the recipes based on their ratings
+   *
+   * @param context: the context of the application
+   */
+  fun fetchRatedRecipes(context: Context = FirebaseFirestore.getInstance().app.applicationContext) {
     viewModelScope.launch {
       recipeRepository.getRatedRecipes(
           context,
@@ -104,9 +111,13 @@ class HomeViewModel : ViewModel() {
     }
   }
 
-  /** A function that fetches more recipes */
-  fun loadMoreRecipes() {
-    fetchRatedRecipes()
+  /**
+   * A function that fetches more recipes
+   *
+   * @param context: the context of the application
+   */
+  fun loadMoreRecipes(context: Context = FirebaseFirestore.getInstance().app.applicationContext) {
+    fetchRatedRecipes(context)
   }
   /**
    * A function that forces recipes to be shown for testing purposes

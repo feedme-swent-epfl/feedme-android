@@ -183,7 +183,7 @@ fun SettingsPage(navigationActions: NavigationActions, profileViewModel: Profile
                       profileViewModel.fetchCurrentUserProfile()
                       coroutineScope.launch {
                         profileViewModel.deleteCurrentUserProfile(
-                            {
+                            onSuccess = {
                               Log.d("DeleteAccount", "Account deletion successful")
                               googleSignInClient.signOut().addOnCompleteListener {
                                 if (it.isSuccessful) {
@@ -195,7 +195,9 @@ fun SettingsPage(navigationActions: NavigationActions, profileViewModel: Profile
                                 }
                               }
                             },
-                            { e -> Log.e("DeleteAccount", "Account deletion failed", e) })
+                            onFailure = { e ->
+                              Log.e("DeleteAccount", "Account deletion failed", e)
+                            })
                       }
                     }) {
                       Text(text = "Confirm")

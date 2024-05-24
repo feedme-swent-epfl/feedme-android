@@ -62,6 +62,7 @@ import kotlinx.coroutines.launch
  * sign-in button and handles authentication flow using Firebase authentication.
  *
  * @param navigationActions : the nav actions given in the MainActivity
+ * @param authViewModel : the authentication view model
  */
 @Composable
 fun LoginScreen(navigationActions: NavigationActions, authViewModel: AuthViewModel) {
@@ -105,7 +106,15 @@ fun LoginScreen(navigationActions: NavigationActions, authViewModel: AuthViewMod
   LoginDisplay(context, navigationActions, googleSignInLauncher, googleSignInClient, authViewModel)
 }
 
-/** Composable function to display the login screen */
+/**
+ * Composable function to display the login screen
+ *
+ * @param context : the context of the app
+ * @param navigationActions : the navigation actions
+ * @param googleSignInLauncher : the launcher for Google Sign-In
+ * @param googleSignInClient : the Google Sign-In client
+ * @param authViewModel : the authentication view model
+ */
 @Composable
 fun LoginDisplay(
     context: Context,

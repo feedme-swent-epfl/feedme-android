@@ -119,8 +119,6 @@ class RecipeRepository(private val db: FirebaseFirestore) {
       onSuccess: (List<Recipe>, DocumentSnapshot?) -> Unit,
       onFailure: (Exception) -> Unit
   ) {
-    val db = FirebaseFirestore.getInstance()
-
     // Function to fetch data from cache
     fun fetchFromCache() {
       db.collection(collectionPath)
@@ -134,7 +132,10 @@ class RecipeRepository(private val db: FirebaseFirestore) {
       db.collection(collectionPath)
           .whereIn("recipeId", ids)
           .get()
-          .addOnSuccessListener { addSuccessListener(it, onSuccess, onFailure) }
+          .addOnSuccessListener {
+            println("getSavedRecipes: Success fetching online, falling back to cache")
+            addSuccessListener(it, onSuccess, onFailure)
+          }
           .addOnFailureListener { exception ->
             Log.e("getSavedRecipes", "Error fetching online, falling back to cache", exception)
             fetchFromCache()
@@ -237,7 +238,6 @@ class RecipeRepository(private val db: FirebaseFirestore) {
   ) {
     val recipes = mutableListOf<Recipe>()
     val docs = snapshot.documents
-
     docs.forEach { recipeMap ->
       // Extract the data from the document
       val data = recipeMap.data

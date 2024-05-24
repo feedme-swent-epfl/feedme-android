@@ -275,12 +275,6 @@ class ProfileRepository(private val db: FirebaseFirestore) {
       onSuccess: (Profile, Profile) -> Unit,
       onFailure: (Exception) -> Unit
   ) {
-    // Check if the user is offline
-    if (!isNetworkAvailable(context)) {
-      Log.d("followUser", "Offline mode: Cannot follow user")
-      return
-    }
-
     handleFirestoreTransaction(
         context,
         {
@@ -390,10 +384,9 @@ class ProfileRepository(private val db: FirebaseFirestore) {
       onFailure: (Exception) -> Unit
   ) {
     // Check if the user is offline
-    if (!isNetworkAvailable(context)) {
-      Log.d("handleFirestoreTransaction", "Offline mode: Cannot execute transaction")
-      return
-    }
+    // if (isNetworkAvailable(context)) {
+    // Log.d("handleFirestoreTransaction", "Offline mode: Cannot execute transaction")
+    // return
 
     db.runTransaction { transaction ->
           transactionBlock(transaction) // Execute the specific transaction logic
@@ -404,6 +397,7 @@ class ProfileRepository(private val db: FirebaseFirestore) {
         .addOnFailureListener { exception ->
           onFailure(exception) // Handle failure
         }
+    // }
   }
 
   private fun mapToProfile(
@@ -588,6 +582,12 @@ class ProfileRepository(private val db: FirebaseFirestore) {
       onSuccess: () -> Unit,
       onFailure: (Exception) -> Unit
   ) {
+    // Check if the user is offline
+    if (!isNetworkAvailable(context)) {
+      Log.d("modifyShowDialog", "Offline mode: Cannot modify showDialog")
+      return
+    }
+
     handleFirestoreTransaction(
         context,
         {

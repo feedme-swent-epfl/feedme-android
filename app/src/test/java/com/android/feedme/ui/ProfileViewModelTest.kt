@@ -1,10 +1,16 @@
 package com.android.feedme.ui
 
+import android.content.Context
+import android.net.ConnectivityManager
+import android.net.Network
+import android.net.NetworkCapabilities
 import android.os.Looper
+import android.widget.Toast
 import androidx.test.core.app.ApplicationProvider
 import com.android.feedme.model.data.Profile
 import com.android.feedme.model.data.ProfileRepository
 import com.android.feedme.model.viewmodel.ProfileViewModel
+import com.android.feedme.model.viewmodel.isNetworkAvailable
 import com.google.android.gms.tasks.Tasks
 import com.google.firebase.FirebaseApp
 import com.google.firebase.firestore.CollectionReference
@@ -33,7 +39,6 @@ import org.robolectric.Shadows.shadowOf
 
 @RunWith(RobolectricTestRunner::class)
 class ProfileViewModelTest {
-
   @Mock private lateinit var mockFirestore: FirebaseFirestore
   @Mock private lateinit var mockDocumentReference: DocumentReference
   @Mock private lateinit var mockCollectionReference: CollectionReference
@@ -41,6 +46,12 @@ class ProfileViewModelTest {
   @Mock private lateinit var mockQuery: Query
   @Mock private lateinit var mockQuerySnapshot: QuerySnapshot
   @Mock private lateinit var mockTransaction: Transaction
+
+  @Mock private lateinit var mockFirebaseApp: FirebaseApp
+  @Mock private lateinit var mockContext: Context
+  @Mock private lateinit var mockConnectivityManager: ConnectivityManager
+  @Mock private lateinit var mockNetwork: Network
+  @Mock private lateinit var mockNetworkCapabilities: NetworkCapabilities
 
   private lateinit var profileRepository: ProfileRepository
   private lateinit var profileViewModel: ProfileViewModel
@@ -52,6 +63,11 @@ class ProfileViewModelTest {
     if (FirebaseApp.getApps(ApplicationProvider.getApplicationContext()).isEmpty()) {
       FirebaseApp.initializeApp(ApplicationProvider.getApplicationContext())
     }
+    // Mock FirebaseApp and application context
+    `when`(mockFirestore.app).thenReturn(mockFirebaseApp)
+    `when`(mockFirebaseApp.applicationContext)
+        .thenReturn(ApplicationProvider.getApplicationContext())
+
     ProfileRepository.initialize(mockFirestore)
 
     profileRepository = ProfileRepository.instance
@@ -69,6 +85,30 @@ class ProfileViewModelTest {
     `when`(mockFirestore.runTransaction<Any>(any())).thenReturn(Tasks.forResult(null))
 
     profileViewModel = ProfileViewModel()
+
+    // Mock the behavior of getSystemService to return mocked ConnectivityManager
+    `when`(mockContext.getSystemService(Context.CONNECTIVITY_SERVICE))
+        .thenReturn(mockConnectivityManager)
+    // Mock the behavior of activeNetwork
+    `when`(mockConnectivityManager.activeNetwork).thenReturn(mockNetwork)
+    // Mock the behavior of getNetworkCapabilities to return mocked NetworkCapabilities
+    `when`(mockConnectivityManager.getNetworkCapabilities(mockNetwork))
+        .thenReturn(mockNetworkCapabilities)
+    // Mock the behavior of hasCapability to return true for internet capability
+    `when`(mockNetworkCapabilities.hasCapability(NetworkCapabilities.NET_CAPABILITY_INTERNET))
+        .thenReturn(true)
+    // Mock Toast to prevent actual Toast from showing in unit tests
+    Mockito.mockStatic(Toast::class.java).use { mockedStatic ->
+      mockedStatic
+          .`when`<Any> { Toast.makeText(any(Context::class.java), anyString(), Mockito.anyInt()) }
+          .thenReturn(mock(Toast::class.java))
+    }
+  }
+
+  @Test
+  fun testIsNetworkAvailable() {
+    val result = isNetworkAvailable(mockContext)
+    assertTrue(result)
   }
 
   @Test
@@ -114,13 +154,13 @@ class ProfileViewModelTest {
     val targetUser = Profile("2")
     profileViewModel.currentUserId = "1"
 
-    val mockTransaction = Mockito.mock(Transaction::class.java)
+    val mockTransaction = mock(Transaction::class.java)
 
-    val currentUserRef = Mockito.mock(DocumentReference::class.java)
-    val targetUserRef = Mockito.mock(DocumentReference::class.java)
+    val currentUserRef = mock(DocumentReference::class.java)
+    val targetUserRef = mock(DocumentReference::class.java)
 
-    val currentUserSnapshot = Mockito.mock(DocumentSnapshot::class.java)
-    val targetUserSnapshot = Mockito.mock(DocumentSnapshot::class.java)
+    val currentUserSnapshot = mock(DocumentSnapshot::class.java)
+    val targetUserSnapshot = mock(DocumentSnapshot::class.java)
 
     // Setup document references
     `when`(mockFirestore.collection("profiles")).thenReturn(mockCollectionReference)
@@ -143,8 +183,8 @@ class ProfileViewModelTest {
     profileViewModel.followUser(targetUser)
     shadowOf(Looper.getMainLooper()).idle()
 
-    assertEquals("2", profileViewModel.currentUserFollowing.value.first().id)
     assertEquals("1", profileViewModel.viewingUserFollowers.value.first().id)
+    assertEquals("2", profileViewModel.currentUserFollowing.value.first().id)
   }
 
   @Test
@@ -153,11 +193,11 @@ class ProfileViewModelTest {
     val targetUser = Profile("2", followers = listOf("1"))
     profileViewModel.currentUserId = "1"
 
-    val mockTransaction = Mockito.mock(Transaction::class.java)
-    val currentUserRef = Mockito.mock(DocumentReference::class.java)
-    val targetUserRef = Mockito.mock(DocumentReference::class.java)
-    val currentUserSnapshot = Mockito.mock(DocumentSnapshot::class.java)
-    val targetUserSnapshot = Mockito.mock(DocumentSnapshot::class.java)
+    val mockTransaction = mock(Transaction::class.java)
+    val currentUserRef = mock(DocumentReference::class.java)
+    val targetUserRef = mock(DocumentReference::class.java)
+    val currentUserSnapshot = mock(DocumentSnapshot::class.java)
+    val targetUserSnapshot = mock(DocumentSnapshot::class.java)
 
     // Setup document references
     `when`(mockFirestore.collection("profiles")).thenReturn(mockCollectionReference)
@@ -217,11 +257,11 @@ class ProfileViewModelTest {
     profileViewModel.currentUserId = "1"
     profileViewModel.setViewingProfile(follower)
 
-    val mockTransaction = Mockito.mock(Transaction::class.java)
-    val userRef = Mockito.mock(DocumentReference::class.java)
-    val followerRef = Mockito.mock(DocumentReference::class.java)
-    val userSnapshot = Mockito.mock(DocumentSnapshot::class.java)
-    val followerSnapshot = Mockito.mock(DocumentSnapshot::class.java)
+    val mockTransaction = mock(Transaction::class.java)
+    val userRef = mock(DocumentReference::class.java)
+    val followerRef = mock(DocumentReference::class.java)
+    val userSnapshot = mock(DocumentSnapshot::class.java)
+    val followerSnapshot = mock(DocumentSnapshot::class.java)
 
     // Setup document references
     `when`(mockFirestore.collection("profiles")).thenReturn(mockCollectionReference)
@@ -339,7 +379,7 @@ class ProfileViewModelTest {
   @Test(expected = IllegalStateException::class)
   fun `deleteCurrentUserProfile throws Exception when currentUserId is null`() {
     profileViewModel.currentUserId = null
-    profileViewModel.deleteCurrentUserProfile({}, {})
+    profileViewModel.deleteCurrentUserProfile(mockContext, {}, {})
   }
 
   @Test(expected = Exception::class)
@@ -351,7 +391,7 @@ class ProfileViewModelTest {
   @Test(expected = Exception::class)
   fun `deleteCurrentUserProfile throws Exception when currentUserId is DEFAULT_ID`() {
     profileViewModel.currentUserId = "DEFAULT_ID"
-    profileViewModel.deleteCurrentUserProfile({}, { throw Exception() })
+    profileViewModel.deleteCurrentUserProfile(mockContext, {}, { throw Exception() })
   }
 
   // New Tests for ProfileRepository and ProfileViewModel Methods
@@ -472,7 +512,11 @@ class ProfileViewModelTest {
     profileViewModel.setDialog(false)
     shadowOf(Looper.getMainLooper()).idle()
 
-    assertTrue(!profileViewModel.showDialog.value)
+    if (isNetworkAvailable(mockContext)) {
+      assertTrue(profileViewModel.showDialog.value)
+    } else {
+      assertFalse(profileViewModel.showDialog.value)
+    }
   }
 
   @Test

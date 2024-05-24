@@ -1,5 +1,6 @@
 package com.android.feedme.model.viewmodel
 
+import android.content.Context
 import android.net.Uri
 import android.util.Log
 import androidx.lifecycle.LiveData
@@ -163,15 +164,19 @@ class ProfileViewModel : ViewModel() {
    * This method deletes the profile of the current user from the database. It then resets the
    * current user's profile state to null.
    *
+   * @param context The context of the application.
    * @param onSuccess A callback function invoked on successful deletion of the profile.
    * @param onFailure A callback function invoked on failure to delete the profile, with an
    *   exception.
    */
-  fun deleteCurrentUserProfile(onSuccess: () -> Unit, onFailure: (Exception) -> Unit) {
+  fun deleteCurrentUserProfile(
+      context: Context = FirebaseFirestore.getInstance().app.applicationContext,
+      onSuccess: () -> Unit,
+      onFailure: (Exception) -> Unit
+  ) {
     currentUserId ?: throw IllegalStateException("Current user ID is null, and should never be")
     val delete = {
       if (currentUserFollowers.value.isEmpty() && _currentUserFollowing.value.isEmpty()) {
-        val context = FirebaseFirestore.getInstance().app.applicationContext
 
         repository.deleteProfile(currentUserId!!, context, onSuccess, onFailure)
       }

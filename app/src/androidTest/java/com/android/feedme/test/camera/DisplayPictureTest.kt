@@ -16,6 +16,7 @@ import com.android.feedme.screen.DisplayPictureScreen
 import com.android.feedme.ui.camera.CameraScreen
 import com.android.feedme.ui.camera.DisplayPicture
 import com.android.feedme.ui.navigation.NavigationActions
+import com.android.feedme.ui.navigation.Screen
 import io.github.kakaocup.compose.node.element.ComposeScreen
 import io.mockk.every
 import io.mockk.mockk
@@ -95,7 +96,8 @@ class DisplayPictureTest : TestCase() {
   private fun gotoDisplayPicture() {
     val navActions = mockk<NavigationActions>()
     every { navActions.canGoBack() } returns true
-    cameraViewModel.onTakePhoto(createBlueBitmap())
+    every { navActions.navigateTo(Screen.CAMERA) } returns
+        cameraViewModel.onTakePhoto(createBlueBitmap())
     composeTestRule.setContent {
       DisplayPicture(navActions, mockk<InputViewModel>(), cameraViewModel)
     }

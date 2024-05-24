@@ -13,6 +13,7 @@ import com.android.feedme.model.viewmodel.InputViewModel
 import com.android.feedme.screen.CameraScreen
 import com.android.feedme.ui.camera.CameraScreen
 import com.android.feedme.ui.navigation.NavigationActions
+import com.android.feedme.ui.navigation.Screen
 import com.kaspersky.kaspresso.testcases.api.testcase.TestCase
 import io.github.kakaocup.compose.node.element.ComposeScreen
 import io.mockk.every
@@ -78,9 +79,10 @@ class CameraTest : TestCase() {
   private fun goToCameraScreen() {
     val navActions = mockk<NavigationActions>()
     every { navActions.canGoBack() } returns true
-    composeTestRule.setContent {
-      CameraScreen(navActions, mockk<InputViewModel>(), cameraViewModel)
-    }
+    every { navActions.navigateTo(Screen.FIND_RECIPE) } returns
+        composeTestRule.setContent {
+          CameraScreen(navActions, mockk<InputViewModel>(), cameraViewModel)
+        }
     composeTestRule.waitForIdle()
   }
 }

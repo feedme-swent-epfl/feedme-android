@@ -7,6 +7,7 @@ import com.android.feedme.model.data.ProfileRepository
 import com.android.feedme.model.data.Recipe
 import com.android.feedme.model.data.RecipeRepository
 import com.google.firebase.firestore.DocumentSnapshot
+import com.google.firebase.firestore.FirebaseFirestore
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.launch
@@ -37,10 +38,13 @@ class SearchViewModel : ViewModel() {
    * @param query: the query to search for in the recipes
    */
   fun searchRecipes(query: String) {
+    val context = FirebaseFirestore.getInstance().app.applicationContext
     this.query = query
+
     viewModelScope.launch {
       recipeRepository.getFilteredRecipes(
           query,
+          context,
           lastRecipe,
           onSuccess = { filteredRecipes, lastRec ->
             lastRecipe = lastRec
@@ -63,10 +67,13 @@ class SearchViewModel : ViewModel() {
    * @param query: the query to search for in the profiles
    */
   fun searchProfiles(query: String) {
+    val context = FirebaseFirestore.getInstance().app.applicationContext
     this.query = query
+
     viewModelScope.launch {
       profileRepository.getFilteredProfiles(
           query,
+          context,
           lastProfile,
           onSuccess = { filteredProfiles, lastProf ->
             lastProfile = lastProf

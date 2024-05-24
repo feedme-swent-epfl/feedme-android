@@ -8,6 +8,7 @@ import com.android.feedme.model.data.ProfileRepository
 import com.android.feedme.model.data.Recipe
 import com.android.feedme.model.data.RecipeRepository
 import com.android.feedme.model.data.Step
+import com.google.firebase.firestore.FirebaseFirestore
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
@@ -87,9 +88,12 @@ class RecipeViewModel : ViewModel() {
   fun fetchProfile(id: String) {
     if (id.isBlank()) return
 
+    val context = FirebaseFirestore.getInstance().app.applicationContext
+
     viewModelScope.launch {
       profileRepository.getProfile(
           id,
+          context,
           onSuccess = { profile ->
             profile?.let {
               _profiles.value = _profiles.value.toMutableMap().apply { this[id] = it }
@@ -108,9 +112,12 @@ class RecipeViewModel : ViewModel() {
    * @param recipe: the recipe to set in the database
    */
   fun setRecipe(recipe: Recipe) {
+    val context = FirebaseFirestore.getInstance().app.applicationContext
+
     viewModelScope.launch {
       recipeRepository.addRecipe(
           recipe,
+          context,
           onSuccess = { _recipe.value = recipe },
           onFailure = {
             // Handle failure

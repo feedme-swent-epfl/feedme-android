@@ -1,6 +1,10 @@
 package com.android.feedme.model.viewmodel
 
+import android.content.Context
+import android.net.ConnectivityManager
+import android.net.NetworkCapabilities
 import android.util.Log
+import android.widget.Toast
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.android.feedme.model.data.Profile
@@ -77,9 +81,12 @@ class AuthViewModel : ViewModel() {
       onDoesntExist: () -> Unit,
       onFailure: (Exception) -> Unit
   ) {
+    val context = FirebaseFirestore.getInstance().app.applicationContext
+
     viewModelScope.launch {
       ProfileRepository.instance.getProfile(
           googleId,
+          context,
           onSuccess = { existingProfile ->
             if (existingProfile != null) {
               onSuccess()
@@ -102,6 +109,8 @@ class AuthViewModel : ViewModel() {
    * @param onFailure Callback to be invoked when adding the profile fails with an exception.
    */
   fun makeNewProfile(onSuccess: () -> Unit = {}, onFailure: (Exception) -> Unit = {}) {
+    val context = FirebaseFirestore.getInstance().app.applicationContext
+
     FirebaseAuth.getInstance().currentUser?.let { firebaseUser ->
       val googleId = firebaseUser.uid
       val name = firebaseUser.displayName.orEmpty()
@@ -125,7 +134,7 @@ class AuthViewModel : ViewModel() {
               commentList = listOf())
 
       // Add the newly created profile to the Firestore database.
-      ProfileRepository.instance.addProfile(newProfile, onSuccess, onFailure)
+      ProfileRepository.instance.addProfile(newProfile, context, onSuccess, onFailure)
       onSuccess()
     }
   }
@@ -154,4 +163,26 @@ class AuthViewModel : ViewModel() {
       Log.e("LoginScreen", "No user is signed in")
     }
   }
+}
+
+/**
+ * Checks if the device is connected to the internet.
+ *
+ * @param context The context of the application.
+ */
+fun isNetworkAvailable(context: Context): Boolean {
+  val connectivityManager =
+      context.getSystemService(Context.CONNECTIVITY_SERVICE) as ConnectivityManager
+  val activeNetwork = connectivityManager.activeNetwork
+  val networkCapabilities = connectivityManager.getNetworkCapabilities(activeNetwork)
+
+  val condition =
+      networkCapabilities != null &&
+          networkCapabilities.hasCapability(NetworkCapabilities.NET_CAPABILITY_INTERNET)
+  if (!condition) {
+    Toast.makeText(
+            context, "You are offline. Some features may not be available.", Toast.LENGTH_LONG)
+        .show()
+  }
+  return condition
 }

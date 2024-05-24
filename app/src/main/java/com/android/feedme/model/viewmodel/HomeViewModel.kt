@@ -7,6 +7,7 @@ import com.android.feedme.model.data.Recipe
 import com.android.feedme.model.data.RecipeRepository
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.DocumentSnapshot
+import com.google.firebase.firestore.FirebaseFirestore
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.launch
@@ -42,10 +43,12 @@ class HomeViewModel : ViewModel() {
    * @param id: the unique ID of the recipe we want to fetch
    */
   fun fetchRecipe(id: String) {
+    val context = FirebaseFirestore.getInstance().app.applicationContext
 
     viewModelScope.launch {
       recipeRepository.getRecipe(
           id,
+          context,
           onSuccess = { recipe ->
             if (recipe != null) {
               _recipes.value += recipe
@@ -64,9 +67,12 @@ class HomeViewModel : ViewModel() {
    * @param ids: the unique ID of the recipe we want to fetch
    */
   fun fetchSavedRecipes(ids: List<String>) {
+    val context = FirebaseFirestore.getInstance().app.applicationContext
+
     viewModelScope.launch {
       val recipeList = mutableListOf<Recipe>()
       recipeRepository.getSavedRecipes(
+          context,
           ids,
           onSuccess = { recipe, _ ->
             recipeList += recipe
@@ -81,8 +87,11 @@ class HomeViewModel : ViewModel() {
 
   /** A function that fetches the recipes based on their ratings */
   fun fetchRatedRecipes() {
+    val context = FirebaseFirestore.getInstance().app.applicationContext
+
     viewModelScope.launch {
       recipeRepository.getRatedRecipes(
+          context,
           lastRecipe,
           onSuccess = { recipes, lastRec ->
             lastRecipe = lastRec

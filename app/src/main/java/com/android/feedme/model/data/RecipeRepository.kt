@@ -1,10 +1,13 @@
 package com.android.feedme.model.data
 
+import android.content.Context
 import android.util.Log
+import com.android.feedme.model.viewmodel.isNetworkAvailable
 import com.google.firebase.firestore.DocumentSnapshot
 import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.firestore.Query
 import com.google.firebase.firestore.QuerySnapshot
+import com.google.firebase.firestore.Source
 import java.util.Locale
 
 /**
@@ -38,10 +41,22 @@ class RecipeRepository(private val db: FirebaseFirestore) {
    * with their IDs, and then stores it in Firestore under the recipes collection.
    *
    * @param recipe The Recipe object to be added to Firestore.
+   * @param context The context of the calling activity.
    * @param onSuccess A callback invoked upon successful addition of the recipe.
    * @param onFailure A callback invoked upon failure to add the recipe, with an exception.
    */
-  fun addRecipe(recipe: Recipe, onSuccess: () -> Unit, onFailure: (Exception) -> Unit) {
+  fun addRecipe(
+      recipe: Recipe,
+      context: Context,
+      onSuccess: () -> Unit,
+      onFailure: (Exception) -> Unit
+  ) {
+    // Check if the user is offline
+    if (!isNetworkAvailable(context)) {
+      Log.d("addRecipe", "Offline mode: Cannot add recipe")
+      return
+    }
+
     // Convert Recipe to a map, replacing Ingredient objects with their IDs
     val recipeMap = recipeToMap(recipe)
     val newDocRef = db.collection(collectionPath).document()
@@ -60,10 +75,22 @@ class RecipeRepository(private val db: FirebaseFirestore) {
    * onFailure is called with an exception.
    *
    * @param recipeId The ID of the recipe to retrieve.
+   * @param context The context of the calling activity.
    * @param onSuccess A callback invoked with the retrieved Recipe object upon success.
    * @param onFailure A callback invoked upon failure to retrieve the recipe, with an exception.
    */
-  fun getRecipe(recipeId: String, onSuccess: (Recipe?) -> Unit, onFailure: (Exception) -> Unit) {
+  fun getRecipe(
+      recipeId: String,
+      context: Context,
+      onSuccess: (Recipe?) -> Unit,
+      onFailure: (Exception) -> Unit
+  ) {
+    // Check if the user is offline
+    if (!isNetworkAvailable(context)) {
+      Log.d("getRecipe", "Offline mode: Cannot fetch recipe")
+      return
+    }
+
     db.collection(collectionPath)
         .document(recipeId)
         .get()
@@ -80,28 +107,48 @@ class RecipeRepository(private val db: FirebaseFirestore) {
   /**
    * Fetches the recipes saved by the user from Firestore. The recipes are fetched by their IDs.
    *
+   * @param context The context of the calling activity.
    * @param ids The list of recipe IDs to fetch.
    * @param onSuccess A callback function invoked with the list of recipes on success.
    * @param onFailure A callback function invoked on failure to fetch the recipes, with an
    *   exception.
    */
   fun getSavedRecipes(
+      context: Context,
       ids: List<String>,
       onSuccess: (List<Recipe>, DocumentSnapshot?) -> Unit,
       onFailure: (Exception) -> Unit
   ) {
-    // Fetch the recipes with the given IDs
-    db.collection(collectionPath)
-        .whereIn("recipeId", ids)
-        .get()
-        .addOnSuccessListener { addSuccessListener(it, onSuccess, onFailure) }
-        .addOnFailureListener { exception -> onFailure(exception) }
+    val db = FirebaseFirestore.getInstance()
+
+    // Function to fetch data from cache
+    fun fetchFromCache() {
+      db.collection(collectionPath)
+          .whereIn("recipeId", ids)
+          .get(Source.CACHE)
+          .addOnSuccessListener { addSuccessListener(it, onSuccess, onFailure) }
+          .addOnFailureListener { exception -> onFailure(exception) }
+    }
+
+    if (isNetworkAvailable(context)) {
+      db.collection(collectionPath)
+          .whereIn("recipeId", ids)
+          .get()
+          .addOnSuccessListener { addSuccessListener(it, onSuccess, onFailure) }
+          .addOnFailureListener { exception ->
+            Log.e("getSavedRecipes", "Error fetching online, falling back to cache", exception)
+            fetchFromCache()
+          }
+    } else {
+      fetchFromCache()
+    }
   }
 
   /**
    * Fetches the top rated recipes from Firestore. The recipes are ordered by their rating in
    * descending order.
    *
+   * @param context The context of the calling activity.
    * @param lastRecipe The last recipe fetched in the previous query. If null, fetches the first
    *   page of recipes.
    * @param onSuccess A callback function invoked with the list of recipes on success.
@@ -109,10 +156,17 @@ class RecipeRepository(private val db: FirebaseFirestore) {
    *   exception.
    */
   fun getRatedRecipes(
+      context: Context,
       lastRecipe: DocumentSnapshot?,
       onSuccess: (List<Recipe>, DocumentSnapshot?) -> Unit,
       onFailure: (Exception) -> Unit
   ) {
+    // Check if the user is offline
+    if (!isNetworkAvailable(context)) {
+      Log.d("getRatedRecipes", "Offline mode: Cannot fetch rated recipes")
+      return
+    }
+
     // Create a query to fetch the top rated recipes
     var queryRef =
         db.collection(collectionPath).orderBy("rating", Query.Direction.DESCENDING).limit(6)
@@ -132,6 +186,7 @@ class RecipeRepository(private val db: FirebaseFirestore) {
    * Fetches all the recipes that contain the given query in their title.
    *
    * @param query The query string to search for in the recipe titles.
+   * @param context The context of the calling activity.
    * @param lastRecipe The last recipe fetched in the previous query. If null, fetches the first
    *   page of recipes.
    * @param onSuccess A callback function invoked with the list of recipes on success.
@@ -140,10 +195,17 @@ class RecipeRepository(private val db: FirebaseFirestore) {
    */
   fun getFilteredRecipes(
       query: String,
+      context: Context,
       lastRecipe: DocumentSnapshot?,
       onSuccess: (List<Recipe>, DocumentSnapshot?) -> Unit,
       onFailure: (Exception) -> Unit
   ) {
+    // Check if the user is offline
+    if (!isNetworkAvailable(context)) {
+      Log.d("getFilteredRecipes", "Offline mode: Cannot fetch filtered recipes")
+      return
+    }
+
     // Create Query for recipes that contain the input query in their title
     var queryRef =
         db.collection(collectionPath)

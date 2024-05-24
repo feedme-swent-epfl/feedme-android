@@ -9,6 +9,7 @@ import androidx.lifecycle.viewModelScope
 import com.android.feedme.model.data.Profile
 import com.android.feedme.model.data.ProfileRepository
 import com.google.firebase.auth.FirebaseAuth
+import com.google.firebase.firestore.FirebaseFirestore
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.launch
@@ -85,10 +86,12 @@ class ProfileViewModel : ViewModel() {
       _viewingUserProfile.value = null
       return
     }
+    val context = FirebaseFirestore.getInstance().app.applicationContext
 
     viewModelScope.launch {
       repository.getProfile(
           id,
+          context,
           onSuccess = { profile ->
             _viewingUserProfile.value = profile
             viewingUserId = id
@@ -106,10 +109,13 @@ class ProfileViewModel : ViewModel() {
 
   /** A function that fetches the profile of the current user */
   fun fetchCurrentUserProfile() {
+    val context = FirebaseFirestore.getInstance().app.applicationContext
+
     currentUserId?.let { userId ->
       viewModelScope.launch {
         repository.getProfile(
             userId,
+            context,
             onSuccess = { profile ->
               _currentUserProfile.value = profile
               if (profile != null) {
@@ -136,9 +142,12 @@ class ProfileViewModel : ViewModel() {
    * @param isCurrent: a boolean to determine if the profile is the current user's profile
    */
   fun setProfile(profile: Profile, isCurrent: Boolean = true) {
+    val context = FirebaseFirestore.getInstance().app.applicationContext
+
     viewModelScope.launch {
       repository.addProfile(
           profile,
+          context,
           onSuccess = {
             if (isCurrent) {
               updateCurrentUserProfile(profile)
@@ -162,7 +171,9 @@ class ProfileViewModel : ViewModel() {
     currentUserId ?: throw IllegalStateException("Current user ID is null, and should never be")
     val delete = {
       if (currentUserFollowers.value.isEmpty() && _currentUserFollowing.value.isEmpty()) {
-        repository.deleteProfile(currentUserId!!, onSuccess, onFailure)
+        val context = FirebaseFirestore.getInstance().app.applicationContext
+
+        repository.deleteProfile(currentUserId!!, context, onSuccess, onFailure)
       }
     }
     delete.invoke()
@@ -185,9 +196,12 @@ class ProfileViewModel : ViewModel() {
     val currentIds = fetchProfile.value.map { it.id }.toSet()
     if (currentIds != ids.toSet() && ids.isNotEmpty()) {
       Log.d("ProfileViewModel", "Fetching profiles: $ids")
+      val context = FirebaseFirestore.getInstance().app.applicationContext
+
       viewModelScope.launch {
         repository.getProfiles(
             ids,
+            context,
             onSuccess = { profiles ->
               // Avoid unnecessary updates
               if (fetchProfile.value != profiles) {
@@ -276,10 +290,13 @@ class ProfileViewModel : ViewModel() {
     if (currentUserId == null) {
       return
     }
+    val context = FirebaseFirestore.getInstance().app.applicationContext
+
     viewModelScope.launch {
       repository.followUser(
           currentUserId!!,
           targetUser.id,
+          context,
           onSuccess = { curr, target ->
             Log.d("ProfileViewModel", "Successfully started following the user")
             _currentUserProfile.value = curr
@@ -332,10 +349,13 @@ class ProfileViewModel : ViewModel() {
     if (currentUserId == null) {
       return
     }
+    val context = FirebaseFirestore.getInstance().app.applicationContext
+
     viewModelScope.launch {
       repository.unfollowUser(
           currentUserId!!,
           targetUser.id,
+          context,
           onSuccess = { curr, target ->
             Log.d("ProfileViewModel", "Successfully unfollowed the user")
             _currentUserProfile.value = curr
@@ -388,10 +408,13 @@ class ProfileViewModel : ViewModel() {
     if (currentUserId == null) {
       return
     }
+    val context = FirebaseFirestore.getInstance().app.applicationContext
+
     viewModelScope.launch {
       repository.unfollowUser(
           follower.id,
           currentUserId!!,
+          context,
           onSuccess = { target, curr ->
             Log.d("ProfileViewModel", "Successfully removed follower and following")
             _currentUserProfile.value = curr
@@ -434,10 +457,13 @@ class ProfileViewModel : ViewModel() {
    * @param picture The URI of the new profile picture.
    */
   fun updateProfilePicture(profileViewModel: ProfileViewModel, picture: Uri) {
+    val context = FirebaseFirestore.getInstance().app.applicationContext
+
     repository.uploadProfilePicture(
         profileViewModel = profileViewModel,
-        onFailure = { throw error("Can't upload profile picture to the database") },
-        uri = picture)
+        uri = picture,
+        context,
+        onFailure = { throw error("Can't upload profile picture to the database") })
   }
 
   /**
@@ -449,9 +475,12 @@ class ProfileViewModel : ViewModel() {
     if (currentUserId == null) {
       return
     }
+    val context = FirebaseFirestore.getInstance().app.applicationContext
+
     repository.addSavedRecipe(
         currentUserId!!,
         recipe,
+        context,
         { _currentUserSavedRecipes.value += recipe },
         { throw error("Can't add recipe to the database") })
   }
@@ -465,9 +494,12 @@ class ProfileViewModel : ViewModel() {
     if (currentUserId == null) {
       return
     }
+    val context = FirebaseFirestore.getInstance().app.applicationContext
+
     repository.removeSavedRecipe(
         currentUserId!!,
         recipe,
+        context,
         { _currentUserSavedRecipes.value = _currentUserSavedRecipes.value.filter { it != recipe } },
         { throw error("Can't remove recipe from the database") })
   }
@@ -482,9 +514,12 @@ class ProfileViewModel : ViewModel() {
     if (currentUserId == null) {
       return
     }
+    val context = FirebaseFirestore.getInstance().app.applicationContext
+
     repository.savedRecipeExists(
         currentUserId!!,
         recipe,
+        context,
         { exists -> onResult(exists) },
         { error ->
           onResult(false)
@@ -510,9 +545,12 @@ class ProfileViewModel : ViewModel() {
     if (currentUserId == null) {
       return
     }
+    val context = FirebaseFirestore.getInstance().app.applicationContext
+
     repository.modifyShowDialog(
         currentUserId!!,
         showDialog,
+        context,
         { _showDialog.value = showDialog },
         { throw error("Can't set dialog in the database") })
   }

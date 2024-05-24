@@ -132,5 +132,8 @@ fun DisplayPicture(
 fun Display(bitmaps: List<Bitmap>, modifier: Modifier = Modifier) {
   if (bitmaps.isEmpty()) return
   val bitmap = bitmaps.last()
-  Image(bitmap.asImageBitmap(), contentDescription = "Photo", modifier = modifier)
+  Image(
+      bitmap.asImageBitmap(),
+      contentDescription = "Photo",
+      modifier = modifier.testTag("ImageToAnalyze"))
 }

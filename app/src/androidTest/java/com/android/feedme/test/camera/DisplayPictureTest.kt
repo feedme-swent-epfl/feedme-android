@@ -1,9 +1,12 @@
 package com.android.feedme.test.camera
 
 import android.Manifest
+import android.graphics.Bitmap
 import android.os.Build
 import androidx.compose.ui.test.assertIsDisplayed
 import androidx.compose.ui.test.junit4.createComposeRule
+import androidx.compose.ui.test.onNodeWithTag
+import androidx.compose.ui.test.performClick
 import androidx.test.ext.junit.runners.AndroidJUnit4
 import androidx.test.rule.GrantPermissionRule
 import com.android.feedme.model.viewmodel.CameraViewModel
@@ -57,6 +60,26 @@ class DisplayPictureTest : TestCase() {
         assertIsDisplayed()
         assertHasClickAction()
       }
+      composeTestRule.onNodeWithTag("LeftIconButton").performClick()
+    }
+  }
+
+  @Test
+  fun photoCorrectlyDisplayed() {
+    gotoDisplayPicture()
+
+    ComposeScreen.onComposeScreen<DisplayPictureScreen>(composeTestRule) {
+      composeTestRule.onNodeWithTag("ImageToAnalyze").performClick()
+
+      mlBarcodeButton {
+        assertIsDisplayed()
+        assertHasClickAction()
+      }
+      mlTextButton {
+        assertIsDisplayed()
+        assertHasClickAction()
+      }
+      composeTestRule.onNodeWithTag("LeftIconButton").performClick()
     }
   }
 
@@ -72,10 +95,25 @@ class DisplayPictureTest : TestCase() {
   private fun gotoDisplayPicture() {
     val navActions = mockk<NavigationActions>()
     every { navActions.canGoBack() } returns true
+    cameraViewModel.onTakePhoto(createBlueBitmap())
     composeTestRule.setContent {
       DisplayPicture(navActions, mockk<InputViewModel>(), cameraViewModel)
     }
     composeTestRule.waitForIdle()
+  }
+
+  private fun createBlueBitmap(): Bitmap {
+    // Create a mutable bitmap with width 256 and height 256
+    val bitmap = Bitmap.createBitmap(256, 256, Bitmap.Config.ARGB_8888)
+
+    // Fill the bitmap with blue color
+    for (x in 0 until 256) {
+      for (y in 0 until 256) {
+        bitmap.setPixel(x, y, 0x0000FF)
+      }
+    }
+
+    return bitmap
   }
 
   // Test the normal case

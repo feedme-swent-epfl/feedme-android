@@ -4,6 +4,8 @@ import android.Manifest
 import android.os.Build
 import androidx.compose.ui.test.assertIsDisplayed
 import androidx.compose.ui.test.junit4.createComposeRule
+import androidx.compose.ui.test.onNodeWithTag
+import androidx.compose.ui.test.performClick
 import androidx.test.ext.junit.runners.AndroidJUnit4
 import androidx.test.rule.GrantPermissionRule
 import com.android.feedme.model.viewmodel.CameraViewModel
@@ -54,6 +56,21 @@ class CameraTest : TestCase() {
       galleryButton {
         assertIsDisplayed()
         assertHasClickAction()
+      }
+
+      composeTestRule.onNodeWithTag("LeftIconButton").performClick()
+    }
+  }
+
+  @Test
+  fun cameraButtonIsClickable() {
+    goToCameraScreen()
+
+    ComposeScreen.onComposeScreen<CameraScreen>(composeTestRule) {
+      photoButton {
+        assertIsDisplayed()
+        assertHasClickAction()
+        performClick()
       }
     }
   }

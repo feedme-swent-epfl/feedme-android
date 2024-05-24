@@ -66,7 +66,7 @@ fun DisplayPicture(
   val listOfIngredientToInput = cameraViewModel.listOfIngredientToInput.collectAsState()
 
   BottomSheetScaffold(
-      modifier = Modifier.testTag("Display Picture"),
+      modifier = Modifier.testTag("DisplayPicture"),
       topBar = {
         TopBarNavigation(
             title = "Analyze Picture",

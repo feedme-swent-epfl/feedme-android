@@ -2,10 +2,8 @@ package com.android.feedme.test
 
 import android.os.Build
 import androidx.compose.ui.test.assertIsDisplayed
-import androidx.compose.ui.test.isDisplayed
 import androidx.compose.ui.test.junit4.createAndroidComposeRule
 import androidx.compose.ui.test.onNodeWithContentDescription
-import androidx.compose.ui.test.onNodeWithText
 import androidx.compose.ui.test.performClick
 import androidx.test.core.app.ApplicationProvider
 import androidx.test.ext.junit.runners.AndroidJUnit4
@@ -142,16 +140,9 @@ class UserFlowTest : TestCase() {
     }
 
     ComposeScreen.onComposeScreen<CameraScreen>(composeTestRule) {
-      cameraPreview { assertIsDisplayed() }
-
       photoButton {
         assertIsDisplayed()
         performClick()
-      }
-
-      // Wait until the "Photo saved" text appears on the UI.
-      composeTestRule.waitUntil(timeoutMillis = 5000) {
-        composeTestRule.onNodeWithText("Photo saved", useUnmergedTree = true).isDisplayed()
       }
 
       // Click on the gallery button

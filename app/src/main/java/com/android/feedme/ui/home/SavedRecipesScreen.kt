@@ -10,7 +10,9 @@ import androidx.compose.foundation.lazy.items
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.testTag
@@ -62,15 +64,15 @@ fun SavedRecipesScreen(
                 items(recipes) { recipe ->
 
                   // Fetch the profile of the user who created the recipe
-                  // TODO: fix later - TO STAY COMMENTED FOR NOW
-                  // profileViewModel.fetchProfile(recipe.userid)
-                  // val profile = profileViewModel.viewingUserProfile.collectAsState().value
+                  LaunchedEffect(recipe.userid) { recipeViewModel.fetchProfile(recipe.userid) }
+                  val profiles by recipeViewModel.profiles.collectAsState()
+                  val profile = profiles[recipe.userid]
 
                   // Recipe card
                   RecipeCard(
                       Route.SAVED,
                       recipe,
-                      null,
+                      profile,
                       navigationActions,
                       recipeViewModel,
                       profileViewModel)

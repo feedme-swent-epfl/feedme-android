@@ -13,6 +13,7 @@ import androidx.compose.material3.Tab
 import androidx.compose.material3.TabRow
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableIntStateOf
@@ -168,11 +169,12 @@ fun FilteredContent(
         0 ->
             items(recipes) { recipe ->
               // Fetch the profile of the user who created the recipe
-              // TODO: will to be replaced with a single call to fetch all profiles if possible
-              // profileViewModel.fetchProfile(recipe.userid)
-              // val profile = profileViewModel.viewingUserProfile.collectAsState().value
+              LaunchedEffect(recipe.userid) { recipeViewModel.fetchProfile(recipe.userid) }
+              val recipesProfiles by recipeViewModel.profiles.collectAsState()
+              val profile = recipesProfiles[recipe.userid]
+
               RecipeCard(
-                  Route.HOME, recipe, null, navigationActions, recipeViewModel, profileViewModel)
+                  Route.HOME, recipe, profile, navigationActions, recipeViewModel, profileViewModel)
             }
         1 ->
             items(profiles) { profile -> FriendsCard(profile, navigationActions, profileViewModel) }

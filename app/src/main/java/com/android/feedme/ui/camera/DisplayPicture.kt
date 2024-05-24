@@ -120,6 +120,7 @@ fun DisplayPicture(
 
                 if (photo) {
                   inputViewModel.addToList(listOfIngredientToInput.value.toMutableList())
+                  cameraViewModel.emptyIngredients()
                   navigationActions.navigateTo(Screen.CAMERA)
                 }
               }

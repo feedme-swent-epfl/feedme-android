@@ -351,4 +351,8 @@ class CameraViewModel : ViewModel() {
     _errorToDisplay.value = null
     _informationToDisplay.value = null
   }
+
+  fun emptyIngredients() {
+    _listOfIngredientToInput.value = emptyList()
+  }
 }

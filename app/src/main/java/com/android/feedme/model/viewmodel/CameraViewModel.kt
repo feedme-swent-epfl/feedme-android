@@ -46,6 +46,7 @@ class CameraViewModel : ViewModel() {
   val ERROR_INGREDIENT_IN_TEXT = "Failed to extract ingredients from text, please try again."
   val ERROR_NO_LABEL = "Failed to found labels corresponding to this object, please try again."
   val ERROR_NO_OBJECT = "Failed to extract object to classify from this photo, please try again."
+  val ERROR_NO_FOOD_LABEL = "Failed to find a suitable food label, please try again."
 
   /** This sealed class is used to model the different states that a photo can be in. */
   sealed class PhotoState() {
@@ -182,12 +183,12 @@ class CameraViewModel : ViewModel() {
         }
       }
 
-    /**
-     * This function is called when user clicks on object classification button. Then depending on the
-     * state of [_lastPhoto] it will call the [performObjectLabelling] function in an other thread to
-     * not block UI. Then it will update accordingly the value of [_informationToDisplay]. If no photo
-     * was taken before an error message is displayed.
-     */
+  /**
+   * This function is called when user clicks on object classification button. Then depending on the
+   * state of [_lastPhoto] it will call the [performObjectLabelling] function in an other thread to
+   * not block UI. Then it will update accordingly the value of [_informationToDisplay]. If no photo
+   * was taken before an error message is displayed.
+   */
   fun imageLabellingButtonPressed() =
       viewModelScope.launch {
         when (val photoState = _lastPhoto.value) {
@@ -224,16 +225,18 @@ class CameraViewModel : ViewModel() {
         }
       }
 
-    /**
-     * Performs object labelling on the given bitmap.
-     *
-     * This function processes the given bitmap to detect objects and extracts labels from the detected objects.
-     * If the labelling is successful, it updates the ingredient list and returns the best label.
-     * If an error occurs or no labels are found, it updates the error message accordingly.
-     *
-     * @param bitmap The bitmap of the photo to label.
-     * @return A string representing the best labelling result, or null if labelling fails or no labels are found.
-     */
+  /**
+   * Performs object labelling on the given bitmap.
+   *
+   * This function processes the given bitmap to detect objects and extracts labels from the
+   * detected objects. If the labelling is successful, it updates the ingredient list and returns
+   * the best label. If an error occurs or no labels are found, it updates the error message
+   * accordingly.
+   *
+   * @param bitmap The bitmap of the photo to label.
+   * @return A string representing the best labelling result, or null if labelling fails or no
+   *   labels are found.
+   */
   private fun performObjectLabelling(bitmap: Bitmap): String? {
     val labelList = mutableMapOf<String, Float>()
     var errorObjectOccured = false
@@ -247,14 +250,19 @@ class CameraViewModel : ViewModel() {
 
     if (labelList.isNotEmpty()) {
       val label = bestLabel(labelList)
-      updateIngredientList(
-          IngredientMetaData(0.0, MeasureUnit.NONE, Ingredient(label, "NO_ID", false, false)))
-      return label
+      if (label != "") {
+        updateIngredientList(
+            IngredientMetaData(0.0, MeasureUnit.NONE, Ingredient(label, "NO_ID", false, false)))
+        return label
+      } else {
+        _errorToDisplay.value = ERROR_NO_FOOD_LABEL
+        return null
+      }
     } else if (!errorObjectOccured) {
       _errorToDisplay.value = ERROR_NO_LABEL
       return null
     }
-      return null
+    return null
   }
 
   /**

@@ -4,11 +4,21 @@ import android.util.Log
 import com.google.firebase.firestore.DocumentSnapshot
 import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.firestore.Query
+import com.google.firebase.firestore.QuerySnapshot
+import java.util.Locale
 
+/**
+ * Repository class for managing Recipe data.
+ *
+ * This class provides methods for adding, fetching, and updating Recipe objects in Firestore. It
+ * also handles serialization and deserialization of Recipe objects to and from Firestore.
+ *
+ * @property db The Firestore database instance.
+ */
 class RecipeRepository(private val db: FirebaseFirestore) {
 
   private val ingredientsRepository = IngredientsRepository(db)
-  private val collectionPath = "recipes"
+  val collectionPath = "recipesFinal"
 
   companion object {
     // Placeholder for the singleton instance
@@ -77,21 +87,14 @@ class RecipeRepository(private val db: FirebaseFirestore) {
    */
   fun getSavedRecipes(
       ids: List<String>,
-      onSuccess: (List<Recipe>) -> Unit,
+      onSuccess: (List<Recipe>, DocumentSnapshot?) -> Unit,
       onFailure: (Exception) -> Unit
   ) {
+    // Fetch the recipes with the given IDs
     db.collection(collectionPath)
         .whereIn("recipeId", ids)
         .get()
-        .addOnSuccessListener {
-          it.documents.map { recipeMap ->
-            val data = recipeMap.data
-            if (data != null) {
-              val success = { recipe: Recipe? -> onSuccess(listOfNotNull(recipe)) }
-              mapToRecipe(data, success, onFailure)
-            }
-          }
-        }
+        .addOnSuccessListener { addSuccessListener(it, onSuccess, onFailure) }
         .addOnFailureListener { exception -> onFailure(exception) }
   }
 
@@ -110,26 +113,18 @@ class RecipeRepository(private val db: FirebaseFirestore) {
       onSuccess: (List<Recipe>, DocumentSnapshot?) -> Unit,
       onFailure: (Exception) -> Unit
   ) {
+    // Create a query to fetch the top rated recipes
     var queryRef =
         db.collection(collectionPath).orderBy("rating", Query.Direction.DESCENDING).limit(6)
 
+    // If lastRecipe is not null, start the query after the last recipe fetched
     if (lastRecipe != null) {
       queryRef = queryRef.startAfter(lastRecipe)
     }
 
     queryRef
         .get()
-        .addOnSuccessListener {
-          it.documents.map { recipeMap ->
-            val data = recipeMap.data
-            if (data != null) {
-              val success = { recipe: Recipe? ->
-                onSuccess(listOfNotNull(recipe), it.documents.lastOrNull())
-              }
-              mapToRecipe(data, success, onFailure)
-            }
-          }
-        }
+        .addOnSuccessListener { addSuccessListener(it, onSuccess, onFailure) }
         .addOnFailureListener { onFailure(it) }
   }
 
@@ -149,30 +144,55 @@ class RecipeRepository(private val db: FirebaseFirestore) {
       onSuccess: (List<Recipe>, DocumentSnapshot?) -> Unit,
       onFailure: (Exception) -> Unit
   ) {
+    // Create Query for recipes that contain the input query in their title
     var queryRef =
         db.collection(collectionPath)
-            .whereGreaterThanOrEqualTo("title", query)
-            .whereLessThan("title", query + "\uf8ff")
+            .whereArrayContainsAny("searchItems", listOf(query.lowercase(Locale.ROOT)))
             .limit(6) // Limit the number of documents fetched
 
+    // If lastRecipe is not null, start the query after the last recipe fetched
     if (lastRecipe != null) {
       queryRef = queryRef.startAfter(lastRecipe)
     }
 
     queryRef
         .get()
-        .addOnSuccessListener {
-          it.documents.map { recipeMap ->
-            val data = recipeMap.data
-            if (data != null) {
-              val success = { recipe: Recipe? ->
-                onSuccess(listOfNotNull(recipe), it.documents.lastOrNull())
-              }
-              mapToRecipe(data, success, onFailure)
-            }
-          }
-        }
+        .addOnSuccessListener { addSuccessListener(it, onSuccess, onFailure) }
         .addOnFailureListener { onFailure(it) }
+  }
+
+  /**
+   * A helper function that adds the recipes to the list of recipes
+   *
+   * @param snapshot: the snapshot of the query
+   * @param onSuccess: the callback function to be called on success
+   * @param onFailure: the callback function to be called on failure
+   */
+  private fun addSuccessListener(
+      snapshot: QuerySnapshot,
+      onSuccess: (List<Recipe>, DocumentSnapshot?) -> Unit,
+      onFailure: (Exception) -> Unit
+  ) {
+    val recipes = mutableListOf<Recipe>()
+    val docs = snapshot.documents
+
+    docs.forEach { recipeMap ->
+      // Extract the data from the document
+      val data = recipeMap.data
+      if (data != null) {
+        // Convert the data to a Recipe object
+        mapToRecipe(
+            data,
+            { recipe ->
+              if (recipe != null) {
+                recipes.add(recipe)
+              }
+            },
+            onFailure)
+      }
+    }
+    // Call the success callback with the list of recipes
+    onSuccess(recipes, docs.lastOrNull())
   }
 
   private fun recipeToMap(recipe: Recipe): Map<String, Any> {
@@ -239,6 +259,8 @@ class RecipeRepository(private val db: FirebaseFirestore) {
             listOf()
           }
 
+      Log.d("RecipeRepository", "IngredientMetaData : $ingredientMetaDataList")
+
       // Safely process the tags
       val rawTagsList = map["tags"]
       val tags =
@@ -286,7 +308,7 @@ class RecipeRepository(private val db: FirebaseFirestore) {
     }
   }
 
-  fun stringToMeasureUnit(measure: String?): MeasureUnit {
+  private fun stringToMeasureUnit(measure: String?): MeasureUnit {
     return when (measure?.uppercase()) {
       "TEASPOON" -> MeasureUnit.TEASPOON
       "TABLESPOON" -> MeasureUnit.TABLESPOON

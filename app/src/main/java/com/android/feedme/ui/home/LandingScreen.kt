@@ -32,6 +32,7 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
@@ -108,6 +109,7 @@ fun LandingPage(
  * @param recipeViewModel : the [RecipeViewModel] instance
  * @param profileViewModel : the [ProfileViewModel] instance
  */
+@SuppressLint("StateFlowValueCalledInComposition")
 @Composable
 fun RecipeDisplay(
     paddingValues: PaddingValues,
@@ -131,16 +133,19 @@ fun RecipeDisplay(
             modifier =
                 Modifier.testTag("RecipeList").padding(top = 8.dp).background(TextBarColor)) {
               items(recipes.value) { recipe ->
-
                 // Fetch the profile of the user who created the recipe
-                // TODO: fix bug when calling fetchProfile before displaying RecipeCard and
-                //  uncomment userName is test
-                // profileViewModel.fetchProfile(recipe.userid)
-                // val profile = profileViewModel.viewingUserProfile.collectAsState().value
+                LaunchedEffect(recipe.userid) { recipeViewModel.fetchProfile(recipe.userid) }
+                val profiles by recipeViewModel.profiles.collectAsState()
+                val profile = profiles[recipe.userid]
 
                 // Recipe card
                 RecipeCard(
-                    Route.HOME, recipe, null, navigationActions, recipeViewModel, profileViewModel)
+                    Route.HOME,
+                    recipe,
+                    profile,
+                    navigationActions,
+                    recipeViewModel,
+                    profileViewModel)
               }
 
               item { LoadMoreButton(homeViewModel::loadMoreRecipes) }
@@ -157,6 +162,7 @@ fun RecipeDisplay(
  * @param recipeViewModel The [RecipeViewModel] instance of the recipe ViewModel.
  * @param profileViewModel The [ProfileViewModel] instance of the profile ViewModel.
  */
+@SuppressLint("StateFlowValueCalledInComposition")
 @Composable
 fun RecipeCard(
     route: String,

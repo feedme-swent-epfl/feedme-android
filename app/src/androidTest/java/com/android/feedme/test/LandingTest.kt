@@ -140,10 +140,10 @@ class LandingTest : TestCase() {
         assertHasClickAction()
       }
 
-      /*userName { TODO: uncomment this when fetchProfile is fixed before displaying RecipeCard
+      userName {
         assertIsDisplayed()
         assertHasClickAction()
-      }*/
+      }
 
       shareIcon { assertIsDisplayed() }
 

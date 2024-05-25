@@ -4,6 +4,7 @@ import android.content.Context
 import android.net.ConnectivityManager
 import android.net.Network
 import android.net.NetworkCapabilities
+import android.net.Uri
 import android.os.Looper
 import android.widget.Toast
 import androidx.test.core.app.ApplicationProvider
@@ -32,6 +33,7 @@ import org.mockito.Mock
 import org.mockito.Mockito
 import org.mockito.Mockito.anyString
 import org.mockito.Mockito.mock
+import org.mockito.Mockito.verify
 import org.mockito.Mockito.`when`
 import org.mockito.MockitoAnnotations
 import org.robolectric.RobolectricTestRunner
@@ -533,5 +535,28 @@ class ProfileViewModelTest {
     } catch (e: Exception) {
       assertTrue(e.message!!.contains("Can't set dialog in the database"))
     }
+  }
+
+  @Test
+  fun setProfile_Offline() {
+    profileViewModel.setProfile(Profile())
+    shadowOf(Looper.getMainLooper()).idle()
+
+    assertEquals(profileViewModel.currentUserProfile.value, null)
+  }
+
+  @Test
+  fun updateProfilePicture_Offline() {
+    profileViewModel.updateProfilePicture(profileViewModel, Uri.EMPTY)
+    shadowOf(Looper.getMainLooper()).idle()
+    assertEquals(profileViewModel._imageUrl.value, null)
+  }
+
+  @Test
+  fun deleteCurrentUserProfile_Offline() {
+    profileViewModel.currentUserId = "1"
+    profileViewModel.deleteCurrentUserProfile(onSuccess = {}, onFailure = {})
+    shadowOf(Looper.getMainLooper()).idle()
+    verify(mockDocumentReference, Mockito.never()).set(any())
   }
 }

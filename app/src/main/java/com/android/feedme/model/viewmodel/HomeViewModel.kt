@@ -127,13 +127,4 @@ class HomeViewModel : ViewModel() {
   fun setRecipes(recipes: List<Recipe>) {
     _recipes.value = recipes
   }
-
-  /**
-   * A function that forces saved recipes to be shown for testing purposes
-   *
-   * @param recipes: a list of recipes to show
-   */
-  fun setSavedRecipes(recipes: List<Recipe>) {
-    _savedRecipes.value = recipes
-  }
 }

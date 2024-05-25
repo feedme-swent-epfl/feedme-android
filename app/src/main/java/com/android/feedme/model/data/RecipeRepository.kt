@@ -47,7 +47,7 @@ class RecipeRepository(private val db: FirebaseFirestore) {
    */
   fun addRecipe(
       recipe: Recipe,
-      context: Context,
+      context: Context = FirebaseFirestore.getInstance().app.applicationContext,
       onSuccess: () -> Unit,
       onFailure: (Exception) -> Unit
   ) {

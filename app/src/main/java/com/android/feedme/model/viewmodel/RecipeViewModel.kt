@@ -1,5 +1,6 @@
 package com.android.feedme.model.viewmodel
 
+import android.content.Context
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.android.feedme.model.data.IngredientMetaData
@@ -89,7 +90,6 @@ class RecipeViewModel : ViewModel() {
     if (id.isBlank()) return
 
     val context = FirebaseFirestore.getInstance().app.applicationContext
-
     viewModelScope.launch {
       profileRepository.getProfile(
           id,
@@ -111,9 +111,10 @@ class RecipeViewModel : ViewModel() {
    *
    * @param recipe: the recipe to set in the database
    */
-  fun setRecipe(recipe: Recipe) {
-    val context = FirebaseFirestore.getInstance().app.applicationContext
-
+  fun setRecipe(
+      recipe: Recipe,
+      context: Context = FirebaseFirestore.getInstance().app.applicationContext
+  ) {
     viewModelScope.launch {
       recipeRepository.addRecipe(
           recipe,

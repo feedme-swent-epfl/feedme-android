@@ -141,10 +141,13 @@ class ProfileViewModel : ViewModel() {
    *
    * @param profile: the profile to set in the database
    * @param isCurrent: a boolean to determine if the profile is the current user's profile
+   * @param context: the context of the application
    */
-  fun setProfile(profile: Profile, isCurrent: Boolean = true) {
-    val context = FirebaseFirestore.getInstance().app.applicationContext
-
+  fun setProfile(
+      profile: Profile,
+      isCurrent: Boolean = true,
+      context: Context = FirebaseFirestore.getInstance().app.applicationContext
+  ) {
     viewModelScope.launch {
       repository.addProfile(
           profile,
@@ -461,9 +464,11 @@ class ProfileViewModel : ViewModel() {
    * @param profileViewModel The ProfileViewModel of the user.
    * @param picture The URI of the new profile picture.
    */
-  fun updateProfilePicture(profileViewModel: ProfileViewModel, picture: Uri) {
-    val context = FirebaseFirestore.getInstance().app.applicationContext
-
+  fun updateProfilePicture(
+      profileViewModel: ProfileViewModel,
+      picture: Uri,
+      context: Context = FirebaseFirestore.getInstance().app.applicationContext
+  ) {
     repository.uploadProfilePicture(
         profileViewModel = profileViewModel,
         uri = picture,

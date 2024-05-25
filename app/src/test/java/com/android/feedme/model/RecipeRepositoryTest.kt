@@ -456,6 +456,26 @@ class RecipeRepositoryTest {
   }
 
   @Test
+  fun addRecipe_Offline() {
+    recipeRepository.addRecipe(
+        Recipe(
+            "1",
+            "Chocolate Cake",
+            "Delicious chocolate cake",
+            listOf(),
+            listOf(),
+            listOf("dessert"),
+            60.0,
+            "user123",
+            "http://image.url"),
+        onSuccess = { fail("Success callback should not be called") },
+        onFailure = { fail("Failure callback should not be called") })
+
+    shadowOf(Looper.getMainLooper()).idle()
+    verify(mockDocumentReference, never()).set(any())
+  }
+
+  @Test
   fun testSingletonInitialization() {
     val mockFirestore = mock(FirebaseFirestore::class.java)
     RecipeRepository.initialize(mockFirestore)

@@ -4,6 +4,8 @@ import androidx.test.core.app.ApplicationProvider
 import com.android.feedme.model.data.Ingredient
 import com.android.feedme.model.data.IngredientMetaData
 import com.android.feedme.model.data.MeasureUnit
+import com.android.feedme.model.data.ProfileRepository
+import com.android.feedme.model.data.Recipe
 import com.android.feedme.model.data.RecipeRepository
 import com.android.feedme.model.data.Step
 import com.android.feedme.model.viewmodel.RecipeViewModel
@@ -24,19 +26,16 @@ import org.robolectric.RobolectricTestRunner
 @RunWith(RobolectricTestRunner::class)
 class RecipeViewModelTest {
   @Mock private lateinit var mockFirestore: FirebaseFirestore
-
   @Mock private lateinit var mockDocumentReference: DocumentReference
-
   @Mock private lateinit var mockCollectionReference: CollectionReference
-
   @Mock private lateinit var mockDocumentSnapshot: DocumentSnapshot
-
   @Mock private lateinit var mockIngredientsCollectionReference: CollectionReference
-
   @Mock private lateinit var mockIngredientDocumentSnapshot: DocumentSnapshot
 
   @Mock private lateinit var recipeViewModel: RecipeViewModel
+
   private lateinit var recipeRepository: RecipeRepository
+  private lateinit var profileRepository: ProfileRepository
 
   @Before
   fun setUp() {
@@ -46,8 +45,10 @@ class RecipeViewModelTest {
       FirebaseApp.initializeApp(ApplicationProvider.getApplicationContext())
     }
     RecipeRepository.initialize(mockFirestore)
+    ProfileRepository.initialize(mockFirestore)
 
     recipeRepository = RecipeRepository.instance
+    profileRepository = ProfileRepository.instance
 
     Mockito.`when`(mockFirestore.collection(recipeRepository.collectionPath))
         .thenReturn(mockCollectionReference)
@@ -136,5 +137,25 @@ class RecipeViewModelTest {
             ),
             "",
             ""))
+  }
+
+  @Test
+  fun setRecipe_Offline() {
+    recipeViewModel.setRecipe(
+        Recipe(
+            "DEFAULT_ID",
+            "recipeTitle",
+            "recipeName",
+            listOf(
+                IngredientMetaData(
+                    200.0, MeasureUnit.G, Ingredient("Ingredient 1", "ID", false, false))),
+            listOf(
+                Step(1, "test", "test"),
+            ),
+            emptyList(),
+            0.0,
+            "userId",
+            ""))
+    assert(recipeViewModel.recipe.value == null)
   }
 }

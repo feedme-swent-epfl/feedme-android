@@ -57,7 +57,6 @@ import com.android.feedme.ui.navigation.NavigationActions
 import com.android.feedme.ui.navigation.Screen
 import com.android.feedme.ui.navigation.TopBarNavigation
 import com.android.feedme.ui.theme.CameraButtonsBackground
-import kotlinx.coroutines.*
 
 /**
  * A composable function representing the camera screen.
@@ -67,7 +66,7 @@ import kotlinx.coroutines.*
  * images and viewing them in a gallery. Utilizes CameraX for camera operations and Jetpack Compose
  * for the UI components.
  */
-@OptIn(ExperimentalMaterial3Api::class, ExperimentalCoroutinesApi::class)
+@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun CameraScreen(navigationActions: NavigationActions, cameraViewModel: CameraViewModel) {
 

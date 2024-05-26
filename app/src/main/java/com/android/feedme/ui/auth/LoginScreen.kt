@@ -113,7 +113,6 @@ fun LoginDisplay(
   Column(
       modifier =
           Modifier.fillMaxSize()
-              .padding(16.dp)
               .background(color = TemplateColor)
               .testTag("LoginScreen"),
       verticalArrangement = Arrangement.Center,

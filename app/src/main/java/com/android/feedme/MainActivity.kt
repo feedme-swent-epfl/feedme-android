@@ -20,6 +20,7 @@ import com.android.feedme.model.data.IngredientsRepository
 import com.android.feedme.model.data.ProfileRepository
 import com.android.feedme.model.data.RecipeRepository
 import com.android.feedme.model.viewmodel.AuthViewModel
+import com.android.feedme.model.viewmodel.CameraViewModel
 import com.android.feedme.model.viewmodel.HomeViewModel
 import com.android.feedme.model.viewmodel.InputViewModel
 import com.android.feedme.model.viewmodel.ProfileViewModel
@@ -29,6 +30,7 @@ import com.android.feedme.resources.C
 import com.android.feedme.ui.auth.LoginScreen
 import com.android.feedme.ui.auth.WelcomeScreen
 import com.android.feedme.ui.camera.CameraScreen
+import com.android.feedme.ui.camera.DisplayPicture
 import com.android.feedme.ui.component.RecipeFullDisplay
 import com.android.feedme.ui.find.FindRecipeScreen
 import com.android.feedme.ui.home.LandingPage
@@ -63,14 +65,17 @@ class MainActivity : ComponentActivity() {
         Surface(
             modifier = Modifier.fillMaxSize().semantics { testTag = C.Tag.main_screen_container },
             color = MaterialTheme.colorScheme.background) {
-              // Navigation host for the app
-              val navController = rememberNavController()
-              val navigationActions = NavigationActions(navController)
+              // ViewModels for the app
               val profileViewModel: ProfileViewModel = viewModel<ProfileViewModel>()
               val searchViewModel: SearchViewModel = viewModel<SearchViewModel>()
               val authViewModel: AuthViewModel = viewModel<AuthViewModel>()
               val inputViewModel: InputViewModel = viewModel<InputViewModel>()
               val homeViewModel: HomeViewModel = viewModel<HomeViewModel>()
+              val cameraViewModel: CameraViewModel = viewModel<CameraViewModel>()
+
+              // Navigation host for the app
+              val navController = rememberNavController()
+              val navigationActions = NavigationActions(navController, profileViewModel)
 
               // Set up the nested navigation graph
               NavHost(navController = navController, startDestination = Route.AUTHENTICATION) {
@@ -109,9 +114,12 @@ class MainActivity : ComponentActivity() {
 
                 navigation(startDestination = Screen.FIND_RECIPE, route = Route.FIND_RECIPE) {
                   composable(Screen.FIND_RECIPE) {
-                    FindRecipeScreen(navigationActions, inputViewModel)
+                    FindRecipeScreen(navigationActions, inputViewModel, profileViewModel)
                   }
-                  composable(Screen.CAMERA) { CameraScreen(navigationActions, inputViewModel) }
+                  composable(Screen.CAMERA) { CameraScreen(navigationActions, cameraViewModel) }
+                  composable(Screen.ANALYZE_PICTURE) {
+                    DisplayPicture(navigationActions, inputViewModel, cameraViewModel)
+                  }
                 }
 
                 navigation(startDestination = Screen.PROFILE, route = Route.PROFILE) {

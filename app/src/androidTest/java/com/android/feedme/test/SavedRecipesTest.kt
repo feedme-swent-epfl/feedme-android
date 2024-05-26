@@ -116,7 +116,8 @@ class SavedRecipesTest : TestCase() {
     recipeViewModel = RecipeViewModel()
 
     every { mockFirestore.collection("profiles") } returns mockCollectionReference
-    every { mockFirestore.collection("recipes") } returns mockCollectionReference
+    every { mockFirestore.collection(recipeRepository.collectionPath) } returns
+        mockCollectionReference
     every { mockFirestore.collection("ingredients") } returns mockIngredientsCollectionReference
 
     every { mockCollectionReference.document(any()) } returns mockDocumentReference

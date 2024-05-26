@@ -77,9 +77,10 @@ fun TopBarNavigation(
               Text(
                   modifier = Modifier.testTag("TitleText").width(250.dp),
                   text = title,
-                  fontSize = 20.sp,
+                  fontSize = 22.sp,
                   fontWeight = FontWeight.Bold,
                   color = TextBarColor,
+                  maxLines = 1,
                   textAlign = TextAlign.Center)
 
               // RightIconBox

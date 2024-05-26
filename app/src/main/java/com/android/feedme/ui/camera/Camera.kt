@@ -167,7 +167,7 @@ fun CameraScreen(navigationActions: NavigationActions, cameraViewModel: CameraVi
           // Snack bar host for error messages (red)
           SnackbarHost(
               hostState = snackbarHostStateError,
-              modifier = Modifier.align(Alignment.TopCenter),
+              modifier = Modifier.align(Alignment.TopCenter).testTag("Snack error"),
               snackbar = { snackbarData ->
                 Snackbar(
                     modifier = Modifier.testTag("Error Snack Bar"),

@@ -15,6 +15,7 @@ import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.outlined.BookmarkBorder
 import androidx.compose.material.icons.rounded.Star
+import androidx.compose.material.icons.sharp.Star
 import androidx.compose.material.icons.twotone.Star
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
@@ -106,7 +107,7 @@ fun SmallThumbnailsDisplay(
                                   modifier = Modifier.testTag("Star Icon")) {
                                     // Larger black star to act as the outline
                                     Icon(
-                                        imageVector = Icons.TwoTone.Star,
+                                        imageVector = Icons.Rounded.Star,
                                         contentDescription = "Star Outline",
                                         tint = YellowStarBlackOutline,
                                         modifier =
@@ -117,7 +118,7 @@ fun SmallThumbnailsDisplay(
                                         )
                                     // Smaller yellow star to act as the inner part
                                     Icon(
-                                        imageVector = Icons.Rounded.Star,
+                                        imageVector = Icons.Sharp.Star,
                                         contentDescription = "Star Icon",
                                         tint = YellowStar,
                                         modifier =

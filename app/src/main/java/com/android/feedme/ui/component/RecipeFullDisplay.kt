@@ -17,6 +17,7 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Bookmark
 import androidx.compose.material.icons.outlined.AddComment
 import androidx.compose.material.icons.rounded.Star
+import androidx.compose.material.icons.sharp.Star
 import androidx.compose.material.icons.twotone.Bookmark
 import androidx.compose.material.icons.twotone.Star
 import androidx.compose.material3.FloatingActionButton
@@ -217,17 +218,17 @@ fun GeneralInfoDisplay(
         Box(contentAlignment = Alignment.Center) {
           // Larger black star to act as the outline
           Icon(
-              imageVector = Icons.TwoTone.Star,
+              imageVector = Icons.Rounded.Star,
               contentDescription = "Star Outline",
               tint = YellowStarBlackOutline,
-              modifier = Modifier.size(26.dp) // Make this star slightly larger to show as the edge
+              modifier = Modifier.size(35.dp) // Make this star slightly larger to show as the edge
               )
           // Smaller yellow star to act as the inner part
           Icon(
-              imageVector = Icons.Rounded.Star,
+              imageVector = Icons.Sharp.Star,
               contentDescription = "Star Icon",
               tint = YellowStar,
-              modifier = Modifier.size(17.dp) // Smaller than the outline star
+              modifier = Modifier.size(23.dp) // Smaller than the outline star
               )
         }
         Text(

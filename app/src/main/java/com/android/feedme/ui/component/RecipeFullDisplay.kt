@@ -188,7 +188,7 @@ fun GeneralInfoDisplay(
     modifier: Modifier = Modifier
 ) {
   Row(
-      horizontalArrangement = Arrangement.SpaceAround,
+      horizontalArrangement = Arrangement.Center,
       verticalAlignment = Alignment.CenterVertically,
       modifier = modifier.fillMaxWidth().height(45.dp).testTag("General Infos Row")) {
 
@@ -201,17 +201,18 @@ fun GeneralInfoDisplay(
               style = TextStyle(fontSize = 16.sp, fontWeight = FontWeight.Medium))
           Text(
               modifier =
-                  Modifier.clickable(
-                      onClick = {
-                        profileViewModel.setViewingProfile(profile)
-                        navigationActions.navigateTo(Screen.PROFILE)
-                      }),
-              text = profile.username,
+                  Modifier.padding(end = 8.dp)
+                      .clickable(
+                          onClick = {
+                            profileViewModel.setViewingProfile(profile)
+                            navigationActions.navigateTo(Screen.PROFILE)
+                          }),
+              text = "@${profile.username}",
               textAlign = TextAlign.Center,
               color = BlueUsername,
               style = TextStyle(fontSize = 16.sp, fontWeight = FontWeight.Medium))
         }
-        Spacer(modifier = Modifier.weight(1f))
+        // Spacer(modifier = Modifier.weight(1f))
 
         // Recipe ratings
         Box(contentAlignment = Alignment.Center) {
@@ -237,6 +238,17 @@ fun GeneralInfoDisplay(
         Spacer(modifier = Modifier.weight(1f))
       }
   HorizontalDivider(thickness = 2.dp, modifier = Modifier.testTag("Horizontal Divider 1"))
+
+  Text(
+      text = "Description",
+      style = TextStyle(fontWeight = FontWeight.SemiBold, fontSize = 20.sp),
+      modifier = modifier.padding(start = 16.dp, top = 8.dp).testTag("Description Title"))
+  Text(
+      text = recipe.description,
+      style = TextStyle(fontSize = 15.sp),
+      modifier = modifier.padding(start = 16.dp, top = 8.dp, bottom = 8.dp).testTag("Description"))
+
+  HorizontalDivider(thickness = 2.dp, modifier = Modifier.testTag("Horizontal Divider 2"))
 }
 
 /**
@@ -285,7 +297,7 @@ fun IngredientDisplay(ingredient: IngredientMetaData, modifier: Modifier = Modif
 fun IngredientStepsDividerDisplay(modifier: Modifier = Modifier) {
   HorizontalDivider(
       thickness = 2.dp,
-      modifier = modifier.padding(top = 8.dp, bottom = 8.dp).testTag("Horizontal Divider 2"))
+      modifier = modifier.padding(top = 8.dp, bottom = 8.dp).testTag("Horizontal Divider 3"))
 }
 
 /**

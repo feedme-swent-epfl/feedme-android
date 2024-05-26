@@ -8,6 +8,8 @@ import android.graphics.Bitmap
 import android.graphics.Matrix
 import android.os.Build
 import android.util.Log
+import androidx.activity.result.PickVisualMediaRequest
+import androidx.activity.result.contract.ActivityResultContracts
 import androidx.camera.core.ImageCapture
 import androidx.camera.core.ImageCaptureException
 import androidx.camera.core.ImageProxy
@@ -137,9 +139,9 @@ fun CameraScreen(navigationActions: NavigationActions, cameraViewModel: CameraVi
                             .testTag("GalleryButton"),
                     // Open the local gallery when the gallery button is clicked
                     onClick = {
-                      cameraViewModel.imageLabellingButtonPressed()
-                      // pickImage.launch(
-                      // PickVisualMediaRequest(ActivityResultContracts.PickVisualMedia.ImageOnly))
+                      pickImage.launch(
+                      PickVisualMediaRequest(ActivityResultContracts.PickVisualMedia.ImageOnly)
+                      )
                     }) {
                       Icon(imageVector = Icons.Default.Photo, contentDescription = "Open gallery")
                     }

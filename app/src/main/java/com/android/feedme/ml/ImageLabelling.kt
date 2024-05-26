@@ -14,7 +14,7 @@ private val LOCAL_MODEL = LocalModel.Builder().setAssetFilePath("Model1.tflite")
 private val FOOD_LABELS: List<String> =
     listOf(
         "apple",
-        "roissant",
+        "croissant",
         "cucumber",
         "radish",
         "hot dog",
@@ -32,7 +32,7 @@ private val FOOD_LABELS: List<String> =
         "food",
         "fruit",
         "french fries",
-        "egg",
+        "Egg",
         "grape",
         "pineapple",
         "cake",
@@ -77,10 +77,10 @@ fun objectExtraction(
           .setMaxPerObjectLabelCount(5) // 3
           .build()
   val objectDetector = ObjectDetection.getClient(customObjectDetectorOptions)
-
   objectDetector
       .process(image)
-      .addOnSuccessListener { results -> onSuccess(results) }
+      .addOnSuccessListener { results ->
+          onSuccess(results) }
       .addOnFailureListener { e ->
         e.message?.let { Log.e("Image Labeling", it) }
         onFailure(e)
@@ -115,11 +115,10 @@ fun labelProcessing(listObject: List<DetectedObject>): MutableMap<String, Float>
  * @return The label with the highest confidence score among the food labels.
  */
 fun bestLabel(labelList: Map<String, Float>): String {
-  println(labelList)
-  val foodLabels = labelList.filterKeys { label -> FOOD_LABELS.contains(label) }
-  println(foodLabels)
+    Log.d("LabelList", labelList.toString())
+  val foodLabels = labelList.filterKeys { label -> FOOD_LABELS.map { it -> it.lowercase() }.contains(label.lowercase()) }
+  Log.d("FoodLabels", foodLabels.toString())
   val maxConfidence = foodLabels.values.maxOrNull()
-  println(maxConfidence)
   if (foodLabels.isEmpty() || maxConfidence == null) {
     return ""
   }

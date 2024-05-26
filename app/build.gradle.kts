@@ -176,6 +176,8 @@ dependencies {
     globalTestImplementation(libs.androidx.espresso.core)
     // Android Navigation
     implementation(libs.androidx.navigation.runtime.ktx)
+    implementation("org.jetbrains.kotlinx:kotlinx-coroutines-core:1.5.1")// Use the latest version
+    implementation("org.jetbrains.kotlinx:kotlinx-coroutines-android:1.5.1") // Use the latest version for Android
 
     // ------------- Jetpack Compose ------------------
     val composeBom = platform(libs.compose.bom)

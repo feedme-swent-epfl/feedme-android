@@ -29,10 +29,11 @@ import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.suspendCancellableCoroutine
+import kotlinx.coroutines.withTimeoutOrNull
 
 class CameraViewModel : ViewModel() {
 
-  val ERROR_NO_PHOTO = "ERROR : No photo to analyse, please take a picture."
   val ERROR_NO_BARCODE = "Failed to identify barcode, please try again."
   val ERROR_BARCODE_PRODUCT_NAME = "Failed to extract product name from barcode, please try again."
   val ERROR_NO_TEXT = "Failed to identify text, please try again."
@@ -40,6 +41,7 @@ class CameraViewModel : ViewModel() {
   val ERROR_NO_LABEL = "Failed to found labels corresponding to this object, please try again."
   val ERROR_NO_OBJECT = "Failed to extract object to classify from this photo, please try again."
   val ERROR_NO_FOOD_LABEL = "Failed to find a suitable food label, please try again."
+  val ERR_TIMEOUT = "Timeout, with object recognition."
 
   /** This sealed class is used to model the different states that a photo can be in. */
   sealed class PhotoState() {
@@ -176,12 +178,13 @@ class CameraViewModel : ViewModel() {
       viewModelScope.launch {
         when (val photoState = _lastPhoto.value) {
           is PhotoState.NoPhoto -> {
-            _errorToDisplay.value = ERROR_NO_PHOTO
+            //_errorToDisplay.value = ERROR_NO_PHOTO will never happen
           }
           is PhotoState.Photo -> {
             val result = performObjectLabelling(photoState.bitmap)
             if (result != null) {
               _informationToDisplay.value = "$result added to your ingredient list."
+              onAnalyzeDone()
             }
           }
         }
@@ -223,33 +226,47 @@ class CameraViewModel : ViewModel() {
    * @return A string representing the best labelling result, or null if labelling fails or no
    *   labels are found.
    */
-  private fun performObjectLabelling(bitmap: Bitmap): String? {
-    val labelList = mutableMapOf<String, Float>()
-    var errorObjectOccured = false
-    objectExtraction(
-        bitmap = bitmap,
-        onSuccess = { detectedObjects -> labelList.putAll(labelProcessing(detectedObjects)) },
-        onFailure = {
-          _errorToDisplay.value = ERROR_NO_OBJECT
-          errorObjectOccured = true
-        })
+  private suspend fun performObjectLabelling(bitmap: Bitmap): String? {
+    return withTimeoutOrNull(10000L){
+      suspendCancellableCoroutine { continuation ->
+        val labelList = mutableMapOf<String, Float>()
+        var errorObjectOccurred = false
 
-    if (labelList.isNotEmpty()) {
-      val label = bestLabel(labelList)
-      if (label != "") {
-        updateIngredientList(
-            IngredientMetaData(0.0, MeasureUnit.NONE, Ingredient(label, "NO_ID", false, false)))
-        return label
-      } else {
-        _errorToDisplay.value = ERROR_NO_FOOD_LABEL
-        return null
+        objectExtraction(
+          bitmap = bitmap,
+          onSuccess = { detectedObjects ->
+            labelList.putAll(labelProcessing(detectedObjects))
+            if (labelList.isNotEmpty()) {
+              val label = bestLabel(labelList)
+              if (label.isNotEmpty()) {
+                updateIngredientList(IngredientMetaData(0.0, MeasureUnit.NONE, Ingredient(label, "NO_ID", false, false)))
+                continuation.resume(label)
+              } else {
+                _errorToDisplay.value = ERROR_NO_FOOD_LABEL
+                onAnalyzeDone()
+                continuation.resume(null)
+              }
+            } else {
+              _errorToDisplay.value = ERROR_NO_LABEL
+              onAnalyzeDone()
+              continuation.resume(null)
+            }
+          },
+          onFailure = {
+            _errorToDisplay.value = ERROR_NO_OBJECT
+            errorObjectOccurred = true
+            continuation.resume(null)
+          }
+        )
       }
-    } else if (!errorObjectOccured) {
-      _errorToDisplay.value = ERROR_NO_LABEL
-      return null
+    } ?: run {
+      _errorToDisplay.value = ERR_TIMEOUT
+        null
     }
-    return null
+
   }
+
+
 
   /**
    * Performs [barcodeScan] and [extractProductNameFromBarcode] on the provided bitmap image. This

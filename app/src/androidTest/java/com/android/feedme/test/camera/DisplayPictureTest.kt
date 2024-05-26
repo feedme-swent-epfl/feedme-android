@@ -5,23 +5,19 @@ import android.graphics.Bitmap
 import android.os.Build
 import androidx.compose.ui.test.assertIsDisplayed
 import androidx.compose.ui.test.junit4.createComposeRule
-import androidx.compose.ui.test.onAllNodesWithTag
 import androidx.compose.ui.test.onNodeWithTag
 import androidx.compose.ui.test.performClick
 import androidx.test.ext.junit.runners.AndroidJUnit4
 import androidx.test.rule.GrantPermissionRule
 import com.android.feedme.model.viewmodel.CameraViewModel
 import com.android.feedme.model.viewmodel.InputViewModel
-import com.android.feedme.screen.CameraScreen
 import com.android.feedme.screen.DisplayPictureScreen
 import com.android.feedme.ui.camera.DisplayPicture
 import com.android.feedme.ui.navigation.NavigationActions
 import com.android.feedme.ui.navigation.Screen
-import com.google.common.base.Verify.verify
 import io.github.kakaocup.compose.node.element.ComposeScreen
 import io.mockk.every
 import io.mockk.mockk
-import io.mockk.verify
 import junit.framework.TestCase
 import org.junit.Before
 import org.junit.Rule
@@ -86,7 +82,7 @@ class DisplayPictureTest : TestCase() {
         assertIsDisplayed()
         assertHasClickAction()
       }
-      mlObjectButton{
+      mlObjectButton {
         assertIsDisplayed()
         assertHasClickAction()
       }

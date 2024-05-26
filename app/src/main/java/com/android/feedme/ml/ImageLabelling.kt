@@ -79,8 +79,7 @@ fun objectExtraction(
   val objectDetector = ObjectDetection.getClient(customObjectDetectorOptions)
   objectDetector
       .process(image)
-      .addOnSuccessListener { results ->
-          onSuccess(results) }
+      .addOnSuccessListener { results -> onSuccess(results) }
       .addOnFailureListener { e ->
         e.message?.let { Log.e("Image Labeling", it) }
         onFailure(e)
@@ -115,8 +114,11 @@ fun labelProcessing(listObject: List<DetectedObject>): MutableMap<String, Float>
  * @return The label with the highest confidence score among the food labels.
  */
 fun bestLabel(labelList: Map<String, Float>): String {
-    Log.d("LabelList", labelList.toString())
-  val foodLabels = labelList.filterKeys { label -> FOOD_LABELS.map { it -> it.lowercase() }.contains(label.lowercase()) }
+  Log.d("LabelList", labelList.toString())
+  val foodLabels =
+      labelList.filterKeys { label ->
+        FOOD_LABELS.map { it -> it.lowercase() }.contains(label.lowercase())
+      }
   Log.d("FoodLabels", foodLabels.toString())
   val maxConfidence = foodLabels.values.maxOrNull()
   if (foodLabels.isEmpty() || maxConfidence == null) {

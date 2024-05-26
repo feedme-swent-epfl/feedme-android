@@ -178,7 +178,7 @@ class CameraViewModel : ViewModel() {
       viewModelScope.launch {
         when (val photoState = _lastPhoto.value) {
           is PhotoState.NoPhoto -> {
-            //_errorToDisplay.value = ERROR_NO_PHOTO will never happen
+            // _errorToDisplay.value = ERROR_NO_PHOTO will never happen
           }
           is PhotoState.Photo -> {
             val result = performObjectLabelling(photoState.bitmap)
@@ -227,46 +227,45 @@ class CameraViewModel : ViewModel() {
    *   labels are found.
    */
   private suspend fun performObjectLabelling(bitmap: Bitmap): String? {
-    return withTimeoutOrNull(10000L){
+    return withTimeoutOrNull(10000L) {
       suspendCancellableCoroutine { continuation ->
         val labelList = mutableMapOf<String, Float>()
         var errorObjectOccurred = false
 
         objectExtraction(
-          bitmap = bitmap,
-          onSuccess = { detectedObjects ->
-            labelList.putAll(labelProcessing(detectedObjects))
-            if (labelList.isNotEmpty()) {
-              val label = bestLabel(labelList)
-              if (label.isNotEmpty()) {
-                updateIngredientList(IngredientMetaData(0.0, MeasureUnit.NONE, Ingredient(label, "NO_ID", false, false)))
-                continuation.resume(label)
+            bitmap = bitmap,
+            onSuccess = { detectedObjects ->
+              labelList.putAll(labelProcessing(detectedObjects))
+              if (labelList.isNotEmpty()) {
+                val label = bestLabel(labelList)
+                if (label.isNotEmpty()) {
+                  updateIngredientList(
+                      IngredientMetaData(
+                          0.0, MeasureUnit.NONE, Ingredient(label, "NO_ID", false, false)))
+                  continuation.resume(label)
+                } else {
+                  _errorToDisplay.value = ERROR_NO_FOOD_LABEL
+                  onAnalyzeDone()
+                  continuation.resume(null)
+                }
               } else {
-                _errorToDisplay.value = ERROR_NO_FOOD_LABEL
+                _errorToDisplay.value = ERROR_NO_LABEL
                 onAnalyzeDone()
                 continuation.resume(null)
               }
-            } else {
-              _errorToDisplay.value = ERROR_NO_LABEL
-              onAnalyzeDone()
+            },
+            onFailure = {
+              _errorToDisplay.value = ERROR_NO_OBJECT
+              errorObjectOccurred = true
               continuation.resume(null)
-            }
-          },
-          onFailure = {
-            _errorToDisplay.value = ERROR_NO_OBJECT
-            errorObjectOccurred = true
-            continuation.resume(null)
-          }
-        )
+            })
       }
-    } ?: run {
-      _errorToDisplay.value = ERR_TIMEOUT
-        null
     }
-
+        ?: run {
+          _errorToDisplay.value = ERR_TIMEOUT
+          null
+        }
   }
-
-
 
   /**
    * Performs [barcodeScan] and [extractProductNameFromBarcode] on the provided bitmap image. This

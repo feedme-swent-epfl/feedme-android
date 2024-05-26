@@ -56,7 +56,7 @@ fun DisplayPicture(
   // Switch off and on the text recognition functionality
   val textRecognitionMode = remember { mutableStateOf(true) }
   val barcodeRecognitionMode = remember { mutableStateOf(true) }
-    val objectLabellingMode = remember { mutableStateOf(true) }
+  val objectLabellingMode = remember { mutableStateOf(true) }
   ///// Machine Learning Part /////
 
   val bitmaps by cameraViewModel.bitmaps.collectAsState()
@@ -75,18 +75,15 @@ fun DisplayPicture(
       },
       sheetPeekHeight = 0.dp,
       sheetContent = {}) { padding ->
-        Box(modifier = Modifier
-            .fillMaxSize()
-            .padding(padding)) {
+        Box(modifier = Modifier.fillMaxSize().padding(padding)) {
           Display(bitmaps, Modifier.fillMaxWidth())
 
           Row(
               modifier =
-              Modifier
-                  .fillMaxWidth()
-                  .align(Alignment.BottomCenter)
-                  .padding(16.dp)
-                  .padding(bottom = 32.dp),
+                  Modifier.fillMaxWidth()
+                      .align(Alignment.BottomCenter)
+                      .padding(16.dp)
+                      .padding(bottom = 32.dp),
               horizontalArrangement = Arrangement.SpaceAround) {
 
                 // Button for text recognition
@@ -94,11 +91,10 @@ fun DisplayPicture(
                   IconButton(
                       onClick = { cameraViewModel.textRecognitionButtonPressed() },
                       modifier =
-                      Modifier
-                          .size(56.dp)
-                          .background(CameraButtonsBackground, shape = CircleShape)
-                          .padding(10.dp)
-                          .testTag("MLTextButton")) {
+                          Modifier.size(56.dp)
+                              .background(CameraButtonsBackground, shape = CircleShape)
+                              .padding(10.dp)
+                              .testTag("MLTextButton")) {
                         Icon(
                             imageVector = Icons.TwoTone.TextFields,
                             contentDescription = "Display text after ML")
@@ -110,11 +106,10 @@ fun DisplayPicture(
                   IconButton(
                       onClick = { cameraViewModel.barcodeScanButtonPressed() },
                       modifier =
-                      Modifier
-                          .size(56.dp)
-                          .background(CameraButtonsBackground, shape = CircleShape)
-                          .padding(10.dp)
-                          .testTag("MLBarcodeButton")) {
+                          Modifier.size(56.dp)
+                              .background(CameraButtonsBackground, shape = CircleShape)
+                              .padding(10.dp)
+                              .testTag("MLBarcodeButton")) {
                         Icon(
                             painter = barcodeScannerPainter,
                             contentDescription = "Barcode Scanner",
@@ -122,20 +117,19 @@ fun DisplayPicture(
                             tint = BottomIconColorSelected)
                       }
                 }
-              if (objectLabellingMode.value){
+                if (objectLabellingMode.value) {
                   IconButton(
                       onClick = { cameraViewModel.imageLabellingButtonPressed() },
                       modifier =
-                      Modifier
-                          .size(56.dp)
-                          .background(CameraButtonsBackground, shape = CircleShape)
-                          .padding(10.dp)
-                          .testTag("MLObjectButton")) {
-                      Icon(
-                          imageVector = Icons.Filled.ViewInAr,
-                          contentDescription = "Object Labelling")
-                  }
-              }
+                          Modifier.size(56.dp)
+                              .background(CameraButtonsBackground, shape = CircleShape)
+                              .padding(10.dp)
+                              .testTag("MLObjectButton")) {
+                        Icon(
+                            imageVector = Icons.Filled.ViewInAr,
+                            contentDescription = "Object Labelling")
+                      }
+                }
 
                 // Once the photo is analyzed, we can add the ingredients and go back to the camera
                 // screen

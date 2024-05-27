@@ -4,6 +4,7 @@ import androidx.test.core.app.ApplicationProvider
 import com.android.feedme.model.data.Ingredient
 import com.android.feedme.model.data.IngredientMetaData
 import com.android.feedme.model.data.MeasureUnit
+import com.android.feedme.model.data.Profile
 import com.android.feedme.model.data.ProfileRepository
 import com.android.feedme.model.data.Recipe
 import com.android.feedme.model.data.RecipeRepository
@@ -80,7 +81,9 @@ class RecipeViewModelTest {
             "recipeName",
             listOf(
                 IngredientMetaData(
-                    200.0, MeasureUnit.G, Ingredient("Ingredient 1", "ID", false, false))),
+                    200.0,
+                    MeasureUnit.G,
+                    Ingredient("Ingredient 1", "ID", false, vegetarian = false))),
             listOf(
                 Step(1, "test", "test"),
             ),
@@ -96,7 +99,9 @@ class RecipeViewModelTest {
             "recipeName",
             listOf(
                 IngredientMetaData(
-                    0.0, MeasureUnit.TEASPOON, Ingredient("test", "test", false, false))),
+                    0.0,
+                    MeasureUnit.TEASPOON,
+                    Ingredient(name = "test", id = "test", vegan = false, vegetarian = false))),
             listOf(
                 Step(1, "test", "test"),
             ),
@@ -109,7 +114,9 @@ class RecipeViewModelTest {
             "recipeName",
             listOf(
                 IngredientMetaData(
-                    0.0, MeasureUnit.TEASPOON, Ingredient("test", "test", false, false))),
+                    0.0,
+                    MeasureUnit.TEASPOON,
+                    Ingredient("test", "test", false, vegetarian = false))),
             emptyList(),
             "userId",
             ""))
@@ -131,7 +138,9 @@ class RecipeViewModelTest {
             "recipeName",
             listOf(
                 IngredientMetaData(
-                    0.0, MeasureUnit.TEASPOON, Ingredient("test", "test", false, false))),
+                    0.0,
+                    MeasureUnit.TEASPOON,
+                    Ingredient("test", "test", false, vegetarian = false))),
             listOf(
                 Step(1, "test", "test"),
             ),
@@ -148,7 +157,9 @@ class RecipeViewModelTest {
             "recipeName",
             listOf(
                 IngredientMetaData(
-                    200.0, MeasureUnit.G, Ingredient("Ingredient 1", "ID", false, false))),
+                    200.0,
+                    MeasureUnit.G,
+                    Ingredient("Ingredient 1", "ID", false, vegetarian = false))),
             listOf(
                 Step(1, "test", "test"),
             ),
@@ -157,5 +168,11 @@ class RecipeViewModelTest {
             "userId",
             ""))
     assert(recipeViewModel.recipe.value == null)
+  }
+
+  @Test
+  fun fetchProfile_Offline() {
+    recipeViewModel.fetchProfile("ID_DEFAULT_1")
+    assert(recipeViewModel.profiles.value == emptyMap<String, Profile>())
   }
 }

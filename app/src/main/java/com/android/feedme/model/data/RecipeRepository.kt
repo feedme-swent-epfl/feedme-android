@@ -325,21 +325,31 @@ class RecipeRepository(private val db: FirebaseFirestore) {
    * Fetches recipes that contain any of the given ingredient IDs and maps them to Recipe objects.
    *
    * @param ingredientIds The list of ingredient IDs to match against.
+   * @param lastRecipe The last recipe fetched in the previous query. If null, fetches the first
    * @param onSuccess A callback function invoked with the list of fetched recipes.
    * @param onFailure A callback function invoked on failure to fetch the recipes, with an
    *   exception.
    */
   private fun fetchAndMapRecipes(
       ingredientIds: List<String>,
-      onSuccess: (List<Recipe>) -> Unit,
+      lastRecipe: DocumentSnapshot?,
+      onSuccess: (List<Recipe>, DocumentSnapshot?) -> Unit,
       onFailure: (Exception) -> Unit
   ) {
     if (ingredientIds.isEmpty()) {
       onFailure(IllegalArgumentException())
       return
     }
-    db.collection(collectionPath)
-        .whereArrayContainsAny("ingredientIds", ingredientIds)
+    // Create a query to fetch the top rated recipes
+    var queryRef =
+        db.collection(collectionPath).whereArrayContainsAny("ingredientIds", ingredientIds).limit(6)
+
+    // If lastRecipe is not null, start the query after the last recipe fetched
+    if (lastRecipe != null) {
+      queryRef = queryRef.startAfter(lastRecipe)
+    }
+
+    queryRef
         .get()
         .addOnSuccessListener { querySnapshot ->
           val allRecipes = mutableListOf<Recipe>()
@@ -359,7 +369,7 @@ class RecipeRepository(private val db: FirebaseFirestore) {
             }
           }
 
-          onSuccess(allRecipes)
+          onSuccess(allRecipes, docs.lastOrNull())
         }
         .addOnFailureListener { exception -> onFailure(exception) }
   }
@@ -369,6 +379,7 @@ class RecipeRepository(private val db: FirebaseFirestore) {
    *
    * @param ingredientIds The list of ingredient IDs to match against.
    * @param profile The user profile to consider for preferences.
+   * @param lastRecipe The last recipe fetched in the previous query. If null, fetches the first
    * @param onSuccess A callback function invoked with the ranked list of suggested recipes on
    *   success.
    * @param onFailure A callback function invoked on failure to fetch the recipes, with an
@@ -377,14 +388,16 @@ class RecipeRepository(private val db: FirebaseFirestore) {
   fun suggestRecipes(
       ingredientIds: List<String>,
       profile: Profile,
-      onSuccess: (List<Recipe>) -> Unit,
+      lastRecipe: DocumentSnapshot?,
+      onSuccess: (List<Recipe>, DocumentSnapshot?) -> Unit,
       onFailure: (Exception) -> Unit
   ) {
     fetchAndMapRecipes(
         ingredientIds,
-        { allRecipes ->
+        lastRecipe,
+        { allRecipes, lastDoc ->
           val rankedRecipes = rankRecipes(allRecipes, ingredientIds, profile)
-          onSuccess(rankedRecipes)
+          onSuccess(rankedRecipes, lastDoc)
         },
         onFailure)
   }
@@ -394,6 +407,7 @@ class RecipeRepository(private val db: FirebaseFirestore) {
    *
    * @param ingredientIds The list of ingredient IDs to match exactly.
    * @param profile The user profile to consider for preferences.
+   * @param lastRecipe The last recipe fetched in the previous query. If null, fetches the first
    * @param onSuccess A callback function invoked with the ranked list of suggested recipes on
    *   success.
    * @param onFailure A callback function invoked on failure to fetch the recipes, with an
@@ -402,12 +416,14 @@ class RecipeRepository(private val db: FirebaseFirestore) {
   fun suggestRecipesStrict(
       ingredientIds: List<String>,
       profile: Profile,
-      onSuccess: (List<Recipe>) -> Unit,
+      lastRecipe: DocumentSnapshot?,
+      onSuccess: (List<Recipe>, DocumentSnapshot?) -> Unit,
       onFailure: (Exception) -> Unit
   ) {
     fetchAndMapRecipes(
         ingredientIds,
-        { allRecipes ->
+        lastRecipe,
+        { allRecipes, lastDoc ->
           val filteredRecipes =
               allRecipes.filter { recipe ->
                 val recipeIngredientIds = recipe.ingredients.map { it.ingredient.id }
@@ -416,7 +432,7 @@ class RecipeRepository(private val db: FirebaseFirestore) {
               }
 
           val rankedRecipes = rankRecipes(filteredRecipes, ingredientIds, profile)
-          onSuccess(rankedRecipes)
+          onSuccess(rankedRecipes, lastDoc)
         },
         onFailure)
   }
@@ -436,14 +452,12 @@ class RecipeRepository(private val db: FirebaseFirestore) {
   ): List<Recipe> {
     return recipes.sortedWith(
         compareByDescending { recipe ->
+          val userPreferencesScore = recipe.tags.count { tag -> profile.filter.contains(tag) }
+          val ratingScore = recipe.rating
           val matchingIngredientsCount =
               recipe.ingredients.count { ingredientMetaData ->
                 ingredientIds.contains(ingredientMetaData.ingredient.id)
               }
-
-          val userPreferencesScore = recipe.tags.count { tag -> profile.filter.contains(tag) }
-
-          val ratingScore = recipe.rating
 
           // Combine the scores to form the final ranking score
           matchingIngredientsCount + userPreferencesScore + ratingScore

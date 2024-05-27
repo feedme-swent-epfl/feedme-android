@@ -11,6 +11,7 @@ import com.android.feedme.model.data.IngredientsRepository
 import com.android.feedme.model.data.Profile
 import com.android.feedme.model.data.ProfileRepository
 import com.android.feedme.model.data.RecipeRepository
+import com.android.feedme.model.viewmodel.GenerateViewModel
 import com.android.feedme.model.viewmodel.InputViewModel
 import com.android.feedme.model.viewmodel.ProfileViewModel
 import com.android.feedme.screen.FindRecipeScreen
@@ -32,7 +33,6 @@ import org.junit.runner.RunWith
 
 @RunWith(AndroidJUnit4::class)
 class FindRecipeTest : TestCase() {
-  // @get:Rule val composeTestRule = createAndroidComposeRule<MainActivity>()
   @get:Rule val composeTestRule = createComposeRule()
 
   private val mockFirestore = mockk<FirebaseFirestore>(relaxed = true)
@@ -144,7 +144,8 @@ class FindRecipeTest : TestCase() {
         }
 
     composeTestRule.setContent {
-      FindRecipeScreen(mockk<NavigationActions>(), InputViewModel(), ProfileViewModel())
+      FindRecipeScreen(
+          mockk<NavigationActions>(), InputViewModel(), ProfileViewModel(), GenerateViewModel())
     }
     composeTestRule.waitForIdle()
   }

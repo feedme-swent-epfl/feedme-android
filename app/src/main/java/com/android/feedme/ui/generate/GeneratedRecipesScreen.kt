@@ -10,12 +10,15 @@ import androidx.compose.foundation.lazy.items
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.unit.dp
+import com.android.feedme.model.viewmodel.GenerateViewModel
 import com.android.feedme.model.viewmodel.ProfileViewModel
 import com.android.feedme.model.viewmodel.RecipeViewModel
 import com.android.feedme.ui.component.LoadMoreButton
@@ -31,12 +34,14 @@ import com.android.feedme.ui.navigation.TopBarNavigation
  * recipes screen
  *
  * @param navigationActions: the navigation actions to be performed
+ * @param generateViewModel: the [GenerateViewModel] view model for the generate functionality
  * @param recipeViewModel: the [RecipeViewModel] view model for the recipe functionality
  * @param profileViewModel: the [ProfileViewModel] view model for the profile functionality
  */
 @Composable
 fun GeneratedRecipesScreen(
     navigationActions: NavigationActions,
+    generateViewModel: GenerateViewModel,
     recipeViewModel: RecipeViewModel,
     profileViewModel: ProfileViewModel
 ) {
@@ -48,7 +53,8 @@ fun GeneratedRecipesScreen(
             Route.FIND_RECIPE, navigationActions::navigateTo, TOP_LEVEL_DESTINATIONS)
       },
       content = {
-        GeneratedRecipesContent(it, navigationActions, recipeViewModel, profileViewModel)
+        GeneratedRecipesContent(
+            it, navigationActions, generateViewModel, recipeViewModel, profileViewModel)
       })
 }
 
@@ -57,6 +63,7 @@ fun GeneratedRecipesScreen(
  *
  * @param padding: the [PaddingValues] for the content padding
  * @param navigationActions: the navigation actions to be performed
+ * @param generateViewModel: the [GenerateViewModel] view model for the generate functionality
  * @param recipeViewModel: the [RecipeViewModel] view model for the recipe functionality
  * @param profileViewModel: the [ProfileViewModel] view model for the profile functionality
  */
@@ -64,13 +71,13 @@ fun GeneratedRecipesScreen(
 fun GeneratedRecipesContent(
     padding: PaddingValues,
     navigationActions: NavigationActions,
-    // TODO: add the view model for the generate recipe functionality
+    generateViewModel: GenerateViewModel,
     recipeViewModel: RecipeViewModel,
     profileViewModel: ProfileViewModel
 ) {
-  val recipes = null // TODO: modify to add the actual generated recipes
+  val recipes = generateViewModel.generatedRecipes.collectAsState()
 
-  if (recipes.isEmpty()) {
+  if (recipes.value.isEmpty()) {
     Column(
         modifier = Modifier.fillMaxSize().padding(padding).testTag("EmptyList"),
         horizontalAlignment = Alignment.CenterHorizontally,
@@ -81,12 +88,19 @@ fun GeneratedRecipesContent(
         }
   } else {
     LazyColumn(modifier = Modifier.fillMaxSize().padding(padding).testTag("GeneratedList")) {
-      items(recipes) { recipe ->
-        RecipeCard(recipe, navigationActions, recipeViewModel, profileViewModel)
+      items(recipes.value) { recipe ->
+        LaunchedEffect(recipe.userid) { recipeViewModel.fetchProfile(recipe.userid) }
+        val profiles by recipeViewModel.profiles.collectAsState()
+        val profile = profiles[recipe.userid]
+        RecipeCard(
+            Route.FIND_RECIPE,
+            recipe,
+            profile,
+            navigationActions,
+            recipeViewModel,
+            profileViewModel)
       }
-      item {
-        LoadMoreButton() // TODO: add the load more functionality
-      }
+      item { LoadMoreButton(generateViewModel::loadMoreGeneratedRecipes) }
     }
   }
 }

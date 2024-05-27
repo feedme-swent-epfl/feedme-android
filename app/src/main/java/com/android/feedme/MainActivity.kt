@@ -21,6 +21,7 @@ import com.android.feedme.model.data.ProfileRepository
 import com.android.feedme.model.data.RecipeRepository
 import com.android.feedme.model.viewmodel.AuthViewModel
 import com.android.feedme.model.viewmodel.CameraViewModel
+import com.android.feedme.model.viewmodel.GenerateViewModel
 import com.android.feedme.model.viewmodel.HomeViewModel
 import com.android.feedme.model.viewmodel.InputViewModel
 import com.android.feedme.model.viewmodel.ProfileViewModel
@@ -33,6 +34,7 @@ import com.android.feedme.ui.camera.CameraScreen
 import com.android.feedme.ui.camera.DisplayPicture
 import com.android.feedme.ui.component.RecipeFullDisplay
 import com.android.feedme.ui.generate.FindRecipeScreen
+import com.android.feedme.ui.generate.GeneratedRecipesScreen
 import com.android.feedme.ui.home.LandingPage
 import com.android.feedme.ui.home.SavedRecipesScreen
 import com.android.feedme.ui.home.SearchScreen
@@ -72,6 +74,7 @@ class MainActivity : ComponentActivity() {
               val inputViewModel: InputViewModel = viewModel<InputViewModel>()
               val homeViewModel: HomeViewModel = viewModel<HomeViewModel>()
               val cameraViewModel: CameraViewModel = viewModel<CameraViewModel>()
+              val generateViewModel = viewModel<GenerateViewModel>()
 
               // Navigation host for the app
               val navController = rememberNavController()
@@ -102,6 +105,13 @@ class MainActivity : ComponentActivity() {
                         profileViewModel,
                         searchViewModel)
                   }
+                  composable(Screen.SEARCH) { backStackEntry ->
+                    backStackEntry.arguments?.getString("sourceRoute")?.let {
+                      val recipeViewModel = viewModel<RecipeViewModel>()
+                      SearchScreen(
+                          it, navigationActions, searchViewModel, recipeViewModel, profileViewModel)
+                    }
+                  }
                 }
 
                 navigation(startDestination = Screen.SAVED, route = Route.SAVED) {
@@ -114,11 +124,17 @@ class MainActivity : ComponentActivity() {
 
                 navigation(startDestination = Screen.FIND_RECIPE, route = Route.FIND_RECIPE) {
                   composable(Screen.FIND_RECIPE) {
-                    FindRecipeScreen(navigationActions, inputViewModel, profileViewModel)
+                    FindRecipeScreen(
+                        navigationActions, inputViewModel, profileViewModel, generateViewModel)
                   }
                   composable(Screen.CAMERA) { CameraScreen(navigationActions, cameraViewModel) }
                   composable(Screen.ANALYZE_PICTURE) {
                     DisplayPicture(navigationActions, inputViewModel, cameraViewModel)
+                  }
+                  composable(Screen.GENERATE) {
+                    val recipeViewModel = viewModel<RecipeViewModel>()
+                    GeneratedRecipesScreen(
+                        navigationActions, generateViewModel, recipeViewModel, profileViewModel)
                   }
                 }
 
@@ -160,13 +176,6 @@ class MainActivity : ComponentActivity() {
                     val navBackStackEntry = navController.getBackStackEntry(backScreen)
                     val recipeViewModel = viewModel<RecipeViewModel>(navBackStackEntry)
                     RecipeFullDisplay(it, navigationActions, recipeViewModel, profileViewModel)
-                  }
-                }
-                composable(Screen.SEARCH) { backStackEntry ->
-                  backStackEntry.arguments?.getString("sourceRoute")?.let {
-                    val recipeViewModel = viewModel<RecipeViewModel>()
-                    SearchScreen(
-                        it, navigationActions, searchViewModel, recipeViewModel, profileViewModel)
                   }
                 }
               }

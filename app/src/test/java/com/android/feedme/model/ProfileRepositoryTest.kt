@@ -130,7 +130,6 @@ class ProfileRepositoryTest {
 
     profileRepository.getProfile(
         profileId,
-        mockContext,
         { profile -> assertEquals(expectedProfile, profile) },
         { fail("Failure callback was called") })
 
@@ -176,7 +175,6 @@ class ProfileRepositoryTest {
     var failureCalled = false
     profileRepository.getProfile(
         profileId,
-        mockContext,
         onSuccess = { fail("Success callback should not be called") },
         onFailure = { failureCalled = true })
 

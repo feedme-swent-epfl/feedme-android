@@ -2,6 +2,7 @@ package com.android.feedme.model.data
 
 import android.content.Context
 import android.util.Log
+import com.android.feedme.model.viewmodel.displayToast
 import com.android.feedme.model.viewmodel.isNetworkAvailable
 import com.google.firebase.firestore.DocumentSnapshot
 import com.google.firebase.firestore.FirebaseFirestore
@@ -54,6 +55,7 @@ class RecipeRepository(private val db: FirebaseFirestore) {
     // Check if the user is offline
     if (!isNetworkAvailable(context)) {
       Log.d("addRecipe", "Offline mode: Cannot add recipe")
+      displayToast(context)
       return
     }
 
@@ -88,6 +90,7 @@ class RecipeRepository(private val db: FirebaseFirestore) {
     // Check if the user is offline
     if (!isNetworkAvailable(context)) {
       Log.d("getRecipe", "Offline mode: Cannot fetch recipe")
+      displayToast(context)
       return
     }
 
@@ -165,6 +168,7 @@ class RecipeRepository(private val db: FirebaseFirestore) {
     // Check if the user is offline
     if (!isNetworkAvailable(context)) {
       Log.d("getRatedRecipes", "Offline mode: Cannot fetch rated recipes")
+      displayToast(context)
       return
     }
 
@@ -204,6 +208,7 @@ class RecipeRepository(private val db: FirebaseFirestore) {
     // Check if the user is offline
     if (!isNetworkAvailable(context)) {
       Log.d("getFilteredRecipes", "Offline mode: Cannot fetch filtered recipes")
+      displayToast(context)
       return
     }
 

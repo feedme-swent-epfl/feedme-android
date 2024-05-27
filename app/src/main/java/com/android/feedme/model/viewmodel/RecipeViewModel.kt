@@ -1,6 +1,7 @@
 package com.android.feedme.model.viewmodel
 
 import android.content.Context
+import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.android.feedme.model.data.IngredientMetaData
@@ -86,14 +87,20 @@ class RecipeViewModel : ViewModel() {
    *
    * @param id: the unique ID of the profile we want to fetch
    */
-  fun fetchProfile(id: String) {
+  fun fetchProfile(
+      id: String,
+      context: Context = FirebaseFirestore.getInstance().app.applicationContext
+  ) {
     if (id.isBlank()) return
 
-    val context = FirebaseFirestore.getInstance().app.applicationContext
+    if (!isNetworkAvailable(context)) {
+      Log.d("fetchProfile", "Offline mode, cannot fetch recipe profile")
+      return
+    }
+
     viewModelScope.launch {
       profileRepository.getProfile(
           id,
-          context,
           onSuccess = { profile ->
             profile?.let {
               _profiles.value = _profiles.value.toMutableMap().apply { this[id] = it }

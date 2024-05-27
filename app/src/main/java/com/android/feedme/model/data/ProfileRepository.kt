@@ -4,6 +4,7 @@ import android.content.Context
 import android.net.Uri
 import android.util.Log
 import com.android.feedme.model.viewmodel.ProfileViewModel
+import com.android.feedme.model.viewmodel.displayToast
 import com.android.feedme.model.viewmodel.isNetworkAvailable
 import com.google.firebase.firestore.DocumentSnapshot
 import com.google.firebase.firestore.FirebaseFirestore
@@ -59,6 +60,7 @@ class ProfileRepository(private val db: FirebaseFirestore) {
     // Check if the user is offline
     if (!isNetworkAvailable(context)) {
       Log.d("addProfile", "Offline mode: Cannot add profile")
+      displayToast(context)
       return
     }
 
@@ -90,6 +92,7 @@ class ProfileRepository(private val db: FirebaseFirestore) {
     // Check if the user is offline
     if (!isNetworkAvailable(context)) {
       Log.d("uploadProfilePicture", "Offline mode: Cannot upload profile picture")
+      displayToast(context)
       return
     }
 
@@ -119,23 +122,11 @@ class ProfileRepository(private val db: FirebaseFirestore) {
    * error occurs or the document does not exist, [onFailure] is invoked.
    *
    * @param id The document ID of the profile to retrieve.
-   * @param context The context to check if the user is offline
    * @param onSuccess A callback function invoked with the retrieved Profile object on success.
    * @param onFailure A callback function invoked on failure to retrieve the profile, with an
    *   exception.
    */
-  fun getProfile(
-      id: String,
-      context: Context,
-      onSuccess: (Profile?) -> Unit,
-      onFailure: (Exception) -> Unit
-  ) {
-    // Check if the user is offline
-    /*if (!isNetworkAvailable(context)) {
-        Log.d("getProfile", "Offline mode: Cannot fetch profile")
-        return
-    }*/
-
+  fun getProfile(id: String, onSuccess: (Profile?) -> Unit, onFailure: (Exception) -> Unit) {
     db.collection(collectionPath)
         .document(id)
         .get()
@@ -164,6 +155,7 @@ class ProfileRepository(private val db: FirebaseFirestore) {
     // Check if the user is offline
     if (!isNetworkAvailable(context)) {
       Log.d("getProfiles", "Offline mode: Cannot fetch profiles")
+      displayToast(context)
       return
     }
 
@@ -195,7 +187,7 @@ class ProfileRepository(private val db: FirebaseFirestore) {
   ) {
     // Check if the user is offline
     if (!isNetworkAvailable(context)) {
-      Log.d("getRecipe", "Offline mode: Cannot fetch recipe")
+      Log.d("getFilteredProfiles", "Offline mode: Cannot fetch profiles")
       return
     }
 
@@ -247,6 +239,7 @@ class ProfileRepository(private val db: FirebaseFirestore) {
     // Check if the user is offline
     if (!isNetworkAvailable(context)) {
       Log.d("deleteProfile", "Offline mode: Cannot delete profile")
+      displayToast(context)
       return
     }
 
@@ -276,7 +269,6 @@ class ProfileRepository(private val db: FirebaseFirestore) {
       onFailure: (Exception) -> Unit
   ) {
     handleFirestoreTransaction(
-        context,
         {
           val currentUserFRef = db.collection(collectionPath).document(currentUserId)
           val targetUserFRef = db.collection(collectionPath).document(toFollowId)
@@ -336,7 +328,6 @@ class ProfileRepository(private val db: FirebaseFirestore) {
       onFailure: (Exception) -> Unit
   ) {
     handleFirestoreTransaction(
-        context,
         {
           val currentUserRef = db.collection(collectionPath).document(currentUserId)
           val targetUserRef = db.collection(collectionPath).document(targetUserId)
@@ -378,16 +369,10 @@ class ProfileRepository(private val db: FirebaseFirestore) {
   }
 
   private fun <T> handleFirestoreTransaction(
-      context: Context,
       transactionBlock: Transaction.() -> T,
       onSuccess: (T) -> Unit,
       onFailure: (Exception) -> Unit
   ) {
-    // Check if the user is offline
-    // if (isNetworkAvailable(context)) {
-    // Log.d("handleFirestoreTransaction", "Offline mode: Cannot execute transaction")
-    // return
-
     db.runTransaction { transaction ->
           transactionBlock(transaction) // Execute the specific transaction logic
         }
@@ -483,8 +468,13 @@ class ProfileRepository(private val db: FirebaseFirestore) {
       onSuccess: () -> Unit,
       onFailure: (Exception) -> Unit
   ) {
+    if (!isNetworkAvailable(context)) {
+      Log.d("addSavedRecipe", "Offline mode: Cannot add saved recipe")
+      displayToast(context)
+      return
+    }
+
     handleFirestoreTransaction(
-        context,
         {
           val userRef = db.collection(collectionPath).document(userId)
           val currentUser =
@@ -516,8 +506,13 @@ class ProfileRepository(private val db: FirebaseFirestore) {
       onSuccess: () -> Unit,
       onFailure: (Exception) -> Unit
   ) {
+    if (!isNetworkAvailable(context)) {
+      Log.d("removeSavedRecipe", "Offline mode: Cannot remove saved recipe")
+      displayToast(context)
+      return
+    }
+
     handleFirestoreTransaction(
-        context,
         {
           val userRef = db.collection(collectionPath).document(userId)
           val currentUser =
@@ -585,11 +580,11 @@ class ProfileRepository(private val db: FirebaseFirestore) {
     // Check if the user is offline
     if (!isNetworkAvailable(context)) {
       Log.d("modifyShowDialog", "Offline mode: Cannot modify showDialog")
+      displayToast(context)
       return
     }
 
     handleFirestoreTransaction(
-        context,
         {
           val userRef = db.collection(collectionPath).document(userId)
           val currentUser =

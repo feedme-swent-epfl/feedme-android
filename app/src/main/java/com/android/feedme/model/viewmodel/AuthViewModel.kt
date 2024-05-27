@@ -81,12 +81,9 @@ class AuthViewModel : ViewModel() {
       onDoesntExist: () -> Unit,
       onFailure: (Exception) -> Unit
   ) {
-    val context = FirebaseFirestore.getInstance().app.applicationContext
-
     viewModelScope.launch {
       ProfileRepository.instance.getProfile(
           googleId,
-          context,
           onSuccess = { existingProfile ->
             if (existingProfile != null) {
               onSuccess()
@@ -172,13 +169,16 @@ fun isNetworkAvailable(context: Context): Boolean {
   val activeNetwork = connectivityManager.activeNetwork
   val networkCapabilities = connectivityManager.getNetworkCapabilities(activeNetwork)
 
-  val condition =
-      networkCapabilities != null &&
-          networkCapabilities.hasCapability(NetworkCapabilities.NET_CAPABILITY_INTERNET)
-  if (!condition) {
-    Toast.makeText(
-            context, "You are offline. Some features may not be available.", Toast.LENGTH_LONG)
-        .show()
-  }
-  return condition
+  return networkCapabilities != null &&
+      networkCapabilities.hasCapability(NetworkCapabilities.NET_CAPABILITY_INTERNET)
+}
+
+/**
+ * A function that displays a toast message when the user is offline
+ *
+ * @param context: the context in which the toast message is displayed
+ */
+fun displayToast(context: Context) {
+  Toast.makeText(context, "You are offline. Some features may not be available.", Toast.LENGTH_LONG)
+      .show()
 }

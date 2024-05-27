@@ -41,6 +41,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.android.feedme.R
 import com.android.feedme.model.viewmodel.AuthViewModel
+import com.android.feedme.model.viewmodel.displayToast
 import com.android.feedme.model.viewmodel.isNetworkAvailable
 import com.android.feedme.ui.navigation.NavigationActions
 import com.android.feedme.ui.navigation.Route
@@ -164,6 +165,7 @@ fun LoginDisplay(
                 navigationActions.navigateTo(Route.HOME)
               } else if (!isNetworkAvailable(context)) {
                 authViewModel.fetchUserProfileOffline(navigationActions)
+                displayToast(context)
               } else {
                 googleSignInLauncher.launch(googleSignInClient.signInIntent)
               }

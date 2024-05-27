@@ -411,7 +411,7 @@ class ProfileViewModelTest {
     }
     `when`(mockTransaction.get(any(DocumentReference::class.java))).thenReturn(mockDocumentSnapshot)
 
-    profileViewModel.addSavedRecipes(recipe)
+    profileViewModel.addSavedRecipes(recipe, mockContext)
     shadowOf(Looper.getMainLooper()).idle()
 
     assertTrue(profileViewModel.currentUserSavedRecipes.value!!.contains(recipe))
@@ -427,7 +427,7 @@ class ProfileViewModelTest {
         .thenReturn(Tasks.forException(Exception("Transaction failed")))
 
     try {
-      profileViewModel.addSavedRecipes(recipe)
+      profileViewModel.addSavedRecipes(recipe, mockContext)
       shadowOf(Looper.getMainLooper()).idle()
     } catch (e: Exception) {
       assertTrue(e.message!!.contains("Can't add recipe to the database"))
@@ -447,8 +447,8 @@ class ProfileViewModelTest {
     }
     `when`(mockTransaction.get(any(DocumentReference::class.java))).thenReturn(mockDocumentSnapshot)
 
-    profileViewModel.addSavedRecipes(recipe) // Add recipe first
-    profileViewModel.removeSavedRecipes(recipe)
+    profileViewModel.addSavedRecipes(recipe, mockContext) // Add recipe first
+    profileViewModel.removeSavedRecipes(recipe, mockContext)
     shadowOf(Looper.getMainLooper()).idle()
 
     assertFalse(profileViewModel.currentUserSavedRecipes.value!!.contains(recipe))
@@ -480,7 +480,7 @@ class ProfileViewModelTest {
     `when`(mockDocumentReference.get()).thenReturn(Tasks.forResult(mockDocumentSnapshot))
     `when`(mockDocumentSnapshot.get("savedRecipes")).thenReturn(listOf(recipe))
 
-    profileViewModel.savedRecipeExists(recipe) { exists -> assertTrue(exists) }
+    profileViewModel.savedRecipeExists(recipe, mockContext) { exists -> assertTrue(exists) }
   }
 
   @Test
@@ -493,7 +493,7 @@ class ProfileViewModelTest {
         .thenReturn(Tasks.forException(Exception("Transaction failed")))
 
     try {
-      profileViewModel.savedRecipeExists(recipe) { exists -> assertFalse(exists) }
+      profileViewModel.savedRecipeExists(recipe, mockContext) { exists -> assertFalse(exists) }
     } catch (e: Exception) {
       assertTrue(e.message!!.contains("Can't check if recipe exists in the database"))
     }

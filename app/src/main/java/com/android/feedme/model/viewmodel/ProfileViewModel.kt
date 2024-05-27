@@ -87,12 +87,9 @@ class ProfileViewModel : ViewModel() {
       _viewingUserProfile.value = null
       return
     }
-    val context = FirebaseFirestore.getInstance().app.applicationContext
-
     viewModelScope.launch {
       repository.getProfile(
           id,
-          context,
           onSuccess = { profile ->
             _viewingUserProfile.value = profile
             viewingUserId = id
@@ -110,13 +107,10 @@ class ProfileViewModel : ViewModel() {
 
   /** A function that fetches the profile of the current user */
   fun fetchCurrentUserProfile() {
-    val context = FirebaseFirestore.getInstance().app.applicationContext
-
     currentUserId?.let { userId ->
       viewModelScope.launch {
         repository.getProfile(
             userId,
-            context,
             onSuccess = { profile ->
               _currentUserProfile.value = profile
               if (profile != null) {
@@ -198,14 +192,17 @@ class ProfileViewModel : ViewModel() {
    *
    * @param ids: the unique IDs of the profiles we want to fetch
    * @param fetchProfile: the MutableStateFlow that will store the fetched profiles
+   * @param context: the context of the application
    */
-  private fun fetchProfiles(ids: List<String>, fetchProfile: MutableStateFlow<List<Profile>>) {
+  private fun fetchProfiles(
+      ids: List<String>,
+      fetchProfile: MutableStateFlow<List<Profile>>,
+      context: Context = FirebaseFirestore.getInstance().app.applicationContext
+  ) {
     // Check if we actually need to fetch the profiles
     val currentIds = fetchProfile.value.map { it.id }.toSet()
     if (currentIds != ids.toSet() && ids.isNotEmpty()) {
       Log.d("ProfileViewModel", "Fetching profiles: $ids")
-      val context = FirebaseFirestore.getInstance().app.applicationContext
-
       viewModelScope.launch {
         repository.getProfiles(
             ids,
@@ -480,13 +477,15 @@ class ProfileViewModel : ViewModel() {
    * Adds a saved recipe to the current user's saved recipes.
    *
    * @param recipe The recipe to add to the saved recipes.
+   * @param context The context of the application.
    */
-  fun addSavedRecipes(recipe: String) {
+  fun addSavedRecipes(
+      recipe: String,
+      context: Context = FirebaseFirestore.getInstance().app.applicationContext
+  ) {
     if (currentUserId == null) {
       return
     }
-    val context = FirebaseFirestore.getInstance().app.applicationContext
-
     repository.addSavedRecipe(
         currentUserId!!,
         recipe,
@@ -499,13 +498,15 @@ class ProfileViewModel : ViewModel() {
    * Removes a saved recipe from the current user's saved recipes.
    *
    * @param recipe The recipe to remove from the saved recipes.
+   * @param context The context of the application.
    */
-  fun removeSavedRecipes(recipe: String) {
+  fun removeSavedRecipes(
+      recipe: String,
+      context: Context = FirebaseFirestore.getInstance().app.applicationContext
+  ) {
     if (currentUserId == null) {
       return
     }
-    val context = FirebaseFirestore.getInstance().app.applicationContext
-
     repository.removeSavedRecipe(
         currentUserId!!,
         recipe,
@@ -520,12 +521,14 @@ class ProfileViewModel : ViewModel() {
    * @param recipe The recipe to check.
    * @param onResult A callback function invoked with the result of the check.
    */
-  fun savedRecipeExists(recipe: String, onResult: (Boolean) -> Unit) {
+  fun savedRecipeExists(
+      recipe: String,
+      context: Context = FirebaseFirestore.getInstance().app.applicationContext,
+      onResult: (Boolean) -> Unit
+  ) {
     if (currentUserId == null) {
       return
     }
-    val context = FirebaseFirestore.getInstance().app.applicationContext
-
     repository.savedRecipeExists(
         currentUserId!!,
         recipe,

@@ -559,4 +559,25 @@ class ProfileViewModelTest {
     shadowOf(Looper.getMainLooper()).idle()
     verify(mockDocumentReference, Mockito.never()).set(any())
   }
+
+  @Test
+  fun addSavedRecipe_Offline() {
+    val userId = "1"
+    val recipe = "Recipe1"
+    profileViewModel.currentUserId = userId
+
+    profileViewModel.addSavedRecipes(recipe)
+    shadowOf(Looper.getMainLooper()).idle()
+
+    assertFalse(profileViewModel.currentUserSavedRecipes.value.contains(recipe))
+  }
+
+  @Test
+  fun savedRecipeExists_Offline() {
+    val userId = "1"
+    val recipe = "Recipe1"
+    profileViewModel.currentUserId = userId
+
+    profileViewModel.savedRecipeExists(recipe) { exists -> assertFalse(exists) }
+  }
 }

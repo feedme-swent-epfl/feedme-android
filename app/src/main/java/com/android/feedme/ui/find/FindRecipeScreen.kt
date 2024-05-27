@@ -135,7 +135,7 @@ fun FindRecipeScreen(
                 Icon(
                     imageVector = Icons.Default.PhotoCamera,
                     contentDescription = "Camera Icon",
-                    modifier = Modifier.size(24.dp))
+                    modifier = Modifier.size(27.dp))
               },
               modifier = Modifier.testTag("CameraButton"))
 
@@ -149,7 +149,7 @@ fun FindRecipeScreen(
                 Icon(
                     imageVector = Icons.Default.RestaurantMenu,
                     contentDescription = "Camera Icon",
-                    modifier = Modifier.size(24.dp))
+                    modifier = Modifier.size(27.dp))
               },
               modifier = Modifier.testTag("ValidateButton"))
         }

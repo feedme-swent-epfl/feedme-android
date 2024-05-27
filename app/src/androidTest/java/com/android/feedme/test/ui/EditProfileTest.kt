@@ -1,7 +1,9 @@
 package com.android.feedme.test.ui
 
+import android.os.Build
 import androidx.compose.ui.test.junit4.createComposeRule
 import androidx.test.ext.junit.runners.AndroidJUnit4
+import androidx.test.rule.GrantPermissionRule
 import com.android.feedme.model.data.Profile
 import com.android.feedme.model.data.ProfileRepository
 import com.android.feedme.model.viewmodel.ProfileViewModel
@@ -25,6 +27,13 @@ import org.junit.runner.RunWith
 class EditProfileTest {
 
   @get:Rule val composeTestRule = createComposeRule()
+
+  // Grant gallery permission for tests
+  @get:Rule
+  val permissionRuleGallery: GrantPermissionRule =
+      if (Build.VERSION.SDK_INT <= 32)
+          GrantPermissionRule.grant(android.Manifest.permission.READ_EXTERNAL_STORAGE)
+      else GrantPermissionRule.grant(android.Manifest.permission.READ_MEDIA_IMAGES)
 
   private val mockNavActions = mockk<NavigationActions>(relaxed = true)
 

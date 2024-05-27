@@ -1,6 +1,14 @@
 package com.android.feedme.model.viewmodel
 
 import android.graphics.Bitmap
+import android.graphics.ImageDecoder
+import android.util.Log
+import androidx.activity.compose.ManagedActivityResultLauncher
+import androidx.activity.compose.rememberLauncherForActivityResult
+import androidx.activity.result.PickVisualMediaRequest
+import androidx.activity.result.contract.ActivityResultContracts
+import androidx.compose.runtime.Composable
+import androidx.compose.ui.platform.LocalContext
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.android.feedme.ml.analyzeTextForIngredients
@@ -10,6 +18,7 @@ import com.android.feedme.ml.textExtraction
 import com.android.feedme.ml.textProcessing
 import com.android.feedme.model.data.Ingredient
 import com.android.feedme.model.data.IngredientMetaData
+import com.android.feedme.model.data.IngredientsRepository
 import com.android.feedme.model.data.MeasureUnit
 import kotlin.coroutines.resume
 import kotlin.coroutines.suspendCoroutine
@@ -19,6 +28,13 @@ import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.launch
 
 class CameraViewModel : ViewModel() {
+
+  private val ERROR_NO_BARCODE = "Failed to identify barcode, please try again."
+  private val ERROR_BARCODE_PRODUCT_NAME =
+      "Failed to extract product name from barcode, please try again."
+  private val ERROR_NO_TEXT = "Failed to identify text, please try again."
+  private val ERROR_INGREDIENT_IN_TEXT =
+      "Failed to extract ingredients from text, please try again."
 
   /** This sealed class is used to model the different states that a photo can be in. */
   sealed class PhotoState() {
@@ -38,9 +54,13 @@ class CameraViewModel : ViewModel() {
   private val _bitmaps = MutableStateFlow<List<Bitmap>>(emptyList())
   val bitmaps = _bitmaps.asStateFlow()
 
-  /** Keep track of whether the photo saved message should be shown */
-  private val _photoSavedMessageVisible = MutableStateFlow<Boolean>(false)
-  val photoSavedMessageVisible = _photoSavedMessageVisible.asStateFlow()
+  /** Keep track of whether we should switch to the analyze screen */
+  private val _photoTaken = MutableStateFlow(false)
+  val photoTaken = _photoTaken.asStateFlow()
+
+  /** Keep track of whether we should switch to the camera screen */
+  private val _analyzed = MutableStateFlow(false)
+  val analyzed = _analyzed.asStateFlow()
 
   /** Contains the last photo taken by user */
   private val _lastPhoto = MutableStateFlow<PhotoState>(PhotoState.NoPhoto)
@@ -50,10 +70,18 @@ class CameraViewModel : ViewModel() {
   private val _listOfIngredientToInput = MutableStateFlow<List<IngredientMetaData>>(emptyList())
   val listOfIngredientToInput = _listOfIngredientToInput.asStateFlow()
 
-  /** Information's to be displayed after a ML button was pressed */
-  private val _informationToDisplay = MutableStateFlow<String>("")
+  /** Information's to be displayed after a ML button was pressed and lead to a successful result */
+  private val _informationToDisplay = MutableStateFlow<String?>(null)
   val informationToDisplay = _informationToDisplay.asStateFlow()
 
+  /** Information's to be displayed when an error occurs * */
+  private val _errorToDisplay = MutableStateFlow<String?>(null)
+  val errorToDisplay = _errorToDisplay.asStateFlow()
+
+  /** Number of ingredient to be added to the input screen after one text recognition scan * */
+  private val _nbOfIngredientAdded = MutableStateFlow<Int>(0)
+
+  /** Last photo on which ML was run * */
   private val _lastAnalyzedPhoto = MutableStateFlow<Bitmap?>(null)
 
   /**
@@ -65,17 +93,44 @@ class CameraViewModel : ViewModel() {
     _lastPhoto.value = PhotoState.Photo(bitmap)
   }
 
+  @Composable
+  fun galleryLauncher(): ManagedActivityResultLauncher<PickVisualMediaRequest, out Any?> {
+    val context = LocalContext.current
+
+    return rememberLauncherForActivityResult(
+        ActivityResultContracts.PickVisualMedia(),
+        onResult = { uri ->
+          uri?.let {
+            val source = ImageDecoder.createSource(context.contentResolver, uri)
+            _bitmaps.value += ImageDecoder.decodeBitmap(source)
+            _lastPhoto.value = PhotoState.Photo(ImageDecoder.decodeBitmap(source))
+            onPhotoSaved()
+          }
+        })
+  }
+
   /**
-   * This function is called when the user taps the save button in the CameraScreen. It sets the
-   * [_photoSavedMessageVisible] state to true, which triggers a message to be shown to the user.
-   * The message is hidden after 3 seconds.
+   * This function is called when the user selects a picture in the CameraScreen. It sets the
+   * [_photoTaken] state to true, which triggers the navigation to the AnalyzeScreen.
    */
   fun onPhotoSaved() {
-    _photoSavedMessageVisible.value = true
+    _photoTaken.value = true
     // Launch a coroutine to hide the message after 3 seconds (3000 milliseconds)
     viewModelScope.launch {
-      delay(3000)
-      _photoSavedMessageVisible.value = false
+      delay(50)
+      _photoTaken.value = false
+    }
+  }
+
+  /**
+   * This function is called when the user analyzed a picture in the CameraScreen. It sets the
+   * [_analyzed] state to true, which triggers the navigation to the Camera.
+   */
+  private fun onAnalyzeDone() {
+    _analyzed.value = true
+    viewModelScope.launch {
+      delay(50)
+      _analyzed.value = false
     }
   }
 
@@ -89,13 +144,18 @@ class CameraViewModel : ViewModel() {
       viewModelScope.launch {
         when (val photoState = _lastPhoto.value) {
           is PhotoState.NoPhoto -> {
-            _informationToDisplay.value = "ERROR : No photo to analyse, please take a picture."
+            //              case won't happen as the button is disabled when there is no photo
+            //              _errorToDisplay.value = ERROR_NO_PHOTO
+            //            onAnalyzeDone()
           }
           is PhotoState.Photo -> {
             if (photoState.bitmap != _lastAnalyzedPhoto.value) {
               _lastAnalyzedPhoto.value = photoState.bitmap
               val result = performTextRecognition(photoState.bitmap)
-              _informationToDisplay.value = result
+              if (result != null) {
+                _informationToDisplay.value = result
+                onAnalyzeDone()
+              }
             }
           }
         }
@@ -111,11 +171,16 @@ class CameraViewModel : ViewModel() {
       viewModelScope.launch {
         when (val photoState = _lastPhoto.value) {
           is PhotoState.NoPhoto -> {
-            _informationToDisplay.value = "ERROR : No photo to analyse, please take a picture."
+            //              case won't happen as the button is disabled when there is no photo
+            //              _errorToDisplay.value = ERROR_NO_PHOTO
+            //            onAnalyzeDone()
           }
           is PhotoState.Photo -> {
             val result = performBarCodeScanning(photoState.bitmap)
-            _informationToDisplay.value = result
+            if (result != null) {
+              _informationToDisplay.value = "$result added to your ingredient list."
+              onAnalyzeDone()
+            }
           }
         }
       }
@@ -129,7 +194,7 @@ class CameraViewModel : ViewModel() {
    * @return The extracted product name from the barcode as string if successful, a relevant error
    *   message otherwise.
    */
-  private suspend fun performBarCodeScanning(bitmap: Bitmap): String {
+  private suspend fun performBarCodeScanning(bitmap: Bitmap): String? {
     return suspendCoroutine { continuation ->
       barcodeScan(
           bitmap,
@@ -139,25 +204,30 @@ class CameraViewModel : ViewModel() {
                   barcodeNumber,
                   { productInfo ->
                     if (productInfo != null) {
-                      // TODO How can i create new ingredients correctly or check if they already
-                      // exist ? => Sylvain PR ?
                       updateIngredientList(
                           IngredientMetaData(
                               0.0,
                               MeasureUnit.NONE,
-                              Ingredient(productInfo.productName, "Default", "DefaultID")))
+                              Ingredient(productInfo.productName, "NO_ID", false, false)))
+                      continuation.resume(productInfo.productName)
+                    } else {
+                      _errorToDisplay.value = ERROR_BARCODE_PRODUCT_NAME
+                      onAnalyzeDone()
+                      continuation.resume(null)
                     }
-                    continuation.resume(
-                        productInfo?.productName
-                            ?: "ERROR: Failed to extract product name from barcode, please try again.")
                   },
                   {
-                    continuation.resume(
-                        "ERROR: Failed to extract product name from barcode, please try again.")
+                    _errorToDisplay.value = ERROR_BARCODE_PRODUCT_NAME
+                    onAnalyzeDone()
+                    continuation.resume(null)
                   })
             }
           },
-          { continuation.resume("ERROR: Failed to identify barcode, please try again.") })
+          {
+            _errorToDisplay.value = ERROR_NO_BARCODE
+            onAnalyzeDone()
+            continuation.resume(null)
+          })
     }
   }
 
@@ -168,16 +238,37 @@ class CameraViewModel : ViewModel() {
    * @param bitmap The bitmap image on which text recognition will be performed.
    * @return The recognized text if successful; otherwise, an error message.
    */
-  private suspend fun performTextRecognition(bitmap: Bitmap): String {
+  private suspend fun performTextRecognition(bitmap: Bitmap): String? {
+    var counter = 0
     return suspendCoroutine { continuation ->
       textExtraction(
           bitmap,
           { text ->
-            analyzeTextForIngredients(text, { ing -> updateIngredientList(ing) })
-
-            continuation.resume(textProcessing(text = text))
+            analyzeTextForIngredients(
+                text,
+                { ing ->
+                  counter += 1
+                  updateIngredientList(ing)
+                },
+                onSuccess = {
+                  _nbOfIngredientAdded.value = counter
+                  continuation.resume(
+                      "${_nbOfIngredientAdded.value} ingredient(s) added to your ingredient list.")
+                },
+                onFailure = { e ->
+                  e.message?.let {
+                    Log.d("ML", it)
+                    _errorToDisplay.value = ERROR_INGREDIENT_IN_TEXT
+                    onAnalyzeDone()
+                  }
+                  continuation.resume(null)
+                })
           },
-          { continuation.resume("ERROR : Failed to identify text, please try again.") })
+          {
+            _errorToDisplay.value = ERROR_NO_TEXT
+            onAnalyzeDone()
+            continuation.resume(null)
+          })
     }
   }
 
@@ -187,10 +278,30 @@ class CameraViewModel : ViewModel() {
    * @param ing The ingredient metadata to update the list with.
    */
   fun updateIngredientList(ing: IngredientMetaData) {
+    if (ing.ingredient.id != "TEST_ID") {
+      IngredientsRepository.instance.getExactFilteredIngredients(
+          ing.ingredient.name,
+          { ingredients ->
+            if (ingredients.isNotEmpty()) {
+              ing.ingredient = ingredients[0]
+            }
+            updateIngredientInList(ing)
+          },
+          {
+            Log.e("CameraViewModel", "Request to Database failed ", it)
+            updateIngredientInList(ing)
+          })
+    }
+    updateIngredientInList(ing)
+  }
+  /**
+   * Updates the ingredient in the list or adds it if it doesn't exist.
+   *
+   * @param ing The ingredient metadata to update or add to the list.
+   */
+  private fun updateIngredientInList(ing: IngredientMetaData) {
     val existingIngredient =
-        _listOfIngredientToInput.value.find {
-          it.ingredient.name == ing.ingredient.name
-        } // Todo change to id later
+        _listOfIngredientToInput.value.find { it.ingredient.name == ing.ingredient.name }
 
     if (existingIngredient != null) {
       // If the ingredient exists, update its quantity
@@ -203,5 +314,19 @@ class CameraViewModel : ViewModel() {
       // If the ingredient doesn't exist, add it to the list
       _listOfIngredientToInput.value += ing
     }
+  }
+
+  /**
+   * This function is used to empty the error and information to display after it has been
+   * processed.
+   */
+  fun empty() {
+    _errorToDisplay.value = null
+    _informationToDisplay.value = null
+  }
+
+  /** This function is used to empty the list of ingredients after it has been processed. */
+  fun emptyIngredients() {
+    _listOfIngredientToInput.value = emptyList()
   }
 }

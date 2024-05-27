@@ -2,17 +2,19 @@ package com.android.feedme.ui.component
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
+import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.lazy.grid.GridCells
 import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.outlined.BookmarkBorder
 import androidx.compose.material.icons.rounded.Star
-import androidx.compose.material.icons.twotone.Bookmark
 import androidx.compose.material.icons.twotone.Star
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
@@ -48,7 +50,7 @@ import com.android.feedme.ui.theme.YellowStarBlackOutline
 fun SmallThumbnailsDisplay(
     listRecipe: List<Recipe>,
     navigationActions: NavigationActions,
-    recipeViewModel: RecipeViewModel = RecipeViewModel()
+    recipeViewModel: RecipeViewModel
 ) {
   // Calculate the width of each image based on the screen width, we want to display 2 images per
   // line
@@ -63,6 +65,9 @@ fun SmallThumbnailsDisplay(
       userScrollEnabled = false,
       modifier = Modifier.height(gridHeight.dp)) {
         items(listRecipe.size) { i ->
+          // Fetch the profile of the user who created the recipe
+          recipeViewModel.fetchProfile(listRecipe[i].userid)
+
           Card(
               modifier =
                   Modifier.padding(8.dp)
@@ -90,48 +95,59 @@ fun SmallThumbnailsDisplay(
                             modifier = Modifier.testTag("Fail Image Download"))
                       }
 
-                      Row(verticalAlignment = Alignment.CenterVertically) {
+                      Row(
+                          modifier = Modifier.fillMaxWidth(),
+                          verticalAlignment = Alignment.CenterVertically,
+                          horizontalArrangement = Arrangement.SpaceBetween) {
+                            Row(modifier = Modifier.padding(start = 10.dp)) {
+                              // Star icon for ratings
+                              Box(
+                                  contentAlignment = Alignment.Center,
+                                  modifier = Modifier.testTag("Star Icon")) {
+                                    // Larger black star to act as the outline
+                                    Icon(
+                                        imageVector = Icons.TwoTone.Star,
+                                        contentDescription = "Star Outline",
+                                        tint = YellowStarBlackOutline,
+                                        modifier =
+                                            Modifier.size(
+                                                26.dp) // Make this star slightly larger to show
+                                        // as the
+                                        // edge
+                                        )
+                                    // Smaller yellow star to act as the inner part
+                                    Icon(
+                                        imageVector = Icons.Rounded.Star,
+                                        contentDescription = "Star Icon",
+                                        tint = YellowStar,
+                                        modifier =
+                                            Modifier.size(17.dp) // Smaller than the outline star
+                                        )
+                                  }
 
-                        // Star icon for ratings
-                        Box(
-                            contentAlignment = Alignment.Center,
-                            modifier = Modifier.testTag("Star Icon")) {
-                              // Larger black star to act as the outline
-                              Icon(
-                                  imageVector = Icons.TwoTone.Star,
-                                  contentDescription = "Star Outline",
-                                  tint = YellowStarBlackOutline,
-                                  modifier =
-                                      Modifier.size(
-                                          26.dp) // Make this star slightly larger to show as the
-                                  // edge
-                                  )
-                              // Smaller yellow star to act as the inner part
-                              Icon(
-                                  imageVector = Icons.Rounded.Star,
-                                  contentDescription = "Star Icon",
-                                  tint = YellowStar,
-                                  modifier = Modifier.size(17.dp) // Smaller than the outline star
-                                  )
+                              // Recipe rating
+                              Text(
+                                  String.format("%.1f", listRecipe[i].rating),
+                                  modifier = Modifier.padding(end = 10.dp).testTag("Text Rating"))
                             }
 
-                        // Recipe rating
-                        Text(
-                            String.format("%.1f", listRecipe[i].rating),
-                            modifier = Modifier.padding(end = 10.dp).testTag("Text Rating"))
+                            // Save button, to keep the recipe accessible even offline
+                            // There is no save icon in Material, so for now i'm using the "build"
+                            // icon
+                            IconButton(
+                                modifier = Modifier.padding(end = 10.dp),
+                                onClick = { /*TODO call to the database function for saving recipes*/}) {
+                                  Icon(
+                                      imageVector = Icons.Outlined.BookmarkBorder,
+                                      contentDescription = "Save Icon",
+                                      modifier = Modifier.size(26.dp).padding(start = 4.dp))
+                                }
+                          }
 
-                        // Save button, to keep the recipe accessible even offline
-                        // There is no save icon in Material, so for now i'm using the "build" icon
-                        IconButton(
-                            onClick = { /*TODO call to the database function for saving recipes*/}) {
-                              Icon(
-                                  imageVector = Icons.TwoTone.Bookmark,
-                                  contentDescription = "Save Icon",
-                                  modifier = Modifier.size(26.dp).padding(start = 4.dp))
-                            }
-                      }
                       // Recipe Title
-                      Text(text = listRecipe[i].title, modifier = Modifier.testTag("Text Title"))
+                      Text(
+                          text = listRecipe[i].title,
+                          modifier = Modifier.padding(bottom = 10.dp).testTag("Text Title"))
                     }
               }
         }

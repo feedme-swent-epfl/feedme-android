@@ -6,6 +6,7 @@ import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.width
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
 import androidx.compose.material3.Icon
@@ -72,18 +73,15 @@ fun TopBarNavigation(
                     }
                   }
 
-              // TitleBox
-              Box(
-                  modifier = Modifier.weight(1f).testTag("TitleBox"),
-                  contentAlignment = Alignment.Center) {
-                    Text(
-                        modifier = Modifier.testTag("TitleText"),
-                        text = title,
-                        fontSize = 20.sp,
-                        fontWeight = FontWeight.Bold,
-                        color = TextBarColor,
-                        textAlign = TextAlign.Center)
-                  }
+              // Title
+              Text(
+                  modifier = Modifier.testTag("TitleText").width(250.dp),
+                  text = title,
+                  fontSize = 22.sp,
+                  fontWeight = FontWeight.Bold,
+                  color = TextBarColor,
+                  maxLines = 1,
+                  textAlign = TextAlign.Center)
 
               // RightIconBox
               Box(
@@ -91,7 +89,7 @@ fun TopBarNavigation(
                   contentAlignment = Alignment.CenterEnd) {
                     if (rightIcon != null) {
                       IconButton(
-                          onClick = { rightIconOnClickAction },
+                          onClick = { rightIconOnClickAction() },
                           modifier = Modifier.testTag("RightIconButton")) {
                             Icon(
                                 modifier = Modifier.testTag("RightIcon"),

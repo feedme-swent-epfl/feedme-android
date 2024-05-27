@@ -1,7 +1,7 @@
 package com.android.feedme.model.data
 
 data class Recipe(
-    val recipeId: String = "", // Unique identifier for the recipe
+    var recipeId: String = "DEFAULT_ID", // Unique identifier for the recipe
     val title: String = "", // Title of the recipe
     val description: String = "", // Description of the recipe for the thumbnail
     val ingredients: List<IngredientMetaData> =
@@ -22,7 +22,7 @@ data class Step(
 data class IngredientMetaData(
     val quantity: Double, // Quantity of the ingredient
     val measure: MeasureUnit, // Measure unit of the ingredient
-    val ingredient: Ingredient // Ingredient object
+    var ingredient: Ingredient // Ingredient object
 ) {
   override fun toString(): String {
     return "$quantity ${measure.toString()} of ${ingredient.name}"

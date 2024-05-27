@@ -6,10 +6,16 @@ import androidx.lifecycle.viewModelScope
 import com.android.feedme.model.data.Recipe
 import com.android.feedme.model.data.RecipeRepository
 import com.google.firebase.auth.FirebaseAuth
+import com.google.firebase.firestore.DocumentSnapshot
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.launch
 
+/**
+ * A class that generates the home view model
+ *
+ * This class is responsible for fetching the recipes and updating the UI with the fetched recipes
+ */
 class HomeViewModel : ViewModel() {
 
   private val recipeRepository = RecipeRepository.instance
@@ -17,12 +23,17 @@ class HomeViewModel : ViewModel() {
   private val _recipes = MutableStateFlow<List<Recipe>>(emptyList())
   val recipes = _recipes.asStateFlow()
 
+  private val _savedRecipes = MutableStateFlow<List<Recipe>>(emptyList())
+  val savedRecipes = _savedRecipes.asStateFlow()
+
+  private var lastRecipe: DocumentSnapshot? = null
+
+  private val authListener =
+      FirebaseAuth.AuthStateListener { FirebaseAuth.getInstance().uid?.let { fetchRatedRecipes() } }
+
   init {
-    FirebaseAuth.getInstance().uid?.let {
-      fetchRecipe("lasagna1")
-      fetchRecipe("lasagna1")
-      fetchRecipe("lasagna1")
-    }
+    // Listen to FirebaseAuth state changes
+    FirebaseAuth.getInstance().addAuthStateListener(authListener)
   }
 
   /**
@@ -48,55 +59,61 @@ class HomeViewModel : ViewModel() {
   }
 
   /**
-   * A function that fetches the recipes given their Ids
+   * A function that fetches the recipe during Login
    *
-   * @param ids: the unique IDs of the profiles we want to fetch
+   * @param ids: the unique ID of the recipe we want to fetch
    */
-  /*fun fetchRecipes(ids: List<String>) {
-    // Check if we actually need to fetch the recipes
-    val currentIds = _recipes.value.map { it.recipeId }.toSet()
-    if (currentIds != ids.toSet() && ids.isNotEmpty()) {
-      Log.d("LandingPageViewModel", "Fetching recipes: $ids")
-      viewModelScope.launch {
-        repository.getRecipes(
-            ids,
-            onSuccess = { recipes ->
-              // Avoid unnecessary updates
-              if (_recipes.value != recipes) {
-                _recipes.value = recipes
-              } else {
-                Log.d("LandingPageViewModel", "Recipes already fetched")
-              }
-            },
-            onFailure = {
-              // Handle failure
-              throw error("Recipes were not fetched")
-            })
-      }
-    } TODO : We will use this for recommendations (maybe)
-  }*/
+  fun fetchSavedRecipes(ids: List<String>) {
+    viewModelScope.launch {
+      val recipeList = mutableListOf<Recipe>()
+      recipeRepository.getSavedRecipes(
+          ids,
+          onSuccess = { recipe, _ ->
+            recipeList += recipe
+            _savedRecipes.value = recipeList
+          },
+          onFailure = {
+            // Handle failure
+            Log.d("fetchRecipe", "Failed fetch of $ids")
+          })
+    }
+  }
 
-  /**
-   * A function that sets which recipes to show
-   *
-   * @param isFiltered: a boolean that indicates if the filtered recipes should be shown
-   */
-  /*fun setShowedRecipes(isFiltered: Boolean) {
-      _recipes.value =
-          if (isFiltered) {
-              _filteredRecipes.value
-          } else {
-              _recommendedRecipes.value
-          }
-  }*/
+  /** A function that fetches the recipes based on their ratings */
+  fun fetchRatedRecipes() {
+    viewModelScope.launch {
+      recipeRepository.getRatedRecipes(
+          lastRecipe,
+          onSuccess = { recipes, lastRec ->
+            lastRecipe = lastRec
+            _recipes.value += recipes
+          },
+          onFailure = {
+            // Handle failure
+            throw error("Recipes could not be fetched")
+          })
+    }
+  }
 
+  /** A function that fetches more recipes */
+  fun loadMoreRecipes() {
+    fetchRatedRecipes()
+  }
   /**
    * A function that forces recipes to be shown for testing purposes
    *
    * @param recipes: a list of recipes to show
-   * @param isFiltered: a boolean that indicates if the filtered recipes should be shown
    */
   fun setRecipes(recipes: List<Recipe>) {
     _recipes.value = recipes
+  }
+
+  /**
+   * A function that forces saved recipes to be shown for testing purposes
+   *
+   * @param recipes: a list of recipes to show
+   */
+  fun setSavedRecipes(recipes: List<Recipe>) {
+    _savedRecipes.value = recipes
   }
 }

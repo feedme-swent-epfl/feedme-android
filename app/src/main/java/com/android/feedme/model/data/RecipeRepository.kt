@@ -1,12 +1,24 @@
 package com.android.feedme.model.data
 
+import android.util.Log
 import com.google.firebase.firestore.DocumentSnapshot
 import com.google.firebase.firestore.FirebaseFirestore
+import com.google.firebase.firestore.Query
+import com.google.firebase.firestore.QuerySnapshot
+import java.util.Locale
 
+/**
+ * Repository class for managing Recipe data.
+ *
+ * This class provides methods for adding, fetching, and updating Recipe objects in Firestore. It
+ * also handles serialization and deserialization of Recipe objects to and from Firestore.
+ *
+ * @property db The Firestore database instance.
+ */
 class RecipeRepository(private val db: FirebaseFirestore) {
 
   private val ingredientsRepository = IngredientsRepository(db)
-  private val collectionPath = "recipes"
+  val collectionPath = "recipesFinal"
 
   companion object {
     // Placeholder for the singleton instance
@@ -32,8 +44,9 @@ class RecipeRepository(private val db: FirebaseFirestore) {
   fun addRecipe(recipe: Recipe, onSuccess: () -> Unit, onFailure: (Exception) -> Unit) {
     // Convert Recipe to a map, replacing Ingredient objects with their IDs
     val recipeMap = recipeToMap(recipe)
-    db.collection(collectionPath)
-        .document(recipe.recipeId)
+    val newDocRef = db.collection(collectionPath).document()
+    recipe.recipeId = newDocRef.id
+    newDocRef
         .set(recipeMap)
         .addOnSuccessListener { onSuccess() }
         .addOnFailureListener { onFailure(it) }
@@ -65,32 +78,62 @@ class RecipeRepository(private val db: FirebaseFirestore) {
   }
 
   /**
-   * Fetch all the recipes of the given List of Ids
+   * Fetches the recipes saved by the user from Firestore. The recipes are fetched by their IDs.
    *
    * @param ids The list of recipe IDs to fetch.
    * @param onSuccess A callback function invoked with the list of recipes on success.
    * @param onFailure A callback function invoked on failure to fetch the recipes, with an
    *   exception.
    */
-  /*fun getRecipes( TODO : We will use this for recommendations (maybe)
+  fun getSavedRecipes(
       ids: List<String>,
-      onSuccess: (List<Recipe>) -> Unit,
+      onSuccess: (List<Recipe>, DocumentSnapshot?) -> Unit,
       onFailure: (Exception) -> Unit
   ) {
+    // Fetch the recipes with the given IDs
     db.collection(collectionPath)
-        .whereIn("id", ids)
+        .whereIn("recipeId", ids)
         .get()
-        .addOnSuccessListener { querySnapshot ->
-          val recipes = querySnapshot.toObjects(Recipe::class.java)
-          onSuccess(recipes)
-        }
+        .addOnSuccessListener { addSuccessListener(it, onSuccess, onFailure) }
         .addOnFailureListener { exception -> onFailure(exception) }
-  }*/
+  }
+
+  /**
+   * Fetches the top rated recipes from Firestore. The recipes are ordered by their rating in
+   * descending order.
+   *
+   * @param lastRecipe The last recipe fetched in the previous query. If null, fetches the first
+   *   page of recipes.
+   * @param onSuccess A callback function invoked with the list of recipes on success.
+   * @param onFailure A callback function invoked on failure to fetch the recipes, with an
+   *   exception.
+   */
+  fun getRatedRecipes(
+      lastRecipe: DocumentSnapshot?,
+      onSuccess: (List<Recipe>, DocumentSnapshot?) -> Unit,
+      onFailure: (Exception) -> Unit
+  ) {
+    // Create a query to fetch the top rated recipes
+    var queryRef =
+        db.collection(collectionPath).orderBy("rating", Query.Direction.DESCENDING).limit(6)
+
+    // If lastRecipe is not null, start the query after the last recipe fetched
+    if (lastRecipe != null) {
+      queryRef = queryRef.startAfter(lastRecipe)
+    }
+
+    queryRef
+        .get()
+        .addOnSuccessListener { addSuccessListener(it, onSuccess, onFailure) }
+        .addOnFailureListener { onFailure(it) }
+  }
 
   /**
    * Fetches all the recipes that contain the given query in their title.
    *
    * @param query The query string to search for in the recipe titles.
+   * @param lastRecipe The last recipe fetched in the previous query. If null, fetches the first
+   *   page of recipes.
    * @param onSuccess A callback function invoked with the list of recipes on success.
    * @param onFailure A callback function invoked on failure to fetch the recipes, with an
    *   exception.
@@ -101,30 +144,55 @@ class RecipeRepository(private val db: FirebaseFirestore) {
       onSuccess: (List<Recipe>, DocumentSnapshot?) -> Unit,
       onFailure: (Exception) -> Unit
   ) {
+    // Create Query for recipes that contain the input query in their title
     var queryRef =
         db.collection(collectionPath)
-            .whereGreaterThanOrEqualTo("title", query)
-            .whereLessThan("title", query + "\uf8ff")
-            .limit(10) // Limit the number of documents fetched
+            .whereArrayContainsAny("searchItems", listOf(query.lowercase(Locale.ROOT)))
+            .limit(6) // Limit the number of documents fetched
 
+    // If lastRecipe is not null, start the query after the last recipe fetched
     if (lastRecipe != null) {
       queryRef = queryRef.startAfter(lastRecipe)
     }
 
     queryRef
         .get()
-        .addOnSuccessListener {
-          it.documents.map { recipeMap ->
-            val data = recipeMap.data
-            if (data != null) {
-              val success = { recipe: Recipe? ->
-                onSuccess(listOfNotNull(recipe), it.documents.lastOrNull())
-              }
-              mapToRecipe(data, success, onFailure)
-            }
-          }
-        }
+        .addOnSuccessListener { addSuccessListener(it, onSuccess, onFailure) }
         .addOnFailureListener { onFailure(it) }
+  }
+
+  /**
+   * A helper function that adds the recipes to the list of recipes
+   *
+   * @param snapshot: the snapshot of the query
+   * @param onSuccess: the callback function to be called on success
+   * @param onFailure: the callback function to be called on failure
+   */
+  private fun addSuccessListener(
+      snapshot: QuerySnapshot,
+      onSuccess: (List<Recipe>, DocumentSnapshot?) -> Unit,
+      onFailure: (Exception) -> Unit
+  ) {
+    val recipes = mutableListOf<Recipe>()
+    val docs = snapshot.documents
+
+    docs.forEach { recipeMap ->
+      // Extract the data from the document
+      val data = recipeMap.data
+      if (data != null) {
+        // Convert the data to a Recipe object
+        mapToRecipe(
+            data,
+            { recipe ->
+              if (recipe != null) {
+                recipes.add(recipe)
+              }
+            },
+            onFailure)
+      }
+    }
+    // Call the success callback with the list of recipes
+    onSuccess(recipes, docs.lastOrNull())
   }
 
   private fun recipeToMap(recipe: Recipe): Map<String, Any> {
@@ -147,75 +215,238 @@ class RecipeRepository(private val db: FirebaseFirestore) {
           "ingredient" to this.ingredient.toMap())
 
   private fun Ingredient.toMap(): Map<String, Any> =
-      mapOf("name" to this.name, "type" to this.type, "id" to this.id)
+      mapOf(
+          "name" to this.name,
+          "id" to this.id,
+          "vegan" to this.vegan,
+          "vegetarian" to this.vegetarian)
 
   private fun Step.toMap(): Map<String, Any> =
       mapOf(
           "stepNumber" to this.stepNumber, "description" to this.description, "title" to this.title)
 
-  private fun mapToRecipe(
+  fun mapToRecipe(
       map: Map<String, Any>,
       onSuccess: (Recipe?) -> Unit,
       onFailure: (Exception) -> Unit
   ) {
-    // Attempt to safely extract the list of ingredient IDs
-    val rawIngredientsList = map["ingredients"]
-    val ingredientIds =
-        if (rawIngredientsList is List<*>) {
-          rawIngredientsList.mapNotNull { (it as? Map<*, *>)?.get("ingredientId") as? String }
-        } else {
-          listOf()
-        }
+    try {
+      // Extract the raw ingredients list
+      val rawIngredientsList = map["ingredients"]
+      Log.d("RecipeRepository", "raw Ids $rawIngredientsList")
 
-    // Safely process the tags
-    val rawTagsList = map["tags"]
-    val tags =
-        if (rawTagsList is List<*>) {
-          rawTagsList.mapNotNull { it as? String }
-        } else {
-          listOf()
-        }
+      // Parse ingredient meta data
+      val ingredientMetaDataList =
+          if (rawIngredientsList is List<*>) {
+            rawIngredientsList.mapNotNull { rawIngredient ->
+              (rawIngredient as? Map<*, *>)?.let { ingredientMap ->
+                val quantity = (ingredientMap["quantity"] as? Number)?.toDouble()
+                val measure = stringToMeasureUnit(ingredientMap["measure"] as? String)
+                val ingredientDetails = ingredientMap["ingredient"] as? Map<*, *>
 
-    ingredientsRepository.getIngredients(
-        ingredientIds,
-        onSuccess = { ingredients ->
-          try {
-            // Safely process the steps
-            val rawStepsList = map["steps"]
-            val steps =
-                if (rawStepsList is List<*>) {
-                  rawStepsList.mapNotNull { rawStep ->
-                    (rawStep as? Map<*, *>)?.let { stepMap ->
-                      val stepNumber = (stepMap["stepNumber"] as? Number)?.toInt()
-                      val description = stepMap["description"] as? String
-                      val title = stepMap["title"] as? String
-                      if (stepNumber != null && description != null && title != null) {
-                        Step(stepNumber, description, title)
-                      } else null
-                    }
-                  }
-                } else {
-                  listOf()
-                }
+                if (quantity != null && ingredientDetails != null) {
+                  val name = ingredientDetails["name"] as? String ?: ""
+                  val vegetarian = ingredientDetails["vegetarian"] as? Boolean ?: false
+                  val vegan = ingredientDetails["vegan"] as? Boolean ?: false
+                  val id = ingredientDetails["id"] as? String ?: ""
 
-            // Construct the Recipe object
-            val recipe =
-                Recipe(
-                    recipeId = map["recipeId"] as? String ?: "",
-                    title = map["title"] as? String ?: "",
-                    description = map["description"] as? String ?: "",
-                    ingredients = ingredients,
-                    steps = steps,
-                    tags = tags,
-                    rating = (map["rating"] as? Number)?.toDouble() ?: 0.0,
-                    userid = map["userid"] as? String ?: "",
-                    imageUrl = map["imageUrl"] as? String ?: "")
-
-            onSuccess(recipe)
-          } catch (e: Exception) {
-            onFailure(e)
+                  val ingredient = Ingredient(name, id, vegetarian, vegan)
+                  IngredientMetaData(quantity, measure, ingredient)
+                } else null
+              }
+            }
+          } else {
+            listOf()
           }
+
+      // Safely process the tags
+      val rawTagsList = map["tags"]
+      val tags =
+          if (rawTagsList is List<*>) {
+            rawTagsList.mapNotNull { it as? String }
+          } else {
+            listOf()
+          }
+
+      // Safely process the steps
+      val rawStepsList = map["steps"]
+      val steps =
+          if (rawStepsList is List<*>) {
+            rawStepsList.mapNotNull { rawStep ->
+              (rawStep as? Map<*, *>)?.let { stepMap ->
+                val stepNumber = (stepMap["stepNumber"] as? Number)?.toInt()
+                val description = stepMap["description"] as? String
+                val title = stepMap["title"] as? String
+                if (stepNumber != null && description != null && title != null) {
+                  Step(stepNumber, description, title)
+                } else null
+              }
+            }
+          } else {
+            listOf()
+          }
+
+      // Construct the Recipe object
+      val recipe =
+          Recipe(
+              recipeId = map["recipeId"] as? String ?: "",
+              title = map["title"] as? String ?: "",
+              description = map["description"] as? String ?: "",
+              ingredients = ingredientMetaDataList,
+              steps = steps,
+              tags = tags,
+              rating = (map["rating"] as? Number)?.toDouble() ?: 0.0,
+              userid = map["userid"] as? String ?: "",
+              imageUrl = map["imageUrl"] as? String ?: "")
+      Log.d("RecipeRepository", " Recipe fetched success $recipe ")
+
+      onSuccess(recipe)
+    } catch (e: Exception) {
+      onFailure(e)
+    }
+  }
+
+  private fun stringToMeasureUnit(measure: String?): MeasureUnit {
+    return when (measure?.uppercase()) {
+      "TEASPOON" -> MeasureUnit.TEASPOON
+      "TABLESPOON" -> MeasureUnit.TABLESPOON
+      "CUP" -> MeasureUnit.CUP
+      "G" -> MeasureUnit.G
+      "KG" -> MeasureUnit.KG
+      "L" -> MeasureUnit.L
+      "ML" -> MeasureUnit.ML
+      "PIECES" -> MeasureUnit.PIECES
+      "NONE" -> MeasureUnit.NONE
+      else -> MeasureUnit.EMPTY
+    }
+  }
+
+  /**
+   * Fetches recipes that contain any of the given ingredient IDs and maps them to Recipe objects.
+   *
+   * @param ingredientIds The list of ingredient IDs to match against.
+   * @param onSuccess A callback function invoked with the list of fetched recipes.
+   * @param onFailure A callback function invoked on failure to fetch the recipes, with an
+   *   exception.
+   */
+  private fun fetchAndMapRecipes(
+      ingredientIds: List<String>,
+      onSuccess: (List<Recipe>) -> Unit,
+      onFailure: (Exception) -> Unit
+  ) {
+    if (ingredientIds.isEmpty()) {
+      onFailure(IllegalArgumentException())
+      return
+    }
+    db.collection(collectionPath)
+        .whereArrayContainsAny("ingredientIds", ingredientIds)
+        .get()
+        .addOnSuccessListener { querySnapshot ->
+          val allRecipes = mutableListOf<Recipe>()
+
+          val docs = querySnapshot.documents
+          docs.forEach { recipeMap ->
+            val data = recipeMap.data
+            if (data != null) {
+              mapToRecipe(
+                  data,
+                  { recipe ->
+                    if (recipe != null) {
+                      allRecipes.add(recipe)
+                    }
+                  },
+                  onFailure)
+            }
+          }
+
+          onSuccess(allRecipes)
+        }
+        .addOnFailureListener { exception -> onFailure(exception) }
+  }
+
+  /**
+   * Suggests recipes based on the given list of ingredient IDs and the user profile.
+   *
+   * @param ingredientIds The list of ingredient IDs to match against.
+   * @param profile The user profile to consider for preferences.
+   * @param onSuccess A callback function invoked with the ranked list of suggested recipes on
+   *   success.
+   * @param onFailure A callback function invoked on failure to fetch the recipes, with an
+   *   exception.
+   */
+  fun suggestRecipes(
+      ingredientIds: List<String>,
+      profile: Profile,
+      onSuccess: (List<Recipe>) -> Unit,
+      onFailure: (Exception) -> Unit
+  ) {
+    fetchAndMapRecipes(
+        ingredientIds,
+        { allRecipes ->
+          val rankedRecipes = rankRecipes(allRecipes, ingredientIds, profile)
+          onSuccess(rankedRecipes)
         },
-        onFailure = onFailure)
+        onFailure)
+  }
+
+  /**
+   * Suggests recipes based on the given list of ingredient IDs and the user profile in strict mode.
+   *
+   * @param ingredientIds The list of ingredient IDs to match exactly.
+   * @param profile The user profile to consider for preferences.
+   * @param onSuccess A callback function invoked with the ranked list of suggested recipes on
+   *   success.
+   * @param onFailure A callback function invoked on failure to fetch the recipes, with an
+   *   exception.
+   */
+  fun suggestRecipesStrict(
+      ingredientIds: List<String>,
+      profile: Profile,
+      onSuccess: (List<Recipe>) -> Unit,
+      onFailure: (Exception) -> Unit
+  ) {
+    fetchAndMapRecipes(
+        ingredientIds,
+        { allRecipes ->
+          val filteredRecipes =
+              allRecipes.filter { recipe ->
+                val recipeIngredientIds = recipe.ingredients.map { it.ingredient.id }
+                recipeIngredientIds.containsAll(ingredientIds) &&
+                    ingredientIds.containsAll(recipeIngredientIds)
+              }
+
+          val rankedRecipes = rankRecipes(filteredRecipes, ingredientIds, profile)
+          onSuccess(rankedRecipes)
+        },
+        onFailure)
+  }
+
+  /**
+   * Ranks recipes based on the number of matching ingredients, user preferences, and ratings.
+   *
+   * @param recipes The list of recipes to rank.
+   * @param ingredientIds The list of ingredient IDs to match against.
+   * @param profile The user profile to consider for preferences.
+   * @return A ranked list of recipes.
+   */
+  private fun rankRecipes(
+      recipes: List<Recipe>,
+      ingredientIds: List<String>,
+      profile: Profile
+  ): List<Recipe> {
+    return recipes.sortedWith(
+        compareByDescending { recipe ->
+          val matchingIngredientsCount =
+              recipe.ingredients.count { ingredientMetaData ->
+                ingredientIds.contains(ingredientMetaData.ingredient.id)
+              }
+
+          val userPreferencesScore = recipe.tags.count { tag -> profile.filter.contains(tag) }
+
+          val ratingScore = recipe.rating
+
+          // Combine the scores to form the final ranking score
+          matchingIngredientsCount + userPreferencesScore + ratingScore
+        })
   }
 }

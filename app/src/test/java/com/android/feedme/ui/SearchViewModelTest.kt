@@ -19,7 +19,9 @@ import junit.framework.TestCase
 import org.junit.Before
 import org.junit.Test
 import org.junit.runner.RunWith
+import org.mockito.ArgumentMatchers.any
 import org.mockito.ArgumentMatchers.anyString
+import org.mockito.ArgumentMatchers.eq
 import org.mockito.Mock
 import org.mockito.Mockito
 import org.mockito.Mockito.`when`
@@ -116,7 +118,8 @@ class SearchViewModelTest {
     recipeRepository = RecipeRepository.instance
     profileRepository = ProfileRepository.instance
 
-    `when`(mockFirestore.collection("recipes")).thenReturn(mockCollectionReference)
+    `when`(mockFirestore.collection(recipeRepository.collectionPath))
+        .thenReturn(mockCollectionReference)
     `when`(mockFirestore.collection("profiles")).thenReturn(mockCollectionReference)
     `when`(mockFirestore.collection("ingredients")).thenReturn(mockIngredientsCollectionReference)
 
@@ -131,21 +134,22 @@ class SearchViewModelTest {
 
     `when`(mockDocumentReference.get()).thenReturn(Tasks.forResult(mockDocumentSnapshot))
     `when`(mockDocumentSnapshot.exists()).thenReturn(true)
-    `when`(mockDocumentSnapshot.data).thenReturn(recipeMap)
 
     // for searchRecipes
     `when`(mockCollectionReference.whereGreaterThanOrEqualTo("title", query)).thenReturn(mockQuery)
     `when`(mockQuery.whereLessThan("title", query + "\uf8ff")).thenReturn(mockQuery)
+    `when`(mockCollectionReference.whereArrayContainsAny(eq("searchItems"), any()))
+        .thenReturn(mockQuery)
 
     // for searchProfiles
     `when`(mockCollectionReference.whereGreaterThanOrEqualTo("username", queryUser))
         .thenReturn(mockQuery)
     `when`(mockQuery.whereLessThan("username", queryUser + "\uf8ff")).thenReturn(mockQuery)
 
+    `when`(mockQuery.limit(6)).thenReturn(mockQuery)
     `when`(mockQuery.limit(10)).thenReturn(mockQuery)
 
     `when`(mockQuery.get()).thenReturn(Tasks.forResult(mockQuerySnapshot))
-
     `when`(mockQuerySnapshot.documents).thenReturn(listOf(mockDocumentSnapshot))
 
     homeViewModel = HomeViewModel()
@@ -154,6 +158,7 @@ class SearchViewModelTest {
 
   @Test
   fun searchRecipes_Success() {
+    `when`(mockDocumentSnapshot.data).thenReturn(recipeMap)
     searchViewModel.searchRecipes(query)
     Shadows.shadowOf(Looper.getMainLooper()).idle()
 
@@ -173,6 +178,7 @@ class SearchViewModelTest {
 
   @Test
   fun loadMoreRecipes_Success() {
+    `when`(mockDocumentSnapshot.data).thenReturn(recipeMap)
     searchViewModel.searchRecipes(query)
     searchViewModel.loadMoreRecipes()
     Shadows.shadowOf(Looper.getMainLooper()).idle()

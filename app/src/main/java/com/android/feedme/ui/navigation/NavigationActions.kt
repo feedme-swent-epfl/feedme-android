@@ -10,6 +10,7 @@ import androidx.compose.material.icons.outlined.Settings
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.navigation.NavGraph.Companion.findStartDestination
 import androidx.navigation.NavHostController
+import com.android.feedme.model.viewmodel.ProfileViewModel
 
 /**
  * Handles navigation within an app's composable navigation graph.
@@ -20,7 +21,10 @@ import androidx.navigation.NavHostController
  *
  * @param navController The controller managing app navigation.
  */
-class NavigationActions(private val navController: NavHostController) {
+class NavigationActions(
+    private val navController: NavHostController,
+    private val profileViewModel: ProfileViewModel
+) {
 
   /**
    * Navigates to the specified [TopLevelDestination] destination.
@@ -42,6 +46,10 @@ class NavigationActions(private val navController: NavHostController) {
       // Restore state when reselecting a previously selected item
       if (destination.route != Route.AUTHENTICATION) {
         restoreState = true
+      }
+
+      if (destination.route == Route.PROFILE) {
+        profileViewModel.removeViewingProfile()
       }
     }
   }
@@ -92,11 +100,12 @@ object Screen {
   const val PROFILE = "Profile Screen"
   const val SETTINGS = "Settings Screen"
   const val CAMERA = "Camera"
-  const val GALLERY = "Gallery"
   const val EDIT_PROFILE = "Edit Profile"
   const val FRIENDS = "Friends/{showFollowers}"
   const val RECIPE = "Recipe/{sourceRoute}"
+  const val ADD_RECIPE = "Recipe Input Screen"
   const val SEARCH = "Search/{sourceRoute}"
+  const val ANALYZE_PICTURE = "Analyze Picture"
 }
 
 /**

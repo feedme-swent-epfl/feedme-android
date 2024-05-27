@@ -13,6 +13,7 @@ import androidx.compose.material3.Tab
 import androidx.compose.material3.TabRow
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableIntStateOf
@@ -30,6 +31,7 @@ import com.android.feedme.model.viewmodel.SearchViewModel
 import com.android.feedme.ui.component.LoadMoreButton
 import com.android.feedme.ui.navigation.BottomNavigationMenu
 import com.android.feedme.ui.navigation.NavigationActions
+import com.android.feedme.ui.navigation.Route
 import com.android.feedme.ui.navigation.TOP_LEVEL_DESTINATIONS
 import com.android.feedme.ui.navigation.TopBarNavigation
 import com.android.feedme.ui.profile.FriendsCard
@@ -166,7 +168,13 @@ fun FilteredContent(
       when (mode) {
         0 ->
             items(recipes) { recipe ->
-              RecipeCard(recipe, navigationActions, recipeViewModel, profileViewModel)
+              // Fetch the profile of the user who created the recipe
+              LaunchedEffect(recipe.userid) { recipeViewModel.fetchProfile(recipe.userid) }
+              val recipesProfiles by recipeViewModel.profiles.collectAsState()
+              val profile = recipesProfiles[recipe.userid]
+
+              RecipeCard(
+                  Route.HOME, recipe, profile, navigationActions, recipeViewModel, profileViewModel)
             }
         1 ->
             items(profiles) { profile -> FriendsCard(profile, navigationActions, profileViewModel) }

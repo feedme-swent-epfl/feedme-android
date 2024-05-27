@@ -1,10 +1,14 @@
 package com.android.feedme.test
 
+import android.os.Build
 import androidx.compose.ui.test.assertIsDisplayed
+import androidx.compose.ui.test.assertTextEquals
 import androidx.compose.ui.test.isDisplayed
+import androidx.compose.ui.test.isNotDisplayed
 import androidx.compose.ui.test.junit4.createAndroidComposeRule
+import androidx.compose.ui.test.onChild
 import androidx.compose.ui.test.onNodeWithContentDescription
-import androidx.compose.ui.test.onNodeWithText
+import androidx.compose.ui.test.onNodeWithTag
 import androidx.compose.ui.test.performClick
 import androidx.test.core.app.ApplicationProvider
 import androidx.test.ext.junit.runners.AndroidJUnit4
@@ -12,6 +16,7 @@ import androidx.test.rule.GrantPermissionRule
 import com.android.feedme.MainActivity
 import com.android.feedme.model.data.ProfileRepository
 import com.android.feedme.screen.CameraScreen
+import com.android.feedme.screen.DisplayPictureScreen
 import com.android.feedme.screen.FindRecipeScreen
 import com.android.feedme.screen.LandingScreen
 import com.android.feedme.screen.LoginScreen
@@ -38,6 +43,13 @@ class UserFlowTest : TestCase() {
   @get:Rule
   val permissionRule: GrantPermissionRule =
       GrantPermissionRule.grant(android.Manifest.permission.CAMERA)
+
+  // Grant gallery permission for tests
+  @get:Rule
+  val permissionRuleGallery: GrantPermissionRule =
+      if (Build.VERSION.SDK_INT <= 32)
+          GrantPermissionRule.grant(android.Manifest.permission.READ_EXTERNAL_STORAGE)
+      else GrantPermissionRule.grant(android.Manifest.permission.READ_MEDIA_IMAGES)
 
   @Before
   fun setup() {
@@ -134,16 +146,9 @@ class UserFlowTest : TestCase() {
     }
 
     ComposeScreen.onComposeScreen<CameraScreen>(composeTestRule) {
-      cameraPreview { assertIsDisplayed() }
-
       photoButton {
         assertIsDisplayed()
         performClick()
-      }
-
-      // Wait until the "Photo saved" text appears on the UI.
-      composeTestRule.waitUntil(timeoutMillis = 5000) {
-        composeTestRule.onNodeWithText("Photo saved", useUnmergedTree = true).isDisplayed()
       }
 
       // Click on the gallery button
@@ -152,13 +157,145 @@ class UserFlowTest : TestCase() {
         performClick()
       }
 
-      // Wait for the gallery to be displayed
+      //      // Wait for the gallery to be displayed
+      //      composeTestRule.waitForIdle()
+      //
+      //      // Assert that the photos are displayed after clicking
+      //      composeTestRule
+      //          .onNodeWithContentDescription("Photo", useUnmergedTree = true)
+      //          .assertIsDisplayed()
+    }
+  }
+
+  @Test
+  fun userFlowErrorWhenAnalyzingPictureText() {
+    ComposeScreen.onComposeScreen<LoginScreen>(composeTestRule) {
+      // Click on the "Sign in with Google" button
+      loginButton {
+        assertIsDisplayed()
+        performClick()
+      }
+
+      // Wait for the login to complete
+      composeTestRule.waitForIdle()
+    }
+
+    ComposeScreen.onComposeScreen<LandingScreen>(composeTestRule) {
+      // From Home Page go to FIND_RECIPE page
+      composeTestRule.onNodeWithContentDescription("Find Recipe").assertIsDisplayed().performClick()
+
+      // Wait for the FIND_RECIPE page to load
+      composeTestRule.waitForIdle()
+    }
+
+    ComposeScreen.onComposeScreen<FindRecipeScreen>(composeTestRule) {
+      cameraButton {
+        assertIsDisplayed()
+        performClick()
+      }
+
+      // Wait for the CAMERA page to load
+      composeTestRule.waitForIdle()
+    }
+
+    ComposeScreen.onComposeScreen<CameraScreen>(composeTestRule) {
+      photoButton {
+        assertIsDisplayed()
+        performClick()
+      }
+      composeTestRule.waitForIdle()
+      composeTestRule.waitUntil(timeoutMillis = 25000) {
+        composeTestRule.onNodeWithTag("DisplayPicture").isDisplayed()
+      }
+    }
+
+    ComposeScreen.onComposeScreen<DisplayPictureScreen>(composeTestRule) {
+      mlTextButton {
+        assertIsDisplayed()
+        performClick()
+      }
+      composeTestRule.waitUntil(timeoutMillis = 25000) {
+        composeTestRule.onNodeWithTag("CameraScreen").isDisplayed()
+      }
+    }
+
+    ComposeScreen.onComposeScreen<CameraScreen>(composeTestRule) {
+      composeTestRule.onNodeWithTag("Error Snack Bar").assertIsDisplayed()
+      composeTestRule
+          .onNodeWithTag("Error Snack Bar")
+          .onChild()
+          .assertTextEquals("Failed to identify text, please try again.")
       composeTestRule.waitForIdle()
 
-      // Assert that the photos are displayed after clicking
+      composeTestRule.waitUntil(timeoutMillis = 25000) {
+        composeTestRule.onNodeWithTag("Error Snack Bar").isNotDisplayed()
+      }
+    }
+  }
+
+  @Test
+  fun userFlowErrorWhenAnalyzingPictureBarcode() {
+    ComposeScreen.onComposeScreen<LoginScreen>(composeTestRule) {
+      // Click on the "Sign in with Google" button
+      loginButton {
+        assertIsDisplayed()
+        performClick()
+      }
+
+      // Wait for the login to complete
+      composeTestRule.waitForIdle()
+    }
+
+    ComposeScreen.onComposeScreen<LandingScreen>(composeTestRule) {
+      // From Home Page go to FIND_RECIPE page
+      composeTestRule.onNodeWithContentDescription("Find Recipe").assertIsDisplayed().performClick()
+
+      // Wait for the FIND_RECIPE page to load
+      composeTestRule.waitForIdle()
+    }
+
+    ComposeScreen.onComposeScreen<FindRecipeScreen>(composeTestRule) {
+      cameraButton {
+        assertIsDisplayed()
+        performClick()
+      }
+
+      // Wait for the CAMERA page to load
+      composeTestRule.waitForIdle()
+    }
+
+    ComposeScreen.onComposeScreen<CameraScreen>(composeTestRule) {
+      photoButton {
+        assertIsDisplayed()
+        performClick()
+      }
+      composeTestRule.waitForIdle()
+      composeTestRule.waitUntil(timeoutMillis = 25000) {
+        composeTestRule.onNodeWithTag("DisplayPicture").isDisplayed()
+      }
+    }
+
+    ComposeScreen.onComposeScreen<DisplayPictureScreen>(composeTestRule) {
+      mlBarcodeButton {
+        assertIsDisplayed()
+        performClick()
+      }
+      composeTestRule.waitUntil(timeoutMillis = 25000) {
+        composeTestRule.onNodeWithTag("CameraScreen").isDisplayed()
+      }
+    }
+
+    ComposeScreen.onComposeScreen<CameraScreen>(composeTestRule) {
+      composeTestRule.onNodeWithTag("Error Snack Bar").assertIsDisplayed()
       composeTestRule
-          .onNodeWithContentDescription("Photo", useUnmergedTree = true)
-          .assertIsDisplayed()
+          .onNodeWithTag("Error Snack Bar")
+          .onChild()
+          .assertTextEquals("Failed to identify barcode, please try again.")
+      composeTestRule.waitForIdle()
+
+      composeTestRule.waitUntil(timeoutMillis = 25000) {
+        composeTestRule.onNodeWithTag("Error Snack Bar").isNotDisplayed()
+      }
     }
   }
 

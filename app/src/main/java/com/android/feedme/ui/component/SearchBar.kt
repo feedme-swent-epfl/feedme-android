@@ -2,16 +2,15 @@ package com.android.feedme.ui.component
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Close
 import androidx.compose.material.icons.filled.Search
-import androidx.compose.material.icons.outlined.Tune
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
@@ -22,14 +21,13 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
-import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.text.font.FontStyle
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import androidx.lifecycle.viewmodel.compose.viewModel
 import com.android.feedme.model.viewmodel.SearchViewModel
 import com.android.feedme.ui.navigation.NavigationActions
 
@@ -59,63 +57,56 @@ fun SearchBarFun(route: String, navigationActions: NavigationActions, viewModel:
     }
   }
 
-  // Search bar + filters icon
-  Row(modifier = Modifier.background(Color.White), verticalAlignment = Alignment.CenterVertically) {
-    SearchBar(
-        modifier = Modifier.fillMaxWidth().padding(10.dp).height(53.dp).testTag("SearchBar"),
-        query = query,
-        active = active,
-        onActiveChange = { active = it },
-        onQueryChange = { query = it },
-        onSearch = onSearch,
-        leadingIcon = {
-          if (active) {
-            IconButton(onClick = { onSearch(query) }) {
-              Icon(
-                  Icons.Default.Search,
-                  contentDescription = "Search Icon Button",
-                  modifier = Modifier.size(26.dp))
-            }
-          } else {
-            IconButton(onClick = { /*TODO: add manual filtering logic*/}) {
-              Icon(
-                  Icons.Outlined.Tune,
-                  contentDescription = "Filter Icon",
-                  modifier = Modifier.size(26.dp))
-            }
-          }
-        },
-        trailingIcon = {
-          if (active) {
-            IconButton(
-                onClick = {
-                  query = ""
-                  active = false
-                  viewModel.resetSearch()
-                }) {
-                  Icon(
-                      imageVector = Icons.Default.Close,
-                      contentDescription = "Close Icon",
-                      modifier = Modifier.size(26.dp))
-                }
-          } else {
-            Icon(
-                Icons.Default.Search,
-                contentDescription = "Search Icon",
-                modifier = Modifier.size(26.dp))
-          }
-        },
-        placeholder = {
+  // Search bar
+  SearchBar(
+      modifier =
+          Modifier.fillMaxWidth()
+              .padding(10.dp)
+              .height(if (active) 70.dp else 55.dp)
+              .clip(RoundedCornerShape(35.dp))
+              .testTag("SearchBar"),
+      query = query,
+      active = active,
+      onActiveChange = { active = it },
+      onQueryChange = { query = it },
+      onSearch = onSearch,
+      leadingIcon = {
+        IconButton(onClick = { onSearch(query) }) {
+          Icon(
+              Icons.Default.Search,
+              contentDescription = "Search Icon Button",
+              modifier = Modifier.size(26.dp))
+        }
+      },
+      trailingIcon = {
+        if (active) {
+          IconButton(
+              onClick = {
+                query = ""
+                active = false
+                viewModel.resetSearch()
+              }) {
+                Icon(
+                    imageVector = Icons.Default.Close,
+                    contentDescription = "Close Icon",
+                    modifier = Modifier.size(26.dp))
+              }
+        }
+      },
+      placeholder = {
+        Text(
+            text = "Find a recipe or friend",
+            fontStyle = FontStyle.Italic,
+            fontSize = 16.sp,
+            modifier = Modifier.testTag("Placeholder Text"))
+      },
+      content = {
+        Column(modifier = Modifier.fillMaxHeight().background(Color.Transparent)) {
           Text(
-              text = "Find a recipe or friend",
-              fontStyle = FontStyle.Italic,
-              fontSize = 16.sp,
-              modifier = Modifier.testTag("Placeholder Text"))
-        },
-        content = {
-          Column(modifier = Modifier.fillMaxHeight().background(Color.Black)) {
-            Text("Hello World")
-          }
-        })
-  }
+              text = query,
+              modifier = Modifier.fillMaxHeight(),
+              color = Color.Black,
+              fontSize = 16.sp)
+        }
+      })
 }

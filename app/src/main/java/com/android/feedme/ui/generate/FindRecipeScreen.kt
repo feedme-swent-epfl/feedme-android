@@ -1,40 +1,44 @@
 package com.android.feedme.ui.generate
 
-import androidx.compose.foundation.BorderStroke
-import androidx.compose.foundation.Image
-import androidx.compose.foundation.border
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
-import androidx.compose.foundation.layout.width
-import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Check
+import androidx.compose.material.icons.filled.Info
 import androidx.compose.material.icons.filled.PhotoCamera
-import androidx.compose.material.icons.filled.PhotoLibrary
+import androidx.compose.material3.Checkbox
+import androidx.compose.material3.FloatingActionButton
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.OutlinedButton
 import androidx.compose.material3.Scaffold
+import androidx.compose.material3.Surface
+import androidx.compose.material3.Switch
+import androidx.compose.material3.SwitchDefaults
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.testTag
-import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import com.android.feedme.R
+import androidx.compose.ui.window.Dialog
 import com.android.feedme.model.viewmodel.InputViewModel
+import com.android.feedme.model.viewmodel.ProfileViewModel
 import com.android.feedme.ui.component.IngredientList
 import com.android.feedme.ui.navigation.BottomNavigationMenu
 import com.android.feedme.ui.navigation.NavigationActions
@@ -42,7 +46,10 @@ import com.android.feedme.ui.navigation.Route
 import com.android.feedme.ui.navigation.Screen
 import com.android.feedme.ui.navigation.TOP_LEVEL_DESTINATIONS
 import com.android.feedme.ui.navigation.TopBarNavigation
-import com.android.feedme.ui.theme.FindRecipeIcons
+import com.android.feedme.ui.theme.DarkGrey
+import com.android.feedme.ui.theme.FabColor
+import com.android.feedme.ui.theme.OffWhite
+import com.android.feedme.ui.theme.TextBarColor
 
 /**
  * Composable function for the Create Screen.
@@ -50,11 +57,101 @@ import com.android.feedme.ui.theme.FindRecipeIcons
  * @param navigationActions actions for navigating to different screens.
  */
 @Composable
-fun FindRecipeScreen(navigationActions: NavigationActions, inputViewModel: InputViewModel) {
+fun FindRecipeScreen(
+    navigationActions: NavigationActions,
+    inputViewModel: InputViewModel,
+    profileViewModel: ProfileViewModel
+) {
+
+  val checkMark = remember { mutableStateOf(false) }
+  val isStrict = remember { mutableStateOf(true) }
+  val dialog = profileViewModel.showDialog.collectAsState()
+  val showDialog = remember { mutableStateOf(true) }
+
+  if (showDialog.value && dialog.value) {
+    Dialog(onDismissRequest = { profileViewModel.setDialog(!checkMark.value) }) {
+      Surface(shape = MaterialTheme.shapes.medium, color = MaterialTheme.colorScheme.background) {
+        Column(
+            modifier = Modifier.padding(16.dp).fillMaxWidth().testTag("Dialog"),
+            horizontalAlignment = Alignment.CenterHorizontally) {
+              Icon(
+                  imageVector = Icons.Default.Info,
+                  contentDescription = "Information Icon",
+                  tint = MaterialTheme.colorScheme.primary,
+                  modifier = Modifier.size(40.dp).padding(end = 8.dp).testTag("InfoIcon"))
+
+              Text(
+                  modifier = Modifier.fillMaxWidth().testTag("InfoText1"),
+                  text = "There is a toggle that you can use to generate different recipes.",
+                  textAlign = TextAlign.Center)
+              Text(
+                  modifier = Modifier.fillMaxWidth().testTag("InfoText2"),
+                  text =
+                      "If you choose strict, the recipe will only include the ingredients you have chosen to input.",
+                  textAlign = TextAlign.Center)
+              Text(
+                  text =
+                      "If you choose extra, the recipe will include the ingredients you have inputted and may include additional ingredients.",
+                  modifier = Modifier.padding(bottom = 16.dp).fillMaxWidth().testTag("InfoText3"),
+                  textAlign = TextAlign.Center)
+              Spacer(modifier = Modifier.height(6.dp))
+              Row(
+                  verticalAlignment = Alignment.CenterVertically,
+                  modifier = Modifier.padding(bottom = 16.dp)) {
+                    Checkbox(
+                        modifier = Modifier.testTag("CheckBox"),
+                        checked = checkMark.value,
+                        onCheckedChange = { checkMark.value = it })
+                    Text("Don't show next time")
+                  }
+              Text(
+                  text = "Dismiss",
+                  style =
+                      TextStyle(color = Color.Red, fontSize = 14.sp, fontWeight = FontWeight.Bold),
+                  modifier =
+                      Modifier.align(Alignment.CenterHorizontally)
+                          .testTag("DismissText")
+                          .clickable {
+                            profileViewModel.setDialog(!checkMark.value)
+                            showDialog.value = false
+                          })
+            }
+      }
+    }
+  }
 
   Scaffold(
       modifier = Modifier.testTag("FindRecipeScreen"),
-      topBar = { TopBarNavigation(title = "Find Recipe") },
+      topBar = { TopBarNavigation(title = "Generate Recipe") },
+      floatingActionButton = {
+        Column {
+          FloatingActionButton(
+              containerColor = FabColor,
+              contentColor = TextBarColor,
+              onClick = { navigationActions.navigateTo(Screen.CAMERA) },
+              content = {
+                Icon(
+                    imageVector = Icons.Default.PhotoCamera,
+                    contentDescription = "Camera Icon",
+                    modifier = Modifier.size(24.dp))
+              },
+              modifier = Modifier.testTag("CameraButton"))
+
+          Spacer(modifier = Modifier.height(10.dp))
+
+          FloatingActionButton(
+              containerColor = FabColor,
+              contentColor = TextBarColor,
+              onClick = { checkMark.value = true },
+              content = {
+                Icon(
+                    imageVector = Icons.Default.Check,
+                    contentDescription = "Camera Icon",
+                    modifier = Modifier.size(24.dp))
+              },
+              modifier = Modifier.testTag("ValidateButton"))
+        }
+      },
       bottomBar = {
         BottomNavigationMenu(
             selectedItem = Route.FIND_RECIPE,
@@ -73,80 +170,28 @@ fun FindRecipeScreen(navigationActions: NavigationActions, inputViewModel: Input
                   fontWeight = FontWeight.Bold,
               )
 
-              // Camera Button
-              OutlinedButton(
-                  modifier =
-                      Modifier.fillMaxWidth()
-                          .padding(horizontal = 20.dp)
-                          .padding(bottom = 20.dp)
-                          .testTag("CameraButton"),
-                  shape = RoundedCornerShape(size = 10.dp),
-                  onClick = { navigationActions.navigateTo(Screen.CAMERA) },
-                  border = BorderStroke(width = 2.dp, color = Color.Black)) {
-                    Icon(
-                        imageVector = Icons.Default.PhotoCamera,
-                        contentDescription = "Camera Icon",
-                        tint = FindRecipeIcons,
-                        modifier = Modifier.size(24.dp))
-
-                    Spacer(modifier = Modifier.width(8.dp))
-
+              Row(
+                  verticalAlignment = Alignment.CenterVertically,
+                  horizontalArrangement = Arrangement.Center,
+                  modifier = Modifier.fillMaxWidth()) {
                     Text(
-                        text = "Scan with Camera",
-                        style =
-                            TextStyle(
-                                fontSize = 16.sp,
-                                lineHeight = 20.sp,
-                                fontWeight = FontWeight(700),
-                                color = FindRecipeIcons,
-                                textAlign = TextAlign.Center,
-                                letterSpacing = 0.25.sp,
-                            ))
-                  }
-
-              // Gallery Button
-              OutlinedButton(
-                  modifier =
-                      Modifier.fillMaxWidth()
-                          .padding(horizontal = 20.dp)
-                          .padding(bottom = 20.dp)
-                          .testTag("GalleryButton"),
-                  shape = RoundedCornerShape(size = 10.dp),
-                  onClick = { navigationActions.navigateTo(Screen.GALLERY) },
-                  border = BorderStroke(width = 2.dp, color = Color.Black)) {
-                    Icon(
-                        imageVector = Icons.Default.PhotoLibrary,
-                        contentDescription = "Gallery Icon",
-                        tint = FindRecipeIcons,
-                        modifier = Modifier.size(24.dp))
-
-                    Spacer(modifier = Modifier.width(8.dp))
-
+                        text = "Strict",
+                        style = MaterialTheme.typography.bodyMedium,
+                        fontWeight = FontWeight.Bold,
+                        modifier = Modifier.padding(end = 8.dp).testTag("StrictText"))
+                    Switch(
+                        modifier = Modifier.testTag("ToggleSwitch"),
+                        checked = !isStrict.value,
+                        onCheckedChange = { isChecked -> isStrict.value = !isChecked },
+                        colors =
+                            SwitchDefaults.colors(
+                                checkedThumbColor = OffWhite, uncheckedThumbColor = DarkGrey))
                     Text(
-                        text = "Select from Gallery",
-                        style =
-                            TextStyle(
-                                fontSize = 16.sp,
-                                lineHeight = 20.sp,
-                                fontWeight = FontWeight(700),
-                                color = FindRecipeIcons,
-                                textAlign = TextAlign.Center,
-                                letterSpacing = 0.25.sp,
-                            ))
+                        text = "Extra",
+                        style = MaterialTheme.typography.bodyMedium,
+                        fontWeight = FontWeight.Bold,
+                        modifier = Modifier.padding(start = 8.dp).testTag("ExtraText"))
                   }
-
-              // Line separator
-              Image(
-                  modifier =
-                      Modifier.border(width = 4.dp, color = Color.Gray)
-                          .padding(4.dp)
-                          .width(180.dp)
-                          .height(0.dp),
-                  painter = painterResource(id = R.drawable.line_8),
-                  contentDescription = "Line Separator",
-                  contentScale = ContentScale.None)
-
-              // List Of Ingredients
               IngredientList(inputViewModel)
             }
       }

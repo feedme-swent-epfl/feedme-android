@@ -8,12 +8,20 @@ import androidx.test.ext.junit.runners.AndroidJUnit4
 import com.android.feedme.model.data.Ingredient
 import com.android.feedme.model.data.IngredientMetaData
 import com.android.feedme.model.data.MeasureUnit
+import com.android.feedme.model.data.Profile
+import com.android.feedme.model.data.ProfileRepository
 import com.android.feedme.model.data.Recipe
 import com.android.feedme.model.data.RecipeRepository
 import com.android.feedme.model.data.Step
+import com.android.feedme.model.viewmodel.RecipeViewModel
 import com.android.feedme.ui.component.SmallThumbnailsDisplay
 import com.android.feedme.ui.navigation.NavigationActions
+import com.google.android.gms.tasks.Tasks
+import com.google.firebase.firestore.CollectionReference
+import com.google.firebase.firestore.DocumentReference
+import com.google.firebase.firestore.DocumentSnapshot
 import com.google.firebase.firestore.FirebaseFirestore
+import io.mockk.every
 import io.mockk.mockk
 import org.junit.Before
 import org.junit.Rule
@@ -27,42 +35,52 @@ class SmallThumbnailsDisplayTest {
 
   private val navMock = mockk<NavigationActions>()
   private val mockFirestore = mockk<FirebaseFirestore>(relaxed = true)
+  private val mockDocumentReference = mockk<DocumentReference>(relaxed = true)
+  private val mockCollectionReference = mockk<CollectionReference>(relaxed = true)
+  private var mockDocumentSnapshot = mockk<DocumentSnapshot>(relaxed = true)
+
+  private val recipe1 =
+      Recipe(
+          recipeId = "lasagna1",
+          title = "Tasty Lasagna",
+          description = "a",
+          ingredients =
+              listOf(
+                  IngredientMetaData(
+                      quantity = 2.0,
+                      measure = MeasureUnit.ML,
+                      ingredient = Ingredient("Tomato", "tomatoID", false, false))),
+          steps = listOf(Step(1, "a", "Step1")),
+          tags = listOf("Meat"),
+          rating = 4.5,
+          userid = "PasDavid",
+      )
 
   @Before
   fun init() {
     RecipeRepository.initialize(mockFirestore)
+    ProfileRepository.initialize(mockFirestore)
   }
 
   @Test
   fun checkThumbnailsDisplay() {
-    val recipe1 =
-        Recipe(
-            recipeId = "lasagna1",
-            title = "Tasty Lasagna",
-            description = "a",
-            ingredients =
-                listOf(
-                    IngredientMetaData(
-                        quantity = 2.0,
-                        measure = MeasureUnit.ML,
-                        ingredient = Ingredient("Tomato", "Vegetables", "tomatoID"))),
-            steps = listOf(Step(1, "a", "Step1")),
-            tags = listOf("Meat"),
-            rating = 4.5,
-            userid = "PasDavid",
-            "https://external-content.duckduckgo.com/iu/?u=https%3A%2F%2Fwww.mamablip.com%2Fstorage%2FLasagna%2520with%2520Meat%2520and%2520Tomato%2520Sauce_3481612355355.jpg&f=1&nofb=1&ipt=8e887ba99ce20a85fb867dabbe0206c1146ebf2f13548b5653a2778e3ea18c54&ipo=images")
+    every { mockFirestore.collection("profiles") } returns mockCollectionReference
+    every { mockCollectionReference.document(any()) } returns mockDocumentReference
 
-    composeTestRule.setContent { SmallThumbnailsDisplay(listOf(recipe1), navMock) }
+    every { mockDocumentReference.get() } returns Tasks.forResult(mockDocumentSnapshot)
+    every { mockDocumentSnapshot.toObject(Profile::class.java) } returns
+        Profile(id = "ID_DEFAULT_1")
+
+    every { mockDocumentReference.set(any()) } returns Tasks.forResult(null)
+
+    composeTestRule.setContent {
+      SmallThumbnailsDisplay(listOf(recipe1), navMock, RecipeViewModel())
+    }
     composeTestRule.waitForIdle()
 
     composeTestRule.onNodeWithTag("RecipeSmallCard").assertIsDisplayed()
 
-    // Check whether the Image or the warning message is displayed
-    /*try {
-      composeTestRule.onNodeWithTag("Recipe Image").assertIsDisplayed()
-    } catch (e: AssertionError) {
-      composeTestRule.onNodeWithText("Fail Image Download")
-    }*/
+    composeTestRule.onNodeWithTag("Fail Image Download", useUnmergedTree = true).assertIsDisplayed()
 
     composeTestRule
         .onNodeWithContentDescription("Star Icon", useUnmergedTree = true)

@@ -9,8 +9,9 @@ data class Profile(
     val imageUrl: String = "URL_DEFAULT",
     var followers: List<String> = listOf(),
     var following: List<String> = listOf(),
-    val filter: List<String> = listOf(), // Setting of alergie / setting
+    val filter: List<String> = listOf(), // Setting of allergies / setting
     val recipeList: List<String> = listOf(), // Assuming this is a list of recipe IDs
-    // TODO ADD recipeSave / RecipeCreated
-    val commentList: List<String> = listOf()
+    var savedRecipes: List<String> = listOf(), // Assuming this is a list of recipe IDs
+    val commentList: List<String> = listOf(),
+    var showDialog: Boolean = true, // Shows or hides the pop-up in the generation of recipes
 )

@@ -5,6 +5,7 @@ import androidx.test.core.app.ApplicationProvider
 import com.android.feedme.model.data.Ingredient
 import com.android.feedme.model.data.IngredientMetaData
 import com.android.feedme.model.data.MeasureUnit
+import com.android.feedme.model.data.Profile
 import com.android.feedme.model.data.Recipe
 import com.android.feedme.model.data.RecipeRepository
 import com.android.feedme.model.data.Step
@@ -30,7 +31,9 @@ class RecipeRepositoryTest {
 
   @Mock private lateinit var mockCollectionReference: CollectionReference
 
-  @Mock private lateinit var mockDocumentSnapshot: DocumentSnapshot
+  @Mock private lateinit var mockDocumentSnapshot1: DocumentSnapshot
+
+  @Mock private lateinit var mockDocumentSnapshot2: DocumentSnapshot
 
   @Mock private lateinit var mockIngredientsCollectionReference: CollectionReference
 
@@ -48,7 +51,8 @@ class RecipeRepositoryTest {
 
     recipeRepository = RecipeRepository(mockFirestore)
 
-    `when`(mockFirestore.collection("recipes")).thenReturn(mockCollectionReference)
+    `when`(mockFirestore.collection(recipeRepository.collectionPath))
+        .thenReturn(mockCollectionReference)
     `when`(mockCollectionReference.document(anyString())).thenReturn(mockDocumentReference)
 
     // Additional mocking for ingredients collection
@@ -57,12 +61,216 @@ class RecipeRepositoryTest {
         .thenReturn(mockDocumentReference)
     `when`(mockDocumentReference.get()).thenReturn(Tasks.forResult(mockIngredientDocumentSnapshot))
 
-    `when`(mockFirestore.collection("recipes")).thenReturn(mock(CollectionReference::class.java))
-    `when`(mockFirestore.collection("recipes").document(anyString()))
-        .thenReturn(mockDocumentReference)
+    `when`(mockFirestore.collection(recipeRepository.collectionPath))
+        .thenReturn(mockCollectionReference)
+    `when`(mockCollectionReference.document()).thenReturn(mockDocumentReference)
+    `when`(mockDocumentReference.id).thenReturn("testRecipeId")
+    `when`(mockDocumentReference.set(any())).thenReturn(Tasks.forResult<Void>(null))
 
-    // Here's the critical part: ensure a Task<Void> is returned
+    // Ensure a Task<Void> is returned
     `when`(mockDocumentReference.set(any())).thenReturn(Tasks.forResult(null))
+  }
+
+  @Test
+  fun suggestRecipes_Success() {
+    val ingredientIds = listOf("flourId", "sugarId")
+    val profile =
+        Profile(
+            id = "user123",
+            name = "John Doe",
+            username = "johndoe",
+            email = "johndoe@example.com",
+            description = "Avid baker",
+            imageUrl = "http://example.com/profile.jpg",
+            filter = listOf("dessert"),
+            recipeList = listOf(),
+            savedRecipes = listOf(),
+            commentList = listOf(),
+            showDialog = true)
+
+    val recipeMap1: Map<String, Any> =
+        mapOf(
+            "recipeId" to "1",
+            "title" to "Chocolate Cake",
+            "description" to "A rich chocolate cake",
+            "ingredients" to
+                listOf(
+                    mapOf(
+                        "quantity" to 2.0,
+                        "measure" to MeasureUnit.CUP.name,
+                        "ingredient" to
+                            mapOf(
+                                "name" to "Flour",
+                                "id" to "flourId",
+                                "vegetarian" to true,
+                                "vegan" to true)),
+                    mapOf(
+                        "quantity" to 1.0,
+                        "measure" to MeasureUnit.CUP.name,
+                        "ingredient" to
+                            mapOf(
+                                "name" to "Sugar",
+                                "id" to "sugarId",
+                                "vegetarian" to true,
+                                "vegan" to true))),
+            "steps" to listOf<Map<String, Any>>(),
+            "tags" to listOf("dessert"),
+            "rating" to 4.5,
+            "userid" to "user123",
+            "imageUrl" to "http://example.com/chocolate_cake.jpg")
+
+    val recipeMap2: Map<String, Any> =
+        mapOf(
+            "recipeId" to "2",
+            "title" to "Vanilla Cake",
+            "description" to "A delightful vanilla cake",
+            "ingredients" to
+                listOf(
+                    mapOf(
+                        "quantity" to 2.0,
+                        "measure" to MeasureUnit.CUP.name,
+                        "ingredient" to
+                            mapOf(
+                                "name" to "Flour",
+                                "id" to "flourId",
+                                "vegetarian" to true,
+                                "vegan" to true)),
+                    mapOf(
+                        "quantity" to 1.0,
+                        "measure" to MeasureUnit.CUP.name,
+                        "ingredient" to
+                            mapOf(
+                                "name" to "Sugar",
+                                "id" to "sugarId",
+                                "vegetarian" to true,
+                                "vegan" to true))),
+            "steps" to listOf<Map<String, Any>>(),
+            "tags" to listOf("dessert"),
+            "rating" to 4.0,
+            "userid" to "user123",
+            "imageUrl" to "http://example.com/vanilla_cake.jpg")
+
+    val querySnapshot: QuerySnapshot = mock(QuerySnapshot::class.java)
+    `when`(mockDocumentSnapshot1.data).thenReturn(recipeMap1)
+    `when`(mockDocumentSnapshot2.data).thenReturn(recipeMap2)
+    `when`(querySnapshot.documents).thenReturn(listOf(mockDocumentSnapshot1, mockDocumentSnapshot2))
+
+    `when`(mockCollectionReference.whereArrayContainsAny("ingredientIds", ingredientIds))
+        .thenReturn(mockCollectionReference)
+    `when`(mockCollectionReference.get()).thenReturn(Tasks.forResult(querySnapshot))
+
+    recipeRepository.suggestRecipes(
+        ingredientIds,
+        profile,
+        { recipes ->
+          assertNotNull(recipes)
+          assertEquals(2, recipes.size)
+          assertEquals("Chocolate Cake", recipes[0].title)
+        },
+        { fail("Failure callback was called") })
+
+    shadowOf(Looper.getMainLooper()).idle()
+  }
+
+  @Test
+  fun suggestRecipesStrict_Success() {
+    val ingredientIds = listOf("flourId", "sugarId")
+    val profile =
+        Profile(
+            id = "user123",
+            name = "John Doe",
+            username = "johndoe",
+            email = "johndoe@example.com",
+            description = "Avid baker",
+            imageUrl = "http://example.com/profile.jpg",
+            filter = listOf("dessert"),
+            recipeList = listOf(),
+            savedRecipes = listOf(),
+            commentList = listOf(),
+            showDialog = true)
+
+    val recipeMap1: Map<String, Any> =
+        mapOf(
+            "recipeId" to "1",
+            "title" to "Chocolate Cake",
+            "description" to "A rich chocolate cake",
+            "ingredients" to
+                listOf(
+                    mapOf(
+                        "quantity" to 2.0,
+                        "measure" to MeasureUnit.CUP.name,
+                        "ingredient" to
+                            mapOf(
+                                "name" to "Flour",
+                                "id" to "flourId",
+                                "vegetarian" to true,
+                                "vegan" to true)),
+                    mapOf(
+                        "quantity" to 1.0,
+                        "measure" to MeasureUnit.CUP.name,
+                        "ingredient" to
+                            mapOf(
+                                "name" to "Sugar",
+                                "id" to "sugarId",
+                                "vegetarian" to true,
+                                "vegan" to true))),
+            "steps" to listOf<Map<String, Any>>(),
+            "tags" to listOf("dessert"),
+            "rating" to 4.5,
+            "userid" to "user123",
+            "imageUrl" to "http://example.com/chocolate_cake.jpg")
+
+    val recipeMap2: Map<String, Any> =
+        mapOf(
+            "recipeId" to "2",
+            "title" to "Vanilla Cake",
+            "description" to "A delightful vanilla cake",
+            "ingredients" to
+                listOf(
+                    mapOf(
+                        "quantity" to 2.0,
+                        "measure" to MeasureUnit.CUP.name,
+                        "ingredient" to
+                            mapOf(
+                                "name" to "Flour",
+                                "id" to "flourId",
+                                "vegetarian" to true,
+                                "vegan" to true)),
+                    mapOf(
+                        "quantity" to 1.0,
+                        "measure" to MeasureUnit.CUP.name,
+                        "ingredient" to
+                            mapOf(
+                                "name" to "Sugar",
+                                "id" to "notSugarId",
+                                "vegetarian" to true,
+                                "vegan" to true))),
+            "steps" to listOf<Map<String, Any>>(),
+            "tags" to listOf("dessert"),
+            "rating" to 4.0,
+            "userid" to "user123",
+            "imageUrl" to "http://example.com/vanilla_cake.jpg")
+
+    val querySnapshot: QuerySnapshot = mock(QuerySnapshot::class.java)
+    `when`(mockDocumentSnapshot1.data).thenReturn(recipeMap1)
+    `when`(mockDocumentSnapshot2.data).thenReturn(recipeMap2)
+    `when`(querySnapshot.documents).thenReturn(listOf(mockDocumentSnapshot1, mockDocumentSnapshot2))
+
+    `when`(mockCollectionReference.whereArrayContainsAny("ingredientIds", ingredientIds))
+        .thenReturn(mockCollectionReference)
+    `when`(mockCollectionReference.get()).thenReturn(Tasks.forResult(querySnapshot))
+
+    recipeRepository.suggestRecipesStrict(
+        ingredientIds,
+        profile,
+        { recipes ->
+          assertNotNull(recipes)
+          assertEquals(1, recipes.size) // Only Chocolate Cake should match exactly
+          assertEquals("Chocolate Cake", recipes[0].title)
+        },
+        { fail("Failure callback was called") })
+
+    shadowOf(Looper.getMainLooper()).idle()
   }
 
   @Test
@@ -132,9 +340,9 @@ class RecipeRepositoryTest {
             "difficulty" to "Easy",
             "imageUrl" to "http://example.com/chocolate_cake.jpg")
 
-    `when`(mockDocumentReference.get()).thenReturn(Tasks.forResult(mockDocumentSnapshot))
-    `when`(mockDocumentSnapshot.exists()).thenReturn(true)
-    `when`(mockDocumentSnapshot.data).thenReturn(recipeMap)
+    `when`(mockDocumentReference.get()).thenReturn(Tasks.forResult(mockDocumentSnapshot1))
+    `when`(mockDocumentSnapshot1.exists()).thenReturn(true)
+    `when`(mockDocumentSnapshot1.data).thenReturn(recipeMap)
 
     // Simulating ingredient fetch - this requires complex mocking or a simplification in testing
     // approach
@@ -197,11 +405,128 @@ class RecipeRepositoryTest {
   }
 
   @Test
+  fun mapToRecipe_Failure() {
+    val invalidRecipeMap: Map<String, Any> =
+        mapOf(
+            "recipeId" to "1",
+            "title" to "Chocolate Cake",
+            "description" to "A deliciously rich chocolate cake.",
+            "ingredients" to "invalid ingredients data",
+            "steps" to
+                listOf(
+                    mapOf(
+                        "stepNumber" to 1,
+                        "description" to "Mix dry ingredients.",
+                        "title" to "Prepare Dry Mix")),
+            "tags" to listOf("dessert", "chocolate", "cake"),
+            "rating" to 4.5,
+            "userid" to "user123",
+            "imageUrl" to "http://example.com/chocolate_cake.jpg")
+
+    var recipeResult: Recipe? = null
+    var failureCalled = false
+
+    recipeRepository.mapToRecipe(
+        invalidRecipeMap,
+        onSuccess = { recipe -> recipeResult = recipe },
+        onFailure = { failureCalled = true })
+
+    shadowOf(Looper.getMainLooper()).idle()
+    recipeResult?.ingredients?.let { assertTrue(it.isEmpty()) }
+    assertFalse("Failure callback should be called", failureCalled)
+  }
+
+  @Test
   fun testSingletonInitialization() {
     val mockFirestore = mock(FirebaseFirestore::class.java)
     RecipeRepository.initialize(mockFirestore)
 
     assertNotNull("Singleton instance should be initialized", RecipeRepository.instance)
+  }
+
+  @Test
+  fun mapToRecipe_Success() {
+    val recipeMap: Map<String, Any> =
+        mapOf(
+            "recipeId" to "1",
+            "title" to "Chocolate Cake",
+            "description" to "A deliciously rich chocolate cake.",
+            "ingredients" to
+                listOf(
+                    mapOf(
+                        "quantity" to 2.0,
+                        "measure" to "CUP",
+                        "ingredient" to
+                            mapOf(
+                                "name" to "Flour",
+                                "id" to "flourId",
+                                "vegetarian" to true,
+                                "vegan" to true)),
+                    mapOf(
+                        "quantity" to 1.0,
+                        "measure" to "CUP",
+                        "ingredient" to
+                            mapOf(
+                                "name" to "Sugar",
+                                "id" to "sugarId",
+                                "vegetarian" to true,
+                                "vegan" to true))),
+            "steps" to
+                listOf(
+                    mapOf(
+                        "stepNumber" to 1,
+                        "description" to "Mix dry ingredients.",
+                        "title" to "Prepare Dry Mix"),
+                    mapOf(
+                        "stepNumber" to 2,
+                        "description" to "Blend with wet ingredients.",
+                        "title" to "Mix Ingredients"),
+                    mapOf(
+                        "stepNumber" to 3,
+                        "description" to "Pour into pan and bake.",
+                        "title" to "Bake")),
+            "tags" to listOf("dessert", "chocolate", "cake"),
+            "rating" to 4.5,
+            "userid" to "user123",
+            "imageUrl" to "http://example.com/chocolate_cake.jpg")
+
+    var recipeResult: Recipe? = null
+    var failureCalled = false
+
+    recipeRepository.mapToRecipe(
+        recipeMap,
+        onSuccess = { recipe -> recipeResult = recipe },
+        onFailure = { failureCalled = true })
+
+    shadowOf(Looper.getMainLooper()).idle()
+
+    assertNotNull("Recipe should not be null", recipeResult)
+    assertEquals("Recipe ID does not match", "1", recipeResult?.recipeId)
+    assertEquals("Title does not match", "Chocolate Cake", recipeResult?.title)
+    assertEquals(
+        "Description does not match",
+        "A deliciously rich chocolate cake.",
+        recipeResult?.description)
+    assertEquals("Tags do not match", listOf("dessert", "chocolate", "cake"), recipeResult?.tags)
+    assertEquals("Rating does not match", 4.5, recipeResult?.rating)
+    assertEquals("User ID does not match", "user123", recipeResult?.userid)
+    assertEquals(
+        "Image URL does not match", "http://example.com/chocolate_cake.jpg", recipeResult?.imageUrl)
+    assertFalse("Failure callback should not be called", failureCalled)
+
+    val ingredients = recipeResult?.ingredients
+    assertNotNull("Ingredients should not be null", ingredients)
+    assertEquals("Ingredients list size incorrect", 2, ingredients?.size)
+    assertEquals(
+        "First ingredient name does not match", "Flour", ingredients?.get(0)?.ingredient?.name)
+    assertEquals("First ingredient quantity does not match", 2.0, ingredients?.get(0)?.quantity)
+    assertEquals(
+        "First ingredient measure does not match", MeasureUnit.CUP, ingredients?.get(0)?.measure)
+
+    val steps = recipeResult?.steps
+    assertNotNull("Steps should not be null", steps)
+    assertEquals("Steps list size incorrect", 3, steps?.size)
+    assertEquals("First step title does not match", "Prepare Dry Mix", steps?.get(0)?.title)
   }
 
   @Test
@@ -214,11 +539,11 @@ class RecipeRepositoryTest {
             ingredients =
                 listOf(
                     IngredientMetaData(
-                        1.0, MeasureUnit.CUP, Ingredient("Flour", "Baking", "flourId")),
+                        1.0, MeasureUnit.CUP, Ingredient("Flour", "flourId", false, false)),
                     IngredientMetaData(
                         2.0,
                         MeasureUnit.TABLESPOON,
-                        Ingredient("Cocoa Powder", "Baking", "cocoaId"))),
+                        Ingredient("Cocoa Powder", "cocoaId", false, false))),
             steps =
                 listOf(
                     Step(1, "Mix ingredients.", "Mix all dry ingredients together."),
@@ -230,8 +555,8 @@ class RecipeRepositoryTest {
 
     var successCalled = false
 
-    `when`(mockDocumentReference.get()).thenReturn(Tasks.forResult(mockDocumentSnapshot))
-    `when`(mockDocumentSnapshot.exists()).thenReturn(true)
+    `when`(mockDocumentReference.get()).thenReturn(Tasks.forResult(mockDocumentSnapshot1))
+    `when`(mockDocumentSnapshot1.exists()).thenReturn(true)
 
     recipeRepository.addRecipe(recipe, onSuccess = { successCalled = true }, onFailure = {})
 
@@ -246,10 +571,10 @@ class RecipeRepositoryTest {
   @Test
   fun addRecipe_Success2() {
     // Preparing the ingredients
-    val ingredient1 = Ingredient("Flour", "Dry", "1")
+    val ingredient1 = Ingredient("Flour", "1", false, false)
     val ingredientMetaData1 = IngredientMetaData(2.0, MeasureUnit.CUP, ingredient1)
 
-    val ingredient2 = Ingredient("Sugar", "Dry", "2")
+    val ingredient2 = Ingredient("Sugar", "2", false, false)
     val ingredientMetaData2 = IngredientMetaData(1.0, MeasureUnit.CUP, ingredient2)
 
     // Preparing the steps

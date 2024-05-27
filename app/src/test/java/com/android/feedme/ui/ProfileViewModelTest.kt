@@ -25,6 +25,7 @@ import org.mockito.ArgumentMatchers.anyList
 import org.mockito.Mock
 import org.mockito.Mockito
 import org.mockito.Mockito.anyString
+import org.mockito.Mockito.mock
 import org.mockito.Mockito.`when`
 import org.mockito.MockitoAnnotations
 import org.robolectric.RobolectricTestRunner
@@ -34,18 +35,15 @@ import org.robolectric.Shadows.shadowOf
 class ProfileViewModelTest {
 
   @Mock private lateinit var mockFirestore: FirebaseFirestore
-
   @Mock private lateinit var mockDocumentReference: DocumentReference
-
   @Mock private lateinit var mockCollectionReference: CollectionReference
-
   @Mock private lateinit var mockDocumentSnapshot: DocumentSnapshot
-
-  private lateinit var profileRepository: ProfileRepository
-
-  private lateinit var profileViewModel: ProfileViewModel
   @Mock private lateinit var mockQuery: Query
   @Mock private lateinit var mockQuerySnapshot: QuerySnapshot
+  @Mock private lateinit var mockTransaction: Transaction
+
+  private lateinit var profileRepository: ProfileRepository
+  private lateinit var profileViewModel: ProfileViewModel
 
   @Before
   fun setUp() {
@@ -62,14 +60,14 @@ class ProfileViewModelTest {
     `when`(mockCollectionReference.document(anyString())).thenReturn(mockDocumentReference)
 
     `when`(mockCollectionReference.whereIn(anyString(), anyList())).thenReturn(mockQuery)
+    `when`(mockQuery.get()).thenReturn(Tasks.forResult(mockQuerySnapshot))
 
-    `when`(mockQuery.get())
-        .thenReturn(Tasks.forResult(mockQuerySnapshot)) // Ensure this returns a valid Task
-
-    // You might need to mock what happens when the QuerySnapshot is processed
     `when`(mockQuerySnapshot.documents).thenReturn(listOf(mockDocumentSnapshot))
     `when`(mockDocumentSnapshot.toObject(Profile::class.java))
-        .thenReturn(Profile("1"), Profile("2")) // Example
+        .thenReturn(Profile("1"), Profile("2"))
+
+    `when`(mockFirestore.runTransaction<Any>(any())).thenReturn(Tasks.forResult(null))
+
     profileViewModel = ProfileViewModel()
   }
 
@@ -130,14 +128,13 @@ class ProfileViewModelTest {
     `when`(mockCollectionReference.document(targetUser.id)).thenReturn(targetUserRef)
 
     // Setup snapshot return from the transaction
-    // Setup direct returns for document snapshots from the transaction
     `when`(mockTransaction.get(currentUserRef)).thenReturn(currentUserSnapshot)
     `when`(mockTransaction.get(targetUserRef)).thenReturn(targetUserSnapshot)
 
     `when`(mockFirestore.runTransaction<Any>(any())).thenAnswer { invocation ->
       val transactionFunction = invocation.arguments[0] as Transaction.Function<*>
       transactionFunction.apply(mockTransaction)
-      Tasks.forResult(Pair(currentUser, targetUser)) // Mock successful transaction
+      Tasks.forResult(Pair(currentUser, targetUser))
     }
 
     profileViewModel.updateCurrentUserProfile(currentUser)
@@ -173,7 +170,7 @@ class ProfileViewModelTest {
     `when`(mockFirestore.runTransaction<Any>(any())).thenAnswer { invocation ->
       val transactionFunction = invocation.arguments[0] as Transaction.Function<*>
       transactionFunction.apply(mockTransaction)
-      Tasks.forResult(Pair(currentUser, targetUser)) // Mock successful transaction
+      Tasks.forResult(Pair(currentUser, targetUser))
     }
 
     profileViewModel.updateCurrentUserProfile(currentUser)
@@ -215,8 +212,8 @@ class ProfileViewModelTest {
 
   @Test
   fun removeFollower_Success() {
-    val currentUser = Profile("1", followers = listOf("3")) // Assume '1' is followed by '3'
-    val follower = Profile("3", following = listOf("1")) // Assume '3' is a follower of '1'
+    val currentUser = Profile("1", followers = listOf("3"))
+    val follower = Profile("3", following = listOf("1"))
     profileViewModel.currentUserId = "1"
     profileViewModel.setViewingProfile(follower)
 
@@ -237,7 +234,7 @@ class ProfileViewModelTest {
     `when`(mockFirestore.runTransaction<Any>(any())).thenAnswer { invocation ->
       val transactionFunction = invocation.arguments[0] as Transaction.Function<*>
       transactionFunction.apply(mockTransaction)
-      Tasks.forResult(Pair(currentUser, follower)) // Mock successful transaction
+      Tasks.forResult(Pair(currentUser, follower))
     }
 
     profileViewModel.updateCurrentUserProfile(currentUser)
@@ -355,5 +352,142 @@ class ProfileViewModelTest {
   fun `deleteCurrentUserProfile throws Exception when currentUserId is DEFAULT_ID`() {
     profileViewModel.currentUserId = "DEFAULT_ID"
     profileViewModel.deleteCurrentUserProfile({}, { throw Exception() })
+  }
+
+  // New Tests for ProfileRepository and ProfileViewModel Methods
+
+  @Test
+  fun addSavedRecipe_Success() {
+    val userId = "1"
+    val recipe = "Recipe1"
+    profileViewModel.currentUserId = userId
+
+    `when`(mockFirestore.runTransaction<Any>(any())).thenAnswer { invocation ->
+      val transactionFunction = invocation.arguments[0] as Transaction.Function<*>
+      transactionFunction.apply(mockTransaction)
+      Tasks.forResult(null)
+    }
+    `when`(mockTransaction.get(any(DocumentReference::class.java))).thenReturn(mockDocumentSnapshot)
+
+    profileViewModel.addSavedRecipes(recipe)
+    shadowOf(Looper.getMainLooper()).idle()
+
+    assertTrue(profileViewModel.currentUserSavedRecipes.value!!.contains(recipe))
+  }
+
+  @Test
+  fun addSavedRecipe_Failure() {
+    val userId = "1"
+    val recipe = "Recipe1"
+    profileViewModel.currentUserId = userId
+
+    `when`(mockFirestore.runTransaction<Any>(any()))
+        .thenReturn(Tasks.forException(Exception("Transaction failed")))
+
+    try {
+      profileViewModel.addSavedRecipes(recipe)
+      shadowOf(Looper.getMainLooper()).idle()
+    } catch (e: Exception) {
+      assertTrue(e.message!!.contains("Can't add recipe to the database"))
+    }
+  }
+
+  @Test
+  fun removeSavedRecipe_Success() {
+    val userId = "1"
+    val recipe = "Recipe1"
+    profileViewModel.currentUserId = userId
+
+    `when`(mockFirestore.runTransaction<Any>(any())).thenAnswer { invocation ->
+      val transactionFunction = invocation.arguments[0] as Transaction.Function<*>
+      transactionFunction.apply(mockTransaction)
+      Tasks.forResult(null)
+    }
+    `when`(mockTransaction.get(any(DocumentReference::class.java))).thenReturn(mockDocumentSnapshot)
+
+    profileViewModel.addSavedRecipes(recipe) // Add recipe first
+    profileViewModel.removeSavedRecipes(recipe)
+    shadowOf(Looper.getMainLooper()).idle()
+
+    assertFalse(profileViewModel.currentUserSavedRecipes.value!!.contains(recipe))
+  }
+
+  @Test
+  fun removeSavedRecipe_Failure() {
+    val userId = "1"
+    val recipe = "Recipe1"
+    profileViewModel.currentUserId = userId
+
+    `when`(mockFirestore.runTransaction<Any>(any()))
+        .thenReturn(Tasks.forException(Exception("Transaction failed")))
+
+    try {
+      profileViewModel.removeSavedRecipes(recipe)
+      shadowOf(Looper.getMainLooper()).idle()
+    } catch (e: Exception) {
+      assertTrue(e.message!!.contains("Can't remove recipe from the database"))
+    }
+  }
+
+  @Test
+  fun savedRecipeExists_Success() {
+    val userId = "1"
+    val recipe = "Recipe1"
+    profileViewModel.currentUserId = userId
+
+    `when`(mockDocumentReference.get()).thenReturn(Tasks.forResult(mockDocumentSnapshot))
+    `when`(mockDocumentSnapshot.get("savedRecipes")).thenReturn(listOf(recipe))
+
+    profileViewModel.savedRecipeExists(recipe) { exists -> assertTrue(exists) }
+  }
+
+  @Test
+  fun savedRecipeExists_Failure() {
+    val userId = "1"
+    val recipe = "Recipe1"
+    profileViewModel.currentUserId = userId
+
+    `when`(mockDocumentReference.get())
+        .thenReturn(Tasks.forException(Exception("Transaction failed")))
+
+    try {
+      profileViewModel.savedRecipeExists(recipe) { exists -> assertFalse(exists) }
+    } catch (e: Exception) {
+      assertTrue(e.message!!.contains("Can't check if recipe exists in the database"))
+    }
+  }
+
+  @Test
+  fun showDialog_Success() {
+    val userId = "1"
+    profileViewModel.currentUserId = userId
+
+    `when`(mockFirestore.runTransaction<Any>(any())).thenAnswer { invocation ->
+      val transactionFunction = invocation.arguments[0] as Transaction.Function<*>
+      transactionFunction.apply(mockTransaction)
+      Tasks.forResult(null)
+    }
+    `when`(mockTransaction.get(any(DocumentReference::class.java))).thenReturn(mockDocumentSnapshot)
+
+    profileViewModel.setDialog(false)
+    shadowOf(Looper.getMainLooper()).idle()
+
+    assertTrue(!profileViewModel.showDialog.value)
+  }
+
+  @Test
+  fun showDialog_Failure() {
+    val userId = "1"
+    profileViewModel.currentUserId = userId
+
+    `when`(mockFirestore.runTransaction<Any>(any()))
+        .thenReturn(Tasks.forException(Exception("Transaction failed")))
+
+    try {
+      profileViewModel.setDialog(false)
+      shadowOf(Looper.getMainLooper()).idle()
+    } catch (e: Exception) {
+      assertTrue(e.message!!.contains("Can't set dialog in the database"))
+    }
   }
 }

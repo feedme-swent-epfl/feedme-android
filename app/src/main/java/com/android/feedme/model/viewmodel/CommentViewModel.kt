@@ -64,6 +64,26 @@ class CommentViewModel : ViewModel() {
   }
 
   /**
+   * A function that gets a comment from the database
+   *
+   * @param comment: the comment to get from the database
+   */
+  fun getComment(comment: Comment, onSuccess: () -> Unit) {
+    viewModelScope.launch {
+      repository.getComment(
+          comment.commentId,
+          onSuccess = {
+            _comment.value = comment
+            onSuccess()
+          },
+          onFailure = {
+            // Handle failure
+            throw error("comment could not get fetched")
+          })
+    }
+  }
+
+  /**
    * A function that fetches the profile during Login
    *
    * @param id: the unique ID of the profile we want to fetch

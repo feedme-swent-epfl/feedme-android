@@ -80,12 +80,11 @@ fun EditProfileContent(
   val profile = profileViewModel.currentUserProfile.collectAsState().value ?: Profile()
 
   val cameraViewModel = viewModel<CameraViewModel>()
-  val pickImage = cameraViewModel.galleryLauncher()
+  val pickImage = cameraViewModel.galleryLauncher(profileViewModel, null, null)
 
   var name by remember { mutableStateOf(profile.name) }
   var username by remember { mutableStateOf(profile.username) }
   var bio by remember { mutableStateOf(profile.description) }
-  var profilePic by remember { mutableStateOf(profile.imageUrl) }
   var nameError by remember { mutableStateOf<String?>(null) }
   var usernameError by remember { mutableStateOf<String?>(null) }
   var bioError by remember { mutableStateOf<String?>(null) }

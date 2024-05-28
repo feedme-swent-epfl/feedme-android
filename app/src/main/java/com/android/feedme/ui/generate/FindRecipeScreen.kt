@@ -12,9 +12,9 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.Check
 import androidx.compose.material.icons.filled.Info
 import androidx.compose.material.icons.filled.PhotoCamera
+import androidx.compose.material.icons.filled.RestaurantMenu
 import androidx.compose.material3.Checkbox
 import androidx.compose.material3.FloatingActionButton
 import androidx.compose.material3.Icon
@@ -50,6 +50,7 @@ import com.android.feedme.ui.navigation.TOP_LEVEL_DESTINATIONS
 import com.android.feedme.ui.navigation.TopBarNavigation
 import com.android.feedme.ui.theme.DarkGrey
 import com.android.feedme.ui.theme.FabColor
+import com.android.feedme.ui.theme.GenerateColor
 import com.android.feedme.ui.theme.OffWhite
 import com.android.feedme.ui.theme.TextBarColor
 import kotlinx.coroutines.flow.map
@@ -137,14 +138,14 @@ fun FindRecipeScreen(
                 Icon(
                     imageVector = Icons.Default.PhotoCamera,
                     contentDescription = "Camera Icon",
-                    modifier = Modifier.size(24.dp))
+                    modifier = Modifier.size(27.dp))
               },
               modifier = Modifier.testTag("CameraButton"))
 
           Spacer(modifier = Modifier.height(10.dp))
 
           FloatingActionButton(
-              containerColor = FabColor,
+              containerColor = GenerateColor,
               contentColor = TextBarColor,
               onClick = {
                 checkMark.value = true
@@ -161,9 +162,9 @@ fun FindRecipeScreen(
               },
               content = {
                 Icon(
-                    imageVector = Icons.Default.Check,
-                    contentDescription = "Validate Icon",
-                    modifier = Modifier.size(24.dp))
+                    imageVector = Icons.Default.RestaurantMenu,
+                    contentDescription = "Camera Icon",
+                    modifier = Modifier.size(27.dp))
               },
               modifier = Modifier.testTag("ValidateButton"))
         }

@@ -22,6 +22,7 @@ import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.shape.CircleShape
@@ -75,7 +76,6 @@ fun CameraScreen(navigationActions: NavigationActions, cameraViewModel: CameraVi
   if (!hasRequiredPermissions(applicationContext)) {
     ActivityCompat.requestPermissions(
         applicationContext as Activity, arrayOf(Manifest.permission.CAMERA), 0)
-    askForPermission(applicationContext)
   }
 
   val scaffoldState = rememberBottomSheetScaffoldState()
@@ -85,7 +85,7 @@ fun CameraScreen(navigationActions: NavigationActions, cameraViewModel: CameraVi
     }
   }
   val photoTaken by cameraViewModel.photoTaken.collectAsState()
-  val pickImage = cameraViewModel.galleryLauncher()
+  val pickImage = cameraViewModel.galleryLauncher(null, null, null)
 
   val snackbarHostStateInfo = remember { SnackbarHostState() }
   val snackbarHostStateError = remember { SnackbarHostState() }
@@ -153,7 +153,6 @@ fun CameraScreen(navigationActions: NavigationActions, cameraViewModel: CameraVi
             cameraViewModel.empty()
             navigationActions.navigateTo(Screen.ANALYZE_PICTURE)
           }
-
           // Snack bar host for info messages (green)
           SnackbarHost(
               hostState = snackbarHostStateInfo,
@@ -168,7 +167,7 @@ fun CameraScreen(navigationActions: NavigationActions, cameraViewModel: CameraVi
           // Snack bar host for error messages (red)
           SnackbarHost(
               hostState = snackbarHostStateError,
-              modifier = Modifier.align(Alignment.TopCenter),
+              modifier = Modifier.align(Alignment.TopCenter).testTag("Snack error"),
               snackbar = { snackbarData ->
                 Snackbar(
                     modifier = Modifier.testTag("Error Snack Bar"),

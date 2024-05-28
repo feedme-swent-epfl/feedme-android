@@ -1,14 +1,17 @@
 package com.android.feedme.model.data
 
 import android.content.Context
+import android.net.Uri
 import android.util.Log
 import com.android.feedme.model.viewmodel.displayToast
 import com.android.feedme.model.viewmodel.isNetworkAvailable
+import com.google.firebase.firestore.DocumentReference
 import com.google.firebase.firestore.DocumentSnapshot
 import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.firestore.Query
 import com.google.firebase.firestore.QuerySnapshot
 import com.google.firebase.firestore.Source
+import com.google.firebase.storage.FirebaseStorage
 import java.util.Locale
 
 /**
@@ -38,9 +41,6 @@ class RecipeRepository(private val db: FirebaseFirestore) {
   /**
    * Adds a recipe to the Firestore database.
    *
-   * This method serializes the Recipe object into a map, replacing complex objects like Ingredient
-   * with their IDs, and then stores it in Firestore under the recipes collection.
-   *
    * @param recipe The Recipe object to be added to Firestore.
    * @param context The context of the calling activity.
    * @param onSuccess A callback invoked upon successful addition of the recipe.
@@ -48,6 +48,7 @@ class RecipeRepository(private val db: FirebaseFirestore) {
    */
   fun addRecipe(
       recipe: Recipe,
+      uri: Uri?,
       context: Context = FirebaseFirestore.getInstance().app.applicationContext,
       onSuccess: () -> Unit,
       onFailure: (Exception) -> Unit
@@ -63,10 +64,36 @@ class RecipeRepository(private val db: FirebaseFirestore) {
     val recipeMap = recipeToMap(recipe)
     val newDocRef = db.collection(collectionPath).document()
     recipe.recipeId = newDocRef.id
-    newDocRef
-        .set(recipeMap)
-        .addOnSuccessListener { onSuccess() }
-        .addOnFailureListener { onFailure(it) }
+    if (uri != null) {
+      val storageRef = FirebaseStorage.getInstance().reference.child("recipes/${recipe.recipeId}")
+      storageRef
+          .putFile(uri)
+          .addOnSuccessListener { taskSnapshot ->
+            taskSnapshot.metadata?.reference?.downloadUrl?.addOnSuccessListener { uri ->
+              recipe.imageUrl = uri.toString()
+              mapAndAddRecipe(recipe, newDocRef, onSuccess, onFailure)
+            }
+          }
+          .addOnFailureListener { exception -> onFailure(exception) }
+    } else {
+      recipe.imageUrl =
+          "https://firebasestorage.googleapis.com/v0/b/feedme-33341.appspot.com/o/recipestest%2Fdummy.jpg?alt=media&token=71de581c-9e1e-47c8-a4dc-8cccf1d0b640"
+      mapAndAddRecipe(recipe, newDocRef, onSuccess, onFailure)
+    }
+  }
+
+  /**
+   * This method serializes the Recipe object into a map, replacing complex objects like Ingredient
+   * with their IDs, and then stores it in Firestore under the recipes collection.
+   */
+  private fun mapAndAddRecipe(
+      recipe: Recipe,
+      id: DocumentReference,
+      onSuccess: () -> Unit,
+      onFailure: (Exception) -> Unit
+  ) {
+    val recipeMap = recipeToMap(recipe)
+    id.set(recipeMap).addOnSuccessListener { onSuccess() }.addOnFailureListener { onFailure(it) }
   }
 
   /**
@@ -110,15 +137,15 @@ class RecipeRepository(private val db: FirebaseFirestore) {
   /**
    * Fetches the recipes saved by the user from Firestore. The recipes are fetched by their IDs.
    *
-   * @param context The context of the calling activity.
    * @param ids The list of recipe IDs to fetch.
+   * @param context The context of the calling activity.
    * @param onSuccess A callback function invoked with the list of recipes on success.
    * @param onFailure A callback function invoked on failure to fetch the recipes, with an
    *   exception.
    */
   fun getSavedRecipes(
-      context: Context,
       ids: List<String>,
+      context: Context,
       onSuccess: (List<Recipe>, DocumentSnapshot?) -> Unit,
       onFailure: (Exception) -> Unit
   ) {
@@ -152,16 +179,16 @@ class RecipeRepository(private val db: FirebaseFirestore) {
    * Fetches the top rated recipes from Firestore. The recipes are ordered by their rating in
    * descending order.
    *
-   * @param context The context of the calling activity.
    * @param lastRecipe The last recipe fetched in the previous query. If null, fetches the first
    *   page of recipes.
+   * @param context The context of the calling activity.
    * @param onSuccess A callback function invoked with the list of recipes on success.
    * @param onFailure A callback function invoked on failure to fetch the recipes, with an
    *   exception.
    */
   fun getRatedRecipes(
-      context: Context,
       lastRecipe: DocumentSnapshot?,
+      context: Context,
       onSuccess: (List<Recipe>, DocumentSnapshot?) -> Unit,
       onFailure: (Exception) -> Unit
   ) {
@@ -243,6 +270,7 @@ class RecipeRepository(private val db: FirebaseFirestore) {
   ) {
     val recipes = mutableListOf<Recipe>()
     val docs = snapshot.documents
+
     docs.forEach { recipeMap ->
       // Extract the data from the document
       val data = recipeMap.data

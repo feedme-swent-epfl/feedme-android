@@ -87,6 +87,7 @@ class ProfileViewModel : ViewModel() {
       _viewingUserProfile.value = null
       return
     }
+
     viewModelScope.launch {
       repository.getProfile(
           id,
@@ -174,7 +175,6 @@ class ProfileViewModel : ViewModel() {
     currentUserId ?: throw IllegalStateException("Current user ID is null, and should never be")
     val delete = {
       if (currentUserFollowers.value.isEmpty() && _currentUserFollowing.value.isEmpty()) {
-
         repository.deleteProfile(currentUserId!!, context, onSuccess, onFailure)
       }
     }
@@ -462,13 +462,12 @@ class ProfileViewModel : ViewModel() {
    * @param picture The URI of the new profile picture.
    */
   fun updateProfilePicture(
-      profileViewModel: ProfileViewModel,
       picture: Uri,
       context: Context = FirebaseFirestore.getInstance().app.applicationContext
   ) {
     repository.uploadProfilePicture(
-        profileViewModel = profileViewModel,
-        uri = picture,
+        this,
+        picture,
         context,
         onFailure = { throw error("Can't upload profile picture to the database") })
   }
@@ -519,6 +518,7 @@ class ProfileViewModel : ViewModel() {
    * Checks if a recipe has already been saved by the current user.
    *
    * @param recipe The recipe to check.
+   * @param context The context of the application.
    * @param onResult A callback function invoked with the result of the check.
    */
   fun savedRecipeExists(
@@ -566,5 +566,12 @@ class ProfileViewModel : ViewModel() {
         context,
         { _showDialog.value = showDialog },
         { throw error("Can't set dialog in the database") })
+  }
+
+  /** A function used in tests to mock a signed in ProfileViewModel */
+  fun initForTests() {
+    currentUserId = "test"
+    _imageUrl.value =
+        "https://firebasestorage.googleapis.com/v0/b/feedme-33341.appspot.com/o/recipestest%2Fdummy.jpg?alt=media&token=71de581c-9e1e-47c8-a4dc-8cccf1d0b640"
   }
 }

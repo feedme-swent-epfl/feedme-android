@@ -30,11 +30,9 @@ import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import com.android.feedme.R
 import com.android.feedme.model.data.Comment
-import com.android.feedme.model.data.Recipe
 import com.android.feedme.model.viewmodel.CommentViewModel
 import com.android.feedme.model.viewmodel.RecipeViewModel
 import com.android.feedme.ui.navigation.NavigationActions
-import com.android.feedme.ui.navigation.Route
 import com.android.feedme.ui.theme.BlueUsername
 
 /**

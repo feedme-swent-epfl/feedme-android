@@ -433,9 +433,9 @@ class ProfileViewModel : ViewModel() {
    * @param profileViewModel The ProfileViewModel of the user.
    * @param picture The URI of the new profile picture.
    */
-  fun updateProfilePicture(profileViewModel: ProfileViewModel, picture: Uri) {
+  fun updateProfilePicture(picture: Uri) {
     repository.uploadProfilePicture(
-        profileViewModel = profileViewModel,
+        profileViewModel = this,
         onFailure = { throw error("Can't upload profile picture to the database") },
         uri = picture)
   }

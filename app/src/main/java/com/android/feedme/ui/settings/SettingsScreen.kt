@@ -18,7 +18,6 @@ import androidx.compose.material3.OutlinedButton
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -92,8 +91,7 @@ fun SettingsPage(navigationActions: NavigationActions, profileViewModel: Profile
       modifier = Modifier.fillMaxSize().padding(4.dp).background(Color.White),
       horizontalAlignment = Alignment.CenterHorizontally) {
         Spacer(modifier = Modifier.height(50.dp))
-        val profile = profileViewModel.currentUserProfile.collectAsState().value
-        if (profile != null) UserProfilePicture(profile)
+        UserProfilePicture(profileViewModel)
 
         Spacer(modifier = Modifier.height(30.dp))
 

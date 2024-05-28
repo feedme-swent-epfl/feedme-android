@@ -80,7 +80,7 @@ fun EditProfileContent(
   val profile = profileViewModel.currentUserProfile.collectAsState().value ?: Profile()
 
   val cameraViewModel = viewModel<CameraViewModel>()
-  val pickImage = cameraViewModel.galleryLauncher()
+  val pickImage = cameraViewModel.galleryLauncher(profileViewModel, null, null)
 
   var name by remember { mutableStateOf(profile.name) }
   var username by remember { mutableStateOf(profile.username) }
@@ -104,7 +104,7 @@ fun EditProfileContent(
                       PickVisualMediaRequest(ActivityResultContracts.PickVisualMedia.ImageOnly))
                 },
         ) {
-          UserProfilePicture(profile)
+          UserProfilePicture(profileViewModel)
           Text(
               text = "Edit Picture",
               style = TextStyle(fontSize = 16.sp),

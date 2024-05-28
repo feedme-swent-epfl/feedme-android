@@ -95,10 +95,10 @@ fun CommentCard(
       shape = RoundedCornerShape(8.dp),
       border = BorderStroke(2.dp, Color.Black)) {
         Row(modifier = Modifier.fillMaxWidth().padding(16.dp)) {
-          // Recipe image
+          // Comment image
           Image(
               painter = painterResource(id = R.drawable.test_image_pasta),
-              contentDescription = "Recipe Image",
+              contentDescription = "Comment Image",
               modifier = Modifier.size(100.dp).aspectRatio(1f).clip(RoundedCornerShape(8.dp)),
               contentScale = ContentScale.Crop)
 

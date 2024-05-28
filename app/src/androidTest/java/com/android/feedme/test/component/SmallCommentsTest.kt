@@ -121,8 +121,6 @@ class SmallCommentsTest {
 
     every { mockDocumentReference.set(any()) } returns Tasks.forResult(null)
 
-    // every { homeViewModel.fetchSavedRecipes(any()) } just Runs
-
     every { mockCollectionReference.whereIn("recipeId", listOf(recipe1.recipeId)) } answers
         {
           mockQuery
@@ -143,7 +141,7 @@ class SmallCommentsTest {
     }
 
     // Recipe Image
-    composeTestRule.onNodeWithContentDescription("Recipe Image").assertIsDisplayed()
+    composeTestRule.onNodeWithContentDescription("Comment Image").assertIsDisplayed()
 
     // Author name
     composeTestRule.onNodeWithText(comment1.commentId).assertIsDisplayed()

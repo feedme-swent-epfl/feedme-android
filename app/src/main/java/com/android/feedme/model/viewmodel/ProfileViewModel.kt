@@ -9,6 +9,8 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.android.feedme.model.data.Profile
 import com.android.feedme.model.data.ProfileRepository
+import com.android.feedme.model.data.Recipe
+import com.android.feedme.model.data.RecipeRepository
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.FirebaseFirestore
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -24,6 +26,7 @@ import kotlinx.coroutines.launch
 class ProfileViewModel : ViewModel() {
 
   private val repository = ProfileRepository.instance
+    private val recipeRepository = RecipeRepository.instance
 
   // Current User
   var currentUserId: String? = null
@@ -31,12 +34,16 @@ class ProfileViewModel : ViewModel() {
   private val _currentUserFollowers = MutableStateFlow<List<Profile>>(listOf())
   private val _currentUserFollowing = MutableStateFlow<List<Profile>>(listOf())
   private val _currentUserSavedRecipes = MutableStateFlow<List<String>>(listOf())
+    private val _currentUserRecipes = MutableStateFlow<List<Recipe>>(listOf())
+    private val _viewingUserRecipes = MutableStateFlow<List<Recipe>>(listOf())
   private val _isRecipeSaved = MutableLiveData<Boolean>()
   private val _showDialog = MutableStateFlow(true)
   val currentUserProfile: StateFlow<Profile?> = _currentUserProfile
   val currentUserFollowers: StateFlow<List<Profile>> = _currentUserFollowers
   val currentUserFollowing: StateFlow<List<Profile>> = _currentUserFollowing
   val currentUserSavedRecipes: StateFlow<List<String>> = _currentUserSavedRecipes
+    val currentUserRecipe: StateFlow<List<Recipe>> = _currentUserRecipes
+    val viewingUserRecipes: StateFlow<List<Recipe>> = _viewingUserRecipes
   val _imageUrl = MutableStateFlow<String?>(null)
   val showDialog: StateFlow<Boolean> = _showDialog
   val isRecipeSaved: LiveData<Boolean>
@@ -97,6 +104,7 @@ class ProfileViewModel : ViewModel() {
             if (profile != null) {
               fetchProfiles(profile.followers, _viewingUserFollowers)
               fetchProfiles(profile.following, _viewingUserFollowing)
+                fetchRecipes(profile.recipeList, _viewingUserRecipes)
             }
           },
           onFailure = {
@@ -120,6 +128,7 @@ class ProfileViewModel : ViewModel() {
                 fetchProfiles(profile.following, _currentUserFollowing)
                 _currentUserSavedRecipes.value = profile.savedRecipes
                 _showDialog.value = profile.showDialog
+                  fetchRecipes(profile.recipeList, _currentUserRecipes)
               }
             },
             onFailure = {
@@ -155,6 +164,8 @@ class ProfileViewModel : ViewModel() {
           onFailure = { _errorMessages.value = "Profile could not get updated" })
     }
   }
+
+
 
   /**
    * Deletes the current user's profile.
@@ -223,6 +234,30 @@ class ProfileViewModel : ViewModel() {
     }
   }
 
+    private fun fetchRecipes(ids: List<String>, fetchRecipe: MutableStateFlow<List<Recipe>>,
+                             context: Context = FirebaseFirestore.getInstance().app.applicationContext     ) {
+        val currentIds = fetchRecipe.value.map { it.recipeId }.toSet()
+        if (currentIds != ids.toSet() && ids.isNotEmpty()) {
+            Log.d("ProfileViewModel", "Fetching recipes: $ids")
+            viewModelScope.launch {
+                recipeRepository.getSavedRecipes(
+                    ids,
+                    context,
+                    onSuccess = { recipes, _ ->
+                        if (fetchRecipe.value != recipes) {
+                            fetchRecipe.value = recipes
+                        } else {
+                            Log.d("ProfileViewModel", "Recipes already fetched")
+                        }
+
+                    },
+                    onFailure = {
+                        // Handle failure
+                        throw error("Recipes were not fetched")
+                    })
+            }
+        }
+    }
   /**
    * Returns the profile to show based on if there is viewingUserId is null or not. If null it will
    * show currentUser (the one logged in)

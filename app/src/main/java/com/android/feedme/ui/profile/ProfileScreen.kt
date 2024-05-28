@@ -82,14 +82,19 @@ fun ProfileScreen(
     recipeViewModel: RecipeViewModel = RecipeViewModel()
 ) {
 
-  val recipeList = listOf(recipe1, recipe2, recipe2, recipe1, recipe1)
+  val recipeList =
+        if (profileViewModel.isViewingProfile())
+            profileViewModel.viewingUserRecipes.collectAsState().value
+        else profileViewModel.currentUserRecipe.collectAsState().value
 
   val profile =
       if (profileViewModel.isViewingProfile()) profileViewModel.viewingUserProfile.collectAsState()
       else profileViewModel.currentUserProfile.collectAsState()
 
   Scaffold(
-      modifier = Modifier.fillMaxSize().testTag("ProfileScreen"),
+      modifier = Modifier
+          .fillMaxSize()
+          .testTag("ProfileScreen"),
       topBar = {
         TopBarNavigation(
             title = "Profile",
@@ -154,15 +159,21 @@ fun ProfileBox(
   val tabList = listOf("Recipes", "Comments")
 
   LazyColumn(
-      modifier = Modifier.padding(padding).testTag("ProfileBox"),
+      modifier = Modifier
+          .padding(padding)
+          .testTag("ProfileBox"),
       verticalArrangement = Arrangement.Top) {
         item {
           Row(
-              modifier = Modifier.fillMaxWidth().padding(vertical = 20.dp),
+              modifier = Modifier
+                  .fillMaxWidth()
+                  .padding(vertical = 20.dp),
               horizontalArrangement = Arrangement.Center,
               verticalAlignment = Alignment.CenterVertically) {
                 UserProfilePicture(profileViewModel)
-                Spacer(modifier = Modifier.width(20.dp).padding(padding))
+                Spacer(modifier = Modifier
+                    .width(20.dp)
+                    .padding(padding))
                 UserNameBox(profile ?: Profile())
                 Row(
                     horizontalArrangement = Arrangement.Center,
@@ -218,7 +229,9 @@ fun UserProfilePicture(profileViewModel: ProfileViewModel, modifier: Modifier = 
  */
 @Composable
 fun UserNameBox(profile: Profile) {
-  Column(modifier = Modifier.width(100.dp).testTag("ProfileName")) {
+  Column(modifier = Modifier
+      .width(100.dp)
+      .testTag("ProfileName")) {
     Text(text = profile.name, style = textStyle(17, 15, 700), overflow = TextOverflow.Ellipsis)
     Spacer(modifier = Modifier.height(10.dp))
     Text(
@@ -278,7 +291,9 @@ fun FollowingButton(profile: Profile, navigationActions: NavigationActions) {
 @Composable
 fun UserBio(profile: Profile) {
   Text(
-      modifier = Modifier.padding(horizontal = 18.dp).testTag("ProfileBio"),
+      modifier = Modifier
+          .padding(horizontal = 18.dp)
+          .testTag("ProfileBio"),
       text = profile.description,
       style = textStyle(13, 15, 400, TextAlign.Justify))
 }
@@ -301,7 +316,9 @@ fun ProfileButtons(
   }
 
   Row(
-      modifier = Modifier.fillMaxWidth().padding(vertical = 20.dp),
+      modifier = Modifier
+          .fillMaxWidth()
+          .padding(vertical = 20.dp),
       horizontalArrangement = Arrangement.SpaceEvenly,
       verticalAlignment = Alignment.CenterVertically) {
         if (!profileViewModel.isViewingProfile()) {
@@ -325,7 +342,9 @@ fun EditProfileButton(navigationActions: NavigationActions) {
       border = BorderStroke(2.dp, FollowButtonBorder),
       onClick = { navigationActions.navigateTo(Screen.EDIT_PROFILE) }) {
         Text(
-            modifier = Modifier.width(110.dp).height(13.dp),
+            modifier = Modifier
+                .width(110.dp)
+                .height(13.dp),
             text = "Edit Profile",
             fontWeight = FontWeight.Bold,
             style = textStyle())
@@ -356,7 +375,9 @@ fun FollowUnfollowButton(
           profileViewModel.unfollowUser(profile)
         }) {
           Text(
-              modifier = Modifier.width(110.dp).height(13.dp),
+              modifier = Modifier
+                  .width(110.dp)
+                  .height(13.dp),
               text = "Unfollow",
               fontWeight = FontWeight.Bold,
               style = textStyle())
@@ -372,7 +393,9 @@ fun FollowUnfollowButton(
           profileViewModel.followUser(profile) // Assuming the function signature matches
         }) {
           Text(
-              modifier = Modifier.width(110.dp).height(13.dp),
+              modifier = Modifier
+                  .width(110.dp)
+                  .height(13.dp),
               text = "Follow",
               color = TextBarColor,
               fontWeight = FontWeight.Bold,

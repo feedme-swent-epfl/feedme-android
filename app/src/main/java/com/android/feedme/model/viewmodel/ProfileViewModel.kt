@@ -516,4 +516,11 @@ class ProfileViewModel : ViewModel() {
         { _showDialog.value = showDialog },
         { throw error("Can't set dialog in the database") })
   }
+
+  /** A function used in tests to mock a signed in ProfileViewModel */
+  fun initForTests() {
+    currentUserId = "test"
+    _imageUrl.value =
+        "https://firebasestorage.googleapis.com/v0/b/feedme-33341.appspot.com/o/recipestest%2Fdummy.jpg?alt=media&token=71de581c-9e1e-47c8-a4dc-8cccf1d0b640"
+  }
 }

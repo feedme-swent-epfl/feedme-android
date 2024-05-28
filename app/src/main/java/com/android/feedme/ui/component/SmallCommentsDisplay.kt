@@ -19,6 +19,7 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.collectAsState
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -30,6 +31,7 @@ import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import com.android.feedme.R
 import com.android.feedme.model.data.Comment
+import com.android.feedme.model.data.Recipe
 import com.android.feedme.model.viewmodel.CommentViewModel
 import com.android.feedme.model.viewmodel.RecipeViewModel
 import com.android.feedme.ui.navigation.NavigationActions
@@ -65,25 +67,32 @@ fun SmallCommentsDisplay(listComment: List<Comment>, modifier: Modifier = Modifi
 @Composable
 fun CommentCard(comment: Comment, commentViewModel: CommentViewModel, navigationActions: NavigationActions, recipeViewModel: RecipeViewModel) {
   Surface(
-      modifier = Modifier.fillMaxWidth().padding(horizontal = 16.dp, vertical = 8.dp)
+      modifier = Modifier
+          .fillMaxWidth()
+          .padding(horizontal = 16.dp, vertical = 8.dp)
           .clickable(
               onClick = {
                   commentViewModel.selectComment(comment)
                   // fetch the recipe that the comment was posted on
-                  val recipe = commentViewModel.fetchRecipe(comment.recipeId)
+                  commentViewModel.fetchRecipe(comment.recipeId)
                   // navigate to said recipe if the comment card is clicked
-                  recipeViewModel.selectRecipe(recipe)
+                  recipeViewModel.selectRecipe(commentViewModel.recipe.value ?: Recipe())
                   navigationActions.navigateTo("Recipe/${Route.HOME}")
               }),
       color = Color.White,
       shape = RoundedCornerShape(8.dp),
       border = BorderStroke(2.dp, Color.Black)) {
-        Row(modifier = Modifier.fillMaxWidth().padding(16.dp)) {
+        Row(modifier = Modifier
+            .fillMaxWidth()
+            .padding(16.dp)) {
           // Recipe image
           Image(
               painter = painterResource(id = R.drawable.test_image_pasta),
               contentDescription = "Recipe Image",
-              modifier = Modifier.size(100.dp).aspectRatio(1f).clip(RoundedCornerShape(8.dp)),
+              modifier = Modifier
+                  .size(100.dp)
+                  .aspectRatio(1f)
+                  .clip(RoundedCornerShape(8.dp)),
               contentScale = ContentScale.Crop)
 
           Spacer(modifier = Modifier.width(10.dp))
@@ -91,9 +100,10 @@ fun CommentCard(comment: Comment, commentViewModel: CommentViewModel, navigation
           // Author + title + description
           Column(
               modifier =
-                  Modifier.fillMaxWidth()
-                      .padding(start = 16.dp)
-                      .align(Alignment.CenterVertically)) {
+              Modifier
+                  .fillMaxWidth()
+                  .padding(start = 16.dp)
+                  .align(Alignment.CenterVertically)) {
 
                 // Comment authorId
                 Text(

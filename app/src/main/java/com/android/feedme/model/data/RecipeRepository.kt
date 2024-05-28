@@ -1,5 +1,6 @@
 package com.android.feedme.model.data
 
+import android.net.Uri
 import android.util.Log
 import com.google.firebase.firestore.DocumentSnapshot
 import com.google.firebase.firestore.FirebaseFirestore
@@ -41,11 +42,13 @@ class RecipeRepository(private val db: FirebaseFirestore) {
    * @param onSuccess A callback invoked upon successful addition of the recipe.
    * @param onFailure A callback invoked upon failure to add the recipe, with an exception.
    */
-  fun addRecipe(recipe: Recipe, onSuccess: () -> Unit, onFailure: (Exception) -> Unit) {
+  fun addRecipe(recipe: Recipe, uri: Uri?, onSuccess: () -> Unit, onFailure: (Exception) -> Unit) {
     // Convert Recipe to a map, replacing Ingredient objects with their IDs
     val recipeMap = recipeToMap(recipe)
     val newDocRef = db.collection(collectionPath).document()
     recipe.recipeId = newDocRef.id
+    // have tried to add image here but sync failed, maybe i need to put a lock to make the program
+    // sequential
     newDocRef
         .set(recipeMap)
         .addOnSuccessListener { onSuccess() }

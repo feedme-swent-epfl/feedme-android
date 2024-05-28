@@ -98,7 +98,7 @@ class CameraViewModel : ViewModel() {
   @Composable
   fun galleryLauncher(
       profileViewModel: ProfileViewModel?,
-      recipe: Recipe?,
+      recipeViewModel: RecipeViewModel?,
       comment: Comment?
   ): ManagedActivityResultLauncher<PickVisualMediaRequest, out Any?> {
     val context = LocalContext.current
@@ -109,7 +109,7 @@ class CameraViewModel : ViewModel() {
           uri?.let {
             when {
               profileViewModel != null -> profileViewModel.updateProfilePicture(uri)
-              recipe != null -> galleryForRecipe(context, uri, recipe)
+              recipeViewModel != null -> recipeViewModel.updatePicture(uri)
               comment != null -> galleryForComment(context, uri, comment)
               else -> galleryForCamera(context, uri)
             }

@@ -51,7 +51,7 @@ class SmallCommentsTest {
 
   private lateinit var profileRepository: ProfileRepository
   private lateinit var recipeRepository: RecipeRepository
-    private lateinit var commentRepository: CommentRepository
+  private lateinit var commentRepository: CommentRepository
 
   private lateinit var profileViewModel: ProfileViewModel
   private lateinit var homeViewModel: HomeViewModel

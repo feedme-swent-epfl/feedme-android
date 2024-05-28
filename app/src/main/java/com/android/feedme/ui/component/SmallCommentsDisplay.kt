@@ -61,7 +61,8 @@ fun CommentCard(comment: Comment) {
       shape = RoundedCornerShape(8.dp),
       border = BorderStroke(2.dp, Color.Black)) {
         Row(modifier = Modifier.fillMaxWidth().padding(16.dp)) {
-          // Recipe image
+
+          // TODO replace this by the photo uploading code
           Image(
               painter = painterResource(id = R.drawable.test_image_pasta),
               contentDescription = "Recipe Image",

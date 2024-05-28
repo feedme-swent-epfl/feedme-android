@@ -44,10 +44,12 @@ import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import coil.compose.AsyncImage
+import com.android.feedme.model.data.Comment
 import com.android.feedme.model.data.Profile
 import com.android.feedme.model.data.Recipe
 import com.android.feedme.model.viewmodel.ProfileViewModel
 import com.android.feedme.model.viewmodel.RecipeViewModel
+import com.android.feedme.resources.comment1
 import com.android.feedme.resources.recipe1
 import com.android.feedme.resources.recipe2
 import com.android.feedme.ui.component.SmallThumbnailsDisplay
@@ -82,13 +84,16 @@ fun ProfileScreen(
 ) {
 
   val recipeList = listOf(recipe1, recipe2, recipe2, recipe1, recipe1)
+  val commentList = listOf(comment1)
 
   val profile =
       if (profileViewModel.isViewingProfile()) profileViewModel.viewingUserProfile.collectAsState()
       else profileViewModel.currentUserProfile.collectAsState()
 
   Scaffold(
-      modifier = Modifier.fillMaxSize().testTag("ProfileScreen"),
+      modifier = Modifier
+          .fillMaxSize()
+          .testTag("ProfileScreen"),
       topBar = {
         TopBarNavigation(
             title = "Profile",
@@ -145,23 +150,33 @@ fun ProfileBox(
     padding: PaddingValues,
     profile: Profile?,
     recipeList: List<Recipe>,
+    commentList: List<Comment>,
     navigationActions: NavigationActions,
     profileViewModel: ProfileViewModel,
     recipeViewModel: RecipeViewModel
 ) { // TODO add font
 
   val tabList = listOf("Recipes", "Comments")
+    var selectedTabIndex by remember {
+
+    }
 
   LazyColumn(
-      modifier = Modifier.padding(padding).testTag("ProfileBox"),
+      modifier = Modifier
+          .padding(padding)
+          .testTag("ProfileBox"),
       verticalArrangement = Arrangement.Top) {
         item {
           Row(
-              modifier = Modifier.fillMaxWidth().padding(vertical = 20.dp),
+              modifier = Modifier
+                  .fillMaxWidth()
+                  .padding(vertical = 20.dp),
               horizontalArrangement = Arrangement.Center,
               verticalAlignment = Alignment.CenterVertically) {
                 UserProfilePicture(profileViewModel)
-                Spacer(modifier = Modifier.width(20.dp).padding(padding))
+                Spacer(modifier = Modifier
+                    .width(20.dp)
+                    .padding(padding))
                 UserNameBox(profile ?: Profile())
                 Row(
                     horizontalArrangement = Arrangement.Center,
@@ -204,7 +219,11 @@ fun UserProfilePicture(profileViewModel: ProfileViewModel) {
       else profileViewModel._imageUrl.collectAsState().value
 
   AsyncImage(
-      modifier = Modifier.width(100.dp).height(100.dp).clip(CircleShape).testTag("ProfileIcon"),
+      modifier = Modifier
+          .width(100.dp)
+          .height(100.dp)
+          .clip(CircleShape)
+          .testTag("ProfileIcon"),
       model = url,
       contentDescription = "User Profile Image",
       contentScale = ContentScale.FillBounds)
@@ -217,7 +236,9 @@ fun UserProfilePicture(profileViewModel: ProfileViewModel) {
  */
 @Composable
 fun UserNameBox(profile: Profile) {
-  Column(modifier = Modifier.width(100.dp).testTag("ProfileName")) {
+  Column(modifier = Modifier
+      .width(100.dp)
+      .testTag("ProfileName")) {
     Text(text = profile.name, style = textStyle(17, 15, 700), overflow = TextOverflow.Ellipsis)
     Spacer(modifier = Modifier.height(10.dp))
     Text(
@@ -277,7 +298,9 @@ fun FollowingButton(profile: Profile, navigationActions: NavigationActions) {
 @Composable
 fun UserBio(profile: Profile) {
   Text(
-      modifier = Modifier.padding(horizontal = 18.dp).testTag("ProfileBio"),
+      modifier = Modifier
+          .padding(horizontal = 18.dp)
+          .testTag("ProfileBio"),
       text = profile.description,
       style = textStyle(13, 15, 400, TextAlign.Justify))
 }
@@ -300,7 +323,9 @@ fun ProfileButtons(
   }
 
   Row(
-      modifier = Modifier.fillMaxWidth().padding(vertical = 20.dp),
+      modifier = Modifier
+          .fillMaxWidth()
+          .padding(vertical = 20.dp),
       horizontalArrangement = Arrangement.SpaceEvenly,
       verticalAlignment = Alignment.CenterVertically) {
         if (!profileViewModel.isViewingProfile()) {
@@ -324,7 +349,9 @@ fun EditProfileButton(navigationActions: NavigationActions) {
       border = BorderStroke(2.dp, FollowButtonBorder),
       onClick = { navigationActions.navigateTo(Screen.EDIT_PROFILE) }) {
         Text(
-            modifier = Modifier.width(110.dp).height(13.dp),
+            modifier = Modifier
+                .width(110.dp)
+                .height(13.dp),
             text = "Edit Profile",
             fontWeight = FontWeight.Bold,
             style = textStyle())
@@ -355,7 +382,9 @@ fun FollowUnfollowButton(
           profileViewModel.unfollowUser(profile)
         }) {
           Text(
-              modifier = Modifier.width(110.dp).height(13.dp),
+              modifier = Modifier
+                  .width(110.dp)
+                  .height(13.dp),
               text = "Unfollow",
               fontWeight = FontWeight.Bold,
               style = textStyle())
@@ -371,7 +400,9 @@ fun FollowUnfollowButton(
           profileViewModel.followUser(profile) // Assuming the function signature matches
         }) {
           Text(
-              modifier = Modifier.width(110.dp).height(13.dp),
+              modifier = Modifier
+                  .width(110.dp)
+                  .height(13.dp),
               text = "Follow",
               color = TextBarColor,
               fontWeight = FontWeight.Bold,

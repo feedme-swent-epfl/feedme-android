@@ -60,6 +60,7 @@ import com.android.feedme.ui.navigation.Route
 import com.android.feedme.ui.navigation.Screen
 import com.android.feedme.ui.navigation.TOP_LEVEL_DESTINATIONS
 import com.android.feedme.ui.navigation.TopBarNavigation
+import com.android.feedme.ui.theme.BlueUsername
 import com.android.feedme.ui.theme.DarkGrey
 import com.android.feedme.ui.theme.FabColor
 import com.android.feedme.ui.theme.FollowButton
@@ -230,7 +231,8 @@ fun UserNameBox(profile: Profile) {
     Text(
         text = "@" + profile.username,
         style = textStyle(14, 15, 700, TextAlign.Left),
-        overflow = TextOverflow.Ellipsis)
+        overflow = TextOverflow.Ellipsis,
+        color = BlueUsername)
   }
 }
 

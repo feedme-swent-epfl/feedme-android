@@ -11,11 +11,13 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Add
+import androidx.compose.material.icons.rounded.Add
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.FloatingActionButton
 import androidx.compose.material3.Icon
@@ -115,7 +117,9 @@ fun ProfileScreen(
                 containerColor = FabColor,
                 contentColor = TextBarColor,
                 onClick = { navigationActions.navigateTo(Screen.ADD_RECIPE) }) {
-                  Icon(imageVector = Icons.Default.Add, contentDescription = "Add recipe Icon")
+                  Icon(imageVector = Icons.Rounded.Add,
+                      contentDescription = "Add recipe Icon",
+                      modifier = Modifier.size(28.dp))
                 }
       },
       content = { padding ->

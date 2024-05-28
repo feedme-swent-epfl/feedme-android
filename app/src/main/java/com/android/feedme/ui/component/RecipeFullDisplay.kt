@@ -212,7 +212,7 @@ fun GeneralInfoDisplay(
               color = BlueUsername,
               style = TextStyle(fontSize = 16.sp, fontWeight = FontWeight.Medium))
         }
-        // Spacer(modifier = Modifier.weight(1f))
+        Spacer(modifier = Modifier.weight(0.5f))
 
         // Recipe ratings
         Box(contentAlignment = Alignment.Center) {

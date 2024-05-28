@@ -167,13 +167,16 @@ class RecipeRepositoryTest {
             "imageUrl" to "http://example.com/vanilla_cake.jpg")
 
     val querySnapshot: QuerySnapshot = mock(QuerySnapshot::class.java)
+    val mockQuery = mock(Query::class.java)
     `when`(mockDocumentSnapshot1.data).thenReturn(recipeMap1)
     `when`(mockDocumentSnapshot2.data).thenReturn(recipeMap2)
     `when`(querySnapshot.documents).thenReturn(listOf(mockDocumentSnapshot1, mockDocumentSnapshot2))
 
     `when`(mockCollectionReference.whereArrayContainsAny("ingredientIds", ingredientIds))
-        .thenReturn(mockCollectionReference)
-    `when`(mockCollectionReference.get()).thenReturn(Tasks.forResult(querySnapshot))
+        .thenReturn(mockQuery)
+    `when`(mockQuery.limit(6)).thenReturn(mockQuery)
+    `when`(mockQuery.get()).thenReturn(Tasks.forResult(querySnapshot))
+    `when`(querySnapshot.documents).thenReturn(listOf(mockDocumentSnapshot1, mockDocumentSnapshot2))
 
     recipeRepository.suggestRecipes(
         ingredientIds,
@@ -268,13 +271,16 @@ class RecipeRepositoryTest {
             "imageUrl" to "http://example.com/vanilla_cake.jpg")
 
     val querySnapshot: QuerySnapshot = mock(QuerySnapshot::class.java)
+    val mockQuery = mock(Query::class.java)
     `when`(mockDocumentSnapshot1.data).thenReturn(recipeMap1)
     `when`(mockDocumentSnapshot2.data).thenReturn(recipeMap2)
     `when`(querySnapshot.documents).thenReturn(listOf(mockDocumentSnapshot1, mockDocumentSnapshot2))
 
     `when`(mockCollectionReference.whereArrayContainsAny("ingredientIds", ingredientIds))
-        .thenReturn(mockCollectionReference)
-    `when`(mockCollectionReference.get()).thenReturn(Tasks.forResult(querySnapshot))
+        .thenReturn(mockQuery)
+    `when`(mockQuery.limit(6)).thenReturn(mockQuery)
+    `when`(mockQuery.get()).thenReturn(Tasks.forResult(querySnapshot))
+    `when`(querySnapshot.documents).thenReturn(listOf(mockDocumentSnapshot1, mockDocumentSnapshot2))
 
     recipeRepository.suggestRecipesStrict(
         ingredientIds,

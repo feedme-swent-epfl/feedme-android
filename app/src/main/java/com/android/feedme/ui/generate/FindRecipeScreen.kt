@@ -1,5 +1,6 @@
-package com.android.feedme.ui.find
+package com.android.feedme.ui.generate
 
+import android.util.Log
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
@@ -37,6 +38,7 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.compose.ui.window.Dialog
+import com.android.feedme.model.viewmodel.GenerateViewModel
 import com.android.feedme.model.viewmodel.InputViewModel
 import com.android.feedme.model.viewmodel.ProfileViewModel
 import com.android.feedme.ui.component.IngredientList
@@ -50,6 +52,7 @@ import com.android.feedme.ui.theme.DarkGrey
 import com.android.feedme.ui.theme.FabColor
 import com.android.feedme.ui.theme.OffWhite
 import com.android.feedme.ui.theme.TextBarColor
+import kotlinx.coroutines.flow.map
 
 /**
  * Composable function for the Create Screen.
@@ -60,7 +63,8 @@ import com.android.feedme.ui.theme.TextBarColor
 fun FindRecipeScreen(
     navigationActions: NavigationActions,
     inputViewModel: InputViewModel,
-    profileViewModel: ProfileViewModel
+    profileViewModel: ProfileViewModel,
+    generateViewModel: GenerateViewModel
 ) {
 
   val checkMark = remember { mutableStateOf(false) }
@@ -142,11 +146,23 @@ fun FindRecipeScreen(
           FloatingActionButton(
               containerColor = FabColor,
               contentColor = TextBarColor,
-              onClick = { checkMark.value = true },
+              onClick = {
+                checkMark.value = true
+                generateViewModel.toggleStrictness(isStrict.value)
+                if (profileViewModel.currentUserProfile.value != null) {
+                  Log.d("FindRecipeScreen", "Fetching generated recipes")
+                  generateViewModel.fetchGeneratedRecipes(
+                      inputViewModel.listOfIngredientMetadatas.value.map {
+                        it?.ingredient?.id ?: ""
+                      },
+                      profileViewModel.currentUserProfile.value!!)
+                }
+                navigationActions.navigateTo(Screen.GENERATE)
+              },
               content = {
                 Icon(
                     imageVector = Icons.Default.Check,
-                    contentDescription = "Camera Icon",
+                    contentDescription = "Validate Icon",
                     modifier = Modifier.size(24.dp))
               },
               modifier = Modifier.testTag("ValidateButton"))

@@ -6,6 +6,7 @@ import androidx.compose.ui.test.onNodeWithContentDescription
 import androidx.compose.ui.test.onNodeWithText
 import androidx.test.ext.junit.runners.AndroidJUnit4
 import com.android.feedme.model.data.Comment
+import com.android.feedme.model.data.CommentRepository
 import com.android.feedme.model.data.Ingredient
 import com.android.feedme.model.data.IngredientMetaData
 import com.android.feedme.model.data.MeasureUnit
@@ -96,6 +97,7 @@ class SmallCommentsTest {
   fun init() {
     RecipeRepository.initialize(mockFirestore)
     ProfileRepository.initialize(mockFirestore)
+    CommentRepository.initialize(mockFirestore)
 
     profileRepository = ProfileRepository.instance
     recipeRepository = RecipeRepository.instance

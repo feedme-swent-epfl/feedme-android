@@ -59,6 +59,10 @@ class DisplayPictureTest : TestCase() {
         assertIsDisplayed()
         assertHasClickAction()
       }
+      mlObjectButton {
+        assertIsDisplayed()
+        assertHasClickAction()
+      }
       composeTestRule.onNodeWithTag("LeftIconButton").performClick()
     }
   }
@@ -75,6 +79,10 @@ class DisplayPictureTest : TestCase() {
         assertHasClickAction()
       }
       mlTextButton {
+        assertIsDisplayed()
+        assertHasClickAction()
+      }
+      mlObjectButton {
         assertIsDisplayed()
         assertHasClickAction()
       }

@@ -13,4 +13,5 @@ class DisplayPictureScreen(semanticsProvider: SemanticsNodeInteractionsProvider)
   // Structural elements of the UI
   val mlTextButton: KNode = child { hasTestTag("MLTextButton") }
   val mlBarcodeButton: KNode = child { hasTestTag("MLBarcodeButton") }
+  val mlObjectButton: KNode = child { hasTestTag("MLObjectButton") }
 }

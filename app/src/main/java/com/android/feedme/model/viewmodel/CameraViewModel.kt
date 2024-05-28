@@ -109,6 +109,8 @@ class CameraViewModel : ViewModel() {
         })
   }
 
+  // camera, profile picture, recipe, comment
+
   /**
    * This function is called when the user selects a picture in the CameraScreen. It sets the
    * [_photoTaken] state to true, which triggers the navigation to the AnalyzeScreen.

@@ -160,7 +160,7 @@ fun ProfileBox(
               modifier = Modifier.fillMaxWidth().padding(vertical = 20.dp),
               horizontalArrangement = Arrangement.Center,
               verticalAlignment = Alignment.CenterVertically) {
-                UserProfilePicture(profileViewModel)
+                UserProfilePicture(profile ?: Profile())
                 Spacer(modifier = Modifier.width(20.dp).padding(padding))
                 UserNameBox(profile ?: Profile())
                 Row(
@@ -197,10 +197,10 @@ fun ProfileBox(
 /** A composable function that generates the user's profile picture. */
 @SuppressLint("StateFlowValueCalledInComposition")
 @Composable
-fun UserProfilePicture(profileViewModel: ProfileViewModel) {
+fun UserProfilePicture(profile: Profile) {
   AsyncImage(
       modifier = Modifier.width(100.dp).height(100.dp).clip(CircleShape).testTag("ProfileIcon"),
-      model = profileViewModel._imageUrl.collectAsState().value,
+      model = profile.imageUrl,
       contentDescription = "User Profile Image",
       contentScale = ContentScale.FillBounds)
 }

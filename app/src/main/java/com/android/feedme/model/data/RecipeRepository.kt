@@ -205,7 +205,8 @@ class RecipeRepository(private val db: FirebaseFirestore) {
         "tags" to recipe.tags,
         "rating" to recipe.rating,
         "userid" to recipe.userid,
-        "imageUrl" to recipe.imageUrl)
+        "imageUrl" to recipe.imageUrl,
+        "ingredientIds" to recipe.ingredients.map { it.ingredient.id })
   }
 
   private fun IngredientMetaData.toMap(): Map<String, Any> =
@@ -392,11 +393,14 @@ class RecipeRepository(private val db: FirebaseFirestore) {
       onSuccess: (List<Recipe>, DocumentSnapshot?) -> Unit,
       onFailure: (Exception) -> Unit
   ) {
+    Log.d("RecipeRepository", "suggest a recipe for the list $ingredientIds")
     fetchAndMapRecipes(
         ingredientIds,
         lastRecipe,
         { allRecipes, lastDoc ->
+          Log.d("RecipeRepository", "recipe to filter $allRecipes")
           val rankedRecipes = rankRecipes(allRecipes, ingredientIds, profile)
+          Log.d("RecipeRepository", "order recipe  $rankedRecipes")
           onSuccess(rankedRecipes, lastDoc)
         },
         onFailure)

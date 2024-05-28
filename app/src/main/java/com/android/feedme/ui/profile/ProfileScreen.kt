@@ -2,6 +2,7 @@ package com.android.feedme.ui.profile
 
 import android.annotation.SuppressLint
 import androidx.compose.foundation.BorderStroke
+import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
@@ -161,7 +162,7 @@ fun ProfileBox(
       verticalArrangement = Arrangement.Top) {
         item {
           Row(
-              modifier = Modifier.fillMaxWidth().padding(vertical = 20.dp),
+              modifier = Modifier.fillMaxWidth().padding(start = 10.dp, top = 10.dp),
               horizontalArrangement = Arrangement.Center,
               verticalAlignment = Alignment.CenterVertically) {
                 UserProfilePicture(profileViewModel)
@@ -208,7 +209,9 @@ fun UserProfilePicture(profileViewModel: ProfileViewModel) {
       else profileViewModel._imageUrl.collectAsState().value
 
   AsyncImage(
-      modifier = Modifier.width(100.dp).height(100.dp).clip(CircleShape).testTag("ProfileIcon"),
+      modifier = Modifier.width(100.dp).height(100.dp).clip(CircleShape)
+          .border(2.dp, Color.LightGray, CircleShape)
+              .testTag("ProfileIcon"),
       model = url,
       contentDescription = "User Profile Image",
       contentScale = ContentScale.FillBounds)

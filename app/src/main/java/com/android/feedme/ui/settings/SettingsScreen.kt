@@ -1,7 +1,6 @@
 package com.android.feedme.ui.settings
 
 import android.util.Log
-import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.Box
@@ -10,9 +9,7 @@ import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
-import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.Button
@@ -31,7 +28,6 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.testTag
-import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
@@ -43,6 +39,7 @@ import com.android.feedme.ui.navigation.Route
 import com.android.feedme.ui.navigation.TOP_LEVEL_AUTH
 import com.android.feedme.ui.navigation.TOP_LEVEL_DESTINATIONS
 import com.android.feedme.ui.navigation.TopBarNavigation
+import com.android.feedme.ui.profile.UserProfilePicture
 import com.android.feedme.ui.theme.TemplateColor
 import com.google.android.gms.auth.api.signin.GoogleSignIn
 import com.google.android.gms.auth.api.signin.GoogleSignInOptions
@@ -94,15 +91,7 @@ fun SettingsPage(navigationActions: NavigationActions, profileViewModel: Profile
       modifier = Modifier.fillMaxSize().padding(4.dp).background(Color.White),
       horizontalAlignment = Alignment.CenterHorizontally) {
         Spacer(modifier = Modifier.height(50.dp))
-
-        // Profile icon
-        Image(
-            painter = painterResource(id = R.drawable.user_logo),
-            contentDescription = "Profile Icon",
-            modifier =
-                Modifier.size(100.dp)
-                    .border(2.dp, TemplateColor, CircleShape)
-                    .background(Color.Transparent, CircleShape))
+        UserProfilePicture(profileViewModel)
 
         Spacer(modifier = Modifier.height(30.dp))
 

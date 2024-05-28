@@ -85,7 +85,7 @@ fun CameraScreen(navigationActions: NavigationActions, cameraViewModel: CameraVi
     }
   }
   val photoTaken by cameraViewModel.photoTaken.collectAsState()
-  val pickImage = cameraViewModel.galleryLauncher()
+  val pickImage = cameraViewModel.galleryLauncher(null, null, null)
 
   val snackbarHostStateInfo = remember { SnackbarHostState() }
   val snackbarHostStateError = remember { SnackbarHostState() }

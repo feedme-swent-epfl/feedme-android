@@ -295,7 +295,7 @@ class RecipeRepositoryTest {
     `when`(mockDocumentReference.set(any())).thenReturn(Tasks.forResult(null))
 
     var successCalled = false
-    recipeRepository.addRecipe(recipe, { successCalled = true }, {})
+    recipeRepository.addRecipe(recipe, null, { successCalled = true }, {})
 
     shadowOf(Looper.getMainLooper()).idle()
 
@@ -385,6 +385,7 @@ class RecipeRepositoryTest {
     var failureCalled = false
     recipeRepository.addRecipe(
         recipe,
+        null,
         onSuccess = { fail("Success callback should not be called") },
         onFailure = { failureCalled = true })
 
@@ -564,7 +565,7 @@ class RecipeRepositoryTest {
     `when`(mockDocumentReference.get()).thenReturn(Tasks.forResult(mockDocumentSnapshot1))
     `when`(mockDocumentSnapshot1.exists()).thenReturn(true)
 
-    recipeRepository.addRecipe(recipe, onSuccess = { successCalled = true }, onFailure = {})
+    recipeRepository.addRecipe(recipe, null, onSuccess = { successCalled = true }, onFailure = {})
 
     // Execute all tasks scheduled on the main thread to simulate the Firestore callback
     shadowOf(Looper.getMainLooper()).idle()
@@ -605,7 +606,7 @@ class RecipeRepositoryTest {
 
     // Action: Attempt to add the recipe
     var successCalled = false
-    recipeRepository.addRecipe(recipe, onSuccess = { successCalled = true }, onFailure = {})
+    recipeRepository.addRecipe(recipe, null, onSuccess = { successCalled = true }, onFailure = {})
 
     // Ensuring all async operations complete
     shadowOf(Looper.getMainLooper()).idle()

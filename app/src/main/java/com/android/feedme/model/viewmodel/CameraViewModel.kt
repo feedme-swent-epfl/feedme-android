@@ -1,7 +1,9 @@
 package com.android.feedme.model.viewmodel
 
+import android.content.Context
 import android.graphics.Bitmap
 import android.graphics.ImageDecoder
+import android.net.Uri
 import android.util.Log
 import androidx.activity.compose.ManagedActivityResultLauncher
 import androidx.activity.compose.rememberLauncherForActivityResult
@@ -16,6 +18,7 @@ import com.android.feedme.ml.barcodeScan
 import com.android.feedme.ml.extractProductInfoFromBarcode
 import com.android.feedme.ml.textExtraction
 import com.android.feedme.ml.textProcessing
+import com.android.feedme.model.data.Comment
 import com.android.feedme.model.data.Ingredient
 import com.android.feedme.model.data.IngredientMetaData
 import com.android.feedme.model.data.IngredientsRepository
@@ -64,8 +67,6 @@ class CameraViewModel : ViewModel() {
 
   /** Contains the last photo taken by user */
   private val _lastPhoto = MutableStateFlow<PhotoState>(PhotoState.NoPhoto)
-  // Could be useful later if lastPhoto needs to be accessed outside the view model
-  val lastPhoto = _lastPhoto.asStateFlow()
 
   private val _listOfIngredientToInput = MutableStateFlow<List<IngredientMetaData>>(emptyList())
   val listOfIngredientToInput = _listOfIngredientToInput.asStateFlow()
@@ -94,19 +95,32 @@ class CameraViewModel : ViewModel() {
   }
 
   @Composable
-  fun galleryLauncher(): ManagedActivityResultLauncher<PickVisualMediaRequest, out Any?> {
+  fun galleryLauncher(
+      profileViewModel: ProfileViewModel?,
+      recipeViewModel: RecipeViewModel?,
+      comment: Comment?
+  ): ManagedActivityResultLauncher<PickVisualMediaRequest, out Any?> {
     val context = LocalContext.current
 
     return rememberLauncherForActivityResult(
         ActivityResultContracts.PickVisualMedia(),
         onResult = { uri ->
           uri?.let {
-            val source = ImageDecoder.createSource(context.contentResolver, uri)
-            _bitmaps.value += ImageDecoder.decodeBitmap(source)
-            _lastPhoto.value = PhotoState.Photo(ImageDecoder.decodeBitmap(source))
-            onPhotoSaved()
+            when {
+              profileViewModel != null -> profileViewModel.updateProfilePicture(uri)
+              recipeViewModel != null -> recipeViewModel.updatePicture(uri)
+              comment != null -> print("TODO") // TODO
+              else -> galleryForCamera(context, uri)
+            }
           }
         })
+  }
+
+  private fun galleryForCamera(context: Context, uri: Uri) {
+    val source = ImageDecoder.createSource(context.contentResolver, uri)
+    _bitmaps.value += ImageDecoder.decodeBitmap(source)
+    _lastPhoto.value = PhotoState.Photo(ImageDecoder.decodeBitmap(source))
+    onPhotoSaved()
   }
 
   /**

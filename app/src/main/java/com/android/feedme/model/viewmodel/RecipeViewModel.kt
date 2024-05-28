@@ -1,5 +1,6 @@
 package com.android.feedme.model.viewmodel
 
+import android.net.Uri
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.android.feedme.model.data.IngredientMetaData
@@ -26,6 +27,8 @@ class RecipeViewModel : ViewModel() {
 
   private val _recipe = MutableStateFlow<Recipe?>(null)
   val recipe: StateFlow<Recipe?> = _recipe
+  private val _picture = MutableStateFlow<Uri?>(null)
+  val picture: StateFlow<Uri?> = _picture
 
   private val _profiles = MutableStateFlow<Map<String, Profile>>(emptyMap())
   val profiles: StateFlow<Map<String, Profile>> = _profiles
@@ -41,6 +44,10 @@ class RecipeViewModel : ViewModel() {
    */
   fun selectRecipe(recipe: Recipe) {
     _recipe.value = recipe
+  }
+
+  fun updatePicture(uri: Uri) {
+    _picture.value = uri
   }
 
   /**
@@ -111,6 +118,7 @@ class RecipeViewModel : ViewModel() {
     viewModelScope.launch {
       recipeRepository.addRecipe(
           recipe,
+          _picture.value,
           onSuccess = { _recipe.value = recipe },
           onFailure = {
             // Handle failure

@@ -33,6 +33,8 @@ class SettingsTest {
         assertIsDisplayed()
         assertHasClickAction()
       }
+      composeTestRule.onNodeWithTag("ProfileIcon").assertIsDisplayed()
+      composeTestRule.onNodeWithTag("Username").assertIsDisplayed()
     }
   }
 

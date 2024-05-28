@@ -21,7 +21,6 @@ import androidx.compose.ui.unit.dp
 import com.android.feedme.model.viewmodel.GenerateViewModel
 import com.android.feedme.model.viewmodel.ProfileViewModel
 import com.android.feedme.model.viewmodel.RecipeViewModel
-import com.android.feedme.ui.component.LoadMoreButton
 import com.android.feedme.ui.home.RecipeCard
 import com.android.feedme.ui.navigation.BottomNavigationMenu
 import com.android.feedme.ui.navigation.NavigationActions
@@ -100,7 +99,6 @@ fun GeneratedRecipesContent(
             recipeViewModel,
             profileViewModel)
       }
-      item { LoadMoreButton(generateViewModel::loadMoreGeneratedRecipes) }
     }
   }
 }

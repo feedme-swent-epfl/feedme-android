@@ -104,8 +104,6 @@ class GenerateViewModelTest {
     val profile = Profile()
     generateViewModel.toggleStrictness(false)
     generateViewModel.fetchGeneratedRecipes(ingredientIds, profile)
-    generateViewModel.toggleStrictness(true)
-    generateViewModel.loadMoreGeneratedRecipes()
 
     Shadows.shadowOf(Looper.getMainLooper()).idle()
   }

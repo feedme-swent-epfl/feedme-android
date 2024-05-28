@@ -168,6 +168,7 @@ class MainActivity : ComponentActivity() {
                           Route.HOME -> Screen.HOME
                           Route.SAVED -> Screen.SAVED
                           Route.PROFILE -> Screen.PROFILE
+                          Route.FIND_RECIPE -> Screen.GENERATE
                           else -> {
                             ""
                           }

@@ -4,7 +4,6 @@ import androidx.lifecycle.ViewModel
 import com.android.feedme.model.data.Profile
 import com.android.feedme.model.data.Recipe
 import com.android.feedme.model.data.RecipeRepository
-import com.google.firebase.firestore.DocumentSnapshot
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
 
@@ -20,11 +19,10 @@ class GenerateViewModel : ViewModel() {
   private val _generatedRecipes = MutableStateFlow<List<Recipe>>(emptyList())
   val generatedRecipes = _generatedRecipes.asStateFlow()
 
-  private var lastRecipe: DocumentSnapshot? = null
   private var _ingredientsIds: List<String> = emptyList()
   private var _profile: Profile = Profile()
 
-  private val _isStrict = MutableStateFlow(false)
+  private val _isStrict = MutableStateFlow(true)
 
   /**
    * A function that fetches the generated recipes
@@ -40,11 +38,7 @@ class GenerateViewModel : ViewModel() {
       recipeRepository.suggestRecipesStrict(
           ingredientIds,
           profile,
-          lastRecipe,
-          onSuccess = { recipes, lastRec ->
-            lastRecipe = lastRec
-            _generatedRecipes.value = recipes
-          },
+          onSuccess = { recipes -> _generatedRecipes.value = recipes },
           onFailure = {
             // Handle failure
           })
@@ -52,20 +46,11 @@ class GenerateViewModel : ViewModel() {
       recipeRepository.suggestRecipes(
           ingredientIds,
           profile,
-          lastRecipe,
-          onSuccess = { recipes, lastRec ->
-            lastRecipe = lastRec
-            _generatedRecipes.value = recipes
-          },
+          onSuccess = { recipes -> _generatedRecipes.value = recipes },
           onFailure = {
             // Handle failure
           })
     }
-  }
-
-  /** A function that fetches more of the generated recipes */
-  fun loadMoreGeneratedRecipes() {
-    fetchGeneratedRecipes(_ingredientsIds, _profile)
   }
 
   /**

@@ -165,8 +165,7 @@ class RecipeRepositoryTest {
     recipeRepository.suggestRecipes(
         ingredientIds,
         profile,
-        null,
-        { recipes, _ ->
+        { recipes ->
           assertNotNull(recipes)
           assertEquals(2, recipes.size)
           assertEquals("Chocolate Cake", recipes[0].title)
@@ -270,8 +269,7 @@ class RecipeRepositoryTest {
     recipeRepository.suggestRecipesStrict(
         ingredientIds,
         profile,
-        null,
-        { recipes, _ ->
+        { recipes ->
           assertNotNull(recipes)
           assertEquals(1, recipes.size) // Only Chocolate Cake should match exactly
           assertEquals("Chocolate Cake", recipes[0].title)

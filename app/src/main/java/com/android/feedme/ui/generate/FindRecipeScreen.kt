@@ -148,6 +148,7 @@ fun FindRecipeScreen(
               contentColor = TextBarColor,
               onClick = {
                 checkMark.value = true
+                generateViewModel.toggleStrictness(isStrict.value)
                 if (profileViewModel.currentUserProfile.value != null) {
                   Log.d("FindRecipeScreen", "Fetching generated recipes")
                   generateViewModel.fetchGeneratedRecipes(
@@ -156,7 +157,6 @@ fun FindRecipeScreen(
                       },
                       profileViewModel.currentUserProfile.value!!)
                 }
-                generateViewModel.toggleStrictness(isStrict.value)
                 navigationActions.navigateTo(Screen.GENERATE)
               },
               content = {

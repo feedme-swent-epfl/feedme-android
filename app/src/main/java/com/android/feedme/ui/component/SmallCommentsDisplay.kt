@@ -77,6 +77,7 @@ fun CommentCard(
     commentViewModel: CommentViewModel,
     navigationActions: NavigationActions,
     recipeViewModel: RecipeViewModel
+    /* TODO fix this in a next issue */
 ) {
   Surface(
       modifier =
@@ -84,12 +85,13 @@ fun CommentCard(
               .padding(horizontal = 16.dp, vertical = 8.dp)
               .clickable(
                   onClick = {
+                    /* TODO implement the comment linking to the recipe
                     commentViewModel.selectComment(comment)
                     // fetch the recipe that the comment was posted on
                     commentViewModel.fetchRecipe(comment.recipeId)
                     // navigate to said recipe if the comment card is clicked
                     recipeViewModel.selectRecipe(commentViewModel.recipe.value ?: Recipe())
-                    navigationActions.navigateTo("Recipe/${Route.HOME}")
+                    navigationActions.navigateTo("Recipe/${Route.HOME}")*/
                   }),
       color = Color.White,
       shape = RoundedCornerShape(8.dp),

@@ -30,9 +30,7 @@ import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.text.SpanStyle
@@ -42,7 +40,6 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.withStyle
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import coil.compose.AsyncImage
 import com.android.feedme.R
 import com.android.feedme.model.viewmodel.ProfileViewModel
 import com.android.feedme.ui.navigation.BottomNavigationMenu
@@ -51,8 +48,8 @@ import com.android.feedme.ui.navigation.Route
 import com.android.feedme.ui.navigation.TOP_LEVEL_AUTH
 import com.android.feedme.ui.navigation.TOP_LEVEL_DESTINATIONS
 import com.android.feedme.ui.navigation.TopBarNavigation
-import com.android.feedme.ui.theme.BlueUsername
 import com.android.feedme.ui.profile.UserProfilePicture
+import com.android.feedme.ui.theme.BlueUsername
 import com.android.feedme.ui.theme.TemplateColor
 import com.android.feedme.ui.theme.deleteButtonColor
 import com.google.android.gms.auth.api.signin.GoogleSignIn
@@ -113,7 +110,11 @@ fun SettingsPage(navigationActions: NavigationActions, profileViewModel: Profile
                   horizontalAlignment = Alignment.CenterHorizontally,
                   modifier = Modifier.fillMaxSize()) {
                     // Profile icon
-                  UserProfilePicture(profileViewModel, Modifier.width(125.dp).border(2.dp, Color.LightGray, CircleShape).height(125.dp))
+                    UserProfilePicture(
+                        profileViewModel,
+                        Modifier.width(125.dp)
+                            .border(2.dp, Color.LightGray, CircleShape)
+                            .height(125.dp))
 
                     Spacer(modifier = Modifier.height(20.dp))
 

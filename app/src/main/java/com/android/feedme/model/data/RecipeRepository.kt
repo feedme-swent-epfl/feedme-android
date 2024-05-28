@@ -205,7 +205,8 @@ class RecipeRepository(private val db: FirebaseFirestore) {
         "tags" to recipe.tags,
         "rating" to recipe.rating,
         "userid" to recipe.userid,
-        "imageUrl" to recipe.imageUrl)
+        "imageUrl" to recipe.imageUrl,
+        "ingredientIds" to recipe.ingredients.map { it.ingredient.id })
   }
 
   private fun IngredientMetaData.toMap(): Map<String, Any> =
@@ -338,6 +339,7 @@ class RecipeRepository(private val db: FirebaseFirestore) {
       onFailure(IllegalArgumentException())
       return
     }
+    // Create a query to fetch the top rated recipes
     db.collection(collectionPath)
         .whereArrayContainsAny("ingredientIds", ingredientIds)
         .get()
@@ -383,7 +385,9 @@ class RecipeRepository(private val db: FirebaseFirestore) {
     fetchAndMapRecipes(
         ingredientIds,
         { allRecipes ->
+          Log.d("RecipeRepository", "recipe to filter $allRecipes")
           val rankedRecipes = rankRecipes(allRecipes, ingredientIds, profile)
+          Log.d("RecipeRepository", "order recipe  $rankedRecipes")
           onSuccess(rankedRecipes)
         },
         onFailure)
@@ -436,14 +440,12 @@ class RecipeRepository(private val db: FirebaseFirestore) {
   ): List<Recipe> {
     return recipes.sortedWith(
         compareByDescending { recipe ->
+          val userPreferencesScore = recipe.tags.count { tag -> profile.filter.contains(tag) }
+          val ratingScore = recipe.rating
           val matchingIngredientsCount =
               recipe.ingredients.count { ingredientMetaData ->
                 ingredientIds.contains(ingredientMetaData.ingredient.id)
               }
-
-          val userPreferencesScore = recipe.tags.count { tag -> profile.filter.contains(tag) }
-
-          val ratingScore = recipe.rating
 
           // Combine the scores to form the final ranking score
           matchingIngredientsCount + userPreferencesScore + ratingScore

@@ -20,7 +20,6 @@ import androidx.compose.foundation.lazy.items
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Bookmark
 import androidx.compose.material.icons.outlined.BookmarkBorder
-import androidx.compose.material.icons.outlined.Share
 import androidx.compose.material.icons.rounded.Bookmark
 import androidx.compose.material.icons.rounded.Star
 import androidx.compose.material.icons.sharp.Star
@@ -267,7 +266,7 @@ fun RecipeCard(
                           modifier = Modifier.size(34.dp).padding(start = 4.dp),
                           tint =
                               if (isSaved.value) {
-                                  TemplateColor
+                                TemplateColor
                               } else {
                                 YellowStarBlackOutline
                               })

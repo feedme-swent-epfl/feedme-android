@@ -1,26 +1,29 @@
 package com.android.feedme.ui.settings
 
 import android.util.Log
-import androidx.compose.foundation.Image
+import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
+import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Arrangement.Center
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
+import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.OutlinedButton
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -28,13 +31,19 @@ import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.testTag
-import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.text.SpanStyle
+import androidx.compose.ui.text.buildAnnotatedString
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.style.TextOverflow
+import androidx.compose.ui.text.withStyle
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import coil.compose.AsyncImage
 import com.android.feedme.R
 import com.android.feedme.model.viewmodel.ProfileViewModel
 import com.android.feedme.ui.navigation.BottomNavigationMenu
@@ -43,7 +52,9 @@ import com.android.feedme.ui.navigation.Route
 import com.android.feedme.ui.navigation.TOP_LEVEL_AUTH
 import com.android.feedme.ui.navigation.TOP_LEVEL_DESTINATIONS
 import com.android.feedme.ui.navigation.TopBarNavigation
+import com.android.feedme.ui.theme.BlueUsername
 import com.android.feedme.ui.theme.TemplateColor
+import com.android.feedme.ui.theme.deleteButtonColor
 import com.google.android.gms.auth.api.signin.GoogleSignIn
 import com.google.android.gms.auth.api.signin.GoogleSignInOptions
 import kotlinx.coroutines.launch
@@ -91,31 +102,53 @@ fun SettingsPage(navigationActions: NavigationActions, profileViewModel: Profile
   var showDialog by remember { mutableStateOf(false) }
 
   Column(
-      modifier = Modifier.fillMaxSize().padding(4.dp).background(Color.White),
-      horizontalAlignment = Alignment.CenterHorizontally) {
-        Spacer(modifier = Modifier.height(50.dp))
-
-        // Profile icon
-        Image(
-            painter = painterResource(id = R.drawable.user_logo),
-            contentDescription = "Profile Icon",
-            modifier =
-                Modifier.size(100.dp)
-                    .border(2.dp, TemplateColor, CircleShape)
-                    .background(Color.Transparent, CircleShape))
-
-        Spacer(modifier = Modifier.height(30.dp))
-
-        // To be filled later (loyal to the Figma design)
+      modifier = Modifier.fillMaxSize().background(Color.White),
+      horizontalAlignment = Alignment.CenterHorizontally,
+      verticalArrangement = Center) {
         Box(
-            modifier =
-                Modifier.width(300.dp)
-                    .height(250.dp)
-                    .border(2.dp, TemplateColor, shape = RoundedCornerShape(16.dp))
-                    .testTag(
-                        "DisplayBox")) { /* TODO() fill the box with necessary information later */}
+            modifier = Modifier.height(200.dp).width(300.dp)
+            /*.border(2.dp, TemplateColor, RoundedCornerShape(20.dp))*/ ) {
+              Column(
+                  verticalArrangement = Arrangement.Top,
+                  horizontalAlignment = Alignment.CenterHorizontally,
+                  modifier = Modifier.fillMaxSize()) {
+                    // Profile icon
+                    // TODO replace with image picker
+                    AsyncImage(
+                        modifier =
+                            Modifier.width(150.dp)
+                                .height(150.dp)
+                                .clip(CircleShape)
+                                .border(1.dp, color = Color.LightGray, shape = CircleShape)
+                                .testTag("ProfileIcon"),
+                        model =
+                            "https://external-content.duckduckgo.com/iu/?u=https%3A%2F%2Fwww." +
+                                "generation-souvenirs.com%2F38509-thickbox_default%2Fpeluche-" +
+                                "bisounours-rose-toucalin-30-cm.jpg&f=1&nofb=1&ipt=411c19cdad14" +
+                                "03db0340c05652681d988095a71011a275f235f20faced305a21&ipo=images",
+                        contentDescription = "User Profile Image",
+                        contentScale = ContentScale.FillBounds)
 
-        Spacer(modifier = Modifier.height(35.dp))
+                    Spacer(modifier = Modifier.height(20.dp))
+
+                    Text(
+                        text =
+                            buildAnnotatedString {
+                              withStyle(
+                                  style =
+                                      SpanStyle(
+                                          fontWeight = FontWeight.Medium, color = BlueUsername)) {
+                                    append(
+                                        "@${profileViewModel.currentUserProfile.collectAsState().value?.username}")
+                                  }
+                            },
+                        modifier =
+                            Modifier.align(alignment = Alignment.CenterHorizontally))
+
+                  }
+            }
+
+        Spacer(modifier = Modifier.height(16.dp))
 
         // Sign out button
         OutlinedButton(
@@ -133,34 +166,28 @@ fun SettingsPage(navigationActions: NavigationActions, profileViewModel: Profile
                 }
               }
             },
-            modifier =
-                Modifier.width(250.dp)
-                    .height(48.dp)
-                    .testTag("SignOutButton")
-                    .border(2.dp, TemplateColor, shape = RoundedCornerShape(12.dp)),
-            shape = RoundedCornerShape(12.dp)) {
+            colors = ButtonDefaults.buttonColors(Color.White),
+            border = BorderStroke(2.dp, TemplateColor),
+            modifier = Modifier.width(300.dp).height(48.dp).testTag("SignOutButton"),
+            shape = RoundedCornerShape(20.dp)) {
               Text(
-                  "Sign out",
+                  "Sign Out",
                   color = TemplateColor,
                   fontWeight = FontWeight.Medium,
                   fontSize = 16.sp)
             }
-
         Spacer(modifier = Modifier.height(16.dp))
 
         // Delete account button
         OutlinedButton(
             onClick = { showDialog = true },
             colors = ButtonDefaults.buttonColors(Color.White),
-            modifier =
-                Modifier.width(250.dp)
-                    .height(48.dp)
-                    .testTag("DeleteAccountButton")
-                    .border(2.dp, Color.Red, shape = RoundedCornerShape(12.dp)),
-            shape = RoundedCornerShape(12.dp)) {
+            border = BorderStroke(2.dp, deleteButtonColor),
+            modifier = Modifier.width(300.dp).height(48.dp).testTag("DeleteAccountButton"),
+            shape = RoundedCornerShape(20.dp)) {
               Text(
                   "Delete Account",
-                  color = Color.Red,
+                  color = deleteButtonColor,
                   fontWeight = FontWeight.Medium,
                   fontSize = 16.sp)
             }

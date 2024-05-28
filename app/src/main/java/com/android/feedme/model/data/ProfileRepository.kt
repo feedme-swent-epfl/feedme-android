@@ -88,6 +88,7 @@ class ProfileRepository(private val db: FirebaseFirestore) {
         }
         .addOnFailureListener { exception -> onFailure(exception) }
   }
+
   /**
    * Retrieves a user profile from Firestore by its document ID.
    *

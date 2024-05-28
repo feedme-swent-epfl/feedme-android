@@ -151,13 +151,16 @@ class RecipeRepositoryTest {
             "imageUrl" to "http://example.com/vanilla_cake.jpg")
 
     val querySnapshot: QuerySnapshot = mock(QuerySnapshot::class.java)
+    val mockQuery = mock(Query::class.java)
     `when`(mockDocumentSnapshot1.data).thenReturn(recipeMap1)
     `when`(mockDocumentSnapshot2.data).thenReturn(recipeMap2)
     `when`(querySnapshot.documents).thenReturn(listOf(mockDocumentSnapshot1, mockDocumentSnapshot2))
 
     `when`(mockCollectionReference.whereArrayContainsAny("ingredientIds", ingredientIds))
-        .thenReturn(mockCollectionReference)
-    `when`(mockCollectionReference.get()).thenReturn(Tasks.forResult(querySnapshot))
+        .thenReturn(mockQuery)
+    `when`(mockQuery.limit(6)).thenReturn(mockQuery)
+    `when`(mockQuery.get()).thenReturn(Tasks.forResult(querySnapshot))
+    `when`(querySnapshot.documents).thenReturn(listOf(mockDocumentSnapshot1, mockDocumentSnapshot2))
 
     recipeRepository.suggestRecipes(
         ingredientIds,
@@ -252,13 +255,16 @@ class RecipeRepositoryTest {
             "imageUrl" to "http://example.com/vanilla_cake.jpg")
 
     val querySnapshot: QuerySnapshot = mock(QuerySnapshot::class.java)
+    val mockQuery = mock(Query::class.java)
     `when`(mockDocumentSnapshot1.data).thenReturn(recipeMap1)
     `when`(mockDocumentSnapshot2.data).thenReturn(recipeMap2)
     `when`(querySnapshot.documents).thenReturn(listOf(mockDocumentSnapshot1, mockDocumentSnapshot2))
 
     `when`(mockCollectionReference.whereArrayContainsAny("ingredientIds", ingredientIds))
-        .thenReturn(mockCollectionReference)
-    `when`(mockCollectionReference.get()).thenReturn(Tasks.forResult(querySnapshot))
+        .thenReturn(mockQuery)
+    `when`(mockQuery.limit(6)).thenReturn(mockQuery)
+    `when`(mockQuery.get()).thenReturn(Tasks.forResult(querySnapshot))
+    `when`(querySnapshot.documents).thenReturn(listOf(mockDocumentSnapshot1, mockDocumentSnapshot2))
 
     recipeRepository.suggestRecipesStrict(
         ingredientIds,
@@ -289,7 +295,7 @@ class RecipeRepositoryTest {
     `when`(mockDocumentReference.set(any())).thenReturn(Tasks.forResult(null))
 
     var successCalled = false
-    recipeRepository.addRecipe(recipe, { successCalled = true }, {})
+    recipeRepository.addRecipe(recipe, null, { successCalled = true }, {})
 
     shadowOf(Looper.getMainLooper()).idle()
 
@@ -379,6 +385,7 @@ class RecipeRepositoryTest {
     var failureCalled = false
     recipeRepository.addRecipe(
         recipe,
+        null,
         onSuccess = { fail("Success callback should not be called") },
         onFailure = { failureCalled = true })
 
@@ -558,7 +565,7 @@ class RecipeRepositoryTest {
     `when`(mockDocumentReference.get()).thenReturn(Tasks.forResult(mockDocumentSnapshot1))
     `when`(mockDocumentSnapshot1.exists()).thenReturn(true)
 
-    recipeRepository.addRecipe(recipe, onSuccess = { successCalled = true }, onFailure = {})
+    recipeRepository.addRecipe(recipe, null, onSuccess = { successCalled = true }, onFailure = {})
 
     // Execute all tasks scheduled on the main thread to simulate the Firestore callback
     shadowOf(Looper.getMainLooper()).idle()
@@ -599,7 +606,7 @@ class RecipeRepositoryTest {
 
     // Action: Attempt to add the recipe
     var successCalled = false
-    recipeRepository.addRecipe(recipe, onSuccess = { successCalled = true }, onFailure = {})
+    recipeRepository.addRecipe(recipe, null, onSuccess = { successCalled = true }, onFailure = {})
 
     // Ensuring all async operations complete
     shadowOf(Looper.getMainLooper()).idle()

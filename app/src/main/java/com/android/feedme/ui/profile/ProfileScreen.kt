@@ -198,9 +198,14 @@ fun ProfileBox(
 @SuppressLint("StateFlowValueCalledInComposition")
 @Composable
 fun UserProfilePicture(profileViewModel: ProfileViewModel) {
+  val url =
+      if (profileViewModel.isViewingProfile())
+          profileViewModel.viewingUserProfile.collectAsState().value?.imageUrl
+      else profileViewModel._imageUrl.collectAsState().value
+
   AsyncImage(
       modifier = Modifier.width(100.dp).height(100.dp).clip(CircleShape).testTag("ProfileIcon"),
-      model = profileViewModel._imageUrl.collectAsState().value,
+      model = url,
       contentDescription = "User Profile Image",
       contentScale = ContentScale.FillBounds)
 }

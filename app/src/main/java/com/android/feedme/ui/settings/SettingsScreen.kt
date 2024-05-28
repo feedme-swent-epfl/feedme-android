@@ -13,7 +13,6 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
-import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.Button
@@ -51,6 +50,7 @@ import com.android.feedme.ui.navigation.TOP_LEVEL_AUTH
 import com.android.feedme.ui.navigation.TOP_LEVEL_DESTINATIONS
 import com.android.feedme.ui.navigation.TopBarNavigation
 import com.android.feedme.ui.theme.BlueUsername
+import com.android.feedme.ui.profile.UserProfilePicture
 import com.android.feedme.ui.theme.TemplateColor
 import com.android.feedme.ui.theme.deleteButtonColor
 import com.google.android.gms.auth.api.signin.GoogleSignIn
@@ -111,21 +111,7 @@ fun SettingsPage(navigationActions: NavigationActions, profileViewModel: Profile
                   horizontalAlignment = Alignment.CenterHorizontally,
                   modifier = Modifier.fillMaxSize()) {
                     // Profile icon
-                    // TODO replace with image picker
-                    AsyncImage(
-                        modifier =
-                            Modifier.width(150.dp)
-                                .height(150.dp)
-                                .clip(CircleShape)
-                                .border(1.dp, color = Color.LightGray, shape = CircleShape)
-                                .testTag("ProfileIcon"),
-                        model =
-                            "https://external-content.duckduckgo.com/iu/?u=https%3A%2F%2Fwww." +
-                                "generation-souvenirs.com%2F38509-thickbox_default%2Fpeluche-" +
-                                "bisounours-rose-toucalin-30-cm.jpg&f=1&nofb=1&ipt=411c19cdad14" +
-                                "03db0340c05652681d988095a71011a275f235f20faced305a21&ipo=images",
-                        contentDescription = "User Profile Image",
-                        contentScale = ContentScale.FillBounds)
+                  UserProfilePicture(profileViewModel)
 
                     Spacer(modifier = Modifier.height(20.dp))
 

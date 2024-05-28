@@ -77,8 +77,8 @@ class HomeViewModel : ViewModel() {
     viewModelScope.launch {
       val recipeList = mutableListOf<Recipe>()
       recipeRepository.getSavedRecipes(
-          context,
           ids,
+          context,
           onSuccess = { recipe, _ ->
             recipeList += recipe
             _savedRecipes.value = recipeList
@@ -98,8 +98,8 @@ class HomeViewModel : ViewModel() {
   fun fetchRatedRecipes(context: Context = FirebaseFirestore.getInstance().app.applicationContext) {
     viewModelScope.launch {
       recipeRepository.getRatedRecipes(
-          context,
           lastRecipe,
+          context,
           onSuccess = { recipes, lastRec ->
             lastRecipe = lastRec
             _recipes.value += recipes

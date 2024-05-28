@@ -547,7 +547,7 @@ class ProfileViewModelTest {
 
   @Test
   fun updateProfilePicture_Offline() {
-    profileViewModel.updateProfilePicture(profileViewModel, Uri.EMPTY)
+    profileViewModel.updateProfilePicture(Uri.EMPTY)
     shadowOf(Looper.getMainLooper()).idle()
     assertEquals(profileViewModel._imageUrl.value, null)
   }

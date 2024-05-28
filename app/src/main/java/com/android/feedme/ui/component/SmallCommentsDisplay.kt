@@ -19,7 +19,6 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.collectAsState
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -47,12 +46,20 @@ import com.android.feedme.ui.theme.BlueUsername
  * @param listComment The list of [Comment] to be displayed.
  */
 @Composable
-fun SmallCommentsDisplay(listComment: List<Comment>, modifier: Modifier = Modifier, commentViewModel: CommentViewModel, navigationActions: NavigationActions, recipeViewModel: RecipeViewModel) {
+fun SmallCommentsDisplay(
+    listComment: List<Comment>,
+    modifier: Modifier = Modifier,
+    commentViewModel: CommentViewModel,
+    navigationActions: NavigationActions,
+    recipeViewModel: RecipeViewModel
+) {
   LazyColumn(modifier = modifier) {
-      items(listComment.size) { i ->
-          commentViewModel.fetchProfile(listComment[i].userId)
+    items(listComment.size) { i ->
+      commentViewModel.fetchProfile(listComment[i].userId)
 
-          CommentCard(comment = listComment[i], commentViewModel, navigationActions, recipeViewModel) } }
+      CommentCard(comment = listComment[i], commentViewModel, navigationActions, recipeViewModel)
+    }
+  }
 }
 
 /**
@@ -65,34 +72,34 @@ fun SmallCommentsDisplay(listComment: List<Comment>, modifier: Modifier = Modifi
  * @param comment The [Comment] object to be displayed.
  */
 @Composable
-fun CommentCard(comment: Comment, commentViewModel: CommentViewModel, navigationActions: NavigationActions, recipeViewModel: RecipeViewModel) {
+fun CommentCard(
+    comment: Comment,
+    commentViewModel: CommentViewModel,
+    navigationActions: NavigationActions,
+    recipeViewModel: RecipeViewModel
+) {
   Surface(
-      modifier = Modifier
-          .fillMaxWidth()
-          .padding(horizontal = 16.dp, vertical = 8.dp)
-          .clickable(
-              onClick = {
-                  commentViewModel.selectComment(comment)
-                  // fetch the recipe that the comment was posted on
-                  commentViewModel.fetchRecipe(comment.recipeId)
-                  // navigate to said recipe if the comment card is clicked
-                  recipeViewModel.selectRecipe(commentViewModel.recipe.value ?: Recipe())
-                  navigationActions.navigateTo("Recipe/${Route.HOME}")
-              }),
+      modifier =
+          Modifier.fillMaxWidth()
+              .padding(horizontal = 16.dp, vertical = 8.dp)
+              .clickable(
+                  onClick = {
+                    commentViewModel.selectComment(comment)
+                    // fetch the recipe that the comment was posted on
+                    commentViewModel.fetchRecipe(comment.recipeId)
+                    // navigate to said recipe if the comment card is clicked
+                    recipeViewModel.selectRecipe(commentViewModel.recipe.value ?: Recipe())
+                    navigationActions.navigateTo("Recipe/${Route.HOME}")
+                  }),
       color = Color.White,
       shape = RoundedCornerShape(8.dp),
       border = BorderStroke(2.dp, Color.Black)) {
-        Row(modifier = Modifier
-            .fillMaxWidth()
-            .padding(16.dp)) {
+        Row(modifier = Modifier.fillMaxWidth().padding(16.dp)) {
           // Recipe image
           Image(
               painter = painterResource(id = R.drawable.test_image_pasta),
               contentDescription = "Recipe Image",
-              modifier = Modifier
-                  .size(100.dp)
-                  .aspectRatio(1f)
-                  .clip(RoundedCornerShape(8.dp)),
+              modifier = Modifier.size(100.dp).aspectRatio(1f).clip(RoundedCornerShape(8.dp)),
               contentScale = ContentScale.Crop)
 
           Spacer(modifier = Modifier.width(10.dp))
@@ -100,10 +107,9 @@ fun CommentCard(comment: Comment, commentViewModel: CommentViewModel, navigation
           // Author + title + description
           Column(
               modifier =
-              Modifier
-                  .fillMaxWidth()
-                  .padding(start = 16.dp)
-                  .align(Alignment.CenterVertically)) {
+                  Modifier.fillMaxWidth()
+                      .padding(start = 16.dp)
+                      .align(Alignment.CenterVertically)) {
 
                 // Comment authorId
                 Text(

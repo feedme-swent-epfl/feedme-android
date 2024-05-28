@@ -1,10 +1,13 @@
 package com.android.feedme.model.data
 
+import android.net.Uri
 import android.util.Log
+import com.google.firebase.firestore.DocumentReference
 import com.google.firebase.firestore.DocumentSnapshot
 import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.firestore.Query
 import com.google.firebase.firestore.QuerySnapshot
+import com.google.firebase.storage.FirebaseStorage
 import java.util.Locale
 
 /**
@@ -34,22 +37,43 @@ class RecipeRepository(private val db: FirebaseFirestore) {
   /**
    * Adds a recipe to the Firestore database.
    *
-   * This method serializes the Recipe object into a map, replacing complex objects like Ingredient
-   * with their IDs, and then stores it in Firestore under the recipes collection.
-   *
    * @param recipe The Recipe object to be added to Firestore.
    * @param onSuccess A callback invoked upon successful addition of the recipe.
    * @param onFailure A callback invoked upon failure to add the recipe, with an exception.
    */
-  fun addRecipe(recipe: Recipe, onSuccess: () -> Unit, onFailure: (Exception) -> Unit) {
-    // Convert Recipe to a map, replacing Ingredient objects with their IDs
-    val recipeMap = recipeToMap(recipe)
+  fun addRecipe(recipe: Recipe, uri: Uri?, onSuccess: () -> Unit, onFailure: (Exception) -> Unit) {
     val newDocRef = db.collection(collectionPath).document()
     recipe.recipeId = newDocRef.id
-    newDocRef
-        .set(recipeMap)
-        .addOnSuccessListener { onSuccess() }
-        .addOnFailureListener { onFailure(it) }
+    if (uri != null) {
+      val storageRef = FirebaseStorage.getInstance().reference.child("recipes/${recipe.recipeId}")
+      storageRef
+          .putFile(uri)
+          .addOnSuccessListener { taskSnapshot ->
+            taskSnapshot.metadata?.reference?.downloadUrl?.addOnSuccessListener { uri ->
+              recipe.imageUrl = uri.toString()
+              mapAndAddRecipe(recipe, newDocRef, onSuccess, onFailure)
+            }
+          }
+          .addOnFailureListener { exception -> onFailure(exception) }
+    } else {
+      recipe.imageUrl =
+          "https://firebasestorage.googleapis.com/v0/b/feedme-33341.appspot.com/o/recipestest%2Fdummy.jpg?alt=media&token=71de581c-9e1e-47c8-a4dc-8cccf1d0b640"
+      mapAndAddRecipe(recipe, newDocRef, onSuccess, onFailure)
+    }
+  }
+
+  /**
+   * This method serializes the Recipe object into a map, replacing complex objects like Ingredient
+   * with their IDs, and then stores it in Firestore under the recipes collection.
+   */
+  private fun mapAndAddRecipe(
+      recipe: Recipe,
+      id: DocumentReference,
+      onSuccess: () -> Unit,
+      onFailure: (Exception) -> Unit
+  ) {
+    val recipeMap = recipeToMap(recipe)
+    id.set(recipeMap).addOnSuccessListener { onSuccess() }.addOnFailureListener { onFailure(it) }
   }
 
   /**
@@ -205,7 +229,8 @@ class RecipeRepository(private val db: FirebaseFirestore) {
         "tags" to recipe.tags,
         "rating" to recipe.rating,
         "userid" to recipe.userid,
-        "imageUrl" to recipe.imageUrl)
+        "imageUrl" to recipe.imageUrl,
+        "ingredientIds" to recipe.ingredients.map { it.ingredient.id })
   }
 
   private fun IngredientMetaData.toMap(): Map<String, Any> =
@@ -338,6 +363,7 @@ class RecipeRepository(private val db: FirebaseFirestore) {
       onFailure(IllegalArgumentException())
       return
     }
+    // Create a query to fetch the top rated recipes
     db.collection(collectionPath)
         .whereArrayContainsAny("ingredientIds", ingredientIds)
         .get()
@@ -383,7 +409,9 @@ class RecipeRepository(private val db: FirebaseFirestore) {
     fetchAndMapRecipes(
         ingredientIds,
         { allRecipes ->
+          Log.d("RecipeRepository", "recipe to filter $allRecipes")
           val rankedRecipes = rankRecipes(allRecipes, ingredientIds, profile)
+          Log.d("RecipeRepository", "order recipe  $rankedRecipes")
           onSuccess(rankedRecipes)
         },
         onFailure)
@@ -436,14 +464,12 @@ class RecipeRepository(private val db: FirebaseFirestore) {
   ): List<Recipe> {
     return recipes.sortedWith(
         compareByDescending { recipe ->
+          val userPreferencesScore = recipe.tags.count { tag -> profile.filter.contains(tag) }
+          val ratingScore = recipe.rating
           val matchingIngredientsCount =
               recipe.ingredients.count { ingredientMetaData ->
                 ingredientIds.contains(ingredientMetaData.ingredient.id)
               }
-
-          val userPreferencesScore = recipe.tags.count { tag -> profile.filter.contains(tag) }
-
-          val ratingScore = recipe.rating
 
           // Combine the scores to form the final ranking score
           matchingIngredientsCount + userPreferencesScore + ratingScore

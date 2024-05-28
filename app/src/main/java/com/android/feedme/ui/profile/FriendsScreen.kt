@@ -1,6 +1,5 @@
 package com.android.feedme.ui.profile
 
-import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
@@ -31,10 +30,9 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.platform.testTag
-import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import com.android.feedme.R
+import coil.compose.AsyncImage
 import com.android.feedme.model.data.Profile
 import com.android.feedme.model.viewmodel.ProfileViewModel
 import com.android.feedme.ui.navigation.BottomNavigationMenu
@@ -193,12 +191,8 @@ fun FriendsCard(
                   profileViewModel.setViewingProfile(profile)
                   navigationActions.navigateTo(Screen.PROFILE)
                 }) {
-              Image(
-                  painter =
-                      painterResource(
-                          id =
-                              R.drawable
-                                  .user_logo), // Assuming google_logo is your default profile icon
+              AsyncImage(
+                  model = profile.imageUrl,
                   contentDescription = "Profile Image",
                   modifier = Modifier.padding(horizontal = 10.dp).size(50.dp).clip(CircleShape),
               )

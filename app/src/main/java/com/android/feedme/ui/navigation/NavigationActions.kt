@@ -105,6 +105,8 @@ object Screen {
   const val RECIPE = "Recipe/{sourceRoute}"
   const val ADD_RECIPE = "Recipe Input Screen"
   const val SEARCH = "Search/{sourceRoute}"
+  const val ANALYZE_PICTURE = "Analyze Picture"
+  const val GENERATE = "Generate"
 }
 
 /**

@@ -261,10 +261,6 @@ class CameraViewModel : ViewModel() {
             })
       }
     }
-        ?: run {
-          _errorToDisplay.value = ERR_TIMEOUT
-          null
-        }
   }
 
   /**

@@ -12,4 +12,7 @@ class CameraScreen(semanticsProvider: SemanticsNodeInteractionsProvider) :
   // Structural elements of the UI
   val photoButton: KNode = child { hasTestTag("PhotoButton") }
   val galleryButton: KNode = child { hasTestTag("GalleryButton") }
+  val cameraPreview: KNode = child { hasTestTag("CameraPreview") }
+  val mlTextButton: KNode = child { hasTestTag("MLTextButton") }
+  val mlBarcodeButton: KNode = child { hasTestTag("MLBarcodeButton") }
 }

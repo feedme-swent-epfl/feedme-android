@@ -1,3 +1,5 @@
+import com.android.build.api.dsl.AaptOptions
+import com.android.build.api.dsl.AndroidResources
 import java.io.FileInputStream
 import java.util.Properties
 
@@ -18,7 +20,7 @@ android {
     namespace = "com.android.feedme"
     compileSdk = 34
 
-
+ androidResources
     defaultConfig {
         applicationId = "com.android.feedme"
         minSdk = 28
@@ -35,6 +37,9 @@ android {
         localProps.load(project.rootProject.file("local.properties").inputStream())
         buildConfigField("String", "CHATGBT_API_KEY", "\"${localProps.getProperty("CHATGBT_API_KEY")}\"")
 
+    }
+    aaptOptions {
+        noCompress += "tflite"
     }
 
     val keystorePropertiesFile = rootProject.file("keystore.properties")
@@ -93,7 +98,6 @@ android {
     packaging {
         resources {
             excludes += "/META-INF/{AL2.0,LGPL2.1}"
-
             merges += "META-INF/LICENSE.md"
             merges += "META-INF/LICENSE-notice.md"
         }
@@ -167,10 +171,13 @@ dependencies {
 
     testImplementation(libs.junit)
     testImplementation("org.testng:testng:6.9.6")
+    androidTestImplementation("org.testng:testng:6.9.6")
     globalTestImplementation(libs.androidx.junit)
     globalTestImplementation(libs.androidx.espresso.core)
     // Android Navigation
     implementation(libs.androidx.navigation.runtime.ktx)
+    implementation("org.jetbrains.kotlinx:kotlinx-coroutines-core:1.5.1")// Use the latest version
+    implementation("org.jetbrains.kotlinx:kotlinx-coroutines-android:1.5.1") // Use the latest version for Android
 
     // ------------- Jetpack Compose ------------------
     val composeBom = platform(libs.compose.bom)
@@ -201,6 +208,9 @@ dependencies {
     implementation(libs.gson)
     implementation(libs.kotlinx.serialization.json)
     implementation(libs.kotlinx.serialization.json)
+    //ML kit image labelling
+    implementation(libs.mlkit.detection.custom)
+
 
     // ---------------- CameraX --------------------
     implementation(libs.camera.core)

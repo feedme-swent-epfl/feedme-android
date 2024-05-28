@@ -15,7 +15,10 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.android.feedme.ml.analyzeTextForIngredients
 import com.android.feedme.ml.barcodeScan
+import com.android.feedme.ml.bestLabel
 import com.android.feedme.ml.extractProductInfoFromBarcode
+import com.android.feedme.ml.labelProcessing
+import com.android.feedme.ml.objectExtraction
 import com.android.feedme.ml.textExtraction
 import com.android.feedme.ml.textProcessing
 import com.android.feedme.model.data.Comment
@@ -29,15 +32,19 @@ import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.suspendCancellableCoroutine
+import kotlinx.coroutines.withTimeoutOrNull
 
 class CameraViewModel : ViewModel() {
 
-  private val ERROR_NO_BARCODE = "Failed to identify barcode, please try again."
-  private val ERROR_BARCODE_PRODUCT_NAME =
-      "Failed to extract product name from barcode, please try again."
-  private val ERROR_NO_TEXT = "Failed to identify text, please try again."
-  private val ERROR_INGREDIENT_IN_TEXT =
-      "Failed to extract ingredients from text, please try again."
+  val ERROR_NO_BARCODE = "Failed to identify barcode, please try again."
+  val ERROR_BARCODE_PRODUCT_NAME = "Failed to extract product name from barcode, please try again."
+  val ERROR_NO_TEXT = "Failed to identify text, please try again."
+  val ERROR_INGREDIENT_IN_TEXT = "Failed to extract ingredients from text, please try again."
+  val ERROR_NO_LABEL = "Failed to found labels corresponding to this object, please try again."
+  val ERROR_NO_OBJECT = "Failed to extract object to classify from this photo, please try again."
+  val ERROR_NO_FOOD_LABEL = "Failed to find a suitable food label, please try again."
+  val ERR_TIMEOUT = "Timeout, with object recognition."
 
   /** This sealed class is used to model the different states that a photo can be in. */
   sealed class PhotoState() {
@@ -176,6 +183,28 @@ class CameraViewModel : ViewModel() {
       }
 
   /**
+   * This function is called when user clicks on object classification button. Then depending on the
+   * state of [_lastPhoto] it will call the [performObjectLabelling] function in an other thread to
+   * not block UI. Then it will update accordingly the value of [_informationToDisplay]. If no photo
+   * was taken before an error message is displayed.
+   */
+  fun imageLabellingButtonPressed() =
+      viewModelScope.launch {
+        when (val photoState = _lastPhoto.value) {
+          is PhotoState.NoPhoto -> {
+            // _errorToDisplay.value = ERROR_NO_PHOTO will never happen
+          }
+          is PhotoState.Photo -> {
+            val result = performObjectLabelling(photoState.bitmap)
+            if (result != null) {
+              _informationToDisplay.value = "$result added to your ingredient list."
+              onAnalyzeDone()
+            }
+          }
+        }
+      }
+
+  /**
    * This function is called when user clicks on barcode scanning button. Then depending on the
    * state of [_lastPhoto] it will call the [performBarCodeScanning] function in an other thread to
    * not block UI. Then it will update accordingly the value of [_informationToDisplay]. If no photo
@@ -198,6 +227,55 @@ class CameraViewModel : ViewModel() {
           }
         }
       }
+
+  /**
+   * Performs object labelling on the given bitmap.
+   *
+   * This function processes the given bitmap to detect objects and extracts labels from the
+   * detected objects. If the labelling is successful, it updates the ingredient list and returns
+   * the best label. If an error occurs or no labels are found, it updates the error message
+   * accordingly.
+   *
+   * @param bitmap The bitmap of the photo to label.
+   * @return A string representing the best labelling result, or null if labelling fails or no
+   *   labels are found.
+   */
+  private suspend fun performObjectLabelling(bitmap: Bitmap): String? {
+    return withTimeoutOrNull(10000L) {
+      suspendCancellableCoroutine { continuation ->
+        val labelList = mutableMapOf<String, Float>()
+        var errorObjectOccurred = false
+
+        objectExtraction(
+            bitmap = bitmap,
+            onSuccess = { detectedObjects ->
+              labelList.putAll(labelProcessing(detectedObjects))
+              if (labelList.isNotEmpty()) {
+                val label = bestLabel(labelList)
+                if (label.isNotEmpty()) {
+                  updateIngredientList(
+                      IngredientMetaData(
+                          0.0, MeasureUnit.NONE, Ingredient(label, "NO_ID", false, false)))
+                  continuation.resume(label)
+                } else {
+                  _errorToDisplay.value = ERROR_NO_FOOD_LABEL
+                  onAnalyzeDone()
+                  continuation.resume(null)
+                }
+              } else {
+                _errorToDisplay.value = ERROR_NO_LABEL
+                onAnalyzeDone()
+                continuation.resume(null)
+              }
+            },
+            onFailure = {
+              _errorToDisplay.value = ERROR_NO_OBJECT
+              errorObjectOccurred = true
+              continuation.resume(null)
+            })
+      }
+    }
+  }
 
   /**
    * Performs [barcodeScan] and [extractProductNameFromBarcode] on the provided bitmap image. This

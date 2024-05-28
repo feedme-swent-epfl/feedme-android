@@ -85,13 +85,6 @@ fun RecipeInputScreen(
   val error = recipeViewModel.errorMessageVisible.collectAsState()
   val snackBarHostStateError = remember { SnackbarHostState() }
 
-  recipeViewModel.updatePicture(
-      Uri.parse(
-          "android.resource://" +
-              LocalContext.current.packageName +
-              "/" +
-              R.drawable.test_image_pasta))
-
   Scaffold(
       modifier = Modifier.fillMaxSize().testTag("RecipeInputScreen"),
       topBar = { TopBarNavigation(title = "Add Recipe", navigationActions) },
@@ -114,7 +107,6 @@ fun RecipeInputScreen(
                   profileViewModel.currentUserId!!,
                   "")) {
                 recipeViewModel.setRecipe(recipeViewModel.recipe.value!!)
-                // TODO : we could display the recipe instead of going back to the profile
                 navigationActions.navigateTo(Route.PROFILE)
               }
             }) {
@@ -206,7 +198,15 @@ fun RecipeInputTopContent(
 fun RecipePicture(recipeViewModel: RecipeViewModel, cameraViewModel: CameraViewModel) {
   val gallery = cameraViewModel.galleryLauncher(null, recipeViewModel, null)
   AsyncImage(
-      model = recipeViewModel.picture.collectAsState().value,
+      model =
+          if (recipeViewModel.picture.collectAsState().value != null)
+              recipeViewModel.picture.collectAsState().value
+          else
+              Uri.parse(
+                  "android.resource://" +
+                      LocalContext.current.packageName +
+                      "/" +
+                      R.drawable.dummy_recipe_picture),
       contentDescription = "Recipe Picture",
       modifier =
           Modifier.padding(20.dp)

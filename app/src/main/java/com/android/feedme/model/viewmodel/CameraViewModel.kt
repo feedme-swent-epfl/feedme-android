@@ -23,7 +23,6 @@ import com.android.feedme.model.data.Ingredient
 import com.android.feedme.model.data.IngredientMetaData
 import com.android.feedme.model.data.IngredientsRepository
 import com.android.feedme.model.data.MeasureUnit
-import com.android.feedme.model.data.Recipe
 import kotlin.coroutines.resume
 import kotlin.coroutines.suspendCoroutine
 import kotlinx.coroutines.delay
@@ -110,7 +109,7 @@ class CameraViewModel : ViewModel() {
             when {
               profileViewModel != null -> profileViewModel.updateProfilePicture(uri)
               recipeViewModel != null -> recipeViewModel.updatePicture(uri)
-              comment != null -> galleryForComment(context, uri, comment)
+              comment != null -> print("TODO") // TODO
               else -> galleryForCamera(context, uri)
             }
           }
@@ -123,10 +122,6 @@ class CameraViewModel : ViewModel() {
     _lastPhoto.value = PhotoState.Photo(ImageDecoder.decodeBitmap(source))
     onPhotoSaved()
   }
-
-  private fun galleryForRecipe(context: Context, uri: Uri, recipe: Recipe) {}
-
-  private fun galleryForComment(context: Context, uri: Uri, comment: Comment) {}
 
   /**
    * This function is called when the user selects a picture in the CameraScreen. It sets the

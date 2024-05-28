@@ -2,10 +2,12 @@ package com.android.feedme.model.data
 
 import android.net.Uri
 import android.util.Log
+import com.google.firebase.firestore.DocumentReference
 import com.google.firebase.firestore.DocumentSnapshot
 import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.firestore.Query
 import com.google.firebase.firestore.QuerySnapshot
+import com.google.firebase.storage.FirebaseStorage
 import java.util.Locale
 
 /**
@@ -35,24 +37,43 @@ class RecipeRepository(private val db: FirebaseFirestore) {
   /**
    * Adds a recipe to the Firestore database.
    *
-   * This method serializes the Recipe object into a map, replacing complex objects like Ingredient
-   * with their IDs, and then stores it in Firestore under the recipes collection.
-   *
    * @param recipe The Recipe object to be added to Firestore.
    * @param onSuccess A callback invoked upon successful addition of the recipe.
    * @param onFailure A callback invoked upon failure to add the recipe, with an exception.
    */
   fun addRecipe(recipe: Recipe, uri: Uri?, onSuccess: () -> Unit, onFailure: (Exception) -> Unit) {
-    // Convert Recipe to a map, replacing Ingredient objects with their IDs
-    val recipeMap = recipeToMap(recipe)
     val newDocRef = db.collection(collectionPath).document()
     recipe.recipeId = newDocRef.id
-    // have tried to add image here but sync failed, maybe i need to put a lock to make the program
-    // sequential
-    newDocRef
-        .set(recipeMap)
-        .addOnSuccessListener { onSuccess() }
-        .addOnFailureListener { onFailure(it) }
+    if (uri != null) {
+      val storageRef = FirebaseStorage.getInstance().reference.child("recipes/${recipe.recipeId}")
+      storageRef
+          .putFile(uri)
+          .addOnSuccessListener { taskSnapshot ->
+            taskSnapshot.metadata?.reference?.downloadUrl?.addOnSuccessListener { uri ->
+              recipe.imageUrl = uri.toString()
+              mapAndAddRecipe(recipe, newDocRef, onSuccess, onFailure)
+            }
+          }
+          .addOnFailureListener { exception -> onFailure(exception) }
+    } else {
+      recipe.imageUrl =
+          "https://firebasestorage.googleapis.com/v0/b/feedme-33341.appspot.com/o/recipestest%2Fdummy.jpg?alt=media&token=71de581c-9e1e-47c8-a4dc-8cccf1d0b640"
+      mapAndAddRecipe(recipe, newDocRef, onSuccess, onFailure)
+    }
+  }
+
+  /**
+   * This method serializes the Recipe object into a map, replacing complex objects like Ingredient
+   * with their IDs, and then stores it in Firestore under the recipes collection.
+   */
+  private fun mapAndAddRecipe(
+      recipe: Recipe,
+      id: DocumentReference,
+      onSuccess: () -> Unit,
+      onFailure: (Exception) -> Unit
+  ) {
+    val recipeMap = recipeToMap(recipe)
+    id.set(recipeMap).addOnSuccessListener { onSuccess() }.addOnFailureListener { onFailure(it) }
   }
 
   /**

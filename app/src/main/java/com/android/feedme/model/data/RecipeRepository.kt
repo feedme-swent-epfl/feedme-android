@@ -385,10 +385,10 @@ class RecipeRepository(private val db: FirebaseFirestore) {
     fetchAndMapRecipes(
         ingredientIds,
         { allRecipes ->
-            Log.d("RecipeRepository", "recipe to filter $allRecipes")
-            val rankedRecipes = rankRecipes(allRecipes, ingredientIds, profile)
-            Log.d("RecipeRepository", "order recipe  $rankedRecipes")
-            onSuccess(rankedRecipes)
+          Log.d("RecipeRepository", "recipe to filter $allRecipes")
+          val rankedRecipes = rankRecipes(allRecipes, ingredientIds, profile)
+          Log.d("RecipeRepository", "order recipe  $rankedRecipes")
+          onSuccess(rankedRecipes)
         },
         onFailure)
   }

@@ -103,12 +103,14 @@ class SmallCommentsTest {
     profileViewModel = ProfileViewModel()
     homeViewModel = HomeViewModel()
     recipeViewModel = RecipeViewModel()
+    commentViewModel = CommentViewModel()
 
     every { mockFirestore.collection("profiles") } returns mockCollectionReference
     every { mockFirestore.collection(recipeRepository.collectionPath) } returns
         mockCollectionReference
     every { mockFirestore.collection("ingredients") } returns mockIngredientsCollectionReference
 
+    every { mockFirestore.collection("comments") } returns mockCollectionReference
     every { mockCollectionReference.document(any()) } returns mockDocumentReference
 
     every { mockDocumentReference.get() } returns Tasks.forResult(mockDocumentSnapshot)
@@ -122,6 +124,10 @@ class SmallCommentsTest {
     every { mockDocumentReference.set(any()) } returns Tasks.forResult(null)
 
     every { mockCollectionReference.whereIn("recipeId", listOf(recipe1.recipeId)) } answers
+        {
+          mockQuery
+        }
+    every { mockCollectionReference.whereIn("commentId", listOf(comment1.commentId)) } answers
         {
           mockQuery
         }

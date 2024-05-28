@@ -28,9 +28,6 @@ class CommentViewModel : ViewModel() {
   private val _recipe = MutableStateFlow<Recipe?>(null)
   val recipe: StateFlow<Recipe?> = _recipe
 
-  // private val _recipes = MutableStateFlow<Map<String, Recipe>>(emptyMap())
-  // val recipes: StateFlow<Map<String, Recipe>> = _recipes
-
   private val _profiles = MutableStateFlow<Map<String, Profile>>(emptyMap())
   val profiles: StateFlow<Map<String, Profile>> = _profiles
 

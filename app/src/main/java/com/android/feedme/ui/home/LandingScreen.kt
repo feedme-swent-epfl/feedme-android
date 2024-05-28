@@ -20,8 +20,9 @@ import androidx.compose.foundation.lazy.items
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Bookmark
 import androidx.compose.material.icons.outlined.BookmarkBorder
-import androidx.compose.material.icons.outlined.Share
+import androidx.compose.material.icons.rounded.Bookmark
 import androidx.compose.material.icons.rounded.Star
+import androidx.compose.material.icons.sharp.Star
 import androidx.compose.material.icons.twotone.Star
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
@@ -193,8 +194,8 @@ fun RecipeCard(
             modifier =
                 Modifier.fillMaxWidth()
                     .background(Color.White)
-                    .padding(top = 16.dp, start = 16.dp, end = 16.dp)) {
-              // Time, rating, share and saving icon
+                    .padding(top = 8.dp, start = 16.dp, end = 16.dp)) {
+              // Rating and saving icon
               Row(
                   modifier = Modifier.padding(4.dp).fillMaxWidth(),
                   horizontalArrangement = Arrangement.Absolute.Left,
@@ -212,13 +213,13 @@ fun RecipeCard(
                           modifier = Modifier.padding(end = 2.dp)) {
                             // Larger black star to act as the outline
                             Icon(
-                                imageVector = Icons.TwoTone.Star,
+                                imageVector = Icons.Rounded.Star,
                                 contentDescription = "Rating Outline",
                                 tint = YellowStarBlackOutline,
-                                modifier = Modifier.size(34.dp))
+                                modifier = Modifier.size(35.dp))
                             // Smaller yellow star to act as the inner part
                             Icon(
-                                imageVector = Icons.Rounded.Star,
+                                imageVector = Icons.Sharp.Star,
                                 contentDescription = "Rating",
                                 tint = YellowStar,
                                 modifier = Modifier.size(23.dp))
@@ -231,15 +232,6 @@ fun RecipeCard(
 
                 Spacer(modifier = Modifier.width(15.dp))
 
-                // Share icon
-                IconButton(
-                    onClick = { /* TODO() adding the options to share */},
-                    modifier = Modifier.testTag("ShareIcon")) {
-                      Icon(
-                          imageVector = Icons.Outlined.Share,
-                          contentDescription = "Share Icon on Recipe Card",
-                          modifier = Modifier.size(32.dp))
-                    }
                 Spacer(modifier = Modifier.weight(1f))
                 // Save icon
                 val isSaved = remember { mutableStateOf(false) }
@@ -266,7 +258,7 @@ fun RecipeCard(
                       Icon(
                           imageVector =
                               if (isSaved.value) {
-                                Icons.Filled.Bookmark
+                                Icons.Rounded.Bookmark
                               } else {
                                 Icons.Outlined.BookmarkBorder
                               },
@@ -274,7 +266,7 @@ fun RecipeCard(
                           modifier = Modifier.size(34.dp).padding(start = 4.dp),
                           tint =
                               if (isSaved.value) {
-                                YellowStar
+                                TemplateColor
                               } else {
                                 YellowStarBlackOutline
                               })

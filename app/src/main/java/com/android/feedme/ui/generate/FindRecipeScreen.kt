@@ -69,7 +69,7 @@ fun FindRecipeScreen(
 ) {
 
   val checkMark = remember { mutableStateOf(false) }
-  val isStrict = remember { mutableStateOf(true) }
+  val isStrict = remember { mutableStateOf(false) }
   val dialog = profileViewModel.showDialog.collectAsState()
   val showDialog = remember { mutableStateOf(true) }
 

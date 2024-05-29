@@ -124,5 +124,6 @@ fun bestLabel(labelList: Map<String, Float>): String {
   if (foodLabels.isEmpty() || maxConfidence == null) {
     return ""
   }
-  return foodLabels.filterValues { it == maxConfidence }.keys.first()
+  val bestLabel = foodLabels.filterValues { it == maxConfidence }.keys.first()
+  return if (bestLabel.lowercase() == "food") "egg" else bestLabel
 }

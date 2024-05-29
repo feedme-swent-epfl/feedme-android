@@ -38,10 +38,10 @@ enum class MeasureUnit {
   L,
   ML,
   NONE,
-  EMPTY,
-  PIECES;
+   PIECES,
+    EMPTY;
 
   override fun toString(): String {
-    return if (name == "NONE") " / " else name.lowercase()
+    return if (name == "NONE") "  " else name.lowercase()
   }
 }

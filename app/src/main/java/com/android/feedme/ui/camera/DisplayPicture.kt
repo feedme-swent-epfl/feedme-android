@@ -104,7 +104,8 @@ fun DisplayPicture(
                 if (barcodeRecognitionMode.value) {
                   val barcodeScannerPainter = painterResource(id = R.drawable.barcode_scanner)
                   IconButton(
-                      onClick = { cameraViewModel.barcodeScanButtonPressed() },
+                      onClick = {
+                          cameraViewModel.barcodeScanButtonPressed() },
                       modifier =
                           Modifier.size(56.dp)
                               .background(CameraButtonsBackground, shape = CircleShape)
@@ -134,7 +135,7 @@ fun DisplayPicture(
                 // Once the photo is analyzed, we can add the ingredients and go back to the camera
                 // screen
                 if (analyzed) {
-                  inputViewModel.addToList(listOfIngredientToInput.value.toMutableList())
+                  listOfIngredientToInput.value.toMutableList().forEach(cameraViewModel::updateIngredientList)
                   cameraViewModel.emptyIngredients()
                   navigationActions.navigateTo(Screen.CAMERA)
                 }

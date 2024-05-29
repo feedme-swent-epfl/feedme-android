@@ -147,6 +147,7 @@ fun IngredientInput(
           })
     }
   }
+  name = name.lowercase()
 
   if (isChecked) {
     Row(
@@ -183,7 +184,7 @@ fun IngredientInput(
                           modifier = Modifier.size(28.dp))
                     }
 
-                DeleteButton(state, quantity, dose, name, action)
+                DeleteButton(state, quantity, dose, name, action, ingredientCurrent)
               }
         }
   } else {
@@ -295,7 +296,7 @@ fun IngredientInput(
               IconButton(
                   modifier = Modifier.padding(top = 4.dp).testTag("CheckIconButton"),
                   onClick = {
-                    if (state == IngredientInputState.COMPLETE) {
+                    if (isComplete) {
                       isChecked = true
                     }
                   }) {
@@ -320,9 +321,14 @@ fun IngredientInput(
                     onValueChange = { // Check if the input is a valid number
                       if (it.isNotEmpty() && it.toDoubleOrNull() != null && it.toDouble() >= 0.0) {
                         quantity = it.toDouble()
+
                         if (quantity != 0.0) {
+                            val beforeState = state
+                            state =
+                                if (isComplete) IngredientInputState.COMPLETE
+                                else IngredientInputState.SEMI_COMPLETE
                           action(
-                              state, state, IngredientMetaData(quantity, dose, ingredientCurrent))
+                              beforeState, state, IngredientMetaData(quantity, dose, ingredientCurrent))
                         }
                       }
                     },
@@ -348,7 +354,7 @@ fun IngredientInput(
                           isError =
                               dose == MeasureUnit.EMPTY && state != IngredientInputState.EMPTY,
                           readOnly = true,
-                          value = if (dose != MeasureUnit.EMPTY) dose.toString() else " ",
+                          value = if (dose != MeasureUnit.EMPTY) dose.toString() else "/",
                           onValueChange = {},
                           label = { Text("Dose") },
                           modifier = Modifier.menuAnchor().testTag("DoseInput"))
@@ -376,7 +382,7 @@ fun IngredientInput(
                             }
                           }
                     }
-                DeleteButton(state, quantity, dose, name, action)
+                DeleteButton(state, quantity, dose, name, action, ingredientCurrent)
               }
         }
   }
@@ -390,7 +396,8 @@ fun DeleteButton(
     quantity: Double,
     dose: MeasureUnit,
     name: String,
-    action: (IngredientInputState?, IngredientInputState?, IngredientMetaData?) -> Unit
+    action: (IngredientInputState?, IngredientInputState?, IngredientMetaData?) -> Unit,
+    ingredientCurrent: Ingredient
 ) {
   // Delete button for removing the ingredient
   if (state == IngredientInputState.SEMI_COMPLETE || state == IngredientInputState.COMPLETE) {
@@ -401,7 +408,7 @@ fun DeleteButton(
           action(
               state,
               IngredientInputState.EMPTY,
-              IngredientMetaData(quantity, dose, Ingredient(name, "", false, false)))
+              IngredientMetaData(quantity, dose, ingredientCurrent))
         }) {
           Icon(
               imageVector = Icons.Outlined.Close,

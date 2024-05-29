@@ -255,7 +255,7 @@ class CameraViewModel : ViewModel() {
                 if (label.isNotEmpty()) {
                   updateIngredientList(
                       IngredientMetaData(
-                          0.0, MeasureUnit.NONE, Ingredient(label, "NO_ID", false, false)))
+                          0.0, MeasureUnit.EMPTY, Ingredient(label, "NO_ID", false, false)))
                   continuation.resume(label)
                 } else {
                   _errorToDisplay.value = ERROR_NO_FOOD_LABEL
@@ -299,7 +299,7 @@ class CameraViewModel : ViewModel() {
                       updateIngredientList(
                           IngredientMetaData(
                               0.0,
-                              MeasureUnit.NONE,
+                              MeasureUnit.EMPTY,
                               Ingredient(productInfo.productName, "NO_ID", false, false)))
                       continuation.resume(productInfo.productName)
                     } else {
@@ -392,8 +392,7 @@ class CameraViewModel : ViewModel() {
    * @param ing The ingredient metadata to update or add to the list.
    */
   private fun updateIngredientInList(ing: IngredientMetaData) {
-    val existingIngredient =
-        _listOfIngredientToInput.value.find { it.ingredient.name == ing.ingredient.name }
+    val existingIngredient = _listOfIngredientToInput.value.find { it.ingredient.id == ing.ingredient.id }
 
     if (existingIngredient != null) {
       // If the ingredient exists, update its quantity

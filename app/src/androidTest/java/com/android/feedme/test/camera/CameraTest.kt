@@ -2,7 +2,6 @@ package com.android.feedme.test.camera
 
 import android.Manifest
 import android.os.Build
-import androidx.compose.ui.test.assertIsDisplayed
 import androidx.compose.ui.test.junit4.createComposeRule
 import androidx.compose.ui.test.onNodeWithTag
 import androidx.compose.ui.test.performClick
@@ -78,7 +77,7 @@ class CameraTest : TestCase() {
     val navActions = mockk<NavigationActions>()
     every { navActions.canGoBack() } returns true
     every { navActions.navigateTo(Screen.FIND_RECIPE) } returns Unit
-    composeTestRule.setContent { CameraScreen(navActions, cameraViewModel) }
+    composeTestRule.setContent { CameraScreen(navActions, cameraViewModel,) }
     composeTestRule.waitForIdle()
   }
 }

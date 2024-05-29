@@ -82,13 +82,16 @@ fun ProfileScreen(
     recipeViewModel: RecipeViewModel = RecipeViewModel()
 ) {
 
-  val recipeList = listOf(recipe1, recipe2)
+
 
   val profile =
       if (profileViewModel.isViewingProfile()) profileViewModel.viewingUserProfile.collectAsState()
       else profileViewModel.currentUserProfile.collectAsState()
 
-  Scaffold(
+    val recipeList = if ((profile.value?.id ?: "") != "RMqZURi8n3WtZq6piFM0Y3fsBr82") listOf(recipe1, recipe2) else emptyList()
+
+
+    Scaffold(
       modifier = Modifier.fillMaxSize().testTag("ProfileScreen"),
       topBar = {
         TopBarNavigation(

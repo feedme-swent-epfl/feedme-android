@@ -19,10 +19,8 @@ val recipe2 =
         "Yummy Pasta",
         "https://www.eatwell101.com/wp-content/uploads/2022/05/Beef-Pasta-in-Tomato-Sauce.jpg")
 
-val comment1 = newComment(
-    "comment1",
-    "pasta1"
-)
+val comment1 = newComment("comment1", "pasta1")
+
 fun newRecipe(recipeId: String, title: String, url: String): Recipe {
   return Recipe(
       recipeId = recipeId,
@@ -50,14 +48,14 @@ fun newRecipe(recipeId: String, title: String, url: String): Recipe {
 }
 
 fun newComment(commentId: String, recipeId: String): Comment {
-    return Comment(
-        commentId = commentId,
-        userId = "9vu1XpyZwrW5hSvEpHuuvcVVgiv2",
-        recipeId = recipeId,
-        photoURL = "https://www.eatwell101.com/wp-content/uploads/2022/05/Beef-Pasta-in-Tomato-Sauce.jpg",
-        rating = 4.0,
-        title = "Super good!",
-        content = "I loved making this recipe! Great content",
-        creationDate = Date()
-    )
+  return Comment(
+      commentId = commentId,
+      userId = "9vu1XpyZwrW5hSvEpHuuvcVVgiv2",
+      recipeId = recipeId,
+      photoURL =
+          "https://www.eatwell101.com/wp-content/uploads/2022/05/Beef-Pasta-in-Tomato-Sauce.jpg",
+      rating = 4.0,
+      title = "Super good!",
+      content = "I loved making this recipe! Great content",
+      creationDate = Date())
 }

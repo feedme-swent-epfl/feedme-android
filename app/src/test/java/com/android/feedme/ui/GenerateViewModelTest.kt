@@ -125,6 +125,8 @@ class GenerateViewModelTest {
     val profile = Profile()
     generateViewModel.toggleStrictness(false)
     generateViewModel.fetchGeneratedRecipes(ingredientIds, profile, mockContext)
+    generateViewModel.toggleStrictness(true)
+    generateViewModel.fetchGeneratedRecipes(ingredientIds, profile, mockContext)
 
     Shadows.shadowOf(Looper.getMainLooper()).idle()
   }
@@ -132,6 +134,8 @@ class GenerateViewModelTest {
   @Test
   fun testFetchGeneratedRecipes_Offline() {
     val profile = Profile()
+    generateViewModel.toggleStrictness(true)
+    generateViewModel.fetchGeneratedRecipes(ingredientIds, profile)
     generateViewModel.toggleStrictness(false)
     generateViewModel.fetchGeneratedRecipes(ingredientIds, profile)
 

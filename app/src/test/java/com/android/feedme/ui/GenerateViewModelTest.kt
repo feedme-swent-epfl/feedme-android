@@ -1,5 +1,9 @@
 package com.android.feedme.ui
 
+import android.content.Context
+import android.net.ConnectivityManager
+import android.net.Network
+import android.net.NetworkCapabilities
 import android.os.Looper
 import androidx.test.core.app.ApplicationProvider
 import com.android.feedme.model.data.MeasureUnit
@@ -39,6 +43,11 @@ class GenerateViewModelTest {
 
   @Mock private lateinit var mockQuery: Query
   @Mock private lateinit var mockQuerySnapshot: QuerySnapshot
+
+  @Mock private lateinit var mockContext: Context
+  @Mock private lateinit var mockConnectivityManager: ConnectivityManager
+  @Mock private lateinit var mockNetwork: Network
+  @Mock private lateinit var mockNetworkCapabilities: NetworkCapabilities
 
   private val ingredientIds = listOf("flourId", "sugarId")
   private val recipeMap1: Map<String, Any> =
@@ -96,11 +105,32 @@ class GenerateViewModelTest {
     `when`(mockQuery.get()).thenReturn(Tasks.forResult(mockQuerySnapshot))
     `when`(mockQuerySnapshot.documents).thenReturn(listOf(mockDocumentSnapshot))
 
+    // Mock the behavior of getSystemService to return mocked ConnectivityManager
+    `when`(mockContext.getSystemService(Context.CONNECTIVITY_SERVICE))
+        .thenReturn(mockConnectivityManager)
+    // Mock the behavior of activeNetwork
+    `when`(mockConnectivityManager.activeNetwork).thenReturn(mockNetwork)
+    // Mock the behavior of getNetworkCapabilities to return mocked NetworkCapabilities
+    `when`(mockConnectivityManager.getNetworkCapabilities(mockNetwork))
+        .thenReturn(mockNetworkCapabilities)
+    // Mock the behavior of hasCapability to return true for internet capability
+    `when`(mockNetworkCapabilities.hasCapability(NetworkCapabilities.NET_CAPABILITY_INTERNET))
+        .thenReturn(true)
+
     generateViewModel = GenerateViewModel()
   }
 
   @Test
   fun testFullViewModelFunctionality() {
+    val profile = Profile()
+    generateViewModel.toggleStrictness(false)
+    generateViewModel.fetchGeneratedRecipes(ingredientIds, profile, mockContext)
+
+    Shadows.shadowOf(Looper.getMainLooper()).idle()
+  }
+
+  @Test
+  fun testFetchGeneratedRecipes_Offline() {
     val profile = Profile()
     generateViewModel.toggleStrictness(false)
     generateViewModel.fetchGeneratedRecipes(ingredientIds, profile)

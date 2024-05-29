@@ -181,6 +181,7 @@ class RecipeRepositoryTest {
     recipeRepository.suggestRecipes(
         ingredientIds,
         profile,
+        mockContext,
         { recipes ->
           assertNotNull(recipes)
           assertEquals(2, recipes.size)
@@ -285,6 +286,7 @@ class RecipeRepositoryTest {
     recipeRepository.suggestRecipesStrict(
         ingredientIds,
         profile,
+        mockContext,
         { recipes ->
           assertNotNull(recipes)
           assertEquals(1, recipes.size) // Only Chocolate Cake should match exactly

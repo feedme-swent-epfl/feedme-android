@@ -466,6 +466,7 @@ class RecipeRepository(private val db: FirebaseFirestore) {
    *
    * @param ingredientIds The list of ingredient IDs to match against.
    * @param profile The user profile to consider for preferences.
+   * @param context The context of the calling activity.
    * @param onSuccess A callback function invoked with the ranked list of suggested recipes on
    *   success.
    * @param onFailure A callback function invoked on failure to fetch the recipes, with an
@@ -474,9 +475,17 @@ class RecipeRepository(private val db: FirebaseFirestore) {
   fun suggestRecipes(
       ingredientIds: List<String>,
       profile: Profile,
+      context: Context,
       onSuccess: (List<Recipe>) -> Unit,
       onFailure: (Exception) -> Unit
   ) {
+    // Check if the user is offline
+    if (!isNetworkAvailable(context)) {
+      Log.d("getFilteredRecipes", "Offline mode: Cannot fetch filtered recipes")
+      displayToast(context)
+      return
+    }
+
     fetchAndMapRecipes(
         ingredientIds,
         { allRecipes ->
@@ -493,6 +502,7 @@ class RecipeRepository(private val db: FirebaseFirestore) {
    *
    * @param ingredientIds The list of ingredient IDs to match exactly.
    * @param profile The user profile to consider for preferences.
+   * @param context The context of the calling activity.
    * @param onSuccess A callback function invoked with the ranked list of suggested recipes on
    *   success.
    * @param onFailure A callback function invoked on failure to fetch the recipes, with an
@@ -501,9 +511,17 @@ class RecipeRepository(private val db: FirebaseFirestore) {
   fun suggestRecipesStrict(
       ingredientIds: List<String>,
       profile: Profile,
+      context: Context,
       onSuccess: (List<Recipe>) -> Unit,
       onFailure: (Exception) -> Unit
   ) {
+    // Check if the user is offline
+    if (!isNetworkAvailable(context)) {
+      Log.d("getFilteredRecipes", "Offline mode: Cannot fetch filtered recipes")
+      displayToast(context)
+      return
+    }
+
     fetchAndMapRecipes(
         ingredientIds,
         { allRecipes ->

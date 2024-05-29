@@ -10,6 +10,7 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.grid.GridCells
 import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
 import androidx.compose.material.icons.Icons
@@ -84,7 +85,7 @@ fun SmallThumbnailsDisplay(
                 AsyncImage(
                     model = listRecipe[i].imageUrl,
                     contentDescription = "Recipe Image",
-                    modifier = Modifier.testTag("Recipe Image"),
+                    modifier = Modifier.testTag("Recipe Image").height(100.dp).width(200.dp),
                     onSuccess = { imageSuccessfulDownload.value = true })
                 Column(
                     horizontalAlignment = Alignment.CenterHorizontally,

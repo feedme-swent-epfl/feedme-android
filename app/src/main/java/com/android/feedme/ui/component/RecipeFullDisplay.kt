@@ -1,5 +1,6 @@
 package com.android.feedme.ui.component
 
+import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -11,8 +12,10 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Bookmark
 import androidx.compose.material.icons.outlined.AddComment
@@ -23,6 +26,7 @@ import androidx.compose.material3.FloatingActionButton
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.OutlinedButton
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -59,6 +63,7 @@ import com.android.feedme.ui.navigation.TOP_LEVEL_DESTINATIONS
 import com.android.feedme.ui.navigation.TopBarNavigation
 import com.android.feedme.ui.theme.BlueUsername
 import com.android.feedme.ui.theme.FabColor
+import com.android.feedme.ui.theme.TemplateColor
 import com.android.feedme.ui.theme.TextBarColor
 import com.android.feedme.ui.theme.YellowStar
 import com.android.feedme.ui.theme.YellowStarBlackOutline
@@ -123,7 +128,9 @@ fun RecipeFullDisplay(
             content = {
               Icon(
                   imageVector = Icons.Outlined.AddComment,
-                  modifier = Modifier.size(26.dp).scale(scaleX = -1f, scaleY = 1f),
+                  modifier = Modifier
+                      .size(26.dp)
+                      .scale(scaleX = -1f, scaleY = 1f),
                   contentDescription = "Add")
             })
       },
@@ -132,6 +139,7 @@ fun RecipeFullDisplay(
           LazyColumn(modifier = Modifier.padding(padding)) {
             item { ImageDisplay(recipe) }
             item { GeneralInfoDisplay(recipe, profile, navigationActions, profileViewModel) }
+            item { DifficultyLevelDisplay(recipe) }
             item { IngredientTitleDisplay() }
             items(recipe.ingredients) { ingredient -> IngredientDisplay(ingredient = ingredient) }
             item { IngredientStepsDividerDisplay() }
@@ -161,7 +169,9 @@ fun ImageDisplay(recipe: Recipe, modifier: Modifier = Modifier) {
   AsyncImage(
       model = recipe.imageUrl,
       contentDescription = "Recipe Image",
-      modifier = modifier.fillMaxWidth().testTag("Recipe Image"),
+      modifier = modifier
+          .fillMaxWidth()
+          .testTag("Recipe Image"),
       onSuccess = { imageSuccessfulDownload.value = true })
 
   // Display a warning message if image couldn't be downloaded from internets
@@ -190,7 +200,10 @@ fun GeneralInfoDisplay(
   Row(
       horizontalArrangement = Arrangement.SpaceAround,
       verticalAlignment = Alignment.CenterVertically,
-      modifier = modifier.fillMaxWidth().height(45.dp).testTag("General Infos Row")) {
+      modifier = modifier
+          .fillMaxWidth()
+          .height(45.dp)
+          .testTag("General Infos Row")) {
 
         // Recipe creator's userId
         Spacer(modifier = Modifier.weight(1f))
@@ -232,11 +245,29 @@ fun GeneralInfoDisplay(
         }
         Text(
             text = recipe.rating.toString(),
-            modifier = Modifier.padding(start = 4.dp).testTag("Text Rating"),
+            modifier = Modifier
+                .padding(start = 4.dp)
+                .testTag("Text Rating"),
             style = TextStyle(fontSize = 16.sp, fontWeight = FontWeight.Medium))
         Spacer(modifier = Modifier.weight(1f))
       }
   HorizontalDivider(thickness = 2.dp, modifier = Modifier.testTag("Horizontal Divider 1"))
+}
+
+/**
+ * Displays the difficulty level of the recipe at hand
+ *
+ * @param recipe the [Recipe] whose difficulty level needs to be displayed
+ * */
+@Composable
+fun DifficultyLevelDisplay(recipe: Recipe) {
+    Text (
+        text = "Difficulty Level :",
+        style = TextStyle(fontWeight = FontWeight.SemiBold, fontSize = 20.sp),
+        modifier = Modifier
+            .padding(start = 16.dp, top = 8.dp)
+            .testTag("Difficulty Level")
+    )
 }
 
 /**
@@ -249,7 +280,9 @@ fun IngredientTitleDisplay(modifier: Modifier = Modifier) {
   Text(
       text = "Ingredients",
       style = TextStyle(fontWeight = FontWeight.SemiBold, fontSize = 20.sp),
-      modifier = modifier.padding(start = 16.dp, top = 8.dp).testTag("Ingredient Title"))
+      modifier = modifier
+          .padding(start = 16.dp, top = 8.dp)
+          .testTag("Ingredient Title"))
 }
 
 /**
@@ -273,7 +306,9 @@ fun IngredientDisplay(ingredient: IngredientMetaData, modifier: Modifier = Modif
             append(ingredientText)
           },
       style = TextStyle(fontWeight = FontWeight.Normal, fontSize = 14.sp),
-      modifier = modifier.padding(top = 10.dp, start = 16.dp).testTag("Ingredient Description"))
+      modifier = modifier
+          .padding(top = 10.dp, start = 16.dp)
+          .testTag("Ingredient Description"))
 }
 
 /**
@@ -285,7 +320,9 @@ fun IngredientDisplay(ingredient: IngredientMetaData, modifier: Modifier = Modif
 fun IngredientStepsDividerDisplay(modifier: Modifier = Modifier) {
   HorizontalDivider(
       thickness = 2.dp,
-      modifier = modifier.padding(top = 8.dp, bottom = 8.dp).testTag("Horizontal Divider 2"))
+      modifier = modifier
+          .padding(top = 8.dp, bottom = 8.dp)
+          .testTag("Horizontal Divider 2"))
 }
 
 /**
@@ -300,13 +337,17 @@ fun StepDisplay(step: Step, modifier: Modifier = Modifier) {
   Text(
       "Step ${step.stepNumber}: ${step.title}",
       style = TextStyle(fontWeight = FontWeight.SemiBold, fontSize = 20.sp),
-      modifier = Modifier.padding(start = 16.dp, bottom = 8.dp).testTag("Step Title"))
+      modifier = Modifier
+          .padding(start = 16.dp, bottom = 8.dp)
+          .testTag("Step Title"))
   Column(modifier = modifier) {
     Text(
         text = step.description,
         style = MaterialTheme.typography.bodyMedium,
         modifier =
-            modifier.padding(start = 16.dp, end = 16.dp, bottom = 8.dp).testTag("Step Description"),
+        modifier
+            .padding(start = 16.dp, end = 16.dp, bottom = 8.dp)
+            .testTag("Step Description"),
         textAlign = TextAlign.Justify)
   }
 }

@@ -10,8 +10,8 @@ data class Profile(
     var followers: List<String> = listOf(),
     var following: List<String> = listOf(),
     val filter: List<String> = listOf(), // Setting of allergies / setting
-    val recipeList: List<String> = listOf(), // Assuming this is a list of recipe IDs
+    var recipeList: List<String> = listOf(), // Assuming this is a list of recipe IDs
     var savedRecipes: List<String> = listOf(), // Assuming this is a list of recipe IDs
-    val commentList: List<String> = listOf(),
+    var commentList: List<String> = listOf(),
     var showDialog: Boolean = true, // Shows or hides the pop-up in the generation of recipes
 )

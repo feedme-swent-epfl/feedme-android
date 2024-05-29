@@ -1,5 +1,6 @@
 package com.android.feedme.model.viewmodel
 
+import android.content.Context
 import android.net.Uri
 import android.util.Log
 import androidx.lifecycle.LiveData
@@ -9,6 +10,7 @@ import androidx.lifecycle.viewModelScope
 import com.android.feedme.model.data.Profile
 import com.android.feedme.model.data.ProfileRepository
 import com.google.firebase.auth.FirebaseAuth
+import com.google.firebase.firestore.FirebaseFirestore
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.launch
@@ -134,11 +136,17 @@ class ProfileViewModel : ViewModel() {
    *
    * @param profile: the profile to set in the database
    * @param isCurrent: a boolean to determine if the profile is the current user's profile
+   * @param context: the context of the application
    */
-  fun setProfile(profile: Profile, isCurrent: Boolean = true) {
+  fun setProfile(
+      profile: Profile,
+      isCurrent: Boolean = true,
+      context: Context = FirebaseFirestore.getInstance().app.applicationContext
+  ) {
     viewModelScope.launch {
       repository.addProfile(
           profile,
+          context,
           onSuccess = {
             if (isCurrent) {
               updateCurrentUserProfile(profile)
@@ -154,15 +162,20 @@ class ProfileViewModel : ViewModel() {
    * This method deletes the profile of the current user from the database. It then resets the
    * current user's profile state to null.
    *
+   * @param context The context of the application.
    * @param onSuccess A callback function invoked on successful deletion of the profile.
    * @param onFailure A callback function invoked on failure to delete the profile, with an
    *   exception.
    */
-  fun deleteCurrentUserProfile(onSuccess: () -> Unit, onFailure: (Exception) -> Unit) {
+  fun deleteCurrentUserProfile(
+      context: Context = FirebaseFirestore.getInstance().app.applicationContext,
+      onSuccess: () -> Unit,
+      onFailure: (Exception) -> Unit
+  ) {
     currentUserId ?: throw IllegalStateException("Current user ID is null, and should never be")
     val delete = {
       if (currentUserFollowers.value.isEmpty() && _currentUserFollowing.value.isEmpty()) {
-        repository.deleteProfile(currentUserId!!, onSuccess, onFailure)
+        repository.deleteProfile(currentUserId!!, context, onSuccess, onFailure)
       }
     }
     delete.invoke()
@@ -179,8 +192,13 @@ class ProfileViewModel : ViewModel() {
    *
    * @param ids: the unique IDs of the profiles we want to fetch
    * @param fetchProfile: the MutableStateFlow that will store the fetched profiles
+   * @param context: the context of the application
    */
-  private fun fetchProfiles(ids: List<String>, fetchProfile: MutableStateFlow<List<Profile>>) {
+  private fun fetchProfiles(
+      ids: List<String>,
+      fetchProfile: MutableStateFlow<List<Profile>>,
+      context: Context = FirebaseFirestore.getInstance().app.applicationContext
+  ) {
     // Check if we actually need to fetch the profiles
     val currentIds = fetchProfile.value.map { it.id }.toSet()
     if (currentIds != ids.toSet() && ids.isNotEmpty()) {
@@ -188,6 +206,7 @@ class ProfileViewModel : ViewModel() {
       viewModelScope.launch {
         repository.getProfiles(
             ids,
+            context,
             onSuccess = { profiles ->
               // Avoid unnecessary updates
               if (fetchProfile.value != profiles) {
@@ -276,10 +295,13 @@ class ProfileViewModel : ViewModel() {
     if (currentUserId == null) {
       return
     }
+    val context = FirebaseFirestore.getInstance().app.applicationContext
+
     viewModelScope.launch {
       repository.followUser(
           currentUserId!!,
           targetUser.id,
+          context,
           onSuccess = { curr, target ->
             Log.d("ProfileViewModel", "Successfully started following the user")
             _currentUserProfile.value = curr
@@ -332,10 +354,13 @@ class ProfileViewModel : ViewModel() {
     if (currentUserId == null) {
       return
     }
+    val context = FirebaseFirestore.getInstance().app.applicationContext
+
     viewModelScope.launch {
       repository.unfollowUser(
           currentUserId!!,
           targetUser.id,
+          context,
           onSuccess = { curr, target ->
             Log.d("ProfileViewModel", "Successfully unfollowed the user")
             _currentUserProfile.value = curr
@@ -388,10 +413,13 @@ class ProfileViewModel : ViewModel() {
     if (currentUserId == null) {
       return
     }
+    val context = FirebaseFirestore.getInstance().app.applicationContext
+
     viewModelScope.launch {
       repository.unfollowUser(
           follower.id,
           currentUserId!!,
+          context,
           onSuccess = { target, curr ->
             Log.d("ProfileViewModel", "Successfully removed follower and following")
             _currentUserProfile.value = curr
@@ -433,25 +461,34 @@ class ProfileViewModel : ViewModel() {
    * @param profileViewModel The ProfileViewModel of the user.
    * @param picture The URI of the new profile picture.
    */
-  fun updateProfilePicture(picture: Uri) {
+  fun updateProfilePicture(
+      picture: Uri,
+      context: Context = FirebaseFirestore.getInstance().app.applicationContext
+  ) {
     repository.uploadProfilePicture(
-        profileViewModel = this,
-        onFailure = { throw error("Can't upload profile picture to the database") },
-        uri = picture)
+        this,
+        picture,
+        context,
+        onFailure = { throw error("Can't upload profile picture to the database") })
   }
 
   /**
    * Adds a saved recipe to the current user's saved recipes.
    *
    * @param recipe The recipe to add to the saved recipes.
+   * @param context The context of the application.
    */
-  fun addSavedRecipes(recipe: String) {
+  fun addSavedRecipes(
+      recipe: String,
+      context: Context = FirebaseFirestore.getInstance().app.applicationContext
+  ) {
     if (currentUserId == null) {
       return
     }
     repository.addSavedRecipe(
         currentUserId!!,
         recipe,
+        context,
         { _currentUserSavedRecipes.value += recipe },
         { throw error("Can't add recipe to the database") })
   }
@@ -460,14 +497,19 @@ class ProfileViewModel : ViewModel() {
    * Removes a saved recipe from the current user's saved recipes.
    *
    * @param recipe The recipe to remove from the saved recipes.
+   * @param context The context of the application.
    */
-  fun removeSavedRecipes(recipe: String) {
+  fun removeSavedRecipes(
+      recipe: String,
+      context: Context = FirebaseFirestore.getInstance().app.applicationContext
+  ) {
     if (currentUserId == null) {
       return
     }
     repository.removeSavedRecipe(
         currentUserId!!,
         recipe,
+        context,
         { _currentUserSavedRecipes.value = _currentUserSavedRecipes.value.filter { it != recipe } },
         { throw error("Can't remove recipe from the database") })
   }
@@ -476,15 +518,21 @@ class ProfileViewModel : ViewModel() {
    * Checks if a recipe has already been saved by the current user.
    *
    * @param recipe The recipe to check.
+   * @param context The context of the application.
    * @param onResult A callback function invoked with the result of the check.
    */
-  fun savedRecipeExists(recipe: String, onResult: (Boolean) -> Unit) {
+  fun savedRecipeExists(
+      recipe: String,
+      context: Context = FirebaseFirestore.getInstance().app.applicationContext,
+      onResult: (Boolean) -> Unit
+  ) {
     if (currentUserId == null) {
       return
     }
     repository.savedRecipeExists(
         currentUserId!!,
         recipe,
+        context,
         { exists -> onResult(exists) },
         { error ->
           onResult(false)
@@ -510,9 +558,12 @@ class ProfileViewModel : ViewModel() {
     if (currentUserId == null) {
       return
     }
+    val context = FirebaseFirestore.getInstance().app.applicationContext
+
     repository.modifyShowDialog(
         currentUserId!!,
         showDialog,
+        context,
         { _showDialog.value = showDialog },
         { throw error("Can't set dialog in the database") })
   }

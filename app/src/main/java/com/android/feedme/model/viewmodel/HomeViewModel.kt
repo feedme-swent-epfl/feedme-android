@@ -1,5 +1,6 @@
 package com.android.feedme.model.viewmodel
 
+import android.content.Context
 import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
@@ -7,6 +8,7 @@ import com.android.feedme.model.data.Recipe
 import com.android.feedme.model.data.RecipeRepository
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.DocumentSnapshot
+import com.google.firebase.firestore.FirebaseFirestore
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.launch
@@ -40,12 +42,16 @@ class HomeViewModel : ViewModel() {
    * A function that fetches the recipe during Login
    *
    * @param id: the unique ID of the recipe we want to fetch
+   * @param context: the context of the application
    */
-  fun fetchRecipe(id: String) {
-
+  fun fetchRecipe(
+      id: String,
+      context: Context = FirebaseFirestore.getInstance().app.applicationContext
+  ) {
     viewModelScope.launch {
       recipeRepository.getRecipe(
           id,
+          context,
           onSuccess = { recipe ->
             if (recipe != null) {
               _recipes.value += recipe
@@ -62,12 +68,17 @@ class HomeViewModel : ViewModel() {
    * A function that fetches the recipe during Login
    *
    * @param ids: the unique ID of the recipe we want to fetch
+   * @param context: the context of the application
    */
-  fun fetchSavedRecipes(ids: List<String>) {
+  fun fetchSavedRecipes(
+      ids: List<String>,
+      context: Context = FirebaseFirestore.getInstance().app.applicationContext
+  ) {
     viewModelScope.launch {
       val recipeList = mutableListOf<Recipe>()
       recipeRepository.getSavedRecipes(
           ids,
+          context,
           onSuccess = { recipe, _ ->
             recipeList += recipe
             _savedRecipes.value = recipeList
@@ -79,11 +90,16 @@ class HomeViewModel : ViewModel() {
     }
   }
 
-  /** A function that fetches the recipes based on their ratings */
-  fun fetchRatedRecipes() {
+  /**
+   * A function that fetches the recipes based on their ratings
+   *
+   * @param context: the context of the application
+   */
+  fun fetchRatedRecipes(context: Context = FirebaseFirestore.getInstance().app.applicationContext) {
     viewModelScope.launch {
       recipeRepository.getRatedRecipes(
           lastRecipe,
+          context,
           onSuccess = { recipes, lastRec ->
             lastRecipe = lastRec
             _recipes.value += recipes
@@ -95,9 +111,13 @@ class HomeViewModel : ViewModel() {
     }
   }
 
-  /** A function that fetches more recipes */
-  fun loadMoreRecipes() {
-    fetchRatedRecipes()
+  /**
+   * A function that fetches more recipes
+   *
+   * @param context: the context of the application
+   */
+  fun loadMoreRecipes(context: Context = FirebaseFirestore.getInstance().app.applicationContext) {
+    fetchRatedRecipes(context)
   }
   /**
    * A function that forces recipes to be shown for testing purposes
@@ -106,14 +126,5 @@ class HomeViewModel : ViewModel() {
    */
   fun setRecipes(recipes: List<Recipe>) {
     _recipes.value = recipes
-  }
-
-  /**
-   * A function that forces saved recipes to be shown for testing purposes
-   *
-   * @param recipes: a list of recipes to show
-   */
-  fun setSavedRecipes(recipes: List<Recipe>) {
-    _savedRecipes.value = recipes
   }
 }

@@ -1,7 +1,11 @@
 package com.android.feedme.model.data
 
+import android.content.Context
 import android.net.Uri
+import android.util.Log
 import com.android.feedme.model.viewmodel.ProfileViewModel
+import com.android.feedme.model.viewmodel.displayToast
+import com.android.feedme.model.viewmodel.isNetworkAvailable
 import com.google.firebase.firestore.DocumentSnapshot
 import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.firestore.Transaction
@@ -43,10 +47,23 @@ class ProfileRepository(private val db: FirebaseFirestore) {
    * [onFailure] is invoked with the exception.
    *
    * @param profile The Profile object to be added to Firestore.
+   * @param context The context to check if the user is offline
    * @param onSuccess A callback function invoked on successful addition of the profile.
    * @param onFailure A callback function invoked on failure to add the profile, with an exception.
    */
-  fun addProfile(profile: Profile, onSuccess: () -> Unit, onFailure: (Exception) -> Unit) {
+  fun addProfile(
+      profile: Profile,
+      context: Context,
+      onSuccess: () -> Unit,
+      onFailure: (Exception) -> Unit
+  ) {
+    // Check if the user is offline
+    if (!isNetworkAvailable(context)) {
+      Log.d("addProfile", "Offline mode: Cannot add profile")
+      displayToast(context)
+      return
+    }
+
     db.collection(collectionPath)
         .document(profile.id)
         .set(profile)
@@ -60,16 +77,25 @@ class ProfileRepository(private val db: FirebaseFirestore) {
    * This method updates the profile document in the Firestore collection specified by
    * [collectionPath]. If an error occurs, [onFailure] is invoked with the exception.
    *
-   * @param profile The Profile object to be updated in Firestore.
+   * @param profileViewModel The ViewModel to update the imageUrl field.
    * @param uri The picture to upload.
+   * @param context The context to check if the user is offline
    * @param onFailure A callback function invoked on failure to update the profile, with an
    *   exception.
    */
   fun uploadProfilePicture(
       profileViewModel: ProfileViewModel,
       uri: Uri,
+      context: Context,
       onFailure: (Exception) -> Unit
   ) {
+    // Check if the user is offline
+    if (!isNetworkAvailable(context)) {
+      Log.d("uploadProfilePicture", "Offline mode: Cannot upload profile picture")
+      displayToast(context)
+      return
+    }
+
     val storageRef =
         FirebaseStorage.getInstance()
             .reference
@@ -116,15 +142,24 @@ class ProfileRepository(private val db: FirebaseFirestore) {
    * Fetch all the profiles of the given List of Ids
    *
    * @param ids The list of profile IDs to fetch.
+   * @param context The context to check if the user is offline
    * @param onSuccess A callback function invoked with the list of profiles on success.
    * @param onFailure A callback function invoked on failure to fetch the profiles, with an
    *   exception.
    */
   fun getProfiles(
       ids: List<String>,
+      context: Context,
       onSuccess: (List<Profile>) -> Unit,
       onFailure: (Exception) -> Unit
   ) {
+    // Check if the user is offline
+    if (!isNetworkAvailable(context)) {
+      Log.d("getProfiles", "Offline mode: Cannot fetch profiles")
+      displayToast(context)
+      return
+    }
+
     db.collection(collectionPath)
         .whereIn("id", ids)
         .get()
@@ -139,16 +174,24 @@ class ProfileRepository(private val db: FirebaseFirestore) {
    * Fetch all the profiles that contain the given query in their name.
    *
    * @param query The search query to filter the profiles.
+   * @param context The context to check if the user is offline
    * @param onSuccess A callback function invoked with the list of profiles on success.
    * @param onFailure A callback function invoked on failure to fetch the profiles, with an
    *   exception.
    */
   fun getFilteredProfiles(
       query: String,
+      context: Context,
       lastProfile: DocumentSnapshot?,
       onSuccess: (List<Profile>, DocumentSnapshot?) -> Unit,
       onFailure: (Exception) -> Unit
   ) {
+    // Check if the user is offline
+    if (!isNetworkAvailable(context)) {
+      Log.d("getFilteredProfiles", "Offline mode: Cannot fetch profiles")
+      return
+    }
+
     var queryRef =
         db.collection(collectionPath)
             .whereGreaterThanOrEqualTo("username", query)
@@ -183,11 +226,24 @@ class ProfileRepository(private val db: FirebaseFirestore) {
    * occurs, [onFailure] is invoked with the exception.
    *
    * @param id The document ID of the profile to delete.
+   * @param context The context to check if the user is offline
    * @param onSuccess A callback function invoked on successful deletion of the profile.
    * @param onFailure A callback function invoked on failure to delete the profile, with an
    *   exception.
    */
-  fun deleteProfile(id: String, onSuccess: () -> Unit, onFailure: (Exception) -> Unit) {
+  fun deleteProfile(
+      id: String,
+      context: Context,
+      onSuccess: () -> Unit,
+      onFailure: (Exception) -> Unit
+  ) {
+    // Check if the user is offline
+    if (!isNetworkAvailable(context)) {
+      Log.d("deleteProfile", "Offline mode: Cannot delete profile")
+      displayToast(context)
+      return
+    }
+
     db.collection(collectionPath)
         .document(id)
         .delete()
@@ -202,12 +258,14 @@ class ProfileRepository(private val db: FirebaseFirestore) {
    *
    * @param currentUserId The ID of the user who is following.
    * @param toFollowId The ID of the user to follow.
+   * @param context The context to check if the user is offline
    * @param onSuccess A callback function invoked on successful following.
    * @param onFailure A callback function invoked on failure to follow, with an exception.
    */
   fun followUser(
       currentUserId: String,
       toFollowId: String,
+      context: Context,
       onSuccess: (Profile, Profile) -> Unit,
       onFailure: (Exception) -> Unit
   ) {
@@ -259,12 +317,14 @@ class ProfileRepository(private val db: FirebaseFirestore) {
    *
    * @param currentUserId The ID of the user who is unfollowing.
    * @param targetUserId The ID of the user to unfollow.
+   * @param context The context to check if the user is offline
    * @param onSuccess A callback function invoked on successful unfollowing.
    * @param onFailure A callback function invoked on failure to unfollow, with an exception.
    */
   fun unfollowUser(
       currentUserId: String,
       targetUserId: String,
+      context: Context,
       onSuccess: (Profile, Profile) -> Unit, // Updated to pass Profile objects
       onFailure: (Exception) -> Unit
   ) {
@@ -323,6 +383,7 @@ class ProfileRepository(private val db: FirebaseFirestore) {
         .addOnFailureListener { exception ->
           onFailure(exception) // Handle failure
         }
+    // }
   }
 
   private fun mapToProfile(
@@ -397,15 +458,23 @@ class ProfileRepository(private val db: FirebaseFirestore) {
    *
    * @param userId The ID of the user to update the saved recipe for
    * @param recipe The [Recipe] to add to the user's saved recipes
+   * @param context The context to check if the user is offline
    * @param onSuccess A callback function invoked on successful addition of the recipe
    * @param onFailure A callback function invoked on failure to add the recipe, with an exception
    */
   fun addSavedRecipe(
       userId: String,
       recipe: String,
+      context: Context,
       onSuccess: () -> Unit,
       onFailure: (Exception) -> Unit
   ) {
+    if (!isNetworkAvailable(context)) {
+      Log.d("addSavedRecipe", "Offline mode: Cannot add saved recipe")
+      displayToast(context)
+      return
+    }
+
     handleFirestoreTransaction(
         {
           val userRef = db.collection(collectionPath).document(userId)
@@ -427,15 +496,23 @@ class ProfileRepository(private val db: FirebaseFirestore) {
    *
    * @param userId The ID of the user to remove the saved recipe for
    * @param recipe The [Recipe] to remove from the user's saved recipes
+   * @param context The context to check if the user is offline
    * @param onSuccess A callback function invoked on successful removal of the recipe
    * @param onFailure A callback function invoked on failure to remove the recipe, with an exception
    */
   fun removeSavedRecipe(
       userId: String,
       recipe: String,
+      context: Context,
       onSuccess: () -> Unit,
       onFailure: (Exception) -> Unit
   ) {
+    if (!isNetworkAvailable(context)) {
+      Log.d("removeSavedRecipe", "Offline mode: Cannot remove saved recipe")
+      displayToast(context)
+      return
+    }
+
     handleFirestoreTransaction(
         {
           val userRef = db.collection(collectionPath).document(userId)
@@ -456,15 +533,23 @@ class ProfileRepository(private val db: FirebaseFirestore) {
    *
    * @param userId The ID of the user to check the saved recipe for
    * @param recipe The [Recipe] to check if it exists in the user's saved recipes
+   * @param context The context to check if the user is offline
    * @param onResult A callback function invoked with the result of the check
    * @param onFailure A callback function invoked on failure to check the recipe, with an exception
    */
   fun savedRecipeExists(
       userId: String,
       recipe: String,
+      context: Context,
       onResult: (Boolean) -> Unit,
       onFailure: (Exception) -> Unit
   ) {
+    // Check if the user is offline
+    if (!isNetworkAvailable(context)) {
+      Log.d("savedRecipeExists", "Offline mode: Cannot check saved recipe")
+      return
+    }
+
     val userRef = db.collection(collectionPath).document(userId)
     userRef
         .get()
@@ -475,12 +560,31 @@ class ProfileRepository(private val db: FirebaseFirestore) {
         .addOnFailureListener { onFailure(it) }
   }
 
+  /**
+   * Function that modifies the showDialog field in a user's profile in Firestore. This field is
+   * used to determine if the user should be shown a dialog on login.
+   *
+   * @param userId The ID of the user to modify the showDialog field for
+   * @param showDialog The value to set the showDialog field to
+   * @param context The context to check if the user is offline
+   * @param onSuccess A callback function invoked on successful modification of the showDialog field
+   * @param onFailure A callback function invoked on failure to modify the showDialog field, with an
+   *   exception
+   */
   fun modifyShowDialog(
       userId: String,
       showDialog: Boolean,
+      context: Context,
       onSuccess: () -> Unit,
       onFailure: (Exception) -> Unit
   ) {
+    // Check if the user is offline
+    if (!isNetworkAvailable(context)) {
+      Log.d("modifyShowDialog", "Offline mode: Cannot modify showDialog")
+      displayToast(context)
+      return
+    }
+
     handleFirestoreTransaction(
         {
           val userRef = db.collection(collectionPath).document(userId)

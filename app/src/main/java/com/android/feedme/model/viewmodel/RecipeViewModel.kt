@@ -1,6 +1,8 @@
 package com.android.feedme.model.viewmodel
 
+import android.content.Context
 import android.net.Uri
+import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.android.feedme.model.data.IngredientMetaData
@@ -9,6 +11,7 @@ import com.android.feedme.model.data.ProfileRepository
 import com.android.feedme.model.data.Recipe
 import com.android.feedme.model.data.RecipeRepository
 import com.android.feedme.model.data.Step
+import com.google.firebase.firestore.FirebaseFirestore
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
@@ -91,8 +94,16 @@ class RecipeViewModel : ViewModel() {
    *
    * @param id: the unique ID of the profile we want to fetch
    */
-  fun fetchProfile(id: String) {
+  fun fetchProfile(
+      id: String,
+      context: Context = FirebaseFirestore.getInstance().app.applicationContext
+  ) {
     if (id.isBlank()) return
+
+    if (!isNetworkAvailable(context)) {
+      Log.d("fetchProfile", "Offline mode, cannot fetch recipe profile")
+      return
+    }
 
     viewModelScope.launch {
       profileRepository.getProfile(
@@ -114,11 +125,15 @@ class RecipeViewModel : ViewModel() {
    *
    * @param recipe: the recipe to set in the database
    */
-  fun setRecipe(recipe: Recipe) {
+  fun setRecipe(
+      recipe: Recipe,
+      context: Context = FirebaseFirestore.getInstance().app.applicationContext
+  ) {
     viewModelScope.launch {
       recipeRepository.addRecipe(
           recipe,
           _picture.value,
+          context,
           onSuccess = { _recipe.value = recipe },
           onFailure = {
             // Handle failure

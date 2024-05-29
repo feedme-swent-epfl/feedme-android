@@ -1,5 +1,6 @@
 package com.android.feedme.model.viewmodel
 
+import android.content.Context
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.android.feedme.model.data.Profile
@@ -7,6 +8,7 @@ import com.android.feedme.model.data.ProfileRepository
 import com.android.feedme.model.data.Recipe
 import com.android.feedme.model.data.RecipeRepository
 import com.google.firebase.firestore.DocumentSnapshot
+import com.google.firebase.firestore.FirebaseFirestore
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.launch
@@ -35,12 +37,18 @@ class SearchViewModel : ViewModel() {
    * A function that fetches the recipes given a query
    *
    * @param query: the query to search for in the recipes
+   * @param context: the context of the application
    */
-  fun searchRecipes(query: String) {
+  fun searchRecipes(
+      query: String,
+      context: Context = FirebaseFirestore.getInstance().app.applicationContext
+  ) {
     this.query = query
+
     viewModelScope.launch {
       recipeRepository.getFilteredRecipes(
           query,
+          context,
           lastRecipe,
           onSuccess = { filteredRecipes, lastRec ->
             lastRecipe = lastRec
@@ -62,11 +70,16 @@ class SearchViewModel : ViewModel() {
    *
    * @param query: the query to search for in the profiles
    */
-  fun searchProfiles(query: String) {
+  fun searchProfiles(
+      query: String,
+      context: Context = FirebaseFirestore.getInstance().app.applicationContext
+  ) {
     this.query = query
+
     viewModelScope.launch {
       profileRepository.getFilteredProfiles(
           query,
+          context,
           lastProfile,
           onSuccess = { filteredProfiles, lastProf ->
             lastProfile = lastProf
@@ -80,21 +93,23 @@ class SearchViewModel : ViewModel() {
   }
 
   /**
-   * A function that fetches more recipes based on the last recipe fetched
+   * A function that fetches more recipes based on the last recipe fetched This function is called
+   * when the user scrolls to the bottom of the list of recipes
    *
-   * This function is called when the user scrolls to the bottom of the list of recipes
+   * @param context: the context of the application
    */
-  fun loadMoreRecipes() {
-    searchRecipes(query)
+  fun loadMoreRecipes(context: Context = FirebaseFirestore.getInstance().app.applicationContext) {
+    searchRecipes(query, context)
   }
 
   /**
-   * A function that fetches more profiles based on the last profile fetched
+   * A function that fetches more profiles based on the last profile fetched This function is called
+   * when the user scrolls to the bottom of the list of profiles
    *
-   * This function is called when the user scrolls to the bottom of the list of profiles
+   * @param context: the context of the application
    */
-  fun loadMoreProfiles() {
-    searchProfiles(query)
+  fun loadMoreProfiles(context: Context = FirebaseFirestore.getInstance().app.applicationContext) {
+    searchProfiles(query, context)
   }
 
   /** A function that resets the filtered recipes and profiles lists */

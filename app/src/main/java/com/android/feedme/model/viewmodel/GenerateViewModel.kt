@@ -1,9 +1,11 @@
 package com.android.feedme.model.viewmodel
 
+import android.content.Context
 import androidx.lifecycle.ViewModel
 import com.android.feedme.model.data.Profile
 import com.android.feedme.model.data.Recipe
 import com.android.feedme.model.data.RecipeRepository
+import com.google.firebase.firestore.FirebaseFirestore
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
 
@@ -29,8 +31,13 @@ class GenerateViewModel : ViewModel() {
    *
    * @param ingredientIds: the unique IDs of the recipes we want to fetch
    * @param profile: the profile of the user
+   * @param context: the context of the application
    */
-  fun fetchGeneratedRecipes(ingredientIds: List<String>, profile: Profile) {
+  fun fetchGeneratedRecipes(
+      ingredientIds: List<String>,
+      profile: Profile,
+      context: Context = FirebaseFirestore.getInstance().app.applicationContext
+  ) {
     _ingredientsIds = ingredientIds
     _profile = profile
 
@@ -38,6 +45,7 @@ class GenerateViewModel : ViewModel() {
       recipeRepository.suggestRecipesStrict(
           ingredientIds,
           profile,
+          context,
           onSuccess = { recipes -> _generatedRecipes.value = recipes },
           onFailure = {
             // Handle failure
@@ -46,6 +54,7 @@ class GenerateViewModel : ViewModel() {
       recipeRepository.suggestRecipes(
           ingredientIds,
           profile,
+          context,
           onSuccess = { recipes -> _generatedRecipes.value = recipes },
           onFailure = {
             // Handle failure

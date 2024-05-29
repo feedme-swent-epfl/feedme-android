@@ -9,12 +9,12 @@ import com.android.feedme.model.data.Step
 val recipe1 =
     newRecipe(
         "lasagna1",
-        "Tasty Lasagna",
-        "https://external-content.duckduckgo.com/iu/?u=https%3A%2F%2Fwww.mamablip.com%2Fstorage%2FLasagna%2520with%2520Meat%2520and%2520Tomato%2520Sauce_3481612355355.jpg&f=1&nofb=1&ipt=8e887ba99ce20a85fb867dabbe0206c1146ebf2f13548b5653a2778e3ea18c54&ipo=images")
+        "Banana Cake",
+        "https://external-content.duckduckgo.com/iu/?u=https%3A%2F%2Firepo.primecp.com%2F2019%2F09%2F422594%2FEasy-Banana-Bread_UserCommentImage_ID-3361638.jpg%3Fv%3D3361638&f=1&nofb=1&ipt=5bc64da42de6992a32947432048f5647017ef9b6a9727960a5ef305cf5afc2bf&ipo=images")
 val recipe2 =
     newRecipe(
         "pasta1",
-        "Yummy Pasta",
+        "Pasta Bolognaise",
         "https://www.eatwell101.com/wp-content/uploads/2022/05/Beef-Pasta-in-Tomato-Sauce.jpg")
 
 fun newRecipe(recipeId: String, title: String, url: String): Recipe {
@@ -38,7 +38,7 @@ fun newRecipe(recipeId: String, title: String, url: String): Recipe {
                       "When the beef is beginning to dry up, add the tomatoes and stir well. Add more salt, then lower the heat and allow to simmer for about an hour, stirring from time to time. Taste for salt and add pepper.",
                   "Make the Meat Sauce")),
       tags = listOf("Meat"),
-      rating = 4.5,
+      rating = 4.7,
       userid = "9vu1XpyZwrW5hSvEpHuuvcVVgiv2",
       imageUrl = url)
 }

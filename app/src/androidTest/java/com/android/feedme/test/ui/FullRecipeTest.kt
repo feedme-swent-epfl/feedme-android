@@ -121,11 +121,13 @@ class FullRecipeTest : TestCase() {
         .assertIsDisplayed()
     composeTestRule.onNodeWithTag("Text Rating").assertIsDisplayed()
     composeTestRule.onNodeWithTag("Horizontal Divider 1").assertIsDisplayed()
-
+    composeTestRule.onNodeWithTag("Description Title").assertIsDisplayed()
+    composeTestRule.onNodeWithTag("Description").assertIsDisplayed()
+    composeTestRule.onNodeWithTag("Horizontal Divider 2").assertIsDisplayed()
     composeTestRule.onNodeWithTag("Ingredient Title").assertIsDisplayed()
     composeTestRule.onNodeWithTag("Ingredient Description").assertIsDisplayed()
 
-    composeTestRule.onNodeWithTag("Horizontal Divider 2").assertIsDisplayed()
+    composeTestRule.onNodeWithTag("Horizontal Divider 3").assertIsDisplayed()
     composeTestRule.onNodeWithTag("Step Title").assertIsDisplayed()
     composeTestRule.onNodeWithTag("Step Description").assertIsDisplayed()
   }

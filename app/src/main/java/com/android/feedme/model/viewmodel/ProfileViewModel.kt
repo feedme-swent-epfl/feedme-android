@@ -6,6 +6,8 @@ import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.android.feedme.model.data.Comment
+import com.android.feedme.model.data.CommentRepository
 import com.android.feedme.model.data.Profile
 import com.android.feedme.model.data.ProfileRepository
 import com.google.firebase.auth.FirebaseAuth
@@ -21,7 +23,8 @@ import kotlinx.coroutines.launch
  */
 class ProfileViewModel : ViewModel() {
 
-  private val repository = ProfileRepository.instance
+    private val repository = ProfileRepository.instance
+    private val commentRepository = CommentRepository.instance
 
   // Current User
   var currentUserId: String? = null
@@ -31,12 +34,16 @@ class ProfileViewModel : ViewModel() {
   private val _currentUserSavedRecipes = MutableStateFlow<List<String>>(listOf())
   private val _isRecipeSaved = MutableLiveData<Boolean>()
   private val _showDialog = MutableStateFlow(true)
+  private val _currentUserComments = MutableStateFlow<List<Comment>>(listOf())
+  private val _viewingUserComments = MutableStateFlow<List<Comment>>(listOf())
   val currentUserProfile: StateFlow<Profile?> = _currentUserProfile
   val currentUserFollowers: StateFlow<List<Profile>> = _currentUserFollowers
   val currentUserFollowing: StateFlow<List<Profile>> = _currentUserFollowing
   val currentUserSavedRecipes: StateFlow<List<String>> = _currentUserSavedRecipes
   val _imageUrl = MutableStateFlow<String?>(null)
   val showDialog: StateFlow<Boolean> = _showDialog
+  val currentUserComments = MutableStateFlow<List<Comment>>(listOf())
+  val viewingUserComments = MutableStateFlow<List<Comment>>(listOf())
   val isRecipeSaved: LiveData<Boolean>
     get() = _isRecipeSaved
 
@@ -95,6 +102,7 @@ class ProfileViewModel : ViewModel() {
             if (profile != null) {
               fetchProfiles(profile.followers, _viewingUserFollowers)
               fetchProfiles(profile.following, _viewingUserFollowing)
+              fetchComments(profile.commentList, _viewingUserComments)
             }
           },
           onFailure = {
@@ -104,8 +112,35 @@ class ProfileViewModel : ViewModel() {
     }
   }
 
+    /**
+    * A function that fetches the profile's comments
+    *
+    * @param ids :
+    * */
+    private fun fetchComments(ids: List<String>, fetchComment: MutableStateFlow<List<Comment>>) {
+        val currentIds = fetchComment.value.map { it.commentId }.toSet()
+        if (currentIds != ids.toSet() && ids.isNotEmpty()) {
+            Log.d("ProfileViewModel", "Fetching comments: $ids")
+            viewModelScope.launch {
+                commentRepository.getComments(
+                    ids,
+                    onSuccess = { comments, _ ->
+                        if (fetchComment.value != comments) {
+                            fetchComment.value = comments
+                        } else {
+                            Log.d("ProfileViewModel", "Comments already fetched")
+                        }
+
+                    },
+                    onFailure = {
+                        // Handle failure
+                        throw error("Comments were not fetched")
+                    })
+            }
+        }
+    }
   /** A function that fetches the profile of the current user */
-  fun fetchCurrentUserProfile() {
+  fun fetchCurrentUserProfile(onSuccess: () -> Unit) {
     currentUserId?.let { userId ->
       viewModelScope.launch {
         repository.getProfile(
@@ -118,6 +153,8 @@ class ProfileViewModel : ViewModel() {
                 fetchProfiles(profile.following, _currentUserFollowing)
                 _currentUserSavedRecipes.value = profile.savedRecipes
                 _showDialog.value = profile.showDialog
+                  fetchComments(profile.commentList, _currentUserComments)
+                  onSuccess()
               }
             },
             onFailure = {

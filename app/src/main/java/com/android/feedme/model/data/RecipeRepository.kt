@@ -97,7 +97,6 @@ class RecipeRepository(private val db: FirebaseFirestore) {
   ) {
     val recipeMap = recipeToMap(recipe)
     id.set(recipeMap).addOnSuccessListener { onSuccess() }.addOnFailureListener { onFailure(it) }
-
   }
 
   /**
@@ -307,7 +306,6 @@ class RecipeRepository(private val db: FirebaseFirestore) {
         "imageUrl" to recipe.imageUrl,
         "ingredientIds" to recipe.ingredients.map { it.ingredient.id },
         "comments" to recipe.comments)
-
   }
 
   private fun IngredientMetaData.toMap(): Map<String, Any> =

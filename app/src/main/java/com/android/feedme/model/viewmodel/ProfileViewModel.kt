@@ -233,31 +233,32 @@ class ProfileViewModel : ViewModel() {
     }
   }
 
-
-    private fun fetchRecipes(ids: List<String>, fetchRecipe: MutableStateFlow<List<Recipe>>,
-                             context: Context = FirebaseFirestore.getInstance().app.applicationContext     ) {
-        val currentIds = fetchRecipe.value.map { it.recipeId }.toSet()
-        if (currentIds != ids.toSet() && ids.isNotEmpty()) {
-            Log.d("ProfileViewModel", "Fetching recipes: $ids")
-            viewModelScope.launch {
-                recipeRepository.getSavedRecipes(
-                    ids,
-                    context,
-                    onSuccess = { recipes, _ ->
-                        if (fetchRecipe.value != recipes) {
-                            fetchRecipe.value = recipes
-                        } else {
-                            Log.d("ProfileViewModel", "Recipes already fetched")
-                        }
-
-                    },
-                    onFailure = {
-                        // Handle failure
-                        throw error("Recipes were not fetched")
-                    })
-            }
-        }
+  private fun fetchRecipes(
+      ids: List<String>,
+      fetchRecipe: MutableStateFlow<List<Recipe>>,
+      context: Context = FirebaseFirestore.getInstance().app.applicationContext
+  ) {
+    val currentIds = fetchRecipe.value.map { it.recipeId }.toSet()
+    if (currentIds != ids.toSet() && ids.isNotEmpty()) {
+      Log.d("ProfileViewModel", "Fetching recipes: $ids")
+      viewModelScope.launch {
+        recipeRepository.getSavedRecipes(
+            ids,
+            context,
+            onSuccess = { recipes, _ ->
+              if (fetchRecipe.value != recipes) {
+                fetchRecipe.value = recipes
+              } else {
+                Log.d("ProfileViewModel", "Recipes already fetched")
+              }
+            },
+            onFailure = {
+              // Handle failure
+              throw error("Recipes were not fetched")
+            })
+      }
     }
+  }
 
   /**
    * Returns the profile to show based on if there is viewingUserId is null or not. If null it will

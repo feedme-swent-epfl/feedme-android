@@ -125,36 +125,35 @@ class RecipeViewModel : ViewModel() {
    *
    * @param recipe: the recipe to set in the database
    */
-
   fun setRecipe(
       recipe: Recipe,
       context: Context = FirebaseFirestore.getInstance().app.applicationContext,
       onSuccess: () -> Unit
   ) {
-      viewModelScope.launch {
-          recipeRepository.addRecipe(
-              recipe,
-              _picture.value,
-              context,
-              onSuccess = {
-                  _recipe.value = recipe
+    viewModelScope.launch {
+      recipeRepository.addRecipe(
+          recipe,
+          _picture.value,
+          context,
+          onSuccess = {
+            _recipe.value = recipe
 
-                  profileRepository.linkRecipeToProfile(
-                      recipe.userid,
-                      recipe.recipeId,
-                      onSuccess = {
-                          onSuccess()
-                          // Handle success
-                      },
-                      onFailure = {
-                          // Handle failure
+            profileRepository.linkRecipeToProfile(
+                recipe.userid,
+                recipe.recipeId,
+                onSuccess = {
+                  onSuccess()
+                  // Handle success
+                },
+                onFailure = {
+                  // Handle failure
 
-                      })
-              },
-              onFailure = {},
-              // Handle failure
+                })
+          },
+          onFailure = {},
+          // Handle failure
 
-          )
-      }
+      )
+    }
   }
 }

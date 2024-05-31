@@ -128,7 +128,7 @@ class RecipeViewModel : ViewModel() {
   fun setRecipe(
       recipe: Recipe,
       context: Context = FirebaseFirestore.getInstance().app.applicationContext,
-      onSuccess: () -> Unit
+      onSuccess: () -> Unit = {}
   ) {
     viewModelScope.launch {
       recipeRepository.addRecipe(

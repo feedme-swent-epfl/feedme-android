@@ -52,13 +52,14 @@ class CommentViewModel : ViewModel() {
    *
    * @param comment: the comment to set in the database
    */
-  fun addComment(comment: Comment, onSuccess: () -> Unit) {
+  fun addComment(comment: Comment) {
     viewModelScope.launch {
       repository.addComment(
           comment,
           _picture.value,
           onSuccess = {
             _comment.value = comment
+
             repositoryRecipe.addCommentToRecipe(
                 comment.recipeId,
                 comment.commentId,
@@ -66,12 +67,11 @@ class CommentViewModel : ViewModel() {
                   repositoryProfile.addCommentToProfile(
                       comment.userId,
                       comment.commentId,
-                      onSuccess = { onSuccess() },
+                      onSuccess = {},
                       onFailure = {
                         // Handle failure
 
                       })
-                  onSuccess()
                 },
                 onFailure = {
                   // Handle failure

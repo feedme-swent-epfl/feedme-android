@@ -167,6 +167,15 @@ class ProfileViewModel : ViewModel() {
   }
 
   /**
+   * A function that adds a recipe to the current user's profile
+   *
+   * @param recipe: the recipe to add to the current user's profile
+   */
+  fun addRecipe(recipe: Recipe) {
+    _currentUserRecipes.value += recipe
+  }
+
+  /**
    * Deletes the current user's profile.
    *
    * This method deletes the profile of the current user from the database. It then resets the

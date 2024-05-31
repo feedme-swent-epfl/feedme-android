@@ -1,9 +1,13 @@
 package com.android.feedme.model.viewmodel
 
+import android.content.Context
+import android.util.Log
 import androidx.lifecycle.ViewModel
 import com.android.feedme.model.data.IngredientMetaData
 import com.android.feedme.model.data.MeasureUnit
 import com.android.feedme.ui.component.IngredientInputState
+import com.google.gson.Gson
+import com.google.gson.reflect.TypeToken
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 
@@ -12,7 +16,14 @@ import kotlinx.coroutines.flow.StateFlow
  * ingredients entries to display, the list of [IngredientMetaData], and the number of complete
  * [IngredientMetaData].
  */
-class InputViewModel : ViewModel() {
+class InputViewModel(val context: Context? = null) : ViewModel() {
+  // SharedPreferences name
+  private val PREFS_NAME = "InputViewModelPrefs"
+
+  // SharedPreferences keys
+  private val LIST_KEY_CURRENT = "listOfIngredientMetadatas"
+  private val LIST_KEY_FRIDGE = "fridge"
+
   // StateFlow to hold the total number of ingredients to display
   private val _totalIngredientEntriesDisplayed = MutableStateFlow(1)
   val totalIngredientEntriesDisplayed: StateFlow<Int> = _totalIngredientEntriesDisplayed
@@ -25,17 +36,104 @@ class InputViewModel : ViewModel() {
   private val _totalCompleteIngredientMetadatas = MutableStateFlow(0)
   val totalCompleteIngredientMetadatas: StateFlow<Int> = _totalCompleteIngredientMetadatas
 
+  // StateFlow to hold the list of ingredient in fridge
+  private val _fridge = MutableStateFlow<List<IngredientMetaData?>>(listOf(null))
+  val fridge: StateFlow<List<IngredientMetaData?>> = _fridge
+
+  // StateFlow to hold the boolean if the current state was saved
+  private val _wasSaved = MutableStateFlow(_fridge == _totalCompleteIngredientMetadatas)
+  val wasSaved: StateFlow<Boolean> = _wasSaved
+
+  init {
+    // Retrieve saved list when ViewModel is initialized
+    retrieveSavedList()
+  }
+
+  // Function to save the list when ViewModel is about to be destroyed
+  override fun onCleared() {
+    super.onCleared()
+    saveList()
+  }
+
+  /** Saves the current list of ingredients to the fridge. */
+  fun saveInFridge() {
+    _fridge.value = _listOfIngredientMetadatas.value
+    wasSaved()
+  }
+
+  /** Checks if the list of ingredients was saved in the fridge. */
+  fun wasSaved() {
+    _wasSaved.value = _fridge.value == _listOfIngredientMetadatas.value
+  }
+
+  /** Loads the list of ingredients from the fridge. */
+  fun loadFridge() {
+    setNewList(_fridge.value.toMutableList())
+  }
+
+  /** Saves the current list of ingredients to SharedPreferences. */
+  private fun saveList() {
+    if (context != null) {
+      val gson = Gson()
+      val type = object : TypeToken<List<IngredientMetaData?>>() {}.type
+      val json = gson.toJson(_listOfIngredientMetadatas.value, type)
+      val jsonFridge = gson.toJson(_fridge.value, type)
+      val prefs = context.getSharedPreferences(PREFS_NAME, Context.MODE_PRIVATE)
+      prefs.edit().putString(LIST_KEY_CURRENT, json).apply()
+      prefs.edit().putString(LIST_KEY_FRIDGE, jsonFridge).apply()
+      Log.d("InputViewModel", "Json sent")
+    } else {
+      Log.e(
+          "InputViewModel",
+          "Error: Unable to save current ingredient list because no 'Context' was given")
+    }
+    wasSaved()
+  }
+
+  /** Retrieves the saved list of ingredients from SharedPreferences. */
+  private fun retrieveSavedList() {
+    if (context != null) {
+      val prefs = context.getSharedPreferences(PREFS_NAME, Context.MODE_PRIVATE)
+      val json = prefs?.getString(LIST_KEY_CURRENT, "[]")
+      val jsonFridge = prefs?.getString(LIST_KEY_FRIDGE, "[]")
+      val gson = Gson()
+      val type = object : TypeToken<List<IngredientMetaData?>>() {}.type
+
+      if (jsonFridge != null) {
+        val listFridge = gson.fromJson<List<IngredientMetaData?>>(jsonFridge, type)
+        _fridge.value = listFridge
+      }
+
+      if (json != null) {
+        val list = gson.fromJson<List<IngredientMetaData?>>(json, type)
+        _listOfIngredientMetadatas.value = list
+        _totalIngredientEntriesDisplayed.value = list.size
+        _totalCompleteIngredientMetadatas.value =
+            list.count { it != null && it.measure != MeasureUnit.EMPTY && it.quantity != 0.0 }
+        Log.d("InputViewModel", "Json received")
+      } else {
+        Log.e(
+            "InputViewModel",
+            "Error: Unable to save current ingredient list because no 'Context' was given")
+      }
+    } else {
+      Log.e(
+          "InputViewModel",
+          "Error: Unable to save current ingredient list because no 'Context' was given")
+    }
+  }
+
   /**
    * Sets a new list of [IngredientMetaData] and adds a empty entry to add a new ingredient in case.
    *
    * @param newList The new list of [IngredientMetaData].
    */
   fun setNewList(newList: MutableList<IngredientMetaData?>) {
-    newList.add(null)
     _listOfIngredientMetadatas.value = newList
     _totalIngredientEntriesDisplayed.value = newList.size
     _totalCompleteIngredientMetadatas.value +=
         newList.count { it != null && it.measure != MeasureUnit.EMPTY && it.quantity != 0.0 }
+    saveList()
   }
 
   /**
@@ -48,6 +146,7 @@ class InputViewModel : ViewModel() {
     _totalIngredientEntriesDisplayed.value += newList.size
     _totalCompleteIngredientMetadatas.value +=
         newList.count { it.measure != MeasureUnit.EMPTY && it.quantity != 0.0 }
+    saveList()
   }
 
   /** Resets the list of ingredients and adds a empty entry to add a new ingredient */
@@ -55,6 +154,7 @@ class InputViewModel : ViewModel() {
     _listOfIngredientMetadatas.value = listOf(null)
     _totalIngredientEntriesDisplayed.value = 1
     _totalCompleteIngredientMetadatas.value = 0
+    saveList()
   }
 
   /**
@@ -80,7 +180,7 @@ class InputViewModel : ViewModel() {
       _totalCompleteIngredientMetadatas.value += if (isComplete) 1 else -1
     }
     newList[index] = newIngredient
-    if (now == IngredientInputState.SEMI_COMPLETE && before == IngredientInputState.EMPTY) {
+    if (now != IngredientInputState.EMPTY && before == IngredientInputState.EMPTY) {
       newList.add(null)
       _totalIngredientEntriesDisplayed.value += 1
     } else if (now == IngredientInputState.EMPTY && before != IngredientInputState.EMPTY) {
@@ -88,6 +188,7 @@ class InputViewModel : ViewModel() {
       _totalIngredientEntriesDisplayed.value -= 1
     }
     _listOfIngredientMetadatas.value = newList
+    saveList()
   }
 
   /**

@@ -256,6 +256,9 @@ dependencies {
     androidTestImplementation(libs.mockk.android)
     androidTestImplementation(libs.mockk.agent)
 
+    implementation("com.google.code.gson:gson:2.8.6")
+
+
 }
 
 

@@ -81,6 +81,7 @@ fun SearchScreen(
  * @param navigationActions: the navigation actions to be performed
  * @param searchViewModel: the [SearchViewModel] view model for the search functionality
  * @param recipeViewModel: the [RecipeViewModel] view model for the recipe functionality
+ * @param homeViewModel: the [HomeViewModel] view model for the home functionality
  * @param profileViewModel: the [ProfileViewModel] view model for the profile functionality
  */
 @Composable
@@ -123,6 +124,7 @@ fun SearchScreenContent(
               selectedTabIndex,
               recipeViewModel,
               profileViewModel,
+              searchViewModel,
               searchViewModel::loadMoreRecipes)
       1 ->
           FilteredContent(
@@ -132,6 +134,7 @@ fun SearchScreenContent(
               selectedTabIndex,
               recipeViewModel,
               profileViewModel,
+              searchViewModel,
               searchViewModel::loadMoreProfiles)
     }
   }
@@ -146,6 +149,8 @@ fun SearchScreenContent(
  * @param mode: the mode to determine if the content is recipes or profiles
  * @param recipeViewModel: the [RecipeViewModel] view model for the recipe functionality
  * @param profileViewModel: the [ProfileViewModel] view model for the profile functionality
+ * @param searchViewModel: the [SearchViewModel] view model for the search functionality
+ * @param loadMore: the function to load more recipes or profiles
  */
 @Composable
 fun FilteredContent(
@@ -155,8 +160,12 @@ fun FilteredContent(
     mode: Int,
     recipeViewModel: RecipeViewModel,
     profileViewModel: ProfileViewModel,
+    searchViewModel: SearchViewModel,
     loadMore: () -> Unit
 ) {
+  val moreRecipes = searchViewModel.lastRecipe.collectAsState()
+  val moreProfiles = searchViewModel.lastProfile.collectAsState()
+
   if (recipes.isEmpty() && mode == 0 || profiles.isEmpty() && mode == 1) {
     Column(
         modifier = Modifier.fillMaxSize().testTag("EmptyList"),
@@ -176,20 +185,31 @@ fun FilteredContent(
   } else {
     LazyColumn(modifier = Modifier.fillMaxSize().testTag("FilteredList")) {
       when (mode) {
-        0 ->
-            items(recipes) { recipe ->
-              // Fetch the profile of the user who created the recipe
-              LaunchedEffect(recipe.userid) { recipeViewModel.fetchProfile(recipe.userid) }
-              val recipesProfiles by recipeViewModel.profiles.collectAsState()
-              val profile = recipesProfiles[recipe.userid]
+        0 -> {
+          items(recipes) { recipe ->
+            // Fetch the profile of the user who created the recipe
+            LaunchedEffect(recipe.userid) { recipeViewModel.fetchProfile(recipe.userid) }
+            val recipesProfiles by recipeViewModel.profiles.collectAsState()
+            val profile = recipesProfiles[recipe.userid]
 
-              RecipeCard(
-                  Route.HOME, recipe, profile, navigationActions, recipeViewModel, profileViewModel)
-            }
-        1 ->
-            items(profiles) { profile -> FriendsCard(profile, navigationActions, profileViewModel) }
+            RecipeCard(
+                Route.HOME, recipe, profile, navigationActions, recipeViewModel, profileViewModel)
+          }
+
+          // Display Load more button if there are more recipes to fetch
+          if (moreRecipes.value != null) {
+            item { LoadMoreButton(loadMore) }
+          }
+        }
+        1 -> {
+          items(profiles) { profile -> FriendsCard(profile, navigationActions, profileViewModel) }
+
+          // Display Load more button if there are more profiles to fetch
+          if (moreProfiles.value != null) {
+            item { LoadMoreButton(loadMore) }
+          }
+        }
       }
-      item { LoadMoreButton(loadMore) }
     }
   }
 }

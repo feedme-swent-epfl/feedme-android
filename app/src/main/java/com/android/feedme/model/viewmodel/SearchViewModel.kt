@@ -29,8 +29,11 @@ class SearchViewModel : ViewModel() {
   private val _filteredProfiles = MutableStateFlow<List<Profile>>(emptyList())
   val filteredProfiles = _filteredProfiles.asStateFlow()
 
-  private var lastRecipe: DocumentSnapshot? = null
-  private var lastProfile: DocumentSnapshot? = null
+  private var _lastRecipe = MutableStateFlow<DocumentSnapshot?>(null)
+  private var _lastProfile = MutableStateFlow<DocumentSnapshot?>(null)
+  val lastRecipe = _lastRecipe.asStateFlow()
+  val lastProfile = _lastProfile.asStateFlow()
+
   private var query: String = ""
 
   /**
@@ -49,9 +52,9 @@ class SearchViewModel : ViewModel() {
       recipeRepository.getFilteredRecipes(
           query,
           context,
-          lastRecipe,
+          _lastRecipe.value,
           onSuccess = { filteredRecipes, lastRec ->
-            lastRecipe = lastRec
+            _lastRecipe.value = lastRec
             _filteredRecipes.value += filteredRecipes
           },
           onFailure = {
@@ -76,9 +79,9 @@ class SearchViewModel : ViewModel() {
       profileRepository.getFilteredProfiles(
           query,
           context,
-          lastProfile,
+          _lastProfile.value,
           onSuccess = { filteredProfiles, lastProf ->
-            lastProfile = lastProf
+            _lastProfile.value = lastProf
             _filteredProfiles.value += filteredProfiles
           },
           onFailure = {
@@ -112,8 +115,8 @@ class SearchViewModel : ViewModel() {
   fun resetSearch() {
     _filteredRecipes.value = emptyList()
     _filteredProfiles.value = emptyList()
-    lastRecipe = null
-    lastProfile = null
+    _lastRecipe.value = null
+    _lastProfile.value = null
   }
 
   /**

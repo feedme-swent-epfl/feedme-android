@@ -125,6 +125,7 @@ class SearchScreenTest : TestCase() {
       tabRow { assertIsDisplayed() }
       filteredListDisplay { assertIsDisplayed() }
       recipeCard { assertIsDisplayed() }
+      loadMoreButton { assertIsNotDisplayed() }
     }
   }
 

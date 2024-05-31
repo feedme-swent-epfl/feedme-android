@@ -3,6 +3,8 @@ package com.android.feedme.model.viewmodel
 import android.content.Context
 import android.util.Log
 import androidx.lifecycle.ViewModel
+import androidx.security.crypto.EncryptedSharedPreferences
+import androidx.security.crypto.MasterKey
 import com.android.feedme.model.data.IngredientMetaData
 import com.android.feedme.model.data.MeasureUnit
 import com.android.feedme.ui.component.IngredientInputState
@@ -45,7 +47,6 @@ class InputViewModel(val context: Context? = null) : ViewModel() {
   val wasSaved: StateFlow<Boolean> = _wasSaved
 
   init {
-    // Retrieve saved list when ViewModel is initialized
     retrieveSavedList()
   }
 
@@ -57,7 +58,7 @@ class InputViewModel(val context: Context? = null) : ViewModel() {
 
   /** Saves the current list of ingredients to the fridge. */
   fun saveInFridge() {
-    _fridge.value = _listOfIngredientMetadatas.value
+    _fridge.value = _listOfIngredientMetadatas.value.ifEmpty { listOf<IngredientMetaData?>(null) }
     wasSaved()
   }
 
@@ -71,14 +72,27 @@ class InputViewModel(val context: Context? = null) : ViewModel() {
     setNewList(_fridge.value.toMutableList())
   }
 
-  /** Saves the current list of ingredients to SharedPreferences. */
   private fun saveList() {
     if (context != null) {
       val gson = Gson()
       val type = object : TypeToken<List<IngredientMetaData?>>() {}.type
-      val json = gson.toJson(_listOfIngredientMetadatas.value, type)
-      val jsonFridge = gson.toJson(_fridge.value, type)
-      val prefs = context.getSharedPreferences(PREFS_NAME, Context.MODE_PRIVATE)
+      val json =
+          gson.toJson(
+              _listOfIngredientMetadatas.value.ifEmpty { listOf<IngredientMetaData?>(null) }, type)
+      val jsonFridge =
+          gson.toJson(_fridge.value.ifEmpty { listOf<IngredientMetaData?>(null) }, type)
+
+      val masterKeyAlias =
+          MasterKey.Builder(context).setKeyScheme(MasterKey.KeyScheme.AES256_GCM).build()
+
+      val prefs =
+          EncryptedSharedPreferences.create(
+              context,
+              PREFS_NAME,
+              masterKeyAlias,
+              EncryptedSharedPreferences.PrefKeyEncryptionScheme.AES256_SIV,
+              EncryptedSharedPreferences.PrefValueEncryptionScheme.AES256_GCM)
+
       prefs.edit().putString(LIST_KEY_CURRENT, json).apply()
       prefs.edit().putString(LIST_KEY_FRIDGE, jsonFridge).apply()
       Log.d("InputViewModel", "Json sent")
@@ -87,40 +101,58 @@ class InputViewModel(val context: Context? = null) : ViewModel() {
           "InputViewModel",
           "Error: Unable to save current ingredient list because no 'Context' was given")
     }
+    _fridge.value = _fridge.value.ifEmpty { listOf<IngredientMetaData?>(null) }
+    _listOfIngredientMetadatas.value =
+        _listOfIngredientMetadatas.value.ifEmpty { listOf<IngredientMetaData?>(null) }
     wasSaved()
   }
 
-  /** Retrieves the saved list of ingredients from SharedPreferences. */
-  private fun retrieveSavedList() {
+  fun retrieveSavedList() {
     if (context != null) {
-      val prefs = context.getSharedPreferences(PREFS_NAME, Context.MODE_PRIVATE)
-      val json = prefs?.getString(LIST_KEY_CURRENT, "[]")
-      val jsonFridge = prefs?.getString(LIST_KEY_FRIDGE, "[]")
+      val masterKeyAlias =
+          MasterKey.Builder(context).setKeyScheme(MasterKey.KeyScheme.AES256_GCM).build()
+
+      val prefs =
+          EncryptedSharedPreferences.create(
+              context,
+              PREFS_NAME,
+              masterKeyAlias,
+              EncryptedSharedPreferences.PrefKeyEncryptionScheme.AES256_SIV,
+              EncryptedSharedPreferences.PrefValueEncryptionScheme.AES256_GCM)
+
+      val json = prefs.getString(LIST_KEY_CURRENT, "[]")
+      val jsonFridge = prefs.getString(LIST_KEY_FRIDGE, "[]")
       val gson = Gson()
       val type = object : TypeToken<List<IngredientMetaData?>>() {}.type
 
       if (jsonFridge != null) {
         val listFridge = gson.fromJson<List<IngredientMetaData?>>(jsonFridge, type)
-        _fridge.value = listFridge
+        _fridge.value = listFridge.ifEmpty { listOf<IngredientMetaData?>(null) }
+      } else {
+        _fridge.value = listOf<IngredientMetaData?>(null)
       }
 
       if (json != null) {
         val list = gson.fromJson<List<IngredientMetaData?>>(json, type)
-        _listOfIngredientMetadatas.value = list
-        _totalIngredientEntriesDisplayed.value = list.size
+        _listOfIngredientMetadatas.value = list.ifEmpty { listOf<IngredientMetaData?>(null) }
+        _totalIngredientEntriesDisplayed.value = _listOfIngredientMetadatas.value.size
         _totalCompleteIngredientMetadatas.value =
             list.count { it != null && it.measure != MeasureUnit.EMPTY && it.quantity != 0.0 }
         Log.d("InputViewModel", "Json received")
       } else {
         Log.e(
             "InputViewModel",
-            "Error: Unable to save current ingredient list because no 'Context' was given")
+            "Error: Unable to retrieve current ingredient list because no data was found")
       }
     } else {
       Log.e(
           "InputViewModel",
-          "Error: Unable to save current ingredient list because no 'Context' was given")
+          "Error: Unable to retrieve current ingredient list because no 'Context' was given")
     }
+    _fridge.value = _fridge.value.ifEmpty { listOf<IngredientMetaData?>(null) }
+    _listOfIngredientMetadatas.value =
+        _listOfIngredientMetadatas.value.ifEmpty { listOf<IngredientMetaData?>(null) }
+    _totalIngredientEntriesDisplayed.value = _listOfIngredientMetadatas.value.size
   }
 
   /**
@@ -129,6 +161,7 @@ class InputViewModel(val context: Context? = null) : ViewModel() {
    * @param newList The new list of [IngredientMetaData].
    */
   fun setNewList(newList: MutableList<IngredientMetaData?>) {
+    _listOfIngredientMetadatas.value = newList.ifEmpty { listOf<IngredientMetaData?>(null) }
     _listOfIngredientMetadatas.value = newList
     _totalIngredientEntriesDisplayed.value = newList.size
     _totalCompleteIngredientMetadatas.value +=

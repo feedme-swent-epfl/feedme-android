@@ -10,6 +10,7 @@ import com.android.feedme.model.data.ProfileRepository
 import com.android.feedme.model.data.Recipe
 import com.android.feedme.model.data.RecipeRepository
 import com.android.feedme.model.data.Step
+import com.android.feedme.model.viewmodel.HomeViewModel
 import com.android.feedme.model.viewmodel.ProfileViewModel
 import com.android.feedme.model.viewmodel.RecipeViewModel
 import com.android.feedme.model.viewmodel.SearchViewModel
@@ -42,6 +43,7 @@ class SearchScreenTest : TestCase() {
   private lateinit var searchViewModel: SearchViewModel
   private lateinit var profileViewModel: ProfileViewModel
   private lateinit var recipeViewModel: RecipeViewModel
+  private lateinit var homeViewModel: HomeViewModel
 
   private lateinit var recipeRepository: RecipeRepository
   private lateinit var profileRepository: ProfileRepository
@@ -90,6 +92,7 @@ class SearchScreenTest : TestCase() {
     searchViewModel = SearchViewModel()
     profileViewModel = ProfileViewModel()
     recipeViewModel = RecipeViewModel()
+    homeViewModel = HomeViewModel()
   }
 
   @Test
@@ -132,7 +135,13 @@ class SearchScreenTest : TestCase() {
     }
     val mockNavAction = mockk<NavigationActions>(relaxed = true)
     composeTestRule.setContent {
-      SearchScreen(Route.HOME, mockNavAction, searchViewModel, recipeViewModel, profileViewModel)
+      SearchScreen(
+          Route.HOME,
+          mockNavAction,
+          searchViewModel,
+          recipeViewModel,
+          homeViewModel,
+          profileViewModel)
     }
     composeTestRule.waitForIdle()
   }

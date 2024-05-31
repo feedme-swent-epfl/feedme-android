@@ -109,7 +109,12 @@ class MainActivity : ComponentActivity() {
                     backStackEntry.arguments?.getString("sourceRoute")?.let {
                       val recipeViewModel = viewModel<RecipeViewModel>()
                       SearchScreen(
-                          it, navigationActions, searchViewModel, recipeViewModel, profileViewModel)
+                          it,
+                          navigationActions,
+                          searchViewModel,
+                          recipeViewModel,
+                          homeViewModel,
+                          profileViewModel)
                     }
                   }
                 }
@@ -165,7 +170,8 @@ class MainActivity : ComponentActivity() {
                   backStackEntry.arguments?.getString("sourceRoute")?.let {
                     val backScreen =
                         when (it) {
-                          Route.HOME -> Screen.HOME
+                          Route.HOME ->
+                              if (homeViewModel.isOnLanding.value) Screen.HOME else Screen.SEARCH
                           Route.SAVED -> Screen.SAVED
                           Route.PROFILE -> Screen.PROFILE
                           Route.FIND_RECIPE -> Screen.GENERATE

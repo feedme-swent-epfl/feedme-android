@@ -25,6 +25,7 @@ import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.unit.dp
 import com.android.feedme.model.data.Profile
 import com.android.feedme.model.data.Recipe
+import com.android.feedme.model.viewmodel.HomeViewModel
 import com.android.feedme.model.viewmodel.ProfileViewModel
 import com.android.feedme.model.viewmodel.RecipeViewModel
 import com.android.feedme.model.viewmodel.SearchViewModel
@@ -52,6 +53,7 @@ fun SearchScreen(
     navigationActions: NavigationActions,
     searchViewModel: SearchViewModel,
     recipeViewModel: RecipeViewModel,
+    homeViewModel: HomeViewModel,
     profileViewModel: ProfileViewModel
 ) {
   Scaffold(
@@ -62,7 +64,12 @@ fun SearchScreen(
       },
       content = {
         SearchScreenContent(
-            it, navigationActions, searchViewModel, recipeViewModel, profileViewModel)
+            it,
+            navigationActions,
+            searchViewModel,
+            recipeViewModel,
+            homeViewModel,
+            profileViewModel)
       })
 }
 
@@ -82,6 +89,7 @@ fun SearchScreenContent(
     navigationActions: NavigationActions,
     searchViewModel: SearchViewModel,
     recipeViewModel: RecipeViewModel,
+    homeViewModel: HomeViewModel,
     profileViewModel: ProfileViewModel
 ) {
   val tabSearchList = listOf("Recipes", "Accounts")
@@ -89,6 +97,8 @@ fun SearchScreenContent(
 
   val recipes = searchViewModel.filteredRecipes.collectAsState()
   val profiles = searchViewModel.filteredProfiles.collectAsState()
+
+  homeViewModel.setOnLanding(false)
 
   Column(modifier = Modifier.padding(padding)) {
     TabRow(

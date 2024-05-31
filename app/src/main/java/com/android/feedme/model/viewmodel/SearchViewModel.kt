@@ -52,11 +52,7 @@ class SearchViewModel : ViewModel() {
           lastRecipe,
           onSuccess = { filteredRecipes, lastRec ->
             lastRecipe = lastRec
-            // Don't re-add the same recipes if there are no new ones
-            if (lastProfile != null && _filteredRecipes.value.isNotEmpty() ||
-                lastProfile == null && _filteredRecipes.value.isEmpty()) {
-              _filteredRecipes.value += filteredRecipes
-            }
+            _filteredRecipes.value += filteredRecipes
           },
           onFailure = {
             // Handle failure

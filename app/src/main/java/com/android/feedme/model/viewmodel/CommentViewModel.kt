@@ -1,5 +1,6 @@
 package com.android.feedme.model.viewmodel
 
+import android.net.Uri
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.android.feedme.model.data.Comment
@@ -18,6 +19,9 @@ class CommentViewModel : ViewModel() {
   private val repository = CommentRepository.instance
   private val _comment = MutableStateFlow<Comment?>(null)
 
+  private val _picture = MutableStateFlow<Uri?>(null)
+  val picture: StateFlow<Uri?> = _picture
+
   val comment: StateFlow<Comment?> = _comment
 
   /**
@@ -27,6 +31,10 @@ class CommentViewModel : ViewModel() {
    */
   fun selectComment(comment: Comment) {
     _comment.value = comment
+  }
+
+  fun updatePicture(uri: Uri) {
+    _picture.value = uri
   }
 
   /**
@@ -39,6 +47,7 @@ class CommentViewModel : ViewModel() {
     viewModelScope.launch {
       repository.addComment(
           comment,
+          _picture.value,
           onSuccess = {
             _comment.value = comment
             onSuccess()

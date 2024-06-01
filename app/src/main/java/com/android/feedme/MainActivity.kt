@@ -176,7 +176,8 @@ class MainActivity : ComponentActivity() {
                     // Link the shared view model to the composable
                     val navBackStackEntry = navController.getBackStackEntry(backScreen)
                     val recipeViewModel = viewModel<RecipeViewModel>(navBackStackEntry)
-                    RecipeFullDisplay(it, navigationActions, recipeViewModel, profileViewModel)
+                    RecipeFullDisplay(
+                        it, navigationActions, recipeViewModel, profileViewModel, cameraViewModel)
                   }
                 }
               }

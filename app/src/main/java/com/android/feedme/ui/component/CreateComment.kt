@@ -1,5 +1,8 @@
 package com.android.feedme.ui.component
 
+import android.net.Uri
+import androidx.activity.result.PickVisualMediaRequest
+import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
@@ -29,6 +32,7 @@ import androidx.compose.material3.OutlinedButton
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -38,13 +42,16 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.text.font.FontStyle
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import coil.compose.AsyncImage
+import com.android.feedme.R
 import com.android.feedme.model.data.Comment
+import com.android.feedme.model.viewmodel.CameraViewModel
 import com.android.feedme.model.viewmodel.CommentViewModel
 import com.android.feedme.model.viewmodel.ProfileViewModel
 import com.android.feedme.model.viewmodel.RecipeViewModel
@@ -67,11 +74,13 @@ fun CreateComment(
     profileViewModel: ProfileViewModel,
     recipeViewModel: RecipeViewModel,
     commentViewModel: CommentViewModel,
+    cameraViewModel: CameraViewModel,
     onDismiss: () -> Unit
 ) {
   var commentTitle by remember { mutableStateOf("") }
   var rating by remember { mutableStateOf(0.0) }
   var description by remember { mutableStateOf("") }
+  val gallery = cameraViewModel.galleryLauncher(null, null, commentViewModel)
 
   Box(
       Modifier.fillMaxSize().padding(16.dp).background(Color.Transparent).testTag("OuterBox"),
@@ -95,13 +104,23 @@ fun CreateComment(
                                 .height(100.dp)
                                 .clip(CircleShape)
                                 .border(1.dp, color = Color.LightGray, shape = CircleShape)
-                                .testTag("ProfileIcon"),
+                                .clickable(
+                                    onClick = {
+                                      gallery.launch(
+                                          PickVisualMediaRequest(
+                                              ActivityResultContracts.PickVisualMedia.ImageOnly))
+                                    })
+                                .testTag("CommentIcon"),
                         model =
-                            "https://external-content.duckduckgo.com/iu/?u=https%3A%2F%2Fwww." +
-                                "generation-souvenirs.com%2F38509-thickbox_default%2Fpeluche-" +
-                                "bisounours-rose-toucalin-30-cm.jpg&f=1&nofb=1&ipt=411c19cdad14" +
-                                "03db0340c05652681d988095a71011a275f235f20faced305a21&ipo=images",
-                        contentDescription = "User Profile Image",
+                            if (commentViewModel.picture.collectAsState().value != null)
+                                commentViewModel.picture.collectAsState().value
+                            else
+                                Uri.parse(
+                                    "android.resource://" +
+                                        LocalContext.current.packageName +
+                                        "/" +
+                                        R.drawable.dummy_recipe_picture),
+                        contentDescription = "Comment Image",
                         contentScale = ContentScale.FillBounds)
 
                     Row(

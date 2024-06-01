@@ -50,6 +50,7 @@ import com.android.feedme.model.data.IngredientMetaData
 import com.android.feedme.model.data.Profile
 import com.android.feedme.model.data.Recipe
 import com.android.feedme.model.data.Step
+import com.android.feedme.model.viewmodel.CameraViewModel
 import com.android.feedme.model.viewmodel.CommentViewModel
 import com.android.feedme.model.viewmodel.ProfileViewModel
 import com.android.feedme.model.viewmodel.RecipeViewModel
@@ -80,7 +81,8 @@ fun RecipeFullDisplay(
     route: String,
     navigationActions: NavigationActions,
     recipeViewModel: RecipeViewModel,
-    profileViewModel: ProfileViewModel
+    profileViewModel: ProfileViewModel,
+    cameraViewModel: CameraViewModel
 ) {
   val recipe = recipeViewModel.recipe.collectAsState().value
 
@@ -145,6 +147,7 @@ fun RecipeFullDisplay(
                 profileViewModel = profileViewModel,
                 recipeViewModel = recipeViewModel,
                 commentViewModel = CommentViewModel(),
+                cameraViewModel,
                 onDismiss = { showDialog = false })
           }
         }

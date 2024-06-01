@@ -8,6 +8,7 @@ import androidx.test.ext.junit.runners.AndroidJUnit4
 import com.android.feedme.model.data.CommentRepository
 import com.android.feedme.model.data.ProfileRepository
 import com.android.feedme.model.data.RecipeRepository
+import com.android.feedme.model.viewmodel.CameraViewModel
 import com.android.feedme.model.viewmodel.CommentViewModel
 import com.android.feedme.model.viewmodel.ProfileViewModel
 import com.android.feedme.model.viewmodel.RecipeViewModel
@@ -38,7 +39,9 @@ class CreateCommentTest : TestCase() {
   fun testCreateCommentEverythingDisplayed() {
     var bol = false
     composeTestRule.setContent {
-      CreateComment(ProfileViewModel(), RecipeViewModel(), CommentViewModel()) { bol = true }
+      CreateComment(ProfileViewModel(), RecipeViewModel(), CommentViewModel(), CameraViewModel()) {
+        bol = true
+      }
     }
 
     composeTestRule.onNodeWithTag("OuterBox").assertIsDisplayed()

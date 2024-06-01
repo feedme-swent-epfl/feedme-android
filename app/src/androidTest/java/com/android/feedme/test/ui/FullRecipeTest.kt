@@ -15,6 +15,7 @@ import com.android.feedme.model.data.ProfileRepository
 import com.android.feedme.model.data.Recipe
 import com.android.feedme.model.data.RecipeRepository
 import com.android.feedme.model.data.Step
+import com.android.feedme.model.viewmodel.CameraViewModel
 import com.android.feedme.model.viewmodel.ProfileViewModel
 import com.android.feedme.model.viewmodel.RecipeViewModel
 import com.android.feedme.ui.component.RecipeFullDisplay
@@ -72,6 +73,7 @@ class FullRecipeTest : TestCase() {
   // Avoid re-creating a viewModel for every test
   private lateinit var recipeViewModel: RecipeViewModel
   private lateinit var profileViewModel: ProfileViewModel
+  private lateinit var cameraViewModel: CameraViewModel
 
   private lateinit var recipeRepository: RecipeRepository
   private lateinit var profileRepository: ProfileRepository
@@ -102,6 +104,7 @@ class FullRecipeTest : TestCase() {
     recipeViewModel.selectRecipe(recipe)
 
     profileViewModel = ProfileViewModel()
+    cameraViewModel = CameraViewModel()
   }
 
   @Test
@@ -152,7 +155,8 @@ class FullRecipeTest : TestCase() {
   private fun goToFullRecipeScreen() {
     profileViewModel.setViewingProfile(Profile(id = "ID_DEFAULT_1"))
     composeTestRule.setContent {
-      RecipeFullDisplay(Route.HOME, mockNavActions, recipeViewModel, profileViewModel)
+      RecipeFullDisplay(
+          Route.HOME, mockNavActions, recipeViewModel, profileViewModel, cameraViewModel)
     }
     composeTestRule.waitForIdle()
   }

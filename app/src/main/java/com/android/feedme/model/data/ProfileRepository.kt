@@ -205,15 +205,26 @@ class ProfileRepository(private val db: FirebaseFirestore) {
     queryRef
         .get()
         .addOnSuccessListener {
-          it.documents.map { recipeMap ->
+          val profiles = mutableListOf<Profile>()
+          val docs = it.documents
+
+          docs.forEach { recipeMap ->
+            // Extract the data from the document
             val data = recipeMap.data
             if (data != null) {
-              val success = { profile: Profile? ->
-                onSuccess(listOfNotNull(profile), it.documents.lastOrNull())
-              }
-              mapToProfile(data, success, onFailure)
+              // Convert the data to a Profile object
+              mapToProfile(
+                  data,
+                  { profile ->
+                    if (profile != null) {
+                      profiles.add(profile)
+                    }
+                  },
+                  onFailure)
             }
           }
+          // Call the success callback with the list of profiles
+          onSuccess(profiles, docs.lastOrNull())
         }
         .addOnFailureListener { onFailure(it) }
   }

@@ -10,7 +10,8 @@ data class Recipe(
     val tags: List<String> = emptyList(), // List of tags for the recipe
     val rating: Double = 0.0, // Rating of the recipe
     val userid: String = "", // User id of the recipe creator
-    var imageUrl: String = "" // Image URL of the recipe
+    var imageUrl: String = "", // Image URL of the recipe
+    var searchItems: List<String> = listOf("new") // List of search items for the recipe
 )
 
 data class Step(

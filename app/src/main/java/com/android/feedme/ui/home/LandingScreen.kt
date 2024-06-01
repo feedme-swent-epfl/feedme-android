@@ -90,6 +90,7 @@ fun LandingPage(
         BottomNavigationMenu(Route.HOME, navigationActions::navigateTo, TOP_LEVEL_DESTINATIONS)
       },
       content = {
+        homeViewModel.setOnLanding(true)
         RecipeDisplay(
             it,
             navigationActions,

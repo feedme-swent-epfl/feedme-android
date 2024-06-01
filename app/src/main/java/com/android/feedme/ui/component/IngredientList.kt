@@ -109,7 +109,6 @@ fun IngredientInput(
   var name by remember { mutableStateOf(ingredient?.ingredient?.name ?: " ") }
   var quantity by remember { mutableDoubleStateOf(ingredient?.quantity ?: 0.0) }
   var dose by remember { mutableStateOf(ingredient?.measure ?: MeasureUnit.EMPTY) }
-
   val isComplete by remember {
     derivedStateOf {
       name.isNotBlank() &&
@@ -120,8 +119,9 @@ fun IngredientInput(
     }
   }
 
+  var isDropdownVisible by remember { mutableStateOf(false) }
+  var filteredIngredients by remember { mutableStateOf(emptyList<Ingredient>()) }
   var isChecked by remember { mutableStateOf(isComplete) }
-
   var state by remember {
     mutableStateOf(
         if (isComplete) IngredientInputState.COMPLETE
@@ -129,10 +129,6 @@ fun IngredientInput(
             IngredientInputState.SEMI_COMPLETE
         else IngredientInputState.EMPTY)
   }
-
-  var isDropdownVisible by remember { mutableStateOf(false) }
-
-  var filteredIngredients by remember { mutableStateOf(emptyList<Ingredient>()) }
 
   LaunchedEffect(name) {
     if (name != " ") {
@@ -192,6 +188,7 @@ fun IngredientInput(
         modifier = Modifier.fillMaxWidth().padding(horizontal = 20.dp),
         horizontalAlignment = Alignment.CenterHorizontally,
         verticalArrangement = Arrangement.Top) {
+
           // First row for the ingredient name
           Row(modifier = Modifier.fillMaxWidth().padding(top = 8.dp)) {
             // Ingredients Box
@@ -226,13 +223,12 @@ fun IngredientInput(
                     if (name != " ") {
                       ingredientCurrent =
                           if (filteredIngredients.isNotEmpty()) {
+                            name = filteredIngredients[0].name
                             filteredIngredients[0]
                           } else {
                             Ingredient(name, "NO_ID", false, false)
                           }
-                      state =
-                          if (isComplete) IngredientInputState.COMPLETE
-                          else IngredientInputState.SEMI_COMPLETE
+                      state = determineState(isComplete, name, dose, quantity)
                       action(
                           beforeState, state, IngredientMetaData(quantity, dose, ingredientCurrent))
                     }
@@ -253,9 +249,7 @@ fun IngredientInput(
                         val beforeState = state
                         if (name != " ") {
                           ingredientCurrent = item
-                          state =
-                              if (isComplete) IngredientInputState.COMPLETE
-                              else IngredientInputState.SEMI_COMPLETE
+                          state = determineState(isComplete, name, dose, quantity)
                           action(
                               beforeState,
                               state,
@@ -276,9 +270,7 @@ fun IngredientInput(
                             isDropdownVisible = false
                             val beforeState = state
                             ingredientCurrent = it
-                            state =
-                                if (isComplete) IngredientInputState.COMPLETE
-                                else IngredientInputState.SEMI_COMPLETE
+                            state = determineState(isComplete, name, dose, quantity)
                             action(
                                 beforeState,
                                 state,
@@ -289,20 +281,25 @@ fun IngredientInput(
               }
             }
             // Checked button for validating the ingredient
-            if (state == IngredientInputState.SEMI_COMPLETE ||
-                state == IngredientInputState.COMPLETE) {
+            if (state != IngredientInputState.EMPTY) {
               Spacer(modifier = Modifier.width(8.dp))
               IconButton(
                   modifier = Modifier.padding(top = 4.dp).testTag("CheckIconButton"),
                   onClick = {
-                    if (state == IngredientInputState.COMPLETE) {
+                    if (isComplete) {
+                      state = IngredientInputState.COMPLETE
+                      action(
+                          IngredientInputState.SEMI_COMPLETE,
+                          state,
+                          IngredientMetaData(quantity, dose, ingredientCurrent))
                       isChecked = true
                     }
                   }) {
                     Icon(
                         imageVector = Icons.Outlined.Check,
                         contentDescription = null,
-                        modifier = Modifier.size(28.dp))
+                        modifier = Modifier.size(28.dp),
+                        tint = if (isComplete) Color.Black else Color.LightGray)
                   }
             }
           }
@@ -318,12 +315,9 @@ fun IngredientInput(
                     isError = quantity == 0.0 && state != IngredientInputState.EMPTY,
                     value = if (quantity == 0.0) " " else quantity.toString(),
                     onValueChange = { // Check if the input is a valid number
-                      if (it.isNotEmpty() && it.toDoubleOrNull() != null && it.toDouble() >= 0.0) {
+                      if (it.isNotBlank() && it.toDoubleOrNull() != null && it.toDouble() >= 0.0) {
                         quantity = it.toDouble()
-                        if (quantity != 0.0) {
-                          action(
-                              state, state, IngredientMetaData(quantity, dose, ingredientCurrent))
-                        }
+                        action(state, state, IngredientMetaData(quantity, dose, ingredientCurrent))
                       }
                     },
                     singleLine = true,
@@ -362,16 +356,12 @@ fun IngredientInput(
                                   onClick = {
                                     dose = selectionOption
                                     expanded = false
-                                    if (dose != MeasureUnit.EMPTY) {
-                                      val beforeState = state
-                                      state =
-                                          if (isComplete) IngredientInputState.COMPLETE
-                                          else IngredientInputState.SEMI_COMPLETE
-                                      action(
-                                          beforeState,
-                                          state,
-                                          IngredientMetaData(quantity, dose, ingredientCurrent))
-                                    }
+                                    val beforeState = state
+                                    state = determineState(isComplete, name, dose, quantity)
+                                    action(
+                                        beforeState,
+                                        state,
+                                        IngredientMetaData(quantity, dose, ingredientCurrent))
                                   })
                             }
                           }
@@ -393,7 +383,7 @@ fun DeleteButton(
     action: (IngredientInputState?, IngredientInputState?, IngredientMetaData?) -> Unit
 ) {
   // Delete button for removing the ingredient
-  if (state == IngredientInputState.SEMI_COMPLETE || state == IngredientInputState.COMPLETE) {
+  if (state != IngredientInputState.EMPTY) {
     Spacer(modifier = Modifier.width(8.dp))
     IconButton(
         modifier = Modifier.testTag("DeleteIconButton"),
@@ -424,6 +414,20 @@ fun colorOfInputBoxes(state: IngredientInputState): TextFieldColors {
       unfocusedContainerColor = if (state != IngredientInputState.EMPTY) ValidInput else NoInput,
       focusedContainerColor = if (state != IngredientInputState.EMPTY) ValidInput else NoInput,
       errorContainerColor = InValidInput)
+}
+
+fun determineState(
+    isComplete: Boolean,
+    name: String,
+    dose: MeasureUnit,
+    quantity: Double
+): IngredientInputState {
+  return when {
+    isComplete -> IngredientInputState.COMPLETE
+    name.isNotBlank() || dose != MeasureUnit.EMPTY || quantity != 0.0 ->
+        IngredientInputState.SEMI_COMPLETE
+    else -> IngredientInputState.EMPTY
+  }
 }
 
 /** Enum class representing the state of an ingredient input. */

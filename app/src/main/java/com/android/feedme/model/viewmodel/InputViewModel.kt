@@ -25,6 +25,18 @@ class InputViewModel : ViewModel() {
   private val _totalCompleteIngredientMetadatas = MutableStateFlow(0)
   val totalCompleteIngredientMetadatas: StateFlow<Int> = _totalCompleteIngredientMetadatas
 
+  // StateFlow to hold the total number of complete ingredients
+  private val _isComplete =
+      MutableStateFlow(
+          _listOfIngredientMetadatas.value.count {
+            it != null &&
+                it.measure != MeasureUnit.EMPTY &&
+                it.quantity != 0.0 &&
+                it.ingredient.name.isNotBlank() &&
+                it.ingredient.id != "NO_ID" &&
+                it.ingredient.id != ""
+          } == _totalIngredientEntriesDisplayed.value - 1)
+  val isComplete: StateFlow<Boolean> = _isComplete
   /**
    * Sets a new list of [IngredientMetaData] and adds a empty entry to add a new ingredient in case.
    *
@@ -35,7 +47,14 @@ class InputViewModel : ViewModel() {
     _listOfIngredientMetadatas.value = newList
     _totalIngredientEntriesDisplayed.value = newList.size
     _totalCompleteIngredientMetadatas.value +=
-        newList.count { it != null && it.measure != MeasureUnit.EMPTY && it.quantity != 0.0 }
+        newList.count {
+          it != null &&
+              it.measure != MeasureUnit.EMPTY &&
+              it.quantity != 0.0 &&
+              it.ingredient.name.isNotBlank() &&
+              it.ingredient.id != "NO_ID" &&
+              it.ingredient.id != ""
+        }
   }
 
   /**
@@ -47,7 +66,14 @@ class InputViewModel : ViewModel() {
     _listOfIngredientMetadatas.value = newList.plus(_listOfIngredientMetadatas.value)
     _totalIngredientEntriesDisplayed.value += newList.size
     _totalCompleteIngredientMetadatas.value +=
-        newList.count { it.measure != MeasureUnit.EMPTY && it.quantity != 0.0 }
+        newList.count {
+          it != null &&
+              it.measure != MeasureUnit.EMPTY &&
+              it.quantity != 0.0 &&
+              it.ingredient.name.isNotBlank() &&
+              it.ingredient.id != "NO_ID" &&
+              it.ingredient.id != ""
+        }
   }
 
   /** Resets the list of ingredients and adds a empty entry to add a new ingredient */
@@ -88,6 +114,8 @@ class InputViewModel : ViewModel() {
       _totalIngredientEntriesDisplayed.value -= 1
     }
     _listOfIngredientMetadatas.value = newList
+    _isComplete.value =
+        _totalIngredientEntriesDisplayed.value - 1 == _totalCompleteIngredientMetadatas.value
   }
 
   /**
@@ -96,7 +124,16 @@ class InputViewModel : ViewModel() {
    * @param onComplete Callback function to be invoked when all [IngredientMetaData] are completed.
    */
   fun isComplete(onComplete: (List<IngredientMetaData?>) -> Unit) {
-    if (_totalIngredientEntriesDisplayed.value - 1 == _totalCompleteIngredientMetadatas.value) {
+    _isComplete.value =
+        _listOfIngredientMetadatas.value.count {
+          it != null &&
+              it.measure != MeasureUnit.EMPTY &&
+              it.quantity != 0.0 &&
+              it.ingredient.name.isNotBlank() &&
+              it.ingredient.id != "NO_ID" &&
+              it.ingredient.id != ""
+        } == _totalIngredientEntriesDisplayed.value - 1
+    if (isComplete.value) {
       onComplete(_listOfIngredientMetadatas.value)
     }
   }

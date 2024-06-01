@@ -25,6 +25,7 @@ data class IngredientMetaData(
     val measure: MeasureUnit, // Measure unit of the ingredient
     var ingredient: Ingredient // Ingredient object
 ) {
+
   override fun toString(): String {
     return "$quantity ${measure.toString()} of ${ingredient.name}"
   }

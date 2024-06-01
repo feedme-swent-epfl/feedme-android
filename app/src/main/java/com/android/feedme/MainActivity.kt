@@ -71,10 +71,10 @@ class MainActivity : ComponentActivity() {
               val profileViewModel: ProfileViewModel = viewModel<ProfileViewModel>()
               val searchViewModel: SearchViewModel = viewModel<SearchViewModel>()
               val authViewModel: AuthViewModel = viewModel<AuthViewModel>()
-              val inputViewModel: InputViewModel = viewModel<InputViewModel>()
               val homeViewModel: HomeViewModel = viewModel<HomeViewModel>()
               val cameraViewModel: CameraViewModel = viewModel<CameraViewModel>()
               val generateViewModel = viewModel<GenerateViewModel>()
+              val inputViewModel = InputViewModel(this)
 
               // Navigation host for the app
               val navController = rememberNavController()
@@ -149,7 +149,8 @@ class MainActivity : ComponentActivity() {
                     EditProfileScreen(navigationActions, profileViewModel)
                   }
                   composable(Screen.ADD_RECIPE) {
-                    RecipeInputScreen(navigationActions, profileViewModel, cameraViewModel)
+                    RecipeInputScreen(
+                        navigationActions, profileViewModel, cameraViewModel, inputViewModel)
                   }
                   composable(Screen.FRIENDS) { backStackEntry ->
                     backStackEntry.arguments?.getString("showFollowers")?.let {

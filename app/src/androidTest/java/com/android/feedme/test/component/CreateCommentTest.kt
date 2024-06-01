@@ -27,19 +27,22 @@ class CreateCommentTest : TestCase() {
   @get:Rule val composeTestRule = createComposeRule()
 
   private val mockFirestore = mockk<FirebaseFirestore>(relaxed = true)
+  private lateinit var profileViewModel: ProfileViewModel
 
   @Before
   fun init() {
     RecipeRepository.initialize(mockFirestore)
     ProfileRepository.initialize(mockFirestore)
     CommentRepository.initialize(mockFirestore)
+    profileViewModel = ProfileViewModel()
+    profileViewModel.initForTests()
   }
 
   @Test
   fun testCreateCommentEverythingDisplayed() {
     var bol = false
     composeTestRule.setContent {
-      CreateComment(ProfileViewModel(), RecipeViewModel(), CommentViewModel(), CameraViewModel()) {
+      CreateComment(profileViewModel, RecipeViewModel(), CommentViewModel(), CameraViewModel()) {
         bol = true
       }
     }
@@ -47,7 +50,7 @@ class CreateCommentTest : TestCase() {
     composeTestRule.onNodeWithTag("OuterBox").assertIsDisplayed()
     composeTestRule.onNodeWithTag("InnerCol").assertIsDisplayed()
     composeTestRule.onNodeWithTag("FirstRow").assertIsDisplayed()
-    composeTestRule.onNodeWithTag("ProfileIcon").assertIsDisplayed()
+    composeTestRule.onNodeWithTag("CommentIcon").assertIsDisplayed()
     composeTestRule.onNodeWithTag("StarRow").assertIsDisplayed()
     composeTestRule.onNodeWithTag("star0").assertIsDisplayed()
     composeTestRule.onNodeWithTag("star1").assertIsDisplayed()

@@ -11,7 +11,6 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
-import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.grid.GridCells
 import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
 import androidx.compose.foundation.lazy.grid.items
@@ -45,21 +44,21 @@ import com.android.feedme.ui.theme.BlueUsername
  */
 @Composable
 fun SmallCommentsDisplay(listComment: List<Comment>, modifier: Modifier = Modifier) {
-    // Calculate the width of each image based on the screen width, we want to display 2 images per
-    // line
-    val imageWidth = LocalConfiguration.current.screenWidthDp / 2
+  // Calculate the width of each image based on the screen width, we want to display 2 images per
+  // line
+  val imageWidth = LocalConfiguration.current.screenWidthDp / 2
 
-    // Calculate the height of the grid based on the number of recipes and the height of each card
-    // 216 is the height of each card with padding
-    val gridHeight = ((listComment.size / 2) + (listComment.size % 2)) * 216
+  // Calculate the height of the grid based on the number of recipes and the height of each card
+  // 216 is the height of each card with padding
+  val gridHeight = ((listComment.size / 2) + (listComment.size % 2)) * 216
 
-    // Using this instead of a LazyColumn should fix the "infinite scroll" bug
-    LazyVerticalGrid(
-        columns = GridCells.Adaptive(minSize = imageWidth.dp),
-        userScrollEnabled = false,
-        modifier = modifier.height(gridHeight.dp)
-    ) {
-        items(listComment) { item -> CommentCard(comment = item) } }
+  // Using this instead of a LazyColumn should fix the "infinite scroll" bug
+  LazyVerticalGrid(
+      columns = GridCells.Adaptive(minSize = imageWidth.dp),
+      userScrollEnabled = false,
+      modifier = modifier.height(gridHeight.dp)) {
+        items(listComment) { item -> CommentCard(comment = item) }
+      }
 }
 
 /**

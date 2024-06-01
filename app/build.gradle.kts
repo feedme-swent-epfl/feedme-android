@@ -1,5 +1,4 @@
-import com.android.build.api.dsl.AaptOptions
-import com.android.build.api.dsl.AndroidResources
+
 import java.io.FileInputStream
 import java.util.Properties
 
@@ -255,6 +254,10 @@ dependencies {
     androidTestImplementation(libs.mockk)
     androidTestImplementation(libs.mockk.android)
     androidTestImplementation(libs.mockk.agent)
+
+    //Encryption of data
+    implementation(libs.gson)
+    implementation("androidx.security:security-crypto:1.1.0-alpha03")
 
 }
 

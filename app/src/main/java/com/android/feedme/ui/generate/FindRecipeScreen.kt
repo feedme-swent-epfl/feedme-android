@@ -53,7 +53,6 @@ import com.android.feedme.ui.theme.FabColor
 import com.android.feedme.ui.theme.GenerateColor
 import com.android.feedme.ui.theme.OffWhite
 import com.android.feedme.ui.theme.TextBarColor
-import kotlinx.coroutines.flow.map
 
 /**
  * Composable function for the Create Screen.
@@ -67,7 +66,7 @@ fun FindRecipeScreen(
     profileViewModel: ProfileViewModel,
     generateViewModel: GenerateViewModel
 ) {
-
+  inputViewModel.retrieveSavedList()
   val checkMark = remember { mutableStateOf(false) }
   val isStrict = remember { mutableStateOf(true) }
   val dialog = profileViewModel.showDialog.collectAsState()

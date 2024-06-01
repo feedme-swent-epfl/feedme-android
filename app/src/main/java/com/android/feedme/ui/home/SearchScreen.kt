@@ -41,7 +41,7 @@ import com.android.feedme.ui.profile.FriendsCard
  * Composable function for the Search Screen. This function displays the search screen with the
  * search bar and the filtered content.
  *
- * @param route: the current route of the app
+ * @param navigationActions: the navigation actions to be performed
  * @param navigationActions: the navigation actions to be performed
  * @param searchViewModel: the [SearchViewModel] view model for the search functionality
  * @param recipeViewModel: the [RecipeViewModel] view model for the recipe functionality
@@ -49,7 +49,6 @@ import com.android.feedme.ui.profile.FriendsCard
  */
 @Composable
 fun SearchScreen(
-    route: String,
     navigationActions: NavigationActions,
     searchViewModel: SearchViewModel,
     recipeViewModel: RecipeViewModel,
@@ -60,7 +59,7 @@ fun SearchScreen(
       modifier = Modifier.fillMaxSize().testTag("SearchScreen"),
       topBar = { TopBarNavigation("Search Results", navigationActions) },
       bottomBar = {
-        BottomNavigationMenu(route, navigationActions::navigateTo, TOP_LEVEL_DESTINATIONS)
+        BottomNavigationMenu(Route.HOME, navigationActions::navigateTo, TOP_LEVEL_DESTINATIONS)
       },
       content = {
         SearchScreenContent(

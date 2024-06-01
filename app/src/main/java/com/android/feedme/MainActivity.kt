@@ -105,17 +105,14 @@ class MainActivity : ComponentActivity() {
                         profileViewModel,
                         searchViewModel)
                   }
-                  composable(Screen.SEARCH) { backStackEntry ->
-                    backStackEntry.arguments?.getString("sourceRoute")?.let {
-                      val recipeViewModel = viewModel<RecipeViewModel>()
-                      SearchScreen(
-                          it,
-                          navigationActions,
-                          searchViewModel,
-                          recipeViewModel,
-                          homeViewModel,
-                          profileViewModel)
-                    }
+                  composable(Screen.SEARCH) {
+                    val recipeViewModel = viewModel<RecipeViewModel>()
+                    SearchScreen(
+                        navigationActions,
+                        searchViewModel,
+                        recipeViewModel,
+                        homeViewModel,
+                        profileViewModel)
                   }
                 }
 

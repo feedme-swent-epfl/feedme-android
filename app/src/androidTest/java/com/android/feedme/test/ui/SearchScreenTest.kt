@@ -17,7 +17,6 @@ import com.android.feedme.model.viewmodel.SearchViewModel
 import com.android.feedme.screen.SearchScreen
 import com.android.feedme.ui.home.SearchScreen
 import com.android.feedme.ui.navigation.NavigationActions
-import com.android.feedme.ui.navigation.Route
 import com.google.android.gms.tasks.Tasks
 import com.google.firebase.firestore.CollectionReference
 import com.google.firebase.firestore.DocumentReference
@@ -136,13 +135,7 @@ class SearchScreenTest : TestCase() {
     }
     val mockNavAction = mockk<NavigationActions>(relaxed = true)
     composeTestRule.setContent {
-      SearchScreen(
-          Route.HOME,
-          mockNavAction,
-          searchViewModel,
-          recipeViewModel,
-          homeViewModel,
-          profileViewModel)
+      SearchScreen(mockNavAction, searchViewModel, recipeViewModel, homeViewModel, profileViewModel)
     }
     composeTestRule.waitForIdle()
   }

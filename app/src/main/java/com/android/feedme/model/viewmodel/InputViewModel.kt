@@ -72,6 +72,10 @@ class InputViewModel(val context: Context? = null) : ViewModel() {
     setNewList(_fridge.value.toMutableList())
   }
 
+  /**
+   * Saves the current list of ingredients and the fridge list to encrypted shared preferences. If
+   * the context is null, logs an error message.
+   */
   private fun saveList() {
     if (context != null) {
       val gson = Gson()
@@ -107,6 +111,11 @@ class InputViewModel(val context: Context? = null) : ViewModel() {
     wasSaved()
   }
 
+  /**
+   * Retrieves the saved list of ingredients and the fridge list from encrypted shared preferences.
+   * Updates the ViewModel's state with the retrieved data. If the context is null, logs an error
+   * message. If nothing was present we start with default values
+   */
   fun retrieveSavedList() {
     if (context != null) {
       val masterKeyAlias =

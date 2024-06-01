@@ -7,7 +7,6 @@ import androidx.security.crypto.EncryptedSharedPreferences
 import androidx.security.crypto.MasterKey
 import com.android.feedme.model.data.IngredientMetaData
 import com.android.feedme.model.data.MeasureUnit
-import com.android.feedme.ui.component.IngredientInputState
 import com.google.gson.Gson
 import com.google.gson.reflect.TypeToken
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -35,15 +34,18 @@ class InputViewModel(val context: Context? = null) : ViewModel() {
   val listOfIngredientMetadatas: StateFlow<List<IngredientMetaData?>> = _listOfIngredientMetadatas
 
   // StateFlow to hold the total number of complete ingredients
-  private val _totalCompleteIngredientMetadatas = MutableStateFlow(0)
-  val totalCompleteIngredientMetadatas: StateFlow<Int> = _totalCompleteIngredientMetadatas
+  private val _isComplete =
+      MutableStateFlow(
+          _listOfIngredientMetadatas.value.count { isCompleteIngredient(it) } ==
+              _totalIngredientEntriesDisplayed.value - 1)
+  val isComplete: StateFlow<Boolean> = _isComplete
 
   // StateFlow to hold the list of ingredient in fridge
   private val _fridge = MutableStateFlow<List<IngredientMetaData?>>(listOf(null))
   val fridge: StateFlow<List<IngredientMetaData?>> = _fridge
 
   // StateFlow to hold the boolean if the current state was saved
-  private val _wasSaved = MutableStateFlow(_fridge == _totalCompleteIngredientMetadatas)
+  private val _wasSaved = MutableStateFlow(_fridge == _listOfIngredientMetadatas)
   val wasSaved: StateFlow<Boolean> = _wasSaved
 
   init {
@@ -145,8 +147,6 @@ class InputViewModel(val context: Context? = null) : ViewModel() {
         val list = gson.fromJson<List<IngredientMetaData?>>(json, type)
         _listOfIngredientMetadatas.value = list.ifEmpty { listOf<IngredientMetaData?>(null) }
         _totalIngredientEntriesDisplayed.value = _listOfIngredientMetadatas.value.size
-        _totalCompleteIngredientMetadatas.value =
-            list.count { it != null && it.measure != MeasureUnit.EMPTY && it.quantity != 0.0 }
         Log.d("InputViewModel", "Json received")
       } else {
         Log.e(
@@ -161,7 +161,7 @@ class InputViewModel(val context: Context? = null) : ViewModel() {
     _fridge.value = _fridge.value.ifEmpty { listOf<IngredientMetaData?>(null) }
     _listOfIngredientMetadatas.value =
         _listOfIngredientMetadatas.value.ifEmpty { listOf<IngredientMetaData?>(null) }
-    _totalIngredientEntriesDisplayed.value = _listOfIngredientMetadatas.value.size
+    isListComplete()
   }
 
   /**
@@ -171,10 +171,8 @@ class InputViewModel(val context: Context? = null) : ViewModel() {
    */
   fun setNewList(newList: MutableList<IngredientMetaData?>) {
     _listOfIngredientMetadatas.value = newList.ifEmpty { listOf<IngredientMetaData?>(null) }
-    _listOfIngredientMetadatas.value = newList
     _totalIngredientEntriesDisplayed.value = newList.size
-    _totalCompleteIngredientMetadatas.value +=
-        newList.count { it != null && it.measure != MeasureUnit.EMPTY && it.quantity != 0.0 }
+    isListComplete()
     saveList()
   }
 
@@ -184,10 +182,9 @@ class InputViewModel(val context: Context? = null) : ViewModel() {
    * @param newList The new list of [IngredientMetaData].
    */
   fun addToList(newList: MutableList<IngredientMetaData>) {
-    _listOfIngredientMetadatas.value = newList.plus(_listOfIngredientMetadatas.value)
+    _listOfIngredientMetadatas.value = newList + _listOfIngredientMetadatas.value
     _totalIngredientEntriesDisplayed.value += newList.size
-    _totalCompleteIngredientMetadatas.value +=
-        newList.count { it.measure != MeasureUnit.EMPTY && it.quantity != 0.0 }
+    isListComplete()
     saveList()
   }
 
@@ -195,7 +192,7 @@ class InputViewModel(val context: Context? = null) : ViewModel() {
   fun resetList() {
     _listOfIngredientMetadatas.value = listOf(null)
     _totalIngredientEntriesDisplayed.value = 1
-    _totalCompleteIngredientMetadatas.value = 0
+    isListComplete()
     saveList()
   }
 
@@ -210,37 +207,55 @@ class InputViewModel(val context: Context? = null) : ViewModel() {
    */
   fun updateListElementBehaviour(
       index: Int,
-      before: IngredientInputState?,
-      now: IngredientInputState?,
+      before: Boolean?,
+      now: Boolean?,
       newIngredient: IngredientMetaData?
   ) {
     val newList = _listOfIngredientMetadatas.value.toMutableList()
-    val wasComplete = before == IngredientInputState.COMPLETE
-    val isComplete = now == IngredientInputState.COMPLETE
 
-    if (wasComplete != isComplete) {
-      _totalCompleteIngredientMetadatas.value += if (isComplete) 1 else -1
-    }
     newList[index] = newIngredient
-    if (now != IngredientInputState.EMPTY && before == IngredientInputState.EMPTY) {
+    if (now != false && before == false) {
       newList.add(null)
       _totalIngredientEntriesDisplayed.value += 1
-    } else if (now == IngredientInputState.EMPTY && before != IngredientInputState.EMPTY) {
+    } else if (now == false && before != false) {
       newList.removeAt(index)
       _totalIngredientEntriesDisplayed.value -= 1
     }
     _listOfIngredientMetadatas.value = newList
+    isListComplete()
     saveList()
   }
 
   /**
-   * Checks if all ingredients are complete and invokes the onComplete callback if true.
+   * Checks if all ingredients are complete and invokes the onComplete callback if true. It also
+   * updates the isComplete value directly
+   *
+   * Must be at least one null element fo it to be correct
    *
    * @param onComplete Callback function to be invoked when all [IngredientMetaData] are completed.
    */
-  fun isComplete(onComplete: (List<IngredientMetaData?>) -> Unit) {
-    if (_totalIngredientEntriesDisplayed.value - 1 == _totalCompleteIngredientMetadatas.value) {
+  fun isListComplete(onComplete: (List<IngredientMetaData?>) -> Unit = {}): Boolean {
+    _isComplete.value =
+        _listOfIngredientMetadatas.value.count { isCompleteIngredient(it) } ==
+            _totalIngredientEntriesDisplayed.value - 1
+    if (isComplete.value) {
       onComplete(_listOfIngredientMetadatas.value)
     }
+    return _isComplete.value
+  }
+
+  /**
+   * Checks if the given [IngredientMetaData] object is complete.
+   *
+   * @param ing the [IngredientMetaData] object to check.
+   * @return `true` if the ingredient is complete, `false` otherwise.
+   */
+  fun isCompleteIngredient(ing: IngredientMetaData?): Boolean {
+    return (ing != null &&
+        ing.measure != MeasureUnit.EMPTY &&
+        ing.quantity != 0.0 &&
+        ing.ingredient.name.isNotBlank() &&
+        ing.ingredient.id != "NO_ID" &&
+        ing.ingredient.id != "")
   }
 }

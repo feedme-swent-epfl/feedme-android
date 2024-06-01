@@ -6,7 +6,6 @@ import com.android.feedme.model.data.Ingredient
 import com.android.feedme.model.data.IngredientMetaData
 import com.android.feedme.model.data.MeasureUnit
 import com.android.feedme.model.viewmodel.InputViewModel
-import com.android.feedme.ui.component.IngredientInputState
 import junit.framework.TestCase.assertEquals
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.runBlocking
@@ -32,11 +31,12 @@ class InputViewModelTest {
     val newList: MutableList<IngredientMetaData?> =
         mutableListOf(
             IngredientMetaData(
-                200.0, MeasureUnit.G, Ingredient("Ingredient 1", "ID_TYPE", false, false)))
+                200.0, MeasureUnit.G, Ingredient("Ingredient 1", "ID_TYPE", false, false)),
+            null)
     viewModel.setNewList(newList)
-    assertEquals(1, viewModel.totalIngredientEntriesDisplayed.first())
+    assertEquals(2, viewModel.totalIngredientEntriesDisplayed.first())
     assertEquals(newList, viewModel.listOfIngredientMetadatas.first())
-    assertEquals(1, viewModel.totalCompleteIngredientMetadatas.first())
+    assertEquals(true, viewModel.isComplete.value)
   }
 
   @Test
@@ -44,11 +44,12 @@ class InputViewModelTest {
     val newList: MutableList<IngredientMetaData?> =
         mutableListOf(
             IngredientMetaData(
-                0.0, MeasureUnit.G, Ingredient("Ingredient 1", "ID_TYPE", false, false)))
+                0.0, MeasureUnit.G, Ingredient("Ingredient 1", "ID_TYPE", false, false)),
+            null)
     viewModel.setNewList(newList)
-    assertEquals(1, viewModel.totalIngredientEntriesDisplayed.first())
+    assertEquals(2, viewModel.totalIngredientEntriesDisplayed.first())
     assertEquals(newList, viewModel.listOfIngredientMetadatas.first())
-    assertEquals(0, viewModel.totalCompleteIngredientMetadatas.first())
+    assertEquals(false, viewModel.isComplete.value)
   }
 
   @Test
@@ -56,7 +57,8 @@ class InputViewModelTest {
     val newList: MutableList<IngredientMetaData?> =
         mutableListOf(
             IngredientMetaData(
-                1.0, MeasureUnit.G, Ingredient("Ingredient 1", "ID_TYPE", false, false)))
+                1.0, MeasureUnit.G, Ingredient("Ingredient 1", "ID_TYPE", false, false)),
+            null)
     viewModel.setNewList(newList)
     val newList2: MutableList<IngredientMetaData> =
         mutableListOf(
@@ -66,9 +68,9 @@ class InputViewModelTest {
                 1.0, MeasureUnit.G, Ingredient("Ingredient 3", "ID_TYPE", false, false)))
     viewModel.addToList(newList2)
 
-    assertEquals(3, viewModel.totalIngredientEntriesDisplayed.first())
+    assertEquals(4, viewModel.totalIngredientEntriesDisplayed.first())
     assertEquals(newList2 + newList, viewModel.listOfIngredientMetadatas.first())
-    assertEquals(3, viewModel.totalCompleteIngredientMetadatas.first())
+    assertEquals(true, viewModel.isComplete.value)
   }
 
   @Test
@@ -83,7 +85,7 @@ class InputViewModelTest {
 
     assertEquals(1, viewModel.totalIngredientEntriesDisplayed.first())
     assertEquals(mutableListOf(null), viewModel.listOfIngredientMetadatas.first())
-    assertEquals(0, viewModel.totalCompleteIngredientMetadatas.first())
+    assertEquals(true, viewModel.isComplete.value)
   }
 
   @Test
@@ -97,7 +99,7 @@ class InputViewModelTest {
                 1.0, MeasureUnit.EMPTY, Ingredient("Ingredient 1", "ID_TYPE", false, false)),
             null)
     viewModel.setNewList(incompleteIngredient)
-    viewModel.isComplete { _ -> isCompleteResult = true }
+    viewModel.isListComplete { _ -> isCompleteResult = true }
     assertEquals(false, isCompleteResult)
 
     // Complete ingredients
@@ -107,7 +109,7 @@ class InputViewModelTest {
                 1.0, MeasureUnit.NONE, Ingredient("Ingredient 1", "ID_TYPE", false, false)),
             null)
     viewModel.setNewList(completeIngredient)
-    viewModel.isComplete { _ -> isCompleteResult = true }
+    viewModel.isListComplete { _ -> isCompleteResult = true }
     assertEquals(true, isCompleteResult)
   }
 
@@ -171,20 +173,85 @@ class InputViewModelTest {
             null)
     viewModel.setNewList(initialList)
 
-    viewModel.updateListElementBehaviour(
-        0, IngredientInputState.COMPLETE, IngredientInputState.EMPTY, null)
+    viewModel.updateListElementBehaviour(0, true, false, null)
 
-    assertEquals(0, viewModel.totalCompleteIngredientMetadatas.first())
+    assertEquals(true, viewModel.isComplete.value)
     assertEquals(1, viewModel.totalIngredientEntriesDisplayed.first())
 
     viewModel.updateListElementBehaviour(
         0,
-        IngredientInputState.EMPTY,
-        IngredientInputState.COMPLETE,
+        false,
+        true,
         IngredientMetaData(
             100.0, MeasureUnit.G, Ingredient("Ingredient 1", "ID_TYPE", false, false)))
 
-    assertEquals(1, viewModel.totalCompleteIngredientMetadatas.first())
+    assertEquals(true, viewModel.isComplete.value)
     assertEquals(2, viewModel.totalIngredientEntriesDisplayed.first())
+  }
+
+  @Test
+  fun testCompleteIngredient() {
+    val completeIngredient =
+        IngredientMetaData(
+            quantity = 200.0,
+            measure = MeasureUnit.G,
+            ingredient = Ingredient("Sugar", "ID_001", false, false))
+    assertEquals(true, viewModel.isCompleteIngredient(completeIngredient))
+  }
+
+  @Test
+  fun testIncompleteIngredient_Null() {
+    val incompleteIngredient: IngredientMetaData? = null
+    assertEquals(false, viewModel.isCompleteIngredient(incompleteIngredient))
+  }
+
+  @Test
+  fun testIncompleteIngredient_EmptyMeasure() {
+    val incompleteIngredient =
+        IngredientMetaData(
+            quantity = 200.0,
+            measure = MeasureUnit.EMPTY,
+            ingredient = Ingredient("Sugar", "ID_001", false, false))
+    assertEquals(false, viewModel.isCompleteIngredient(incompleteIngredient))
+  }
+
+  @Test
+  fun testIncompleteIngredient_ZeroQuantity() {
+    val incompleteIngredient =
+        IngredientMetaData(
+            quantity = 0.0,
+            measure = MeasureUnit.G,
+            ingredient = Ingredient("Sugar", "ID_001", false, false))
+    assertEquals(false, viewModel.isCompleteIngredient(incompleteIngredient))
+  }
+
+  @Test
+  fun testIncompleteIngredient_BlankName() {
+    val incompleteIngredient =
+        IngredientMetaData(
+            quantity = 200.0,
+            measure = MeasureUnit.G,
+            ingredient = Ingredient(" ", "ID_001", false, false))
+    assertEquals(false, viewModel.isCompleteIngredient(incompleteIngredient))
+  }
+
+  @Test
+  fun testIncompleteIngredient_NoId() {
+    val incompleteIngredient =
+        IngredientMetaData(
+            quantity = 200.0,
+            measure = MeasureUnit.G,
+            ingredient = Ingredient("Sugar", "NO_ID", false, false))
+    assertEquals(false, viewModel.isCompleteIngredient(incompleteIngredient))
+  }
+
+  @Test
+  fun testIncompleteIngredient_EmptyId() {
+    val incompleteIngredient =
+        IngredientMetaData(
+            quantity = 200.0,
+            measure = MeasureUnit.G,
+            ingredient = Ingredient("Sugar", "", false, false))
+    assertEquals(false, viewModel.isCompleteIngredient(incompleteIngredient))
   }
 }

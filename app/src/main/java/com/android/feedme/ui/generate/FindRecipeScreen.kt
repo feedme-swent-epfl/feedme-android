@@ -153,7 +153,7 @@ fun FindRecipeScreen(
                 checkMark.value = true
                 generateViewModel.toggleStrictness(isStrict.value)
                 if (profileViewModel.currentUserProfile.value != null) {
-                  inputViewModel.isComplete {
+                  inputViewModel.isListComplete {
                     Log.d("FindRecipeScreen", "Fetching generated recipes")
                     generateViewModel.fetchGeneratedRecipes(
                         inputViewModel.listOfIngredientMetadatas.value.map {

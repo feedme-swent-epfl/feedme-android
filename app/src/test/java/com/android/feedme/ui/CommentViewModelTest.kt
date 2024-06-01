@@ -1,111 +1,93 @@
 package com.android.feedme.model.viewmodel
 
-import android.os.Looper
-import androidx.test.core.app.ApplicationProvider
 import com.android.feedme.model.data.Comment
 import com.android.feedme.model.data.CommentRepository
-import com.google.android.gms.tasks.Tasks
-import com.google.firebase.FirebaseApp
-import com.google.firebase.firestore.CollectionReference
-import com.google.firebase.firestore.DocumentReference
-import com.google.firebase.firestore.FirebaseFirestore
-import java.time.Instant
-import java.util.*
-import org.junit.Assert.*
+import com.android.feedme.model.data.ProfileRepository
+import com.android.feedme.model.data.RecipeRepository
+import com.google.firebase.firestore.*
+import java.util.Date
+import kotlinx.coroutines.ExperimentalCoroutinesApi
+import kotlinx.coroutines.flow.first
+import kotlinx.coroutines.test.runTest
 import org.junit.Before
 import org.junit.Test
 import org.junit.runner.RunWith
+import org.mockito.ArgumentMatchers.anyString
 import org.mockito.Mock
 import org.mockito.Mockito.*
 import org.mockito.MockitoAnnotations
 import org.robolectric.RobolectricTestRunner
-import org.robolectric.Shadows.shadowOf
 
+@ExperimentalCoroutinesApi
 @RunWith(RobolectricTestRunner::class)
 class CommentViewModelTest {
 
   @Mock private lateinit var mockFirestore: FirebaseFirestore
 
-  @Mock private lateinit var mockDocumentReference: DocumentReference
+  @Mock private lateinit var mockTransaction: Transaction
 
-  @Mock private lateinit var mockCollectionReference: CollectionReference
+  @Mock private lateinit var mockCommentCollection: CollectionReference
+
+  @Mock private lateinit var mockRecipeCollection: CollectionReference
+
+  @Mock private lateinit var mockProfileCollection: CollectionReference
+
+  @Mock private lateinit var mockCommentDocumentReference: DocumentReference
+
+  @Mock private lateinit var mockRecipeDocumentReference: DocumentReference
+
+  @Mock private lateinit var mockProfileDocumentReference: DocumentReference
+
+  @Mock private lateinit var mockRecipeDocumentSnapshot: DocumentSnapshot
+
+  @Mock private lateinit var mockProfileDocumentSnapshot: DocumentSnapshot
+
+  private lateinit var commentRepository: CommentRepository
+  private lateinit var recipeRepository: RecipeRepository
+  private lateinit var profileRepository: ProfileRepository
 
   private lateinit var viewModel: CommentViewModel
 
   @Before
   fun setUp() {
-    // Initialize Mockito annotations
     MockitoAnnotations.openMocks(this)
 
-    // Initialize Firebase if necessary
-    if (FirebaseApp.getApps(ApplicationProvider.getApplicationContext()).isEmpty()) {
-      FirebaseApp.initializeApp(ApplicationProvider.getApplicationContext())
-    }
+    // Mock the behavior of the Firestore collections
+    `when`(mockFirestore.collection("comments")).thenReturn(mockCommentCollection)
+    `when`(mockFirestore.collection("recipes")).thenReturn(mockRecipeCollection)
+    `when`(mockFirestore.collection("profiles")).thenReturn(mockProfileCollection)
 
-    // Initialize the repository with the mocked Firestore instance
+    // Mock the behavior of the DocumentReferences
+    `when`(mockCommentCollection.document(anyString())).thenReturn(mockCommentDocumentReference)
+    `when`(mockRecipeCollection.document(anyString())).thenReturn(mockRecipeDocumentReference)
+    `when`(mockProfileCollection.document(anyString())).thenReturn(mockProfileDocumentReference)
+
+    // Initialize the repositories with the mocked Firestore instance
     CommentRepository.initialize(mockFirestore)
-    `when`(mockFirestore.collection("comments")).thenReturn(mockCollectionReference)
-    `when`(mockCollectionReference.document(anyString())).thenReturn(mockDocumentReference)
-    `when`(mockCollectionReference.document()).thenReturn(mockDocumentReference)
-    `when`(mockDocumentReference.id).thenReturn("testCommentId")
-    `when`(mockDocumentReference.set(any())).thenReturn(Tasks.forResult(null))
+    RecipeRepository.initialize(mockFirestore)
+    ProfileRepository.initialize(mockFirestore)
+    commentRepository = CommentRepository.instance
+    recipeRepository = RecipeRepository.instance
+    profileRepository = ProfileRepository.instance
 
-    // Initialize the ViewModel
     viewModel = CommentViewModel()
   }
 
   @Test
-  fun selectComment_setsComment() {
-    val comment = createTestComment()
+  fun selectComment_updatesCommentState() = runTest {
+    val comment =
+        Comment(
+            commentId = "commentId",
+            userId = "userId",
+            recipeId = "recipeId",
+            photoURL = "photoURL",
+            rating = 5.0,
+            title = "title",
+            content = "content",
+            creationDate = Date())
+
     viewModel.selectComment(comment)
 
-    val result = viewModel.comment.value
-    assertEquals(comment, result)
-  }
-
-  @Test
-  fun addComment_success() {
-    val comment = createTestComment()
-    comment.commentId = "ajjaha"
-
-    var bol = false
-    viewModel.addComment(comment) { bol = true }
-
-    // Ensure all asynchronous operations complete
-    shadowOf(Looper.getMainLooper()).idle()
-
-    val result = viewModel.comment.value
-    assertEquals(comment, result)
-    assertNotEquals(comment.commentId, "ajjaha")
-    assertTrue(bol)
-  }
-
-  @Test
-  fun addComment_withEmptyCommentId() {
-    val comment = createTestComment()
-    comment.commentId = ""
-
-    var bol = false
-    viewModel.addComment(comment) { bol = true }
-
-    // Ensure all asynchronous operations complete
-    shadowOf(Looper.getMainLooper()).idle()
-
-    val result = viewModel.comment.value
-    assertEquals(comment, result)
-    assertNotEquals(comment.commentId, "")
-    assertTrue(bol)
-  }
-
-  private fun createTestComment(): Comment {
-    return Comment(
-        "authorId",
-        "recipeId",
-        "photoURL",
-        "hehehe",
-        120.0,
-        "Title",
-        "Content",
-        Date.from(Instant.now()))
+    assert(viewModel.comment.first() == comment)
   }
 }

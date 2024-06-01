@@ -661,4 +661,56 @@ class RecipeRepositoryTest {
     // Assert: Verify the success callback was invoked
     assertTrue("Expected the success callback to be invoked", successCalled)
   }
+
+  @Test
+  fun addCommentToRecipe_Success() {
+    val recipeId = "testRecipeId"
+    val commentId = "testCommentId"
+    val mockTransaction = mock(Transaction::class.java)
+
+    `when`(mockFirestore.runTransaction<Any>(any())).thenAnswer { invocation ->
+      val transactionFunction = invocation.arguments[0] as Transaction.Function<*>
+      transactionFunction.apply(mockTransaction)
+      Tasks.forResult(null)
+    }
+
+    `when`(mockTransaction.get(mockDocumentReference)).thenReturn(mockDocumentSnapshot1)
+    `when`(mockDocumentSnapshot1.get("comments")).thenReturn(listOf<String>())
+
+    var successCalled = false
+    var failureCalled = false
+
+    recipeRepository.addCommentToRecipe(
+        recipeId, commentId, { successCalled = true }, { failureCalled = true })
+
+    shadowOf(Looper.getMainLooper()).idle()
+
+    verify(mockTransaction).get(mockDocumentReference)
+    verify(mockTransaction).update(mockDocumentReference, "comments", listOf(commentId))
+    assertTrue("Success callback was not called", successCalled)
+    assertFalse("Failure callback should not be called", failureCalled)
+  }
+
+  @Test
+  fun addCommentToRecipe_Failure() {
+    val recipeId = "testRecipeId"
+    val commentId = "testCommentId"
+    val exception = Exception("Firestore transaction failed")
+
+    `when`(mockFirestore.runTransaction<Any>(any())).thenAnswer { invocation ->
+      val transactionFunction = invocation.arguments[0] as Transaction.Function<*>
+      Tasks.forException<Any>(exception)
+    }
+
+    var successCalled = false
+    var failureCalled = false
+
+    recipeRepository.addCommentToRecipe(
+        recipeId, commentId, { successCalled = true }, { failureCalled = true })
+
+    shadowOf(Looper.getMainLooper()).idle()
+
+    assertFalse("Success callback should not be called", successCalled)
+    assertTrue("Failure callback was not called", failureCalled)
+  }
 }

@@ -68,7 +68,7 @@ fun FindRecipeScreen(
     profileViewModel: ProfileViewModel,
     generateViewModel: GenerateViewModel
 ) {
-
+  inputViewModel.retrieveSavedList()
   val checkMark = remember { mutableStateOf(false) }
   val isStrict = remember { mutableStateOf(true) }
   val dialog = profileViewModel.showDialog.collectAsState()

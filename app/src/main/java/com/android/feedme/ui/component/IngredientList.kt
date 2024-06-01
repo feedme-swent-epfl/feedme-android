@@ -15,9 +15,13 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Bookmark
+import androidx.compose.material.icons.filled.Delete
+import androidx.compose.material.icons.filled.Refresh
 import androidx.compose.material.icons.outlined.Check
 import androidx.compose.material.icons.outlined.Close
 import androidx.compose.material.icons.outlined.ModeEdit
+import androidx.compose.material.icons.twotone.Bookmark
 import androidx.compose.material3.DropdownMenu
 import androidx.compose.material3.DropdownMenuItem
 import androidx.compose.material3.ExperimentalMaterial3Api
@@ -72,7 +76,7 @@ fun IngredientList(
     inputViewModel: InputViewModel = InputViewModel(),
     modifier: Modifier = Modifier,
 ) {
-
+  val wasSaved by inputViewModel.wasSaved.collectAsState()
   val totalIngredients by inputViewModel.totalIngredientEntriesDisplayed.collectAsState()
   LazyColumn(modifier = modifier.testTag("LazyList")) {
     this.items(totalIngredients) { index ->
@@ -85,6 +89,30 @@ fun IngredientList(
         }
       }
       movableContent()
+    }
+    // Add a row at the end with three icons
+    item {
+      Row(
+          modifier = Modifier.fillMaxWidth().padding(16.dp),
+          horizontalArrangement = Arrangement.Start) {
+            IconButton(
+                modifier = Modifier.testTag("SaveButton"),
+                onClick = { inputViewModel.saveInFridge() }) {
+                  Icon(
+                      if (wasSaved) Icons.Filled.Bookmark else Icons.TwoTone.Bookmark,
+                      contentDescription = "Saved")
+                }
+            IconButton(
+                modifier = Modifier.testTag("ReloadButton"),
+                onClick = { inputViewModel.loadFridge() }) {
+                  Icon(Icons.Filled.Refresh, contentDescription = "Reload")
+                }
+            IconButton(
+                modifier = Modifier.testTag("TrashButton"),
+                onClick = { inputViewModel.resetList() }) {
+                  Icon(Icons.Filled.Delete, contentDescription = "Trash")
+                }
+          }
     }
   }
 }

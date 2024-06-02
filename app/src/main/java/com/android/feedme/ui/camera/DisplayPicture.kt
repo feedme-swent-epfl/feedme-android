@@ -134,8 +134,10 @@ fun DisplayPicture(
                 // Once the photo is analyzed, we can add the ingredients and go back to the camera
                 // screen
                 if (analyzed) {
-                  inputViewModel.addToList(listOfIngredientToInput.value.toList())
-                  cameraViewModel.emptyIngredients()
+                  listOfIngredientToInput.value
+                      .toMutableList()
+                      .forEach(cameraViewModel::updateIngredientList)
+
                   navigationActions.navigateTo(Screen.CAMERA)
                 }
               }

@@ -211,9 +211,10 @@ fun IngredientInput(
                   onDismissRequest = {
                     isDropdownVisible = false
                     val beforeState = isBeingUsed
-                    if (name != " ") {
+                    if (name.isNotBlank()) {
                       ingredientCurrent =
-                          if (filteredIngredients.isNotEmpty()) {
+                          if (filteredIngredients.isNotEmpty() &&
+                              name.trim() == filteredIngredients[0].name) {
                             name = filteredIngredients[0].name
                             filteredIngredients[0]
                           } else {

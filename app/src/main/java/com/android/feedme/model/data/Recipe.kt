@@ -41,11 +41,11 @@ enum class MeasureUnit {
   KG,
   L,
   ML,
+  PIECES,
   NONE,
-  EMPTY,
-  PIECES;
+  EMPTY;
 
   override fun toString(): String {
-    return if (name == "NONE") " / " else name.lowercase()
+    return if (name == "NONE") " " else name.lowercase()
   }
 }

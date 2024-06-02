@@ -380,8 +380,9 @@ class CameraViewModel : ViewModel() {
             Log.e("CameraViewModel", "Request to Database failed ", it)
             updateIngredientInList(ing)
           })
+    } else {
+      updateIngredientInList(ing)
     }
-    updateIngredientInList(ing)
   }
   /**
    * Updates the ingredient in the list or adds it if it doesn't exist.
@@ -390,7 +391,7 @@ class CameraViewModel : ViewModel() {
    */
   private fun updateIngredientInList(ing: IngredientMetaData) {
     val existingIngredient =
-        _listOfIngredientToInput.value.find { it.ingredient.name == ing.ingredient.name }
+        _listOfIngredientToInput.value.find { it.ingredient.id == ing.ingredient.id }
 
     if (existingIngredient != null) {
       // If the ingredient exists, update its quantity

@@ -44,13 +44,13 @@ import com.android.feedme.ui.theme.BlueUsername
  */
 @Composable
 fun SmallCommentsDisplay(listComment: List<Comment>, modifier: Modifier = Modifier) {
-  // Calculate the width of each image based on the screen width, we want to display 2 images per
+  // Calculate the width of each image based on the screen width, we want to display 1 comment per
   // line
-  val imageWidth = LocalConfiguration.current.screenWidthDp / 2
+  val imageWidth = LocalConfiguration.current.screenWidthDp
 
-  // Calculate the height of the grid based on the number of recipes and the height of each card
-  // 216 is the height of each card with padding
-  val gridHeight = ((listComment.size / 2) + (listComment.size % 2)) * 216
+  // Calculate the height of the grid based on the number of comments and the height of each card
+  // 152 is the height of each card with padding
+  val gridHeight = listComment.size * 152
 
   // Using this instead of a LazyColumn should fix the "infinite scroll" bug
   LazyVerticalGrid(

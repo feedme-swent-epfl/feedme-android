@@ -87,7 +87,7 @@ fun ProfileScreen(
 ) {
 
   val recipeList = listOf(recipe1, recipe2, recipe2, recipe1, recipe1)
-  val commentList = listOf(comment1)
+  val commentList = listOf(comment1, comment1, comment1, comment1)
 
   val profile =
       if (profileViewModel.isViewingProfile()) profileViewModel.viewingUserProfile.collectAsState()

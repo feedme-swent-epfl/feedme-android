@@ -77,17 +77,14 @@ class CommentViewModel : ViewModel() {
                       onSuccess = {},
                       onFailure = {
                         // Handle failure
-
                       })
                 },
                 onFailure = {
                   // Handle failure
-
                 })
           },
           onFailure = {
             // Handle failure
-
           })
     }
   }
@@ -107,7 +104,6 @@ class CommentViewModel : ViewModel() {
           },
           onFailure = {
             // Handle failure
-            throw error("comment could not get fetched")
           })
     }
   }
@@ -132,29 +128,7 @@ class CommentViewModel : ViewModel() {
           },
           onFailure = {
             // Handle failure
-            throw error("Profile was not fetched during Login")
           })
-    }
-  }
-
-  /**
-   * A function that fetches the recipe that the comment was posted on
-   *
-   * @param id: the unique ID of the recipe we want to fetch
-   */
-  fun fetchRecipe(id: String) {
-    if (id.isBlank()) {
-      _recipe.value = null
-      return
-    }
-
-    viewModelScope.launch {
-      recipeRepository.getRecipe(
-          id,
-          onSuccess = { recipe ->
-            recipe?.let { _recipe.value = it } ?: run { _recipe.value = null }
-          },
-          onFailure = { throw error("Recipe was not fetched") })
     }
   }
 }

@@ -214,7 +214,7 @@ fun IngredientInput(
                     if (name.isNotBlank()) {
                       ingredientCurrent =
                           if (filteredIngredients.isNotEmpty() &&
-                              name == filteredIngredients[0].name) {
+                              name.trim() == filteredIngredients[0].name) {
                             name = filteredIngredients[0].name
                             filteredIngredients[0]
                           } else {

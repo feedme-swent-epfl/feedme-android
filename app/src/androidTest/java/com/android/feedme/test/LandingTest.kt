@@ -3,6 +3,7 @@ package com.android.feedme.test
 import androidx.compose.ui.test.assertIsDisplayed
 import androidx.compose.ui.test.junit4.createComposeRule
 import androidx.compose.ui.test.onAllNodesWithContentDescription
+import androidx.compose.ui.test.onAllNodesWithTag
 import androidx.compose.ui.test.onNodeWithContentDescription
 import androidx.compose.ui.test.performClick
 import androidx.test.ext.junit.runners.AndroidJUnit4
@@ -154,7 +155,9 @@ class LandingTest : TestCase() {
 
       completeScreen { assertIsDisplayed() }
 
-      levelIcon { assertIsDisplayed() }
+      composeTestRule
+          .onAllNodesWithTag("RecipeDifficulty", useUnmergedTree = true)[0]
+          .assertIsDisplayed()
     }
   }
 

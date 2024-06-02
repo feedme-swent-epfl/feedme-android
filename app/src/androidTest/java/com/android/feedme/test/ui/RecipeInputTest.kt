@@ -9,6 +9,7 @@ import androidx.compose.ui.test.onNodeWithTag
 import androidx.test.ext.junit.runners.AndroidJUnit4
 import com.android.feedme.model.data.IngredientsRepository
 import com.android.feedme.model.data.RecipeRepository
+import com.android.feedme.model.viewmodel.CameraViewModel
 import com.android.feedme.model.viewmodel.ProfileViewModel
 import com.android.feedme.screen.RecipeInputTestScreen
 import com.android.feedme.ui.navigation.NavigationActions
@@ -27,8 +28,8 @@ class RecipeInputTest {
 
   private val mockFirestore = mockk<FirebaseFirestore>(relaxed = true)
   private val navigationActions: NavigationActions = mockk(relaxed = true)
-
   private val profileViewModel: ProfileViewModel = mockk(relaxed = true)
+  private val cameraViewModel: CameraViewModel = mockk(relaxed = true)
 
   private lateinit var recipeRepository: RecipeRepository
   private lateinit var ingredientsRepository: IngredientsRepository
@@ -44,7 +45,9 @@ class RecipeInputTest {
 
   @Test
   fun recipeInputTestDisplayedAndValidates() {
-    composeTestRule.setContent { RecipeInputScreen(navigationActions, profileViewModel) }
+    composeTestRule.setContent {
+      RecipeInputScreen(navigationActions, profileViewModel, cameraViewModel)
+    }
 
     composeTestRule.waitForIdle()
 
@@ -80,8 +83,7 @@ class RecipeInputTest {
   @Test
   fun recipeViewModelValidateFails() {
     composeTestRule.setContent {
-      RecipeInputScreen(
-          mockk<NavigationActions>(relaxed = true), mockk<ProfileViewModel>(relaxed = true))
+      RecipeInputScreen(navigationActions, profileViewModel, cameraViewModel)
     }
     composeTestRule.waitForIdle()
 

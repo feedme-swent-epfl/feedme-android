@@ -1,6 +1,5 @@
 package com.android.feedme.ui.component
 
-import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -12,21 +11,19 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
-import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
-import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Bookmark
 import androidx.compose.material.icons.outlined.AddComment
 import androidx.compose.material.icons.rounded.Star
+import androidx.compose.material.icons.sharp.Star
 import androidx.compose.material.icons.twotone.Bookmark
 import androidx.compose.material.icons.twotone.Star
 import androidx.compose.material3.FloatingActionButton
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.OutlinedButton
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -53,6 +50,7 @@ import com.android.feedme.model.data.IngredientMetaData
 import com.android.feedme.model.data.Profile
 import com.android.feedme.model.data.Recipe
 import com.android.feedme.model.data.Step
+import com.android.feedme.model.viewmodel.CameraViewModel
 import com.android.feedme.model.viewmodel.CommentViewModel
 import com.android.feedme.model.viewmodel.ProfileViewModel
 import com.android.feedme.model.viewmodel.RecipeViewModel
@@ -63,7 +61,6 @@ import com.android.feedme.ui.navigation.TOP_LEVEL_DESTINATIONS
 import com.android.feedme.ui.navigation.TopBarNavigation
 import com.android.feedme.ui.theme.BlueUsername
 import com.android.feedme.ui.theme.FabColor
-import com.android.feedme.ui.theme.TemplateColor
 import com.android.feedme.ui.theme.TextBarColor
 import com.android.feedme.ui.theme.YellowStar
 import com.android.feedme.ui.theme.YellowStarBlackOutline
@@ -84,7 +81,8 @@ fun RecipeFullDisplay(
     route: String,
     navigationActions: NavigationActions,
     recipeViewModel: RecipeViewModel,
-    profileViewModel: ProfileViewModel
+    profileViewModel: ProfileViewModel,
+    cameraViewModel: CameraViewModel
 ) {
   val recipe = recipeViewModel.recipe.collectAsState().value
 
@@ -128,9 +126,7 @@ fun RecipeFullDisplay(
             content = {
               Icon(
                   imageVector = Icons.Outlined.AddComment,
-                  modifier = Modifier
-                      .size(26.dp)
-                      .scale(scaleX = -1f, scaleY = 1f),
+                  modifier = Modifier.size(26.dp).scale(scaleX = -1f, scaleY = 1f),
                   contentDescription = "Add")
             })
       },
@@ -152,6 +148,7 @@ fun RecipeFullDisplay(
                 profileViewModel = profileViewModel,
                 recipeViewModel = recipeViewModel,
                 commentViewModel = CommentViewModel(),
+                cameraViewModel,
                 onDismiss = { showDialog = false })
           }
         }
@@ -169,9 +166,7 @@ fun ImageDisplay(recipe: Recipe, modifier: Modifier = Modifier) {
   AsyncImage(
       model = recipe.imageUrl,
       contentDescription = "Recipe Image",
-      modifier = modifier
-          .fillMaxWidth()
-          .testTag("Recipe Image"),
+      modifier = modifier.fillMaxWidth().testTag("Recipe Image"),
       onSuccess = { imageSuccessfulDownload.value = true })
 
   // Display a warning message if image couldn't be downloaded from internets
@@ -198,12 +193,9 @@ fun GeneralInfoDisplay(
     modifier: Modifier = Modifier
 ) {
   Row(
-      horizontalArrangement = Arrangement.SpaceAround,
+      horizontalArrangement = Arrangement.Center,
       verticalAlignment = Alignment.CenterVertically,
-      modifier = modifier
-          .fillMaxWidth()
-          .height(45.dp)
-          .testTag("General Infos Row")) {
+      modifier = modifier.fillMaxWidth().height(45.dp).testTag("General Infos Row")) {
 
         // Recipe creator's userId
         Spacer(modifier = Modifier.weight(1f))
@@ -214,60 +206,67 @@ fun GeneralInfoDisplay(
               style = TextStyle(fontSize = 16.sp, fontWeight = FontWeight.Medium))
           Text(
               modifier =
-                  Modifier.clickable(
-                      onClick = {
-                        profileViewModel.setViewingProfile(profile)
-                        navigationActions.navigateTo(Screen.PROFILE)
-                      }),
-              text = profile.username,
+                  Modifier.padding(end = 8.dp)
+                      .clickable(
+                          onClick = {
+                            profileViewModel.setViewingProfile(profile)
+                            navigationActions.navigateTo(Screen.PROFILE)
+                          }),
+              text = "@${profile.username}",
               textAlign = TextAlign.Center,
               color = BlueUsername,
               style = TextStyle(fontSize = 16.sp, fontWeight = FontWeight.Medium))
+          Spacer(modifier = Modifier.weight(0.5f))
         }
-        Spacer(modifier = Modifier.weight(1f))
 
         // Recipe ratings
         Box(contentAlignment = Alignment.Center) {
           // Larger black star to act as the outline
           Icon(
-              imageVector = Icons.TwoTone.Star,
+              imageVector = Icons.Rounded.Star,
               contentDescription = "Star Outline",
               tint = YellowStarBlackOutline,
-              modifier = Modifier.size(26.dp) // Make this star slightly larger to show as the edge
+              modifier = Modifier.size(35.dp) // Make this star slightly larger to show as the edge
               )
           // Smaller yellow star to act as the inner part
           Icon(
-              imageVector = Icons.Rounded.Star,
+              imageVector = Icons.Sharp.Star,
               contentDescription = "Star Icon",
               tint = YellowStar,
-              modifier = Modifier.size(17.dp) // Smaller than the outline star
+              modifier = Modifier.size(23.dp) // Smaller than the outline star
               )
         }
         Text(
             text = recipe.rating.toString(),
-            modifier = Modifier
-                .padding(start = 4.dp)
-                .testTag("Text Rating"),
+            modifier = Modifier.padding(start = 4.dp).testTag("Text Rating"),
             style = TextStyle(fontSize = 16.sp, fontWeight = FontWeight.Medium))
         Spacer(modifier = Modifier.weight(1f))
       }
   HorizontalDivider(thickness = 2.dp, modifier = Modifier.testTag("Horizontal Divider 1"))
+
+  Text(
+      text = "Description",
+      style = TextStyle(fontWeight = FontWeight.SemiBold, fontSize = 20.sp),
+      modifier = modifier.padding(start = 16.dp, top = 8.dp).testTag("Description Title"))
+  Text(
+      text = recipe.description,
+      style = TextStyle(fontSize = 15.sp),
+      modifier = modifier.padding(start = 16.dp, top = 8.dp, bottom = 8.dp).testTag("Description"))
+
+  HorizontalDivider(thickness = 2.dp, modifier = Modifier.testTag("Horizontal Divider 2"))
 }
 
 /**
  * Displays the difficulty level of the recipe at hand
  *
  * @param recipe the [Recipe] whose difficulty level needs to be displayed
- * */
+ */
 @Composable
 fun DifficultyLevelDisplay(recipe: Recipe) {
-    Text (
-        text = "Difficulty Level :",
-        style = TextStyle(fontWeight = FontWeight.SemiBold, fontSize = 20.sp),
-        modifier = Modifier
-            .padding(start = 16.dp, top = 8.dp)
-            .testTag("Difficulty Level")
-    )
+  Text(
+      text = "Difficulty Level :",
+      style = TextStyle(fontWeight = FontWeight.SemiBold, fontSize = 20.sp),
+      modifier = Modifier.padding(start = 16.dp, top = 8.dp).testTag("Difficulty Level"))
 }
 
 /**
@@ -280,9 +279,7 @@ fun IngredientTitleDisplay(modifier: Modifier = Modifier) {
   Text(
       text = "Ingredients",
       style = TextStyle(fontWeight = FontWeight.SemiBold, fontSize = 20.sp),
-      modifier = modifier
-          .padding(start = 16.dp, top = 8.dp)
-          .testTag("Ingredient Title"))
+      modifier = modifier.padding(start = 16.dp, top = 8.dp).testTag("Ingredient Title"))
 }
 
 /**
@@ -306,9 +303,7 @@ fun IngredientDisplay(ingredient: IngredientMetaData, modifier: Modifier = Modif
             append(ingredientText)
           },
       style = TextStyle(fontWeight = FontWeight.Normal, fontSize = 14.sp),
-      modifier = modifier
-          .padding(top = 10.dp, start = 16.dp)
-          .testTag("Ingredient Description"))
+      modifier = modifier.padding(top = 10.dp, start = 16.dp).testTag("Ingredient Description"))
 }
 
 /**
@@ -320,9 +315,7 @@ fun IngredientDisplay(ingredient: IngredientMetaData, modifier: Modifier = Modif
 fun IngredientStepsDividerDisplay(modifier: Modifier = Modifier) {
   HorizontalDivider(
       thickness = 2.dp,
-      modifier = modifier
-          .padding(top = 8.dp, bottom = 8.dp)
-          .testTag("Horizontal Divider 2"))
+      modifier = modifier.padding(top = 8.dp, bottom = 8.dp).testTag("Horizontal Divider 3"))
 }
 
 /**
@@ -337,17 +330,13 @@ fun StepDisplay(step: Step, modifier: Modifier = Modifier) {
   Text(
       "Step ${step.stepNumber}: ${step.title}",
       style = TextStyle(fontWeight = FontWeight.SemiBold, fontSize = 20.sp),
-      modifier = Modifier
-          .padding(start = 16.dp, bottom = 8.dp)
-          .testTag("Step Title"))
+      modifier = Modifier.padding(start = 16.dp, bottom = 8.dp).testTag("Step Title"))
   Column(modifier = modifier) {
     Text(
         text = step.description,
         style = MaterialTheme.typography.bodyMedium,
         modifier =
-        modifier
-            .padding(start = 16.dp, end = 16.dp, bottom = 8.dp)
-            .testTag("Step Description"),
+            modifier.padding(start = 16.dp, end = 16.dp, bottom = 8.dp).testTag("Step Description"),
         textAlign = TextAlign.Justify)
   }
 }

@@ -10,8 +10,10 @@ data class Recipe(
     val tags: List<String> = emptyList(), // List of tags for the recipe
     val rating: Double = 0.0, // Rating of the recipe
     val userid: String = "", // User id of the recipe creator
-    val imageUrl: String = "", // Image URL of the recipe
-    val level: String = "" // Difficulty tag of the recipe
+    val level: String = "", // Difficulty tag of the recipe
+    var imageUrl: String = "", // Image URL of the recipe
+    var searchItems: List<String> = listOf("new"), // List of search items for the recipe
+    val comments: List<String> = emptyList(), // List of comments for the recipe
 )
 
 data class Step(
@@ -25,6 +27,7 @@ data class IngredientMetaData(
     val measure: MeasureUnit, // Measure unit of the ingredient
     var ingredient: Ingredient // Ingredient object
 ) {
+
   override fun toString(): String {
     return "$quantity ${measure.toString()} of ${ingredient.name}"
   }

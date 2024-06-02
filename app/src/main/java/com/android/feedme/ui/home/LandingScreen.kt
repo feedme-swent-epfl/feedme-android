@@ -22,8 +22,9 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Bookmark
 import androidx.compose.material.icons.outlined.BookmarkBorder
-import androidx.compose.material.icons.outlined.Share
+import androidx.compose.material.icons.rounded.Bookmark
 import androidx.compose.material.icons.rounded.Star
+import androidx.compose.material.icons.sharp.Star
 import androidx.compose.material.icons.twotone.Star
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
@@ -34,7 +35,6 @@ import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
-import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -46,7 +46,6 @@ import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontWeight
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import coil.compose.AsyncImage
@@ -69,7 +68,6 @@ import com.android.feedme.ui.theme.TemplateColor
 import com.android.feedme.ui.theme.TextBarColor
 import com.android.feedme.ui.theme.YellowStar
 import com.android.feedme.ui.theme.YellowStarBlackOutline
-import kotlinx.coroutines.flow.MutableStateFlow
 
 /**
  * Composable function that generates the landing page / landing screen
@@ -89,14 +87,13 @@ fun LandingPage(
     searchViewModel: SearchViewModel
 ) {
   Scaffold(
-      modifier = Modifier
-          .fillMaxSize()
-          .testTag("LandingScreen"),
+      modifier = Modifier.fillMaxSize().testTag("LandingScreen"),
       topBar = { TopBarNavigation(title = "FeedMe") },
       bottomBar = {
         BottomNavigationMenu(Route.HOME, navigationActions::navigateTo, TOP_LEVEL_DESTINATIONS)
       },
       content = {
+        homeViewModel.setOnLanding(true)
         RecipeDisplay(
             it,
             navigationActions,
@@ -131,10 +128,7 @@ fun RecipeDisplay(
 
   Column(
       modifier =
-      Modifier
-          .testTag("CompleteScreen")
-          .padding(paddingValues)
-          .background(Color.White)) {
+          Modifier.testTag("CompleteScreen").padding(paddingValues).background(Color.White)) {
 
         // Search bar + filters icon
         SearchBarFun(Route.HOME, navigationActions, searchViewModel)
@@ -142,10 +136,7 @@ fun RecipeDisplay(
         // Scrollable list of recipes
         LazyColumn(
             modifier =
-            Modifier
-                .testTag("RecipeList")
-                .padding(top = 8.dp)
-                .background(TextBarColor)) {
+                Modifier.testTag("RecipeList").padding(top = 8.dp).background(TextBarColor)) {
               items(recipes.value) { recipe ->
                 // Fetch the profile of the user who created the recipe
                 LaunchedEffect(recipe.userid) { recipeViewModel.fetchProfile(recipe.userid) }
@@ -188,35 +179,29 @@ fun RecipeCard(
 ) {
   Card(
       modifier =
-      Modifier
-          .padding(16.dp)
-          .clickable(
-              onClick = {
-                  // Set the selected recipe in the view model and navigate to the
-                  // recipe screen
-                  recipeViewModel.selectRecipe(recipe)
-                  navigationActions.navigateTo("Recipe/${route}")
-              })
-          .testTag("RecipeCard"),
+          Modifier.padding(16.dp)
+              .clickable(
+                  onClick = {
+                    // Set the selected recipe in the view model and navigate to the
+                    // recipe screen
+                    recipeViewModel.selectRecipe(recipe)
+                    navigationActions.navigateTo("Recipe/${route}")
+                  })
+              .testTag("RecipeCard"),
       elevation = CardDefaults.elevatedCardElevation()) {
         AsyncImage(
             model = recipe.imageUrl,
             contentDescription = "Recipe Image",
             contentScale = ContentScale.Fit,
-            modifier = Modifier
-                .height(200.dp)
-                .fillMaxWidth())
+            modifier = Modifier.height(200.dp).fillMaxWidth())
         Column(
             modifier =
-            Modifier
-                .fillMaxWidth()
-                .background(Color.White)
-                .padding(top = 16.dp, start = 16.dp, end = 16.dp)) {
-              // Time, rating, share and saving icon
+                Modifier.fillMaxWidth()
+                    .background(Color.White)
+                    .padding(top = 8.dp, start = 16.dp, end = 16.dp)) {
+              // Rating and saving icon
               Row(
-                  modifier = Modifier
-                      .padding(4.dp)
-                      .fillMaxWidth(),
+                  modifier = Modifier.padding(4.dp).fillMaxWidth(),
                   horizontalArrangement = Arrangement.Absolute.Left,
                   verticalAlignment = Alignment.CenterVertically,
               ) {
@@ -224,22 +209,21 @@ fun RecipeCard(
                 Row(
                     verticalAlignment = Alignment.CenterVertically,
                     modifier =
-                    Modifier
-                        .clickable { /* TODO () : access the comments */ }
-                        .testTag("Rating")) {
+                        Modifier.clickable { /* TODO () : access the comments */}
+                            .testTag("Rating")) {
                       // Star icon for ratings
                       Box(
                           contentAlignment = Alignment.Center,
                           modifier = Modifier.padding(end = 2.dp)) {
                             // Larger black star to act as the outline
                             Icon(
-                                imageVector = Icons.TwoTone.Star,
+                                imageVector = Icons.Rounded.Star,
                                 contentDescription = "Rating Outline",
                                 tint = YellowStarBlackOutline,
-                                modifier = Modifier.size(34.dp))
+                                modifier = Modifier.size(35.dp))
                             // Smaller yellow star to act as the inner part
                             Icon(
-                                imageVector = Icons.Rounded.Star,
+                                imageVector = Icons.Sharp.Star,
                                 contentDescription = "Rating",
                                 tint = YellowStar,
                                 modifier = Modifier.size(23.dp))
@@ -251,6 +235,7 @@ fun RecipeCard(
                     }
 
                 Spacer(modifier = Modifier.width(15.dp))
+                Spacer(modifier = Modifier.weight(1f))
 
                 // Save icon
                 val isSaved = remember { mutableStateOf(false) }
@@ -277,17 +262,15 @@ fun RecipeCard(
                       Icon(
                           imageVector =
                               if (isSaved.value) {
-                                Icons.Filled.Bookmark
+                                Icons.Rounded.Bookmark
                               } else {
                                 Icons.Outlined.BookmarkBorder
                               },
                           contentDescription = "Bookmark Icon on Recipe Card",
-                          modifier = Modifier
-                              .size(34.dp)
-                              .padding(start = 4.dp),
+                          modifier = Modifier.size(34.dp).padding(start = 4.dp),
                           tint =
                               if (isSaved.value) {
-                                YellowStar
+                                TemplateColor
                               } else {
                                 YellowStarBlackOutline
                               })
@@ -306,36 +289,31 @@ fun RecipeCard(
 
                 // Difficulty tag
                 OutlinedButton(
-                    onClick = { /* no action when clicking on difficult */ },
-                    modifier = Modifier.border(3.dp, Color.Black, RoundedCornerShape(12.dp))
-                ) {
+                    onClick = { /* no action when clicking on difficult */},
+                    modifier = Modifier.border(3.dp, Color.Black, RoundedCornerShape(12.dp))) {}
+              }
 
-                }
+              if (profile != null) {
+                Text(
+                    modifier =
+                        Modifier.padding(bottom = 10.dp)
+                            .clickable(
+                                onClick = {
+                                  profileViewModel.setViewingProfile(profile)
+                                  navigationActions.navigateTo(Screen.PROFILE)
+                                })
+                            .testTag("UserName"),
+                    text = "@${profile.username}",
+                    color = BlueUsername,
+                    style = TextStyle(fontSize = 16.sp, fontWeight = FontWeight.Medium))
               }
 
               Spacer(modifier = Modifier.height(10.dp))
               // Description of the recipe
               Text(
                   text = recipe.description,
-                  modifier = Modifier
-                      .fillMaxWidth()
-                      .height(50.dp),
+                  modifier = Modifier.fillMaxWidth().height(50.dp),
                   color = TemplateColor)
-              if (profile != null) {
-                Text(
-                    modifier =
-                    Modifier
-                        .padding(bottom = 10.dp)
-                        .clickable(
-                            onClick = {
-                                profileViewModel.setViewingProfile(profile)
-                                navigationActions.navigateTo(Screen.PROFILE)
-                            })
-                        .testTag("UserName"),
-                    text = "@${profile.username}",
-                    color = BlueUsername,
-                    style = TextStyle(fontSize = 16.sp, fontWeight = FontWeight.Medium))
-              }
             }
       }
 }

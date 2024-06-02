@@ -18,4 +18,5 @@ class SearchScreen(semanticsProvider: SemanticsNodeInteractionsProvider) :
   val noRecipesText: KNode = child { hasTestTag("NoRecipes") }
   val noAccountsText: KNode = child { hasTestTag("NoAccounts") }
   val recipeCard: KNode = child { hasTestTag("RecipeCard") }
+  val loadMoreButton: KNode = child { hasTestTag("Load More Button") }
 }

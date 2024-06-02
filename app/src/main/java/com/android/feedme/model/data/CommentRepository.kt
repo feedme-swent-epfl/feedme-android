@@ -15,6 +15,9 @@ import com.google.firebase.storage.FirebaseStorage
  */
 class CommentRepository(private val db: FirebaseFirestore) {
 
+  val collectionPath = "comments"
+  val databasePath = "comments/"
+
   companion object {
     /** The singleton instance of CommentRepository. */
     lateinit var instance: CommentRepository
@@ -44,11 +47,11 @@ class CommentRepository(private val db: FirebaseFirestore) {
       onSuccess: () -> Unit,
       onFailure: (Exception) -> Unit
   ) {
-    val newDocRef = db.collection("comments").document()
+    val newDocRef = db.collection(collectionPath).document()
     comment.commentId = newDocRef.id // Assign the generated ID to the comment
     if (uri != null) {
       val storageRef =
-          FirebaseStorage.getInstance().reference.child("comments/${comment.commentId}")
+          FirebaseStorage.getInstance().reference.child((databasePath + comment.commentId))
       storageRef
           .putFile(uri)
           .addOnSuccessListener { taskSnapshot ->

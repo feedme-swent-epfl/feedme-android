@@ -33,6 +33,11 @@ class CommentViewModel : ViewModel() {
     _comment.value = comment
   }
 
+  /**
+   * A function that stores our comment's picture
+   *
+   * @param comment: the comment to be displayed
+   */
   fun updatePicture(uri: Uri) {
     _picture.value = uri
   }

@@ -26,6 +26,7 @@ import androidx.compose.material3.SwitchDefaults
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
@@ -48,12 +49,12 @@ import com.android.feedme.ui.navigation.Route
 import com.android.feedme.ui.navigation.Screen
 import com.android.feedme.ui.navigation.TOP_LEVEL_DESTINATIONS
 import com.android.feedme.ui.navigation.TopBarNavigation
+import com.android.feedme.ui.theme.CantGenerateColor
 import com.android.feedme.ui.theme.DarkGrey
 import com.android.feedme.ui.theme.FabColor
 import com.android.feedme.ui.theme.GenerateColor
 import com.android.feedme.ui.theme.OffWhite
 import com.android.feedme.ui.theme.TextBarColor
-import kotlinx.coroutines.flow.map
 
 /**
  * Composable function for the Create Screen.
@@ -67,11 +68,12 @@ fun FindRecipeScreen(
     profileViewModel: ProfileViewModel,
     generateViewModel: GenerateViewModel
 ) {
-
+  inputViewModel.retrieveSavedList()
   val checkMark = remember { mutableStateOf(false) }
   val isStrict = remember { mutableStateOf(true) }
   val dialog = profileViewModel.showDialog.collectAsState()
   val showDialog = remember { mutableStateOf(true) }
+  val isComplete by inputViewModel.isComplete.collectAsState()
 
   if (showDialog.value && dialog.value) {
     Dialog(onDismissRequest = { profileViewModel.setDialog(!checkMark.value) }) {
@@ -145,26 +147,29 @@ fun FindRecipeScreen(
           Spacer(modifier = Modifier.height(10.dp))
 
           FloatingActionButton(
-              containerColor = GenerateColor,
+              containerColor = if (isComplete) GenerateColor else CantGenerateColor,
               contentColor = TextBarColor,
               onClick = {
                 checkMark.value = true
                 generateViewModel.toggleStrictness(isStrict.value)
                 if (profileViewModel.currentUserProfile.value != null) {
-                  Log.d("FindRecipeScreen", "Fetching generated recipes")
-                  generateViewModel.fetchGeneratedRecipes(
-                      inputViewModel.listOfIngredientMetadatas.value.map {
-                        it?.ingredient?.id ?: ""
-                      },
-                      profileViewModel.currentUserProfile.value!!)
+                  inputViewModel.isListComplete {
+                    Log.d("FindRecipeScreen", "Fetching generated recipes")
+                    generateViewModel.fetchGeneratedRecipes(
+                        inputViewModel.listOfIngredientMetadatas.value.map {
+                          it?.ingredient?.id ?: ""
+                        },
+                        profileViewModel.currentUserProfile.value!!)
+                    navigationActions.navigateTo(Screen.GENERATE)
+                  }
                 }
-                navigationActions.navigateTo(Screen.GENERATE)
               },
               content = {
                 Icon(
                     imageVector = Icons.Default.RestaurantMenu,
-                    contentDescription = "Camera Icon",
-                    modifier = Modifier.size(27.dp))
+                    contentDescription = "Restaurant Icon",
+                    modifier = Modifier.size(27.dp),
+                )
               },
               modifier = Modifier.testTag("ValidateButton"))
         }

@@ -28,6 +28,9 @@ class HomeViewModel : ViewModel() {
   private val _savedRecipes = MutableStateFlow<List<Recipe>>(emptyList())
   val savedRecipes = _savedRecipes.asStateFlow()
 
+  private val _isOnLanding = MutableStateFlow(true)
+  val isOnLanding = _isOnLanding.asStateFlow()
+
   private var lastRecipe: DocumentSnapshot? = null
 
   private val authListener =
@@ -119,6 +122,16 @@ class HomeViewModel : ViewModel() {
   fun loadMoreRecipes(context: Context = FirebaseFirestore.getInstance().app.applicationContext) {
     fetchRatedRecipes(context)
   }
+
+  /**
+   * A function that sets the landing page
+   *
+   * @param isOnLanding: a boolean that determines if the user is on the landing page
+   */
+  fun setOnLanding(isOnLanding: Boolean) {
+    _isOnLanding.value = isOnLanding
+  }
+
   /**
    * A function that forces recipes to be shown for testing purposes
    *

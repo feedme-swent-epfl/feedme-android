@@ -242,6 +242,13 @@ class ProfileViewModel : ViewModel() {
     }
   }
 
+  /**
+   * A function that fetches the recipes of the given Ids
+   *
+   * @param ids: the unique IDs of the recipes we want to fetch
+   * @param fetchRecipe: the MutableStateFlow that will store the fetched recipes
+   * @param context: the context of the application
+   */
   private fun fetchRecipes(
       ids: List<String>,
       fetchRecipe: MutableStateFlow<List<Recipe>>,

@@ -53,7 +53,7 @@ class CommentRepository(private val db: FirebaseFirestore) {
       val storageRef =
           FirebaseStorage.getInstance().reference.child((databasePath + comment.commentId))
       storageRef
-          .putFile(uri) 
+          .putFile(uri)
           .addOnSuccessListener { taskSnapshot ->
             taskSnapshot.metadata?.reference?.downloadUrl?.addOnSuccessListener { uri ->
               comment.photoURL = uri.toString()

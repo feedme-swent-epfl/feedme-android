@@ -169,14 +169,14 @@ dependencies {
     implementation(libs.firebase.storage.ktx)
 
     testImplementation(libs.junit)
-    testImplementation("org.testng:testng:6.9.6")
+    testImplementation(libs.testng)
     androidTestImplementation("org.testng:testng:6.9.6")
     globalTestImplementation(libs.androidx.junit)
     globalTestImplementation(libs.androidx.espresso.core)
     // Android Navigation
     implementation(libs.androidx.navigation.runtime.ktx)
-    implementation("org.jetbrains.kotlinx:kotlinx-coroutines-core:1.5.1")// Use the latest version
-    implementation("org.jetbrains.kotlinx:kotlinx-coroutines-android:1.5.1") // Use the latest version for Android
+    implementation(libs.kotlinx.coroutines.core)// Use the latest version
+    implementation(libs.kotlinx.coroutines.android) // Use the latest version for Android
 
     // ------------- Jetpack Compose ------------------
     val composeBom = platform(libs.compose.bom)
@@ -257,7 +257,7 @@ dependencies {
 
     //Encryption of data
     implementation(libs.gson)
-    implementation("androidx.security:security-crypto:1.1.0-alpha03")
+    implementation(libs.security.crypto)
 
 }
 

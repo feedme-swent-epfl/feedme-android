@@ -137,8 +137,7 @@ class AuthViewModel : ViewModel() {
     if (currentUser != null) {
       val db = FirebaseFirestore.getInstance()
       db.collection("profiles")
-          .document(currentUser.uid)
-          .get(Source.CACHE)
+          .document(currentUser.uid)[Source.CACHE]
           .addOnSuccessListener { document ->
             if (document != null && document.exists()) {
               val userProfile = document.toObject(Profile::class.java)

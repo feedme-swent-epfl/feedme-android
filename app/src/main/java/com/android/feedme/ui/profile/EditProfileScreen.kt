@@ -189,7 +189,8 @@ fun EditProfileContent(
               if (nameError == null &&
                   usernameError == null &&
                   name.isNotEmpty() &&
-                  username.isNotEmpty()) {
+                  username.isNotEmpty() &&
+                  profileViewModel._imageUrl.value != null) {
                 profileViewModel.setProfile(
                     Profile(
                         profile.id,
@@ -197,7 +198,7 @@ fun EditProfileContent(
                         username,
                         profile.email,
                         bio,
-                        profile.imageUrl,
+                        profileViewModel._imageUrl.value!!,
                         profile.followers,
                         profile.following,
                         profile.filter,

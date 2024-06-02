@@ -1,9 +1,12 @@
 package com.android.feedme.model.viewmodel
 
+import android.net.Uri
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.android.feedme.model.data.Comment
 import com.android.feedme.model.data.CommentRepository
+import com.android.feedme.model.data.ProfileRepository
+import com.android.feedme.model.data.RecipeRepository
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.launch
@@ -16,7 +19,12 @@ import kotlinx.coroutines.launch
  */
 class CommentViewModel : ViewModel() {
   private val repository = CommentRepository.instance
+  private val repositoryRecipe = RecipeRepository.instance
+  private val repositoryProfile = ProfileRepository.instance
   private val _comment = MutableStateFlow<Comment?>(null)
+
+  private val _picture = MutableStateFlow<Uri?>(null)
+  val picture: StateFlow<Uri?> = _picture
 
   val comment: StateFlow<Comment?> = _comment
 
@@ -30,22 +38,49 @@ class CommentViewModel : ViewModel() {
   }
 
   /**
+   * A function that stores our comment's picture
+   *
+   * @param comment: the comment to be displayed
+   */
+  fun updatePicture(uri: Uri) {
+    _picture.value = uri
+  }
+
+  /**
    * A function that add a comment in the database Overwrites the comment object given to assign it
    * a new commentId
    *
    * @param comment: the comment to set in the database
    */
-  fun addComment(comment: Comment, onSuccess: () -> Unit) {
+  fun addComment(comment: Comment) {
     viewModelScope.launch {
       repository.addComment(
           comment,
+          _picture.value,
           onSuccess = {
             _comment.value = comment
-            onSuccess()
+
+            repositoryRecipe.addCommentToRecipe(
+                comment.recipeId,
+                comment.commentId,
+                onSuccess = {
+                  repositoryProfile.addCommentToProfile(
+                      comment.userId,
+                      comment.commentId,
+                      onSuccess = {},
+                      onFailure = {
+                        // Handle failure
+
+                      })
+                },
+                onFailure = {
+                  // Handle failure
+
+                })
           },
           onFailure = {
             // Handle failure
-            throw error("comment could not get updated")
+
           })
     }
   }

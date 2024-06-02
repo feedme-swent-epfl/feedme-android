@@ -4,6 +4,7 @@ coilCompose = "2.6.0"
 composeBomVersion = "2024.03.00"
 firebaseBom = "32.8.0"
 gson = "2.10.1"
+imageLabeling = "17.0.8"
 junitJunit = "4.12"
 kaspressoAllureSupport = "1.4.3"
 kaspressoComposeSupport = "1.5.5"
@@ -28,6 +29,7 @@ mockitoMockitoCore = "4.11.0"
 mockk = "1.13.7"
 mockkAgent = "1.13.7"
 mockkAndroid = "1.13.7"
+objectDetectionCustomVersion = "17.0.1"
 okhttp = "4.12.0"
 playServicesAuth = "21.0.0"
 robolectric = "4.11.1"
@@ -78,6 +80,7 @@ compose-test-manifest = { group = "androidx.compose.ui", name = "ui-test-manifes
 kaspresso = { group = "com.kaspersky.android-components", name = "kaspresso", version.ref = "kaspresso" }
 kaspresso-compose = { group = "com.kaspersky.android-components", name = "kaspresso-compose-support", version.ref = "kaspresso" }
 
+mlkit-detection-custom = { module = "com.google.mlkit:object-detection-custom", version.ref = "objectDetectionCustomVersion" }
 mockito-core = { module = "org.mockito:mockito-core", version.ref = "mockitoCore" }
 mockito-inline = { module = "org.mockito:mockito-inline", version.ref = "mockitoInline" }
 mockk = { module = "io.mockk:mockk", version.ref = "mockk" }

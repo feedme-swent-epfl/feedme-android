@@ -1,6 +1,7 @@
 package com.android.feedme.ui.auth
 
 // import android.app.Instrumentation
+import android.content.Context
 import android.content.Intent
 import android.util.Log
 import androidx.activity.compose.ManagedActivityResultLauncher
@@ -17,7 +18,6 @@ import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
-import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.shape.RoundedCornerShape
@@ -38,9 +38,10 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import androidx.lifecycle.viewmodel.compose.viewModel
 import com.android.feedme.R
 import com.android.feedme.model.viewmodel.AuthViewModel
+import com.android.feedme.model.viewmodel.displayToast
+import com.android.feedme.model.viewmodel.isNetworkAvailable
 import com.android.feedme.ui.navigation.NavigationActions
 import com.android.feedme.ui.navigation.Route
 import com.android.feedme.ui.navigation.Screen
@@ -51,6 +52,7 @@ import com.google.android.gms.auth.api.signin.GoogleSignIn
 import com.google.android.gms.auth.api.signin.GoogleSignInClient
 import com.google.android.gms.auth.api.signin.GoogleSignInOptions
 import com.google.android.gms.common.api.ApiException
+import com.google.firebase.firestore.FirebaseFirestore
 import kotlinx.coroutines.launch
 
 /**
@@ -60,9 +62,10 @@ import kotlinx.coroutines.launch
  * sign-in button and handles authentication flow using Firebase authentication.
  *
  * @param navigationActions : the nav actions given in the MainActivity
+ * @param authViewModel : the authentication view model
  */
 @Composable
-fun LoginScreen(navigationActions: NavigationActions, authViewModel: AuthViewModel = viewModel()) {
+fun LoginScreen(navigationActions: NavigationActions, authViewModel: AuthViewModel) {
   val context = LocalContext.current
   val coroutineScope = rememberCoroutineScope()
 
@@ -96,26 +99,34 @@ fun LoginScreen(navigationActions: NavigationActions, authViewModel: AuthViewMod
               }
             } catch (e: ApiException) {
               // Handle API exception
-              Log.e("LoginScreen", "Sign in failed", e)
+              Log.d("LoginScreen", "Online sign in failed", e)
             }
           })
 
-  LoginDisplay(navigationActions, googleSignInLauncher, googleSignInClient)
+  LoginDisplay(context, navigationActions, googleSignInLauncher, googleSignInClient, authViewModel)
 }
 
-/** Composable function to display the login screen */
+/**
+ * Composable function to display the login screen
+ *
+ * @param context : the context of the app
+ * @param navigationActions : the navigation actions
+ * @param googleSignInLauncher : the launcher for Google Sign-In
+ * @param googleSignInClient : the Google Sign-In client
+ * @param authViewModel : the authentication view model
+ */
 @Composable
 fun LoginDisplay(
+    context: Context,
     navigationActions: NavigationActions,
     googleSignInLauncher: ManagedActivityResultLauncher<Intent, ActivityResult>,
-    googleSignInClient: GoogleSignInClient
+    googleSignInClient: GoogleSignInClient,
+    authViewModel: AuthViewModel
 ) {
+  val context = FirebaseFirestore.getInstance().app.applicationContext
+
   Column(
-      modifier =
-          Modifier.fillMaxSize()
-              .padding(16.dp)
-              .background(color = TemplateColor)
-              .testTag("LoginScreen"),
+      modifier = Modifier.fillMaxSize().background(color = TemplateColor).testTag("LoginScreen"),
       verticalArrangement = Arrangement.Center,
       horizontalAlignment = Alignment.CenterHorizontally) {
         Image(
@@ -143,9 +154,13 @@ fun LoginDisplay(
 
         Button(
             onClick = {
+              // Check if the user is offline and fetch the profile offline
               if (Testing.isTestMode) {
                 Testing.mockSuccessfulLogin()
                 navigationActions.navigateTo(Route.HOME)
+              } else if (!isNetworkAvailable(context)) {
+                authViewModel.fetchUserProfileOffline(navigationActions)
+                displayToast(context)
               } else {
                 googleSignInLauncher.launch(googleSignInClient.signInIntent)
               }

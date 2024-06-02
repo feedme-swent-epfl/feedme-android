@@ -6,7 +6,7 @@ data class Comment(
     var commentId: String = "DEFAULT_ID",
     val userId: String,
     val recipeId: String,
-    val photoURL: String,
+    var photoURL: String,
     val rating: Double,
     val title: String,
     val content: String,

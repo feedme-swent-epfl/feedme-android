@@ -15,9 +15,13 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Bookmark
+import androidx.compose.material.icons.filled.Delete
+import androidx.compose.material.icons.filled.Refresh
 import androidx.compose.material.icons.outlined.Check
 import androidx.compose.material.icons.outlined.Close
 import androidx.compose.material.icons.outlined.ModeEdit
+import androidx.compose.material.icons.twotone.Bookmark
 import androidx.compose.material3.DropdownMenu
 import androidx.compose.material3.DropdownMenuItem
 import androidx.compose.material3.ExperimentalMaterial3Api
@@ -72,19 +76,43 @@ fun IngredientList(
     modifier: Modifier = Modifier,
     inputViewModel: InputViewModel = InputViewModel(),
 ) {
-
+  val wasSaved by inputViewModel.wasSaved.collectAsState()
   val totalIngredients by inputViewModel.totalIngredientEntriesDisplayed.collectAsState()
   LazyColumn(modifier = modifier.testTag("LazyList")) {
     this.items(totalIngredients) { index ->
       val movableContent = movableContentOf {
-        IngredientInput(inputViewModel.listOfIngredientMetadatas.value[index]) {
-            before,
-            now,
-            newIngredient ->
+        IngredientInput(
+            inputViewModel,
+            inputViewModel.listOfIngredientMetadatas.value[index],
+        ) { before, now, newIngredient ->
           inputViewModel.updateListElementBehaviour(index, before, now, newIngredient)
         }
       }
       movableContent()
+    }
+    // Add a row at the end with three icons
+    item {
+      Row(
+          modifier = Modifier.fillMaxWidth().padding(16.dp),
+          horizontalArrangement = Arrangement.Start) {
+            IconButton(
+                modifier = Modifier.testTag("SaveButton"),
+                onClick = { inputViewModel.saveInFridge() }) {
+                  Icon(
+                      if (wasSaved) Icons.Filled.Bookmark else Icons.TwoTone.Bookmark,
+                      contentDescription = "Saved")
+                }
+            IconButton(
+                modifier = Modifier.testTag("ReloadButton"),
+                onClick = { inputViewModel.loadFridge() }) {
+                  Icon(Icons.Filled.Refresh, contentDescription = "Reload")
+                }
+            IconButton(
+                modifier = Modifier.testTag("TrashButton"),
+                onClick = { inputViewModel.resetList() }) {
+                  Icon(Icons.Filled.Delete, contentDescription = "Trash")
+                }
+          }
     }
   }
 }
@@ -98,8 +126,9 @@ fun IngredientList(
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun IngredientInput(
+    inputViewModel: InputViewModel,
     ingredient: IngredientMetaData? = null,
-    action: (IngredientInputState?, IngredientInputState?, IngredientMetaData?) -> Unit
+    action: (Boolean?, Boolean?, IngredientMetaData?) -> Unit,
 ) {
 
   var ingredientCurrent by remember {
@@ -109,30 +138,18 @@ fun IngredientInput(
   var name by remember { mutableStateOf(ingredient?.ingredient?.name ?: " ") }
   var quantity by remember { mutableDoubleStateOf(ingredient?.quantity ?: 0.0) }
   var dose by remember { mutableStateOf(ingredient?.measure ?: MeasureUnit.EMPTY) }
-
   val isComplete by remember {
     derivedStateOf {
-      name.isNotBlank() &&
-          dose != MeasureUnit.EMPTY &&
-          quantity != 0.0 &&
-          (ingredientCurrent.id != "NO_ID") &&
-          (ingredientCurrent.id != "")
+      inputViewModel.isCompleteIngredient(IngredientMetaData(quantity, dose, ingredientCurrent))
     }
   }
 
-  var isChecked by remember { mutableStateOf(isComplete) }
-
-  var state by remember {
-    mutableStateOf(
-        if (isComplete) IngredientInputState.COMPLETE
-        else if (name.isNotBlank() || dose != MeasureUnit.EMPTY || quantity != 0.0)
-            IngredientInputState.SEMI_COMPLETE
-        else IngredientInputState.EMPTY)
-  }
-
   var isDropdownVisible by remember { mutableStateOf(false) }
-
   var filteredIngredients by remember { mutableStateOf(emptyList<Ingredient>()) }
+  var isChecked by remember { mutableStateOf(isComplete) }
+  var isBeingUsed by remember {
+    mutableStateOf(name.isNotBlank() || dose != MeasureUnit.EMPTY || quantity != 0.0)
+  }
 
   LaunchedEffect(name) {
     if (name != " ") {
@@ -149,60 +166,31 @@ fun IngredientInput(
   }
 
   if (isChecked) {
-    Row(
-        modifier =
-            Modifier.fillMaxWidth()
-                .padding(horizontal = 20.dp, vertical = 8.dp)
-                .padding(start = 8.dp, top = 14.dp),
-        horizontalArrangement = Arrangement.SpaceBetween) {
-          Column {
-            Text(
-                text = name,
-                style =
-                    MaterialTheme.typography.bodyLarge.copy(
-                        fontStyle = FontStyle.Italic,
-                        fontSize = 18.sp,
-                        fontWeight = FontWeight.Bold),
-                modifier = Modifier.padding(bottom = 4.dp).testTag("IngredientName"))
-            Text(
-                text = "$quantity $dose",
-                style =
-                    MaterialTheme.typography.bodyMedium.copy(
-                        fontStyle = FontStyle.Italic, fontSize = 16.sp, color = Color.Gray),
-                modifier = Modifier.testTag("Quantity&Dose"))
-          }
-          Row(
-              horizontalArrangement = Arrangement.End,
-              verticalAlignment = Alignment.CenterVertically) {
-                IconButton(
-                    modifier = Modifier.testTag("ModifyIconButton"),
-                    onClick = { isChecked = false }) {
-                      Icon(
-                          imageVector = Icons.Outlined.ModeEdit,
-                          contentDescription = null,
-                          modifier = Modifier.size(28.dp))
-                    }
-
-                DeleteButton(state, quantity, dose, name, action)
-              }
-        }
+    CompletedIngredient(
+        name = name,
+        dose = dose,
+        isBeingUsed = isBeingUsed,
+        quantity = quantity,
+        action = action,
+        onClick = { isChecked = false })
   } else {
     // Column for the input fields
     Column(
         modifier = Modifier.fillMaxWidth().padding(horizontal = 20.dp),
         horizontalAlignment = Alignment.CenterHorizontally,
         verticalArrangement = Arrangement.Top) {
+
           // First row for the ingredient name
           Row(modifier = Modifier.fillMaxWidth().padding(top = 8.dp)) {
             // Ingredients Box
             Box(modifier = Modifier.weight(1.5f).height(60.dp).testTag("IngredientsBox")) {
               OutlinedTextField(
-                  colors = colorOfInputBoxes(state),
+                  colors = colorOfInputBoxes(isBeingUsed),
                   value = name,
                   isError =
                       (name == " " ||
                           ingredientCurrent.id == "NO_ID" ||
-                          ingredientCurrent.id == "") && state != IngredientInputState.EMPTY,
+                          ingredientCurrent.id == "") && isBeingUsed,
                   onValueChange = {
                     name = it
                     isDropdownVisible = true
@@ -222,19 +210,20 @@ fun IngredientInput(
                   expanded = isDropdownVisible && name.isNotEmpty(),
                   onDismissRequest = {
                     isDropdownVisible = false
-                    val beforeState = state
+                    val beforeState = isBeingUsed
                     if (name != " ") {
                       ingredientCurrent =
                           if (filteredIngredients.isNotEmpty()) {
+                            name = filteredIngredients[0].name
                             filteredIngredients[0]
                           } else {
                             Ingredient(name, "NO_ID", false, false)
                           }
-                      state =
-                          if (isComplete) IngredientInputState.COMPLETE
-                          else IngredientInputState.SEMI_COMPLETE
+                      isBeingUsed = newState(name, dose, quantity)
                       action(
-                          beforeState, state, IngredientMetaData(quantity, dose, ingredientCurrent))
+                          beforeState,
+                          isBeingUsed,
+                          IngredientMetaData(quantity, dose, ingredientCurrent))
                     }
                   },
                   properties =
@@ -250,15 +239,13 @@ fun IngredientInput(
                       onClick = {
                         name = item.name
                         isDropdownVisible = false
-                        val beforeState = state
+                        val beforeState = isBeingUsed
                         if (name != " ") {
                           ingredientCurrent = item
-                          state =
-                              if (isComplete) IngredientInputState.COMPLETE
-                              else IngredientInputState.SEMI_COMPLETE
+                          isBeingUsed = newState(name, dose, quantity)
                           action(
                               beforeState,
-                              state,
+                              isBeingUsed,
                               IngredientMetaData(quantity, dose, ingredientCurrent))
                         }
                       })
@@ -274,14 +261,12 @@ fun IngredientInput(
                           Ingredient(name, "NO_ID", false, false),
                           {
                             isDropdownVisible = false
-                            val beforeState = state
+                            val beforeState = isBeingUsed
                             ingredientCurrent = it
-                            state =
-                                if (isComplete) IngredientInputState.COMPLETE
-                                else IngredientInputState.SEMI_COMPLETE
+                            isBeingUsed = newState(name, dose, quantity)
                             action(
                                 beforeState,
-                                state,
+                                isBeingUsed,
                                 IngredientMetaData(quantity, dose, ingredientCurrent))
                           },
                           { Log.e("Fail to add Ingredient : ", " ", it) })
@@ -289,20 +274,23 @@ fun IngredientInput(
               }
             }
             // Checked button for validating the ingredient
-            if (state == IngredientInputState.SEMI_COMPLETE ||
-                state == IngredientInputState.COMPLETE) {
+            if (isBeingUsed) {
               Spacer(modifier = Modifier.width(8.dp))
               IconButton(
                   modifier = Modifier.padding(top = 4.dp).testTag("CheckIconButton"),
                   onClick = {
-                    if (state == IngredientInputState.COMPLETE) {
+                    if (inputViewModel.isCompleteIngredient(
+                        IngredientMetaData(quantity, dose, ingredientCurrent))) {
+                      isBeingUsed = true
+                      action(true, true, IngredientMetaData(quantity, dose, ingredientCurrent))
                       isChecked = true
                     }
                   }) {
                     Icon(
                         imageVector = Icons.Outlined.Check,
                         contentDescription = null,
-                        modifier = Modifier.size(28.dp))
+                        modifier = Modifier.size(28.dp),
+                        tint = if (isComplete) Color.Black else Color.LightGray)
                   }
             }
           }
@@ -314,16 +302,16 @@ fun IngredientInput(
               horizontalArrangement = Arrangement.Start) {
                 // Quantity
                 OutlinedTextField(
-                    colors = colorOfInputBoxes(state),
-                    isError = quantity == 0.0 && state != IngredientInputState.EMPTY,
+                    colors = colorOfInputBoxes(isBeingUsed),
+                    isError = quantity == 0.0 && isBeingUsed,
                     value = if (quantity == 0.0) " " else quantity.toString(),
                     onValueChange = { // Check if the input is a valid number
-                      if (it.isNotEmpty() && it.toDoubleOrNull() != null && it.toDouble() >= 0.0) {
+                      if (it.isNotBlank() && it.toDoubleOrNull() != null && it.toDouble() >= 0.0) {
                         quantity = it.toDouble()
-                        if (quantity != 0.0) {
-                          action(
-                              state, state, IngredientMetaData(quantity, dose, ingredientCurrent))
-                        }
+                        action(
+                            isBeingUsed,
+                            isBeingUsed,
+                            IngredientMetaData(quantity, dose, ingredientCurrent))
                       }
                     },
                     singleLine = true,
@@ -344,9 +332,8 @@ fun IngredientInput(
                     expanded = expanded,
                     onExpandedChange = { expanded = !expanded }) {
                       OutlinedTextField(
-                          colors = colorOfInputBoxes(state),
-                          isError =
-                              dose == MeasureUnit.EMPTY && state != IngredientInputState.EMPTY,
+                          colors = colorOfInputBoxes(isBeingUsed),
+                          isError = dose == MeasureUnit.EMPTY && isBeingUsed,
                           readOnly = true,
                           value = if (dose != MeasureUnit.EMPTY) dose.toString() else " ",
                           onValueChange = {},
@@ -362,46 +349,48 @@ fun IngredientInput(
                                   onClick = {
                                     dose = selectionOption
                                     expanded = false
-                                    if (dose != MeasureUnit.EMPTY) {
-                                      val beforeState = state
-                                      state =
-                                          if (isComplete) IngredientInputState.COMPLETE
-                                          else IngredientInputState.SEMI_COMPLETE
-                                      action(
-                                          beforeState,
-                                          state,
-                                          IngredientMetaData(quantity, dose, ingredientCurrent))
-                                    }
+                                    val beforeState = isBeingUsed
+                                    isBeingUsed = newState(name, dose, quantity)
+                                    action(
+                                        beforeState,
+                                        isBeingUsed,
+                                        IngredientMetaData(quantity, dose, ingredientCurrent))
                                   })
                             }
                           }
                     }
-                DeleteButton(state, quantity, dose, name, action)
+                DeleteButton(isBeingUsed, quantity, dose, name, action)
               }
         }
   }
   HorizontalDivider(modifier = Modifier.padding(top = 4.dp).testTag("IngredientDivider"))
 }
 
-/** Composable function for displaying a delete button. */
+/**
+ * Composable function for displaying a delete button.
+ *
+ * @param isBeingUsed indicates if the ingredient input is being used.
+ * @param quantity the quantity of the ingredient.
+ * @param dose the measure unit of the ingredient.
+ * @param name the name of the ingredient.
+ * @param action the action to perform on button click.
+ */
 @Composable
 fun DeleteButton(
-    state: IngredientInputState,
+    isBeingUsed: Boolean,
     quantity: Double,
     dose: MeasureUnit,
     name: String,
-    action: (IngredientInputState?, IngredientInputState?, IngredientMetaData?) -> Unit
+    action: (Boolean?, Boolean?, IngredientMetaData?) -> Unit
 ) {
   // Delete button for removing the ingredient
-  if (state == IngredientInputState.SEMI_COMPLETE || state == IngredientInputState.COMPLETE) {
+  if (isBeingUsed) {
     Spacer(modifier = Modifier.width(8.dp))
     IconButton(
         modifier = Modifier.testTag("DeleteIconButton"),
         onClick = {
           action(
-              state,
-              IngredientInputState.EMPTY,
-              IngredientMetaData(quantity, dose, Ingredient(name, "", false, false)))
+              true, false, IngredientMetaData(quantity, dose, Ingredient(name, "", false, false)))
         }) {
           Icon(
               imageVector = Icons.Outlined.Close,
@@ -412,23 +401,82 @@ fun DeleteButton(
 }
 
 /**
+ * Composable function for displaying a completed ingredient.
+ *
+ * @param onClick the action to perform on button click.
+ * @param name the name of the ingredient.
+ * @param quantity the quantity of the ingredient.
+ * @param dose the measure unit of the ingredient.
+ * @param isBeingUsed indicates if the ingredient input is being used.
+ * @param action the action to perform on button click.
+ */
+@Composable
+fun CompletedIngredient(
+    onClick: () -> Unit,
+    name: String,
+    quantity: Double,
+    dose: MeasureUnit,
+    isBeingUsed: Boolean,
+    action: (Boolean?, Boolean?, IngredientMetaData?) -> Unit
+) {
+  Row(
+      modifier =
+          Modifier.fillMaxWidth()
+              .padding(horizontal = 20.dp, vertical = 8.dp)
+              .padding(start = 8.dp, top = 14.dp),
+      horizontalArrangement = Arrangement.SpaceBetween) {
+        Column {
+          Text(
+              text = name,
+              style =
+                  MaterialTheme.typography.bodyLarge.copy(
+                      fontStyle = FontStyle.Italic, fontSize = 18.sp, fontWeight = FontWeight.Bold),
+              modifier = Modifier.padding(bottom = 4.dp).testTag("IngredientName"))
+          Text(
+              text = "$quantity $dose",
+              style =
+                  MaterialTheme.typography.bodyMedium.copy(
+                      fontStyle = FontStyle.Italic, fontSize = 16.sp, color = Color.Gray),
+              modifier = Modifier.testTag("Quantity&Dose"))
+        }
+        Row(
+            horizontalArrangement = Arrangement.End,
+            verticalAlignment = Alignment.CenterVertically) {
+              IconButton(modifier = Modifier.testTag("ModifyIconButton"), onClick = { onClick() }) {
+                Icon(
+                    imageVector = Icons.Outlined.ModeEdit,
+                    contentDescription = null,
+                    modifier = Modifier.size(28.dp))
+              }
+
+              DeleteButton(isBeingUsed, quantity, dose, name, action)
+            }
+      }
+}
+
+/**
  * Function to determine the colors of input boxes based on input state.
  *
- * @param state the state of the input.
+ * @param isBeingUsed the state of the input.
  * @return [TextFieldColors] object representing the colors of input boxes.
  */
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun colorOfInputBoxes(state: IngredientInputState): TextFieldColors {
+fun colorOfInputBoxes(isBeingUsed: Boolean): TextFieldColors {
   return ExposedDropdownMenuDefaults.textFieldColors(
-      unfocusedContainerColor = if (state != IngredientInputState.EMPTY) ValidInput else NoInput,
-      focusedContainerColor = if (state != IngredientInputState.EMPTY) ValidInput else NoInput,
+      unfocusedContainerColor = if (isBeingUsed) ValidInput else NoInput,
+      focusedContainerColor = if (isBeingUsed) ValidInput else NoInput,
       errorContainerColor = InValidInput)
 }
 
-/** Enum class representing the state of an ingredient input. */
-enum class IngredientInputState {
-  EMPTY,
-  SEMI_COMPLETE,
-  COMPLETE
+/**
+ * Function to determine the new state of the input.
+ *
+ * @param name the name of the ingredient.
+ * @param dose the measure unit of the ingredient.
+ * @param quantity the quantity of the ingredient.
+ * @return a boolean indicating if the input is in use.
+ */
+fun newState(name: String, dose: MeasureUnit, quantity: Double): Boolean {
+  return name.isNotBlank() || dose != MeasureUnit.EMPTY || quantity != 0.0
 }

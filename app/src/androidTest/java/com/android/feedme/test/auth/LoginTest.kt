@@ -2,6 +2,7 @@ package com.android.feedme.test.auth
 
 import androidx.compose.ui.test.junit4.createComposeRule
 import androidx.test.ext.junit.runners.AndroidJUnit4
+import com.android.feedme.model.viewmodel.AuthViewModel
 import com.android.feedme.screen.LoginScreen
 import com.android.feedme.ui.auth.LoginScreen
 import com.android.feedme.ui.navigation.NavigationActions
@@ -52,7 +53,7 @@ class LoginTest : TestCase() {
     }
   */
   private fun goToLoginScreen() {
-    composeTestRule.setContent { LoginScreen(mockk<NavigationActions>()) }
+    composeTestRule.setContent { LoginScreen(mockk<NavigationActions>(), AuthViewModel()) }
     composeTestRule.waitForIdle()
   }
 }

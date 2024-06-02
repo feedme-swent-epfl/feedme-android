@@ -62,9 +62,10 @@ class RecipeRepository(private val db: FirebaseFirestore) {
     }
 
     // Convert Recipe to a map, replacing Ingredient objects with their IDs
-    val recipeMap = recipeToMap(recipe)
+
     val newDocRef = db.collection(collectionPath).document()
     recipe.recipeId = newDocRef.id
+
     if (uri != null) {
       val storageRef =
           FirebaseStorage.getInstance().reference.child((databasePath + recipe.recipeId))
@@ -303,7 +304,8 @@ class RecipeRepository(private val db: FirebaseFirestore) {
         "rating" to recipe.rating,
         "userid" to recipe.userid,
         "imageUrl" to recipe.imageUrl,
-        "ingredientIds" to recipe.ingredients.map { it.ingredient.id })
+        "ingredientIds" to recipe.ingredients.map { it.ingredient.id },
+        "comments" to recipe.comments)
   }
 
   private fun IngredientMetaData.toMap(): Map<String, Any> =
@@ -384,6 +386,15 @@ class RecipeRepository(private val db: FirebaseFirestore) {
             listOf()
           }
 
+      // get the comment if they exist
+      val rawCommentsList = map["comments"]
+      val comments =
+          if (rawCommentsList is List<*>) {
+            rawCommentsList.mapNotNull { it as? String }
+          } else {
+            listOf()
+          }
+
       // Construct the Recipe object
       val recipe =
           Recipe(
@@ -395,7 +406,8 @@ class RecipeRepository(private val db: FirebaseFirestore) {
               tags = tags,
               rating = (map["rating"] as? Number)?.toDouble() ?: 0.0,
               userid = map["userid"] as? String ?: "",
-              imageUrl = map["imageUrl"] as? String ?: "")
+              imageUrl = map["imageUrl"] as? String ?: "",
+              comments = comments)
       Log.d("RecipeRepository", " Recipe fetched success $recipe ")
 
       onSuccess(recipe)
@@ -565,5 +577,28 @@ class RecipeRepository(private val db: FirebaseFirestore) {
           // Combine the scores to form the final ranking score
           matchingIngredientsCount + userPreferencesScore + ratingScore
         })
+  }
+
+  /**
+   * Update the comment list in the recipe document in Firestore. Using transaction to ensure the
+   * data is consistent.
+   *
+   * @param recipeId The ID of the recipe to update.
+   * @param commentId The comment to add to the recipe.
+   */
+  fun addCommentToRecipe(
+      recipeId: String,
+      commentId: String,
+      onSuccess: () -> Unit,
+      onFailure: (Exception) -> Unit
+  ) {
+    val recipeRef = db.collection(collectionPath).document(recipeId)
+    db.runTransaction { transaction ->
+          val recipe = transaction.get(recipeRef)
+          val comments = recipe["comments"] as? List<*> ?: listOf<Comment>()
+          transaction.update(recipeRef, "comments", comments + commentId)
+        }
+        .addOnSuccessListener { onSuccess() }
+        .addOnFailureListener { onFailure(it) }
   }
 }

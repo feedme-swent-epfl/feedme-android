@@ -107,9 +107,16 @@ fun RecipeInputScreen(
                   recipeStepViewModel.steps.value,
                   profileViewModel.currentUserId!!,
                   "")) {
-                recipeViewModel.setRecipe(recipeViewModel.recipe.value!!)
-                navigationActions.navigateTo(Route.PROFILE)
+
+                recipeViewModel.setRecipe(recipeViewModel.recipe.value!!) {
+                  profileViewModel.addRecipe(recipeViewModel.recipe.value!!)
+                  // unsure the UI is up to date
+
+                }
               }
+              navigationActions.navigateTo(Route.PROFILE)
+              // TODO : we could display the recipe instead of going back to the profile
+
             }) {
               Icon(imageVector = Icons.Default.Check, contentDescription = "Validate Recipe Icon")
             }

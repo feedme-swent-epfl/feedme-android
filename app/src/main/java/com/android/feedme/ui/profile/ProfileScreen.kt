@@ -50,8 +50,6 @@ import com.android.feedme.model.data.Profile
 import com.android.feedme.model.data.Recipe
 import com.android.feedme.model.viewmodel.ProfileViewModel
 import com.android.feedme.model.viewmodel.RecipeViewModel
-import com.android.feedme.resources.recipe1
-import com.android.feedme.resources.recipe2
 import com.android.feedme.ui.component.SmallThumbnailsDisplay
 import com.android.feedme.ui.navigation.BottomNavigationMenu
 import com.android.feedme.ui.navigation.NavigationActions
@@ -84,7 +82,10 @@ fun ProfileScreen(
     recipeViewModel: RecipeViewModel = RecipeViewModel()
 ) {
 
-  val recipeList = listOf(recipe1, recipe2, recipe2, recipe1, recipe1)
+  val recipeList =
+      if (profileViewModel.isViewingProfile())
+          profileViewModel.viewingUserRecipes.collectAsState().value
+      else profileViewModel.currentUserRecipe.collectAsState().value
 
   val profile =
       if (profileViewModel.isViewingProfile()) profileViewModel.viewingUserProfile.collectAsState()

@@ -50,6 +50,7 @@ class NavigationActions(
 
       if (destination.route == Route.PROFILE) {
         profileViewModel.removeViewingProfile()
+        profileViewModel.fetchCurrentUserProfile()
       }
     }
   }

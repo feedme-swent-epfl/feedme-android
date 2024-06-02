@@ -503,6 +503,66 @@ class ProfileRepository(private val db: FirebaseFirestore) {
   }
 
   /**
+   * Function that updates a document in Firestore with the given field and value.
+   *
+   * @param userId The ID of the user to update the saved recipe for
+   * @param recipe The [Recipe] to add to the user's saved recipes
+   * @param onSuccess A callback function invoked on successful addition of the recipe
+   * @param onFailure A callback function invoked on failure to add the recipe, with an exception
+   */
+  fun linkRecipeToProfile(
+      userId: String,
+      recipe: String,
+      onSuccess: () -> Unit,
+      onFailure: (Exception) -> Unit
+  ) {
+    handleFirestoreTransaction(
+        {
+          val userRef = db.collection(collectionPath).document(userId)
+          val currentUser =
+              this.get(userRef).toObject(Profile::class.java)
+                  ?: return@handleFirestoreTransaction null
+          val savedRecipes = currentUser.recipeList.toMutableList()
+          savedRecipes.add(recipe)
+          currentUser.recipeList = savedRecipes
+          update(userRef, "recipeList", savedRecipes)
+          set(userRef, currentUser)
+        },
+        onSuccess = { onSuccess() },
+        onFailure = { onFailure(it) })
+  }
+
+  /**
+   * Function that updates a document in Firestore with the given field and value.
+   *
+   * @param userId The ID of the user to update the saved recipe for
+   * @param recipe The [Recipe] to add to the user's saved recipes
+   * @param onSuccess A callback function invoked on successful addition of the recipe
+   * @param onFailure A callback function invoked on failure to add the recipe, with an exception
+   */
+  fun addCommentToProfile(
+      userId: String,
+      commentId: String,
+      onSuccess: () -> Unit,
+      onFailure: (Exception) -> Unit
+  ) {
+    handleFirestoreTransaction(
+        {
+          val userRef = db.collection(collectionPath).document(userId)
+          val currentUser =
+              this.get(userRef).toObject(Profile::class.java)
+                  ?: return@handleFirestoreTransaction null
+          val savedRecipes = currentUser.commentList.toMutableList()
+          savedRecipes.add(commentId)
+          currentUser.commentList = savedRecipes
+          update(userRef, "commentList", savedRecipes)
+          set(userRef, currentUser)
+        },
+        onSuccess = { onSuccess() },
+        onFailure = { onFailure(it) })
+  }
+
+  /**
    * Function that removes a saved recipe from a user's saved recipes in Firestore.
    *
    * @param userId The ID of the user to remove the saved recipe for

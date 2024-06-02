@@ -127,18 +127,33 @@ class RecipeViewModel : ViewModel() {
    */
   fun setRecipe(
       recipe: Recipe,
-      context: Context = FirebaseFirestore.getInstance().app.applicationContext
+      context: Context = FirebaseFirestore.getInstance().app.applicationContext,
+      onSuccess: () -> Unit = {}
   ) {
     viewModelScope.launch {
       recipeRepository.addRecipe(
           recipe,
           _picture.value,
           context,
-          onSuccess = { _recipe.value = recipe },
-          onFailure = {
-            // Handle failure
-            throw error("Recipe could not get updated")
-          })
+          onSuccess = {
+            _recipe.value = recipe
+
+            profileRepository.linkRecipeToProfile(
+                recipe.userid,
+                recipe.recipeId,
+                onSuccess = {
+                  onSuccess()
+                  // Handle success
+                },
+                onFailure = {
+                  // Handle failure
+
+                })
+          },
+          onFailure = {},
+          // Handle failure
+
+      )
     }
   }
 }

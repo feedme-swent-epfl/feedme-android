@@ -17,6 +17,7 @@ import com.google.firebase.firestore.DocumentSnapshot
 import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.firestore.Transaction
 import junit.framework.TestCase.assertEquals
+import junit.framework.TestCase.assertFalse
 import junit.framework.TestCase.assertNotNull
 import junit.framework.TestCase.assertTrue
 import junit.framework.TestCase.fail
@@ -336,6 +337,112 @@ class ProfileRepositoryTest {
 
     shadowOf(Looper.getMainLooper()).idle()
 
+    assertTrue("Failure callback was not called", failureCalled)
+  }
+
+  @Test
+  fun linkRecipeToProfile_Success() {
+    val userId = "testUserId"
+    val recipeId = "testRecipeId"
+    val mockTransaction = mock(Transaction::class.java)
+
+    `when`(mockFirestore.runTransaction<Any>(any())).thenAnswer { invocation ->
+      val transactionFunction = invocation.arguments[0] as Transaction.Function<*>
+      transactionFunction.apply(mockTransaction)
+      Tasks.forResult(null)
+    }
+
+    `when`(mockTransaction.get(mockDocumentReference)).thenReturn(mockDocumentSnapshot)
+    val profile = Profile(userId, recipeList = mutableListOf())
+    `when`(mockDocumentSnapshot.toObject(Profile::class.java)).thenReturn(profile)
+
+    var successCalled = false
+    var failureCalled = false
+
+    profileRepository.linkRecipeToProfile(
+        userId, recipeId, { successCalled = true }, { failureCalled = true })
+
+    shadowOf(Looper.getMainLooper()).idle()
+
+    verify(mockTransaction).get(mockDocumentReference)
+    verify(mockTransaction).update(mockDocumentReference, "recipeList", listOf(recipeId))
+    verify(mockTransaction).set(mockDocumentReference, profile)
+    assertTrue("Success callback was not called", successCalled)
+    assertFalse("Failure callback should not be called", failureCalled)
+  }
+
+  @Test
+  fun linkRecipeToProfile_Failure() {
+    val userId = "testUserId"
+    val recipeId = "testRecipeId"
+    val exception = Exception("Firestore transaction failed")
+
+    `when`(mockFirestore.runTransaction<Any>(any())).thenAnswer { invocation ->
+      Tasks.forException<Any>(exception)
+    }
+
+    var successCalled = false
+    var failureCalled = false
+
+    profileRepository.linkRecipeToProfile(
+        userId, recipeId, { successCalled = true }, { failureCalled = true })
+
+    shadowOf(Looper.getMainLooper()).idle()
+
+    assertFalse("Success callback should not be called", successCalled)
+    assertTrue("Failure callback was not called", failureCalled)
+  }
+
+  @Test
+  fun addCommentToProfile_Success() {
+    val userId = "testUserId"
+    val commentId = "testCommentId"
+    val mockTransaction = mock(Transaction::class.java)
+
+    `when`(mockFirestore.runTransaction<Any>(any())).thenAnswer { invocation ->
+      val transactionFunction = invocation.arguments[0] as Transaction.Function<*>
+      transactionFunction.apply(mockTransaction)
+      Tasks.forResult(null)
+    }
+
+    `when`(mockTransaction.get(mockDocumentReference)).thenReturn(mockDocumentSnapshot)
+    val profile = Profile(userId, commentList = mutableListOf())
+    `when`(mockDocumentSnapshot.toObject(Profile::class.java)).thenReturn(profile)
+
+    var successCalled = false
+    var failureCalled = false
+
+    profileRepository.addCommentToProfile(
+        userId, commentId, { successCalled = true }, { failureCalled = true })
+
+    shadowOf(Looper.getMainLooper()).idle()
+
+    verify(mockTransaction).get(mockDocumentReference)
+    verify(mockTransaction).update(mockDocumentReference, "commentList", listOf(commentId))
+    verify(mockTransaction).set(mockDocumentReference, profile)
+    assertTrue("Success callback was not called", successCalled)
+    assertFalse("Failure callback should not be called", failureCalled)
+  }
+
+  @Test
+  fun addCommentToProfile_Failure() {
+    val userId = "testUserId"
+    val commentId = "testCommentId"
+    val exception = Exception("Firestore transaction failed")
+
+    `when`(mockFirestore.runTransaction<Any>(any())).thenAnswer { invocation ->
+      Tasks.forException<Any>(exception)
+    }
+
+    var successCalled = false
+    var failureCalled = false
+
+    profileRepository.addCommentToProfile(
+        userId, commentId, { successCalled = true }, { failureCalled = true })
+
+    shadowOf(Looper.getMainLooper()).idle()
+
+    assertFalse("Success callback should not be called", successCalled)
     assertTrue("Failure callback was not called", failureCalled)
   }
 }

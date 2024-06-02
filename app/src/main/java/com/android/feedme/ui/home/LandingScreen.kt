@@ -18,12 +18,10 @@ import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.Bookmark
 import androidx.compose.material.icons.outlined.BookmarkBorder
 import androidx.compose.material.icons.rounded.Bookmark
 import androidx.compose.material.icons.rounded.Star
 import androidx.compose.material.icons.sharp.Star
-import androidx.compose.material.icons.twotone.Star
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.Icon
@@ -65,6 +63,7 @@ import com.android.feedme.ui.theme.TemplateColor
 import com.android.feedme.ui.theme.TextBarColor
 import com.android.feedme.ui.theme.YellowStar
 import com.android.feedme.ui.theme.YellowStarBlackOutline
+import java.util.Locale
 
 /**
  * Composable function that generates the landing page / landing screen
@@ -205,9 +204,7 @@ fun RecipeCard(
                 // Rating
                 Row(
                     verticalAlignment = Alignment.CenterVertically,
-                    modifier =
-                        Modifier.clickable { /* TODO () : access the comments */}
-                            .testTag("Rating")) {
+                    modifier = Modifier.clickable {}.testTag("Rating")) {
                       // Star icon for ratings
                       Box(
                           contentAlignment = Alignment.Center,
@@ -226,7 +223,7 @@ fun RecipeCard(
                                 modifier = Modifier.size(23.dp))
                           }
                       Text(
-                          text = String.format("%.1f", recipe.rating),
+                          text = String.format(Locale.getDefault(), "%.1f", recipe.rating),
                           fontWeight = FontWeight.Bold,
                       )
                     }

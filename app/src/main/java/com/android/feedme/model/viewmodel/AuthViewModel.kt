@@ -113,13 +113,13 @@ class AuthViewModel : ViewModel() {
       val newProfile =
           Profile(
               id = googleId,
-              name = name ?: "",
+              name = name,
               username =
                   if (name.length <= 15) name.replace("[^\\w]".toRegex(), "_").lowercase()
                   else name.replace("[^\\w]".toRegex(), "_").take(15).lowercase(),
-              email = email ?: "",
+              email = email,
               description = "",
-              imageUrl = photoUrl ?: "",
+              imageUrl = photoUrl,
               followers = listOf(),
               following = listOf(),
               filter = listOf(),
@@ -137,8 +137,7 @@ class AuthViewModel : ViewModel() {
     if (currentUser != null) {
       val db = FirebaseFirestore.getInstance()
       db.collection("profiles")
-          .document(currentUser.uid)
-          .get(Source.CACHE)
+          .document(currentUser.uid)[Source.CACHE]
           .addOnSuccessListener { document ->
             if (document != null && document.exists()) {
               val userProfile = document.toObject(Profile::class.java)

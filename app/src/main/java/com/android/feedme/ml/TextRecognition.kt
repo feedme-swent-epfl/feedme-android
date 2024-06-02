@@ -63,26 +63,11 @@ fun textExtraction(
  *
  * @param text The [Text] object containing the text to be processed.
  * @return A concatenated string containing the text of each block.
- *
- * TODO("A lot of work on exact image processing an display of the relevant information's in a smart
- *   way")
  */
 fun textProcessing(text: Text): String {
   var blockText = ""
   for (block in text.textBlocks) {
     blockText += block.text
-    /*val blockCornerPoints = block.cornerPoints
-    val blockFrame = block.boundingBox
-    for (line in block.lines) {
-      val lineText = line.text
-      val lineCornerPoints = line.cornerPoints
-      val lineFrame = line.boundingBox
-      for (element in line.elements) {
-        val elementText = element.text
-        val elementCornerPoints = element.cornerPoints
-        val elementFrame = element.boundingBox
-      }
-    }*/
   }
   return blockText
 }
@@ -230,8 +215,8 @@ fun parseResponse(responseBody: String?, forIngredientFound: (IngredientMetaData
  * @return The string with each word capitalized.
  */
 fun String.capitalizeWords(): String =
-    split(" ").joinToString(" ") { it ->
-      it.replaceFirstChar {
+    split(" ").joinToString(" ") { word ->
+      word.replaceFirstChar {
         if (it.isLowerCase()) it.titlecase(Locale.getDefault()) else it.toString()
       }
     }

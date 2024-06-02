@@ -214,7 +214,7 @@ fun FindRecipeScreen(
                         fontWeight = FontWeight.Bold,
                         modifier = Modifier.padding(start = 8.dp).testTag("ExtraText"))
                   }
-              IngredientList(inputViewModel)
+              IngredientList(inputViewModel = inputViewModel)
             }
       }
 }

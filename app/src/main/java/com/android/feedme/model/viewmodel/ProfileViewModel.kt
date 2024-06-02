@@ -218,9 +218,12 @@ class ProfileViewModel : ViewModel() {
       fetchProfile: MutableStateFlow<List<Profile>>,
       context: Context = FirebaseFirestore.getInstance().app.applicationContext
   ) {
+    if (ids.isEmpty()) {
+      fetchProfile.value = listOf()
+    }
     // Check if we actually need to fetch the profiles
     val currentIds = fetchProfile.value.map { it.id }.toSet()
-    if (currentIds != ids.toSet() && ids.isNotEmpty()) {
+    if (currentIds != ids.toSet()) {
       Log.d("ProfileViewModel", "Fetching profiles: $ids")
       viewModelScope.launch {
         repository.getProfiles(
@@ -254,8 +257,11 @@ class ProfileViewModel : ViewModel() {
       fetchRecipe: MutableStateFlow<List<Recipe>>,
       context: Context = FirebaseFirestore.getInstance().app.applicationContext
   ) {
+    if (ids.isEmpty()) {
+      fetchRecipe.value = listOf()
+    }
     val currentIds = fetchRecipe.value.map { it.recipeId }.toSet()
-    if (currentIds != ids.toSet() && ids.isNotEmpty()) {
+    if (currentIds != ids.toSet()) {
       Log.d("ProfileViewModel", "Fetching recipes: $ids")
       viewModelScope.launch {
         recipeRepository.getSavedRecipes(
@@ -336,6 +342,7 @@ class ProfileViewModel : ViewModel() {
     currentUserId = profile.id
     fetchProfiles(profile.followers, _currentUserFollowers)
     fetchProfiles(profile.following, _currentUserFollowing)
+    fetchRecipes(profile.recipeList, _currentUserRecipes)
   }
 
   /**

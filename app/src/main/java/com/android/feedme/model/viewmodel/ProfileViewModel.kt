@@ -316,6 +316,7 @@ class ProfileViewModel : ViewModel() {
     viewingUserId = profile.id
     fetchProfiles(profile.followers, _viewingUserFollowers)
     fetchProfiles(profile.following, _viewingUserFollowing)
+    fetchRecipes(profile.recipeList, _viewingUserRecipes)
   }
 
   /**

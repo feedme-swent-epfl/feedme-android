@@ -289,8 +289,14 @@ fun RecipeCard(
 
                 // Difficulty tag
                 OutlinedButton(
-                    onClick = { /* no action when clicking on difficult */},
-                    modifier = Modifier.border(3.dp, Color.Black, RoundedCornerShape(12.dp))) {}
+                    onClick = { /* no action when clicking on difficulty */},
+                    modifier = Modifier.border(3.dp, TemplateColor, RoundedCornerShape(12.dp))) {
+                      Text(
+                          text = recipe.level,
+                          style =
+                              TextStyle(fontWeight = FontWeight.SemiBold, color = TemplateColor),
+                          modifier = Modifier.testTag("RecipeDifficulty"))
+                    }
               }
 
               if (profile != null) {

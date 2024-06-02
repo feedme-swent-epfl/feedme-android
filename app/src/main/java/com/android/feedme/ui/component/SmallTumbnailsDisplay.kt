@@ -58,8 +58,8 @@ fun SmallThumbnailsDisplay(
   val imageWidth = LocalConfiguration.current.screenWidthDp / 2
 
   // Calculate the height of the grid based on the number of recipes and the height of each card
-  // 216 is the height of each card with padding
-  val gridHeight = ((listRecipe.size / 2) + (listRecipe.size % 2)) * 216
+  // 340 is the height of each card with padding
+  val gridHeight = ((listRecipe.size / 2) + (listRecipe.size % 2)) * 340
 
   LazyVerticalGrid(
       columns = GridCells.Adaptive(minSize = imageWidth.dp),

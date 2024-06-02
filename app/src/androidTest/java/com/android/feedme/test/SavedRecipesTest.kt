@@ -76,9 +76,9 @@ class SavedRecipesTest : TestCase() {
           tags = listOf("Meat"),
           rating = 4.5,
           userid = "9vu1XpyZwrW5hSvEpHuuvcVVgiv2",
+          level = "Easy",
           imageUrl =
-              "https://external-content.duckduckgo.com/iu/?u=https%3A%2F%2Fwww.mamablip.com%2Fstorage%2FLasagna%2520with%2520Meat%2520and%2520Tomato%2520Sauce_3481612355355.jpg&f=1&nofb=1&ipt=8e887ba99ce20a85fb867dabbe0206c1146ebf2f13548b5653a2778e3ea18c54&ipo=images",
-          level = "Easy")
+              "https://external-content.duckduckgo.com/iu/?u=https%3A%2F%2Fwww.mamablip.com%2Fstorage%2FLasagna%2520with%2520Meat%2520and%2520Tomato%2520Sauce_3481612355355.jpg&f=1&nofb=1&ipt=8e887ba99ce20a85fb867dabbe0206c1146ebf2f13548b5653a2778e3ea18c54&ipo=images")
 
   private val recipe2 =
       Recipe(
@@ -101,9 +101,9 @@ class SavedRecipesTest : TestCase() {
           tags = listOf("Meat"),
           rating = 4.2,
           userid = "9vu1XpyZwrW5hSvEpHuuvcVVgiv2",
+          level = "Medium",
           imageUrl =
-              "https://external-content.duckduckgo.com/iu/?u=https%3A%2F%2Fwww.mamablip.com%2Fstorage%2FLasagna%2520with%2520Meat%2520and%2520Tomato%2520Sauce_3481612355355.jpg&f=1&nofb=1&ipt=8e887ba99ce20a85fb867dabbe0206c1146ebf2f13548b5653a2778e3ea18c54&ipo=images",
-          level = "Easy")
+              "https://external-content.duckduckgo.com/iu/?u=https%3A%2F%2Fwww.mamablip.com%2Fstorage%2FLasagna%2520with%2520Meat%2520and%2520Tomato%2520Sauce_3481612355355.jpg&f=1&nofb=1&ipt=8e887ba99ce20a85fb867dabbe0206c1146ebf2f13548b5653a2778e3ea18c54&ipo=images")
 
   @Before
   fun init() {
@@ -131,12 +131,8 @@ class SavedRecipesTest : TestCase() {
     every { mockDocumentReference.set(any()) } returns Tasks.forResult(null)
 
     every { mockDocumentSnapshot.exists() } returns true
-    // TODO : uncomment and fix the test
-    // every { mockDocumentSnapshot.data } returns recipe2Map
 
     every { mockDocumentReference.set(any()) } returns Tasks.forResult(null)
-
-    // every { homeViewModel.fetchSavedRecipes(any()) } just Runs
 
     every { mockCollectionReference.whereIn("recipeId", listOf(recipe2.recipeId)) } answers
         {
@@ -144,7 +140,6 @@ class SavedRecipesTest : TestCase() {
         }
     every { mockQuery.limit(6) } answers { mockQuery }
     every { mockQuery.get() } answers { Tasks.forResult(mockQuerySnapshot) }
-    // every {mockQuerySnapshot.documents} answers {listOf(mockDocumentSnapshot)}
   }
 
   @Test
@@ -163,15 +158,9 @@ class SavedRecipesTest : TestCase() {
     profileViewModel.addSavedRecipes(recipe2.recipeId)
     profileViewModel.removeSavedRecipes(recipe1.recipeId)
 
-    // TODO : uncomment and fix the test
-    // profileViewModel.setUserSavedRecipes(listOf(recipe2.recipeId))
-    // homeViewModel.setSavedRecipes(listOf(recipe2))
     composeTestRule.setContent {
       SavedRecipesScreen(navAction, profileViewModel, recipeViewModel, homeViewModel)
     }
-    // TODO : uncomment and fix the test
-    // composeTestRule.onNodeWithTag("RecipeCard").assertIsDisplayed()
-
   }
 
   private val recipe2Map: Map<String, Any> =
@@ -211,6 +200,6 @@ class SavedRecipesTest : TestCase() {
           "time" to 60.0,
           "rating" to 4.5,
           "userid" to "user123",
-          "difficulty" to "Easy",
+          "level" to "Easy",
           "imageUrl" to "http://example.com/chocolate_cake.jpg")
 }

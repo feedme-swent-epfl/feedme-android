@@ -19,5 +19,6 @@ class LandingScreen(semanticsProvider: SemanticsNodeInteractionsProvider) :
   val recipeCard: KNode = child { hasTestTag("RecipeCard") }
   val userName: KNode = child { hasTestTag("UserName") }
   val saveIcon: KNode = child { hasTestTag("SaveIcon") }
+  val levelIcon: KNode = child { hasTestTag("RecipeDifficulty") }
   val ratingButton: KNode = child { hasTestTag("Rating") }
 }

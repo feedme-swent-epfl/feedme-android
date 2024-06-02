@@ -31,8 +31,11 @@ import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -46,10 +49,13 @@ import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import coil.compose.AsyncImage
+import com.android.feedme.model.data.Comment
 import com.android.feedme.model.data.Profile
 import com.android.feedme.model.data.Recipe
 import com.android.feedme.model.viewmodel.ProfileViewModel
 import com.android.feedme.model.viewmodel.RecipeViewModel
+import com.android.feedme.resources.comment1
+import com.android.feedme.ui.component.SmallCommentsDisplay
 import com.android.feedme.ui.component.SmallThumbnailsDisplay
 import com.android.feedme.ui.navigation.BottomNavigationMenu
 import com.android.feedme.ui.navigation.NavigationActions
@@ -86,6 +92,7 @@ fun ProfileScreen(
       if (profileViewModel.isViewingProfile())
           profileViewModel.viewingUserRecipes.collectAsState().value
       else profileViewModel.currentUserRecipe.collectAsState().value
+  val commentList = listOf(comment1, comment1, comment1, comment1)
 
   val profile =
       if (profileViewModel.isViewingProfile()) profileViewModel.viewingUserProfile.collectAsState()
@@ -130,6 +137,7 @@ fun ProfileScreen(
             padding,
             profile.value,
             recipeList,
+            commentList,
             navigationActions,
             profileViewModel,
             recipeViewModel)
@@ -152,12 +160,14 @@ fun ProfileBox(
     padding: PaddingValues,
     profile: Profile?,
     recipeList: List<Recipe>,
+    commentList: List<Comment>,
     navigationActions: NavigationActions,
     profileViewModel: ProfileViewModel,
     recipeViewModel: RecipeViewModel
-) { // TODO add font
+) {
 
   val tabList = listOf("Recipes", "Comments")
+  var selectedTabIndex by remember { mutableIntStateOf(0) }
 
   LazyColumn(
       modifier = Modifier.padding(padding).testTag("ProfileBox"),
@@ -183,20 +193,22 @@ fun ProfileBox(
           ProfileButtons(navigationActions, profile ?: Profile(), profileViewModel)
 
           TabRow(
-              selectedTabIndex = 0,
+              selectedTabIndex = selectedTabIndex,
               containerColor = MaterialTheme.colorScheme.surface,
               contentColor = MaterialTheme.colorScheme.onSurface,
               modifier = Modifier.testTag("TabRow")) {
                 tabList.forEachIndexed { index, title ->
                   Tab(
                       text = { Text(title) },
-                      selected = false /*TODO(): selectedTabIndex == index*/,
-                      onClick = { /*TODO selectedTabIndex = index */},
+                      selected = (selectedTabIndex == index),
+                      onClick = { selectedTabIndex = index },
                       modifier = Modifier.testTag(if (index == 0) "TabRecipes" else "TabComments"))
                 }
               }
-
-          SmallThumbnailsDisplay(recipeList, navigationActions, recipeViewModel)
+          when (selectedTabIndex) {
+            0 -> SmallThumbnailsDisplay(recipeList, navigationActions, recipeViewModel)
+            1 -> SmallCommentsDisplay(commentList)
+          }
         }
       }
 }

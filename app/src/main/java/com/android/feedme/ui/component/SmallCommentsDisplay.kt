@@ -1,6 +1,7 @@
 package com.android.feedme.ui.component
 
 import androidx.compose.foundation.BorderStroke
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
@@ -30,6 +31,9 @@ import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import coil.compose.AsyncImage
 import com.android.feedme.model.data.Comment
+import com.android.feedme.model.viewmodel.CommentViewModel
+import com.android.feedme.model.viewmodel.RecipeViewModel
+import com.android.feedme.ui.navigation.NavigationActions
 import com.android.feedme.ui.theme.BlueUsername
 
 /**
@@ -41,7 +45,13 @@ import com.android.feedme.ui.theme.BlueUsername
  * @param listComment The list of [Comment] to be displayed.
  */
 @Composable
-fun SmallCommentsDisplay(listComment: List<Comment>, modifier: Modifier = Modifier) {
+fun SmallCommentsDisplay(
+    listComment: List<Comment>,
+    modifier: Modifier = Modifier,
+    commentViewModel: CommentViewModel,
+    navigationActions: NavigationActions,
+    recipeViewModel: RecipeViewModel
+) {
   // Calculate the width of each image based on the screen width, we want to display 1 comment per
   // line
   val imageWidth = LocalConfiguration.current.screenWidthDp
@@ -55,7 +65,9 @@ fun SmallCommentsDisplay(listComment: List<Comment>, modifier: Modifier = Modifi
       columns = GridCells.Adaptive(minSize = imageWidth.dp),
       userScrollEnabled = false,
       modifier = modifier.height(gridHeight.dp)) {
-        items(listComment) { item -> CommentCard(comment = item) }
+        items(listComment) { item ->
+          CommentCard(comment = item, commentViewModel, navigationActions, recipeViewModel)
+        }
       }
 }
 
@@ -69,9 +81,18 @@ fun SmallCommentsDisplay(listComment: List<Comment>, modifier: Modifier = Modifi
  * @param comment The [Comment] object to be displayed.
  */
 @Composable
-fun CommentCard(comment: Comment) {
+fun CommentCard(
+    comment: Comment,
+    commentViewModel: CommentViewModel,
+    navigationActions: NavigationActions,
+    recipeViewModel: RecipeViewModel
+    /* TODO fix this in a next issue */
+) {
   Surface(
-      modifier = Modifier.fillMaxWidth().padding(horizontal = 16.dp, vertical = 8.dp),
+      modifier =
+          Modifier.fillMaxWidth()
+              .padding(horizontal = 16.dp, vertical = 8.dp)
+              .clickable(onClick = {}),
       color = Color.White,
       shape = RoundedCornerShape(8.dp),
       border = BorderStroke(2.dp, Color.Black)) {

@@ -52,6 +52,7 @@ import coil.compose.AsyncImage
 import com.android.feedme.model.data.Comment
 import com.android.feedme.model.data.Profile
 import com.android.feedme.model.data.Recipe
+import com.android.feedme.model.viewmodel.CommentViewModel
 import com.android.feedme.model.viewmodel.ProfileViewModel
 import com.android.feedme.model.viewmodel.RecipeViewModel
 import com.android.feedme.resources.comment1
@@ -85,7 +86,8 @@ import com.android.feedme.ui.theme.TextBarColor
 fun ProfileScreen(
     navigationActions: NavigationActions,
     profileViewModel: ProfileViewModel,
-    recipeViewModel: RecipeViewModel = RecipeViewModel()
+    recipeViewModel: RecipeViewModel = RecipeViewModel(),
+    commentViewModel: CommentViewModel = CommentViewModel()
 ) {
 
   val recipeList =
@@ -140,7 +142,8 @@ fun ProfileScreen(
             commentList,
             navigationActions,
             profileViewModel,
-            recipeViewModel)
+            recipeViewModel,
+            commentViewModel)
       })
 }
 
@@ -163,7 +166,8 @@ fun ProfileBox(
     commentList: List<Comment>,
     navigationActions: NavigationActions,
     profileViewModel: ProfileViewModel,
-    recipeViewModel: RecipeViewModel
+    recipeViewModel: RecipeViewModel,
+    commentViewModel: CommentViewModel
 ) {
 
   val tabList = listOf("Recipes", "Comments")
@@ -205,9 +209,12 @@ fun ProfileBox(
                       modifier = Modifier.testTag(if (index == 0) "TabRecipes" else "TabComments"))
                 }
               }
+
           when (selectedTabIndex) {
             0 -> SmallThumbnailsDisplay(recipeList, navigationActions, recipeViewModel)
-            1 -> SmallCommentsDisplay(commentList)
+            1 ->
+                SmallCommentsDisplay(
+                    commentList, Modifier, commentViewModel, navigationActions, recipeViewModel)
           }
         }
       }

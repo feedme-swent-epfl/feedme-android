@@ -19,7 +19,6 @@ import androidx.compose.material.icons.outlined.AddComment
 import androidx.compose.material.icons.rounded.Star
 import androidx.compose.material.icons.sharp.Star
 import androidx.compose.material.icons.twotone.Bookmark
-import androidx.compose.material.icons.twotone.Star
 import androidx.compose.material3.FloatingActionButton
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon

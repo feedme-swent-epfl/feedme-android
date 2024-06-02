@@ -16,7 +16,6 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.outlined.BookmarkBorder
 import androidx.compose.material.icons.rounded.Star
 import androidx.compose.material.icons.sharp.Star
-import androidx.compose.material.icons.twotone.Star
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.Icon
@@ -38,6 +37,7 @@ import com.android.feedme.ui.navigation.NavigationActions
 import com.android.feedme.ui.navigation.Route
 import com.android.feedme.ui.theme.YellowStar
 import com.android.feedme.ui.theme.YellowStarBlackOutline
+import java.util.Locale
 
 /**
  * Composable function to display a list of recipes as small thumbnails with additional information.
@@ -128,21 +128,19 @@ fun SmallThumbnailsDisplay(
 
                               // Recipe rating
                               Text(
-                                  String.format("%.1f", listRecipe[i].rating),
+                                  String.format(Locale.getDefault(), "%.1f", listRecipe[i].rating),
                                   modifier = Modifier.padding(end = 10.dp).testTag("Text Rating"))
                             }
 
                             // Save button, to keep the recipe accessible even offline
                             // There is no save icon in Material, so for now i'm using the "build"
                             // icon
-                            IconButton(
-                                modifier = Modifier.padding(end = 10.dp),
-                                onClick = { /*TODO call to the database function for saving recipes*/}) {
-                                  Icon(
-                                      imageVector = Icons.Outlined.BookmarkBorder,
-                                      contentDescription = "Save Icon",
-                                      modifier = Modifier.size(26.dp).padding(start = 4.dp))
-                                }
+                            IconButton(modifier = Modifier.padding(end = 10.dp), onClick = {}) {
+                              Icon(
+                                  imageVector = Icons.Outlined.BookmarkBorder,
+                                  contentDescription = "Save Icon",
+                                  modifier = Modifier.size(26.dp).padding(start = 4.dp))
+                            }
                           }
 
                       // Recipe Title

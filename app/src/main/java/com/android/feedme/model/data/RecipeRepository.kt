@@ -155,8 +155,7 @@ class RecipeRepository(private val db: FirebaseFirestore) {
     // Function to fetch data from cache
     fun fetchFromCache() {
       db.collection(collectionPath)
-          .whereIn("recipeId", ids)
-          .get(Source.CACHE)
+          .whereIn("recipeId", ids)[Source.CACHE]
           .addOnSuccessListener { addSuccessListener(it, onSuccess, onFailure) }
           .addOnFailureListener { exception -> onFailure(exception) }
     }
@@ -594,7 +593,7 @@ class RecipeRepository(private val db: FirebaseFirestore) {
   ) {
     val recipeRef = db.collection(collectionPath).document(recipeId)
     db.runTransaction { transaction ->
-          val recipe = transaction.get(recipeRef)
+          val recipe = transaction[recipeRef]
           val comments = recipe["comments"] as? List<*> ?: listOf<Comment>()
           transaction.update(recipeRef, "comments", comments + commentId)
         }

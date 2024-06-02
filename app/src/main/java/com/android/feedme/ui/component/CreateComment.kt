@@ -22,10 +22,8 @@ import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.rounded.StarHalf
-import androidx.compose.material.icons.filled.Star
 import androidx.compose.material.icons.rounded.Star
 import androidx.compose.material.icons.rounded.StarBorder
-import androidx.compose.material.icons.twotone.Star
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Icon
 import androidx.compose.material3.OutlinedButton
@@ -34,6 +32,7 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableDoubleStateOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
@@ -78,7 +77,7 @@ fun CreateComment(
     onDismiss: () -> Unit
 ) {
   var commentTitle by remember { mutableStateOf("") }
-  var rating by remember { mutableStateOf(0.0) }
+  var rating by remember { mutableDoubleStateOf(0.0) }
   var description by remember { mutableStateOf("") }
   val gallery = cameraViewModel.galleryLauncher(null, null, commentViewModel)
 
@@ -97,7 +96,6 @@ fun CreateComment(
               Row(
                   modifier = Modifier.fillMaxWidth().testTag("FirstRow"),
                   horizontalArrangement = Arrangement.SpaceBetween) {
-                    // TODO Change that and call the function UserProfilePicture(profileViewModel)
                     AsyncImage(
                         modifier =
                             Modifier.width(100.dp)

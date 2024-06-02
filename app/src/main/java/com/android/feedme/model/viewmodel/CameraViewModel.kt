@@ -243,7 +243,6 @@ class CameraViewModel : ViewModel() {
     return withTimeoutOrNull(10000L) {
       suspendCancellableCoroutine { continuation ->
         val labelList = mutableMapOf<String, Float>()
-        var errorObjectOccurred = false
 
         objectExtraction(
             bitmap = bitmap,
@@ -269,7 +268,6 @@ class CameraViewModel : ViewModel() {
             },
             onFailure = {
               _errorToDisplay.value = ERROR_NO_OBJECT
-              errorObjectOccurred = true
               continuation.resume(null)
             })
       }

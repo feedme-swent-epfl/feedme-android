@@ -5,6 +5,8 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.android.feedme.model.data.Comment
 import com.android.feedme.model.data.CommentRepository
+import com.android.feedme.model.data.ProfileRepository
+import com.android.feedme.model.data.RecipeRepository
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.launch
@@ -17,6 +19,8 @@ import kotlinx.coroutines.launch
  */
 class CommentViewModel : ViewModel() {
   private val repository = CommentRepository.instance
+  private val repositoryRecipe = RecipeRepository.instance
+  private val repositoryProfile = ProfileRepository.instance
   private val _comment = MutableStateFlow<Comment?>(null)
 
   private val _picture = MutableStateFlow<Uri?>(null)
@@ -48,18 +52,35 @@ class CommentViewModel : ViewModel() {
    *
    * @param comment: the comment to set in the database
    */
-  fun addComment(comment: Comment, onSuccess: () -> Unit) {
+  fun addComment(comment: Comment) {
     viewModelScope.launch {
       repository.addComment(
           comment,
           _picture.value,
           onSuccess = {
             _comment.value = comment
-            onSuccess()
+
+            repositoryRecipe.addCommentToRecipe(
+                comment.recipeId,
+                comment.commentId,
+                onSuccess = {
+                  repositoryProfile.addCommentToProfile(
+                      comment.userId,
+                      comment.commentId,
+                      onSuccess = {},
+                      onFailure = {
+                        // Handle failure
+
+                      })
+                },
+                onFailure = {
+                  // Handle failure
+
+                })
           },
           onFailure = {
             // Handle failure
-            throw error("comment could not get updated")
+
           })
     }
   }

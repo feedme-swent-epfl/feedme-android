@@ -43,9 +43,12 @@ fun StepList(
     // Title for the list of steps with an icon to add a new step at the top
     Row(
         verticalAlignment = Alignment.CenterVertically,
-        modifier = Modifier.padding(8.dp).testTag("StepListTitle")) {
-          Text("Steps", style = MaterialTheme.typography.titleMedium)
-          Spacer(modifier = Modifier.weight(1f))
+        modifier = Modifier.testTag("StepListTitle")) {
+          Text(
+              "Steps",
+              style = MaterialTheme.typography.titleMedium,
+              modifier = Modifier.padding(start = 20.dp))
+          Spacer(modifier = Modifier.weight(2f))
           IconButton(
               onClick = { recipeStepViewModel.addStep(Step(steps.size + 1, "", "")) },
               modifier = Modifier.testTag("AddStepButton")) {

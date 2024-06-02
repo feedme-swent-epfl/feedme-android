@@ -4,6 +4,7 @@ import androidx.compose.ui.test.junit4.createComposeRule
 import androidx.test.ext.junit.runners.AndroidJUnit4
 import com.android.feedme.model.data.Profile
 import com.android.feedme.model.data.ProfileRepository
+import com.android.feedme.model.data.Recipe
 import com.android.feedme.model.data.RecipeRepository
 import com.android.feedme.model.viewmodel.ProfileViewModel
 import com.android.feedme.screen.ProfileScreen
@@ -48,10 +49,13 @@ class ProfileTest {
         Profile(id = "ID_DEFAULT_1")
 
     every { mockDocumentReference.set(any()) } returns Tasks.forResult(null)
+
+    profileViewModel.addRecipe(Recipe())
   }
 
   @Test
   fun profileBoxAndComponentsCorrectlyDisplayed() {
+
     composeTestRule.setContent { ProfileScreen(navAction, profileViewModel) }
     composeTestRule.waitForIdle()
 
@@ -91,11 +95,6 @@ class ProfileTest {
         assertIsDisplayed()
         assertHasClickAction()
       }
-
-      shareButton {
-        assertIsDisplayed()
-        assertHasClickAction()
-      }
     }
   }
 
@@ -128,11 +127,6 @@ class ProfileTest {
       }
 
       editButton { assertIsNotDisplayed() }
-
-      shareButton {
-        assertIsDisplayed()
-        assertHasClickAction()
-      }
 
       followerButton {
         assertIsDisplayed()

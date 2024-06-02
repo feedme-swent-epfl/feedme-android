@@ -12,11 +12,12 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.Add
+import androidx.compose.material.icons.rounded.Add
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.FloatingActionButton
 import androidx.compose.material3.Icon
@@ -53,8 +54,6 @@ import com.android.feedme.model.data.Recipe
 import com.android.feedme.model.viewmodel.ProfileViewModel
 import com.android.feedme.model.viewmodel.RecipeViewModel
 import com.android.feedme.resources.comment1
-import com.android.feedme.resources.recipe1
-import com.android.feedme.resources.recipe2
 import com.android.feedme.ui.component.SmallCommentsDisplay
 import com.android.feedme.ui.component.SmallThumbnailsDisplay
 import com.android.feedme.ui.navigation.BottomNavigationMenu
@@ -63,6 +62,7 @@ import com.android.feedme.ui.navigation.Route
 import com.android.feedme.ui.navigation.Screen
 import com.android.feedme.ui.navigation.TOP_LEVEL_DESTINATIONS
 import com.android.feedme.ui.navigation.TopBarNavigation
+import com.android.feedme.ui.theme.BlueUsername
 import com.android.feedme.ui.theme.DarkGrey
 import com.android.feedme.ui.theme.FabColor
 import com.android.feedme.ui.theme.FollowButton
@@ -87,8 +87,13 @@ fun ProfileScreen(
     recipeViewModel: RecipeViewModel = RecipeViewModel()
 ) {
 
-  val recipeList = listOf(recipe1, recipe2, recipe2, recipe1, recipe1)
+
+  val recipeList =
+      if (profileViewModel.isViewingProfile())
+          profileViewModel.viewingUserRecipes.collectAsState().value
+      else profileViewModel.currentUserRecipe.collectAsState().value
   val commentList = listOf(comment1, comment1, comment1, comment1)
+
 
   val profile =
       if (profileViewModel.isViewingProfile()) profileViewModel.viewingUserProfile.collectAsState()
@@ -122,7 +127,10 @@ fun ProfileScreen(
                 containerColor = FabColor,
                 contentColor = TextBarColor,
                 onClick = { navigationActions.navigateTo(Screen.ADD_RECIPE) }) {
-                  Icon(imageVector = Icons.Default.Add, contentDescription = "Add recipe Icon")
+                  Icon(
+                      imageVector = Icons.Rounded.Add,
+                      contentDescription = "Add recipe Icon",
+                      modifier = Modifier.size(28.dp))
                 }
       },
       content = { padding ->
@@ -167,7 +175,7 @@ fun ProfileBox(
       verticalArrangement = Arrangement.Top) {
         item {
           Row(
-              modifier = Modifier.fillMaxWidth().padding(vertical = 20.dp),
+              modifier = Modifier.fillMaxWidth().padding(start = 10.dp, top = 10.dp),
               horizontalArrangement = Arrangement.Center,
               verticalAlignment = Alignment.CenterVertically) {
                 UserProfilePicture(profileViewModel)
@@ -216,7 +224,12 @@ fun UserProfilePicture(profileViewModel: ProfileViewModel, modifier: Modifier = 
       else profileViewModel._imageUrl.collectAsState().value
 
   AsyncImage(
-      modifier = modifier.width(100.dp).height(100.dp).clip(CircleShape).testTag("ProfileIcon"),
+      modifier =
+          Modifier.width(100.dp)
+              .height(100.dp)
+              .clip(CircleShape)
+              .border(2.dp, Color.LightGray, CircleShape)
+              .testTag("ProfileIcon"),
       model = url,
       contentDescription = "User Profile Image",
       contentScale = ContentScale.FillBounds)
@@ -229,13 +242,18 @@ fun UserProfilePicture(profileViewModel: ProfileViewModel, modifier: Modifier = 
  */
 @Composable
 fun UserNameBox(profile: Profile) {
-  Column(modifier = Modifier.width(100.dp).testTag("ProfileName")) {
-    Text(text = profile.name, style = textStyle(17, 15, 700), overflow = TextOverflow.Ellipsis)
+  Column(modifier = Modifier.width(110.dp).testTag("ProfileName")) {
+    Text(
+        text = profile.name,
+        style = textStyle(15, 15, 500),
+        overflow = TextOverflow.Clip,
+        maxLines = 1)
     Spacer(modifier = Modifier.height(10.dp))
     Text(
         text = "@" + profile.username,
         style = textStyle(14, 15, 700, TextAlign.Left),
-        overflow = TextOverflow.Ellipsis)
+        overflow = TextOverflow.Ellipsis,
+        color = BlueUsername)
   }
 }
 
@@ -320,7 +338,6 @@ fun ProfileButtons(
         } else {
           FollowUnfollowButton(profile, isFollowing, profileViewModel)
         }
-        ShareProfileButton()
       }
 }
 
@@ -334,9 +351,10 @@ fun EditProfileButton(navigationActions: NavigationActions) {
   OutlinedButton(
       modifier = Modifier.testTag("EditButton"),
       border = BorderStroke(2.dp, FollowButtonBorder),
+      shape = MaterialTheme.shapes.medium,
       onClick = { navigationActions.navigateTo(Screen.EDIT_PROFILE) }) {
         Text(
-            modifier = Modifier.width(110.dp).height(13.dp),
+            modifier = Modifier.width(210.dp).height(13.dp),
             text = "Edit Profile",
             fontWeight = FontWeight.Bold,
             style = textStyle())
@@ -361,13 +379,14 @@ fun FollowUnfollowButton(
         colors = ButtonDefaults.buttonColors(containerColor = FollowingButton),
         border = BorderStroke(2.dp, FollowButtonBorder),
         modifier = Modifier.testTag("FollowingButton"),
+        shape = MaterialTheme.shapes.medium,
         onClick = {
           // Unfollow logic
           isFollowing.value = false
           profileViewModel.unfollowUser(profile)
         }) {
           Text(
-              modifier = Modifier.width(110.dp).height(13.dp),
+              modifier = Modifier.width(210.dp).height(13.dp),
               text = "Unfollow",
               fontWeight = FontWeight.Bold,
               style = textStyle())
@@ -390,23 +409,6 @@ fun FollowUnfollowButton(
               style = textStyle(color = TextBarColor))
         }
   }
-}
-
-/** A composable function that generates the share profile button. */
-@Composable
-fun ShareProfileButton() {
-  OutlinedButton(
-      modifier = Modifier.testTag("ShareButton"),
-      border = BorderStroke(2.dp, FollowButtonBorder),
-      onClick = {
-        // Placeholder for future share functionality
-      }) {
-        Text(
-            modifier = Modifier.width(110.dp),
-            text = "Share Profile",
-            fontWeight = FontWeight.Bold,
-            style = textStyle())
-      }
 }
 
 /**

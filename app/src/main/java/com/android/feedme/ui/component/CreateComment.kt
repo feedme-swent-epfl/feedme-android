@@ -219,9 +219,7 @@ fun CreateComment(
                                   description,
                                   java.util.Date())
                           if (commentTitle.isNotEmpty() && description.isNotEmpty()) {
-                            commentViewModel.addComment(com) {
-                              // TODO Add the comment Id to profile and recipe locally and in the db
-                            }
+                            commentViewModel.addComment(com)
                           }
                           onDismiss()
                         },

@@ -30,6 +30,7 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
+import coil.compose.AsyncImage
 import com.android.feedme.R
 import com.android.feedme.model.data.Comment
 import com.android.feedme.ui.theme.BlueUsername
@@ -73,12 +74,15 @@ fun SmallCommentsDisplay(listComment: List<Comment>, modifier: Modifier = Modifi
 @Composable
 fun CommentCard(comment: Comment) {
   Surface(
-      modifier = Modifier.fillMaxWidth().padding(horizontal = 16.dp, vertical = 8.dp),
+      modifier = Modifier
+          .fillMaxWidth()
+          .padding(horizontal = 16.dp, vertical = 8.dp),
       color = Color.White,
       shape = RoundedCornerShape(8.dp),
       border = BorderStroke(2.dp, Color.Black)) {
-        Row(modifier = Modifier.fillMaxWidth().padding(16.dp)) {
-
+        Row(modifier = Modifier
+            .fillMaxWidth()
+            .padding(16.dp)) {
           // TODO replace this by the photo uploading code
           Image(
               painter = painterResource(id = R.drawable.test_image_pasta),
@@ -91,9 +95,10 @@ fun CommentCard(comment: Comment) {
           // Author + title + description
           Column(
               modifier =
-                  Modifier.fillMaxWidth()
-                      .padding(start = 16.dp)
-                      .align(Alignment.CenterVertically)) {
+              Modifier
+                  .fillMaxWidth()
+                  .padding(start = 16.dp)
+                  .align(Alignment.CenterVertically)) {
 
                 // Comment authorId
                 Text(

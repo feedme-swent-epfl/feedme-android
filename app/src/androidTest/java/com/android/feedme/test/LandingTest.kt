@@ -3,6 +3,7 @@ package com.android.feedme.test
 import androidx.compose.ui.test.assertIsDisplayed
 import androidx.compose.ui.test.junit4.createComposeRule
 import androidx.compose.ui.test.onAllNodesWithContentDescription
+import androidx.compose.ui.test.onAllNodesWithTag
 import androidx.compose.ui.test.onNodeWithContentDescription
 import androidx.compose.ui.test.performClick
 import androidx.test.ext.junit.runners.AndroidJUnit4
@@ -69,6 +70,7 @@ class LandingTest : TestCase() {
           tags = listOf("Meat"),
           rating = 4.5,
           userid = "9vu1XpyZwrW5hSvEpHuuvcVVgiv2",
+          level = "Easy",
           imageUrl =
               "https://external-content.duckduckgo.com/iu/?u=https%3A%2F%2Fwww.mamablip.com%2Fstorage%2FLasagna%2520with%2520Meat%2520and%2520Tomato%2520Sauce_3481612355355.jpg&f=1&nofb=1&ipt=8e887ba99ce20a85fb867dabbe0206c1146ebf2f13548b5653a2778e3ea18c54&ipo=images")
 
@@ -93,6 +95,7 @@ class LandingTest : TestCase() {
           tags = listOf("Meat"),
           rating = 4.2,
           userid = "9vu1XpyZwrW5hSvEpHuuvcVVgiv2",
+          level = "Medium",
           imageUrl =
               "https://external-content.duckduckgo.com/iu/?u=https%3A%2F%2Fwww.mamablip.com%2Fstorage%2FLasagna%2520with%2520Meat%2520and%2520Tomato%2520Sauce_3481612355355.jpg&f=1&nofb=1&ipt=8e887ba99ce20a85fb867dabbe0206c1146ebf2f13548b5653a2778e3ea18c54&ipo=images")
 
@@ -151,6 +154,10 @@ class LandingTest : TestCase() {
       }
 
       completeScreen { assertIsDisplayed() }
+
+      composeTestRule
+          .onAllNodesWithTag("RecipeDifficulty", useUnmergedTree = true)[0]
+          .assertIsDisplayed()
     }
   }
 

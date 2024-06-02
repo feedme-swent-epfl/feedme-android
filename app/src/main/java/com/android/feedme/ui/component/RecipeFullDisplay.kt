@@ -92,7 +92,7 @@ fun RecipeFullDisplay(
   var showDialog by remember { mutableStateOf(false) }
 
   val isSaved = remember { mutableStateOf(false) }
-  // LaunchedEffect to trigger the Firestore check when the composable is first composed
+  // LaunchedEffect to trigger the FireStore check when the composable is first composed
   LaunchedEffect(recipe) {
     if (recipe != null) {
       profileViewModel.savedRecipeExists(recipe.recipeId) { exists -> isSaved.value = exists }
@@ -134,6 +134,7 @@ fun RecipeFullDisplay(
           LazyColumn(modifier = Modifier.padding(padding)) {
             item { ImageDisplay(recipe) }
             item { GeneralInfoDisplay(recipe, profile, navigationActions, profileViewModel) }
+            item { DifficultyLevelDisplay(recipe) }
             item { IngredientTitleDisplay() }
             items(recipe.ingredients) { ingredient -> IngredientDisplay(ingredient = ingredient) }
             item { IngredientStepsDividerDisplay() }
@@ -252,6 +253,21 @@ fun GeneralInfoDisplay(
       modifier = modifier.padding(start = 16.dp, top = 8.dp, bottom = 8.dp).testTag("Description"))
 
   HorizontalDivider(thickness = 2.dp, modifier = Modifier.testTag("Horizontal Divider 2"))
+}
+
+/**
+ * Displays the difficulty level of the recipe at hand
+ *
+ * @param recipe the [Recipe] whose difficulty level needs to be displayed
+ */
+@Composable
+fun DifficultyLevelDisplay(recipe: Recipe) {
+  Text(
+      text = "Difficulty Level : ${recipe.level}",
+      style = TextStyle(fontWeight = FontWeight.SemiBold, fontSize = 20.sp),
+      modifier = Modifier.padding(start = 16.dp, top = 8.dp).testTag("Difficulty Level"))
+  Spacer(modifier = Modifier.height(8.dp))
+  HorizontalDivider(thickness = 2.dp, modifier = Modifier.testTag("Horizontal Divider 4"))
 }
 
 /**

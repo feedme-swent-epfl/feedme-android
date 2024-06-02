@@ -129,7 +129,6 @@ class FullRecipeTest : TestCase() {
     composeTestRule.onNodeWithTag("Horizontal Divider 2").assertIsDisplayed()
     composeTestRule.onNodeWithTag("Ingredient Title").assertIsDisplayed()
     composeTestRule.onNodeWithTag("Ingredient Description").assertIsDisplayed()
-
     composeTestRule.onNodeWithTag("Horizontal Divider 3").assertIsDisplayed()
     composeTestRule.onNodeWithTag("Step Title").assertIsDisplayed()
     composeTestRule.onNodeWithTag("Step Description").assertIsDisplayed()

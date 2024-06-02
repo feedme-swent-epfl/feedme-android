@@ -302,6 +302,7 @@ class RecipeRepository(private val db: FirebaseFirestore) {
         "tags" to recipe.tags,
         "rating" to recipe.rating,
         "userid" to recipe.userid,
+        "level" to recipe.level,
         "imageUrl" to recipe.imageUrl,
         "ingredientIds" to recipe.ingredients.map { it.ingredient.id },
         "comments" to recipe.comments)
@@ -405,6 +406,7 @@ class RecipeRepository(private val db: FirebaseFirestore) {
               tags = tags,
               rating = (map["rating"] as? Number)?.toDouble() ?: 0.0,
               userid = map["userid"] as? String ?: "",
+              level = map["level"] as? String ?: "",
               imageUrl = map["imageUrl"] as? String ?: "",
               comments = comments)
       Log.d("RecipeRepository", " Recipe fetched success $recipe ")

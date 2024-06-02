@@ -119,7 +119,8 @@ fun ProfileScreen(
                 containerColor = FabColor,
                 contentColor = TextBarColor,
                 onClick = { navigationActions.navigateTo(Screen.ADD_RECIPE) }) {
-                  Icon(imageVector = Icons.Rounded.Add,
+                  Icon(
+                      imageVector = Icons.Rounded.Add,
                       contentDescription = "Add recipe Icon",
                       modifier = Modifier.size(28.dp))
                 }
@@ -210,8 +211,11 @@ fun UserProfilePicture(profileViewModel: ProfileViewModel) {
       else profileViewModel._imageUrl.collectAsState().value
 
   AsyncImage(
-      modifier = Modifier.width(100.dp).height(100.dp).clip(CircleShape)
-          .border(2.dp, Color.LightGray, CircleShape)
+      modifier =
+          Modifier.width(100.dp)
+              .height(100.dp)
+              .clip(CircleShape)
+              .border(2.dp, Color.LightGray, CircleShape)
               .testTag("ProfileIcon"),
       model = url,
       contentDescription = "User Profile Image",
@@ -225,8 +229,12 @@ fun UserProfilePicture(profileViewModel: ProfileViewModel) {
  */
 @Composable
 fun UserNameBox(profile: Profile) {
-  Column(modifier = Modifier.width(100.dp).testTag("ProfileName")) {
-    Text(text = profile.name, style = textStyle(17, 15, 700), overflow = TextOverflow.Ellipsis)
+  Column(modifier = Modifier.width(110.dp).testTag("ProfileName")) {
+    Text(
+        text = profile.name,
+        style = textStyle(15, 15, 500),
+        overflow = TextOverflow.Clip,
+        maxLines = 1)
     Spacer(modifier = Modifier.height(10.dp))
     Text(
         text = "@" + profile.username,
@@ -317,7 +325,6 @@ fun ProfileButtons(
         } else {
           FollowUnfollowButton(profile, isFollowing, profileViewModel)
         }
-        ShareProfileButton()
       }
 }
 
@@ -331,9 +338,10 @@ fun EditProfileButton(navigationActions: NavigationActions) {
   OutlinedButton(
       modifier = Modifier.testTag("EditButton"),
       border = BorderStroke(2.dp, FollowButtonBorder),
+      shape = MaterialTheme.shapes.medium,
       onClick = { navigationActions.navigateTo(Screen.EDIT_PROFILE) }) {
         Text(
-            modifier = Modifier.width(110.dp).height(13.dp),
+            modifier = Modifier.width(210.dp).height(13.dp),
             text = "Edit Profile",
             fontWeight = FontWeight.Bold,
             style = textStyle())
@@ -358,13 +366,14 @@ fun FollowUnfollowButton(
         colors = ButtonDefaults.buttonColors(containerColor = FollowingButton),
         border = BorderStroke(2.dp, FollowButtonBorder),
         modifier = Modifier.testTag("FollowingButton"),
+        shape = MaterialTheme.shapes.medium,
         onClick = {
           // Unfollow logic
           isFollowing.value = false
           profileViewModel.unfollowUser(profile)
         }) {
           Text(
-              modifier = Modifier.width(110.dp).height(13.dp),
+              modifier = Modifier.width(210.dp).height(13.dp),
               text = "Unfollow",
               fontWeight = FontWeight.Bold,
               style = textStyle())
@@ -387,23 +396,6 @@ fun FollowUnfollowButton(
               style = textStyle(color = TextBarColor))
         }
   }
-}
-
-/** A composable function that generates the share profile button. */
-@Composable
-fun ShareProfileButton() {
-  OutlinedButton(
-      modifier = Modifier.testTag("ShareButton"),
-      border = BorderStroke(2.dp, FollowButtonBorder),
-      onClick = {
-        // Placeholder for future share functionality
-      }) {
-        Text(
-            modifier = Modifier.width(110.dp),
-            text = "Share Profile",
-            fontWeight = FontWeight.Bold,
-            style = textStyle())
-      }
 }
 
 /**

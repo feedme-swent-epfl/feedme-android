@@ -69,7 +69,11 @@ import com.android.feedme.ui.theme.CameraButtonsBackground
  */
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun CameraScreen(navigationActions: NavigationActions, cameraViewModel: CameraViewModel, inputViewModel: InputViewModel = InputViewModel()) {
+fun CameraScreen(
+    navigationActions: NavigationActions,
+    cameraViewModel: CameraViewModel,
+    inputViewModel: InputViewModel = InputViewModel()
+) {
 
   val applicationContext = LocalContext.current
   // Request camera permission if not already granted
@@ -98,7 +102,8 @@ fun CameraScreen(navigationActions: NavigationActions, cameraViewModel: CameraVi
             navAction = navigationActions,
             backArrowOnClickAction = {
               cameraViewModel.empty()
-              inputViewModel.addToList(cameraViewModel.listOfIngredientToInput.value.toMutableList())
+              inputViewModel.addToList(
+                  cameraViewModel.listOfIngredientToInput.value.toMutableList())
               cameraViewModel.emptyIngredients()
               navigationActions.navigateTo(Screen.FIND_RECIPE)
             })

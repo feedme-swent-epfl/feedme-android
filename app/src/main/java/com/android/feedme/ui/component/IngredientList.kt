@@ -213,7 +213,8 @@ fun IngredientInput(
                     val beforeState = isBeingUsed
                     if (name.isNotBlank()) {
                       ingredientCurrent =
-                          if (filteredIngredients.isNotEmpty()) {
+                          if (filteredIngredients.isNotEmpty() &&
+                              name == filteredIngredients[0].name) {
                             name = filteredIngredients[0].name
                             filteredIngredients[0]
                           } else {

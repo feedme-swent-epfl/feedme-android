@@ -267,6 +267,7 @@ fun DifficultyLevelDisplay(recipe: Recipe) {
       text = "Difficulty Level : ${recipe.level}",
       style = TextStyle(fontWeight = FontWeight.SemiBold, fontSize = 20.sp),
       modifier = Modifier.padding(start = 16.dp, top = 8.dp).testTag("Difficulty Level"))
+  Spacer(modifier = Modifier.height(8.dp))
   HorizontalDivider(thickness = 2.dp, modifier = Modifier.testTag("Horizontal Divider 4"))
 }
 

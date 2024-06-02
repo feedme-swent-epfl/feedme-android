@@ -30,7 +30,6 @@ import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
-import androidx.compose.material3.OutlinedButton
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -288,14 +287,17 @@ fun RecipeCard(
                 Spacer(modifier = Modifier.width(18.dp))
 
                 // Difficulty tag
-                OutlinedButton(
-                    onClick = { /* no action when clicking on difficulty */},
-                    modifier = Modifier.border(3.dp, TemplateColor, RoundedCornerShape(12.dp))) {
+                Box(
+                    modifier =
+                        Modifier.padding(bottom = 10.dp)
+                            .border(2.dp, TemplateColor, RoundedCornerShape(12.dp))) {
                       Text(
                           text = recipe.level,
                           style =
                               TextStyle(fontWeight = FontWeight.SemiBold, color = TemplateColor),
-                          modifier = Modifier.testTag("RecipeDifficulty"))
+                          modifier =
+                              Modifier.testTag("RecipeDifficulty")
+                                  .padding(horizontal = 10.dp, vertical = 8.dp))
                     }
               }
 

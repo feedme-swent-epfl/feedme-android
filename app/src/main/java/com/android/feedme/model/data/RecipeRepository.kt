@@ -26,6 +26,7 @@ class RecipeRepository(private val db: FirebaseFirestore) {
 
   private val ingredientsRepository = IngredientsRepository(db)
   val collectionPath = "recipesFinal"
+  val databasePath = "recipes/"
 
   companion object {
     // Placeholder for the singleton instance
@@ -65,7 +66,8 @@ class RecipeRepository(private val db: FirebaseFirestore) {
     val newDocRef = db.collection(collectionPath).document()
     recipe.recipeId = newDocRef.id
     if (uri != null) {
-      val storageRef = FirebaseStorage.getInstance().reference.child("recipes/${recipe.recipeId}")
+      val storageRef =
+          FirebaseStorage.getInstance().reference.child((databasePath + recipe.recipeId))
       storageRef
           .putFile(uri)
           .addOnSuccessListener { taskSnapshot ->

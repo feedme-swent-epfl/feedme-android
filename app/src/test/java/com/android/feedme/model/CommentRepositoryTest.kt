@@ -57,7 +57,7 @@ class CommentRepositoryTest {
 
     // Execute
     var successCalled = false
-    commentRepository.addComment(comment, { successCalled = true }, {})
+    commentRepository.addComment(comment, null, { successCalled = true }, {})
 
     // Ensure all asynchronous operations complete
     shadowOf(Looper.getMainLooper()).idle()
@@ -94,6 +94,7 @@ class CommentRepositoryTest {
     var failureCalled = false
     commentRepository.addComment(
         comment,
+        null,
         onSuccess = { fail("Success callback should not be called") },
         onFailure = { failureCalled = true })
 

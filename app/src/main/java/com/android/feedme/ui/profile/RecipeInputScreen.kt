@@ -115,8 +115,6 @@ fun RecipeInputScreen(
                 }
               }
               navigationActions.navigateTo(Route.PROFILE)
-              // TODO : we could display the recipe instead of going back to the profile
-
             }) {
               Icon(imageVector = Icons.Default.Check, contentDescription = "Validate Recipe Icon")
             }
@@ -177,7 +175,7 @@ fun RecipeBox(
       modifier = Modifier.padding(paddingValues).testTag("RecipeInputBox"),
       verticalArrangement = Arrangement.Top) {
         RecipeInputTopContent(title, description, recipeViewModel, cameraViewModel)
-        IngredientList(inputViewModel, Modifier.heightIn(max = 150.dp))
+        IngredientList(Modifier.heightIn(max = 150.dp), inputViewModel)
         StepList(recipeStepViewModel = recipeStepViewModel)
       }
 }

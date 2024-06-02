@@ -117,7 +117,7 @@ fun bestLabel(labelList: Map<String, Float>): String {
   Log.d("LabelList", labelList.toString())
   val foodLabels =
       labelList.filterKeys { label ->
-        FOOD_LABELS.map { it -> it.lowercase() }.contains(label.lowercase())
+        FOOD_LABELS.map { word -> word.lowercase() }.contains(label.lowercase())
       }
   Log.d("FoodLabels", foodLabels.toString())
   val maxConfidence = foodLabels.values.maxOrNull()

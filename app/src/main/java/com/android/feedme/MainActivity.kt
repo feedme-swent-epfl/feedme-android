@@ -46,7 +46,7 @@ import com.android.feedme.ui.profile.FriendsScreen
 import com.android.feedme.ui.profile.ProfileScreen
 import com.android.feedme.ui.profile.RecipeInputScreen
 import com.android.feedme.ui.settings.SettingsScreen
-import com.android.feedme.ui.theme.feedmeAppTheme
+import com.android.feedme.ui.theme.FeedMeAppTheme
 import com.google.firebase.firestore.FirebaseFirestore
 
 class MainActivity : ComponentActivity() {
@@ -62,7 +62,7 @@ class MainActivity : ComponentActivity() {
     IngredientsRepository.initialize(firebase)
     CommentRepository.initialize(firebase)
     setContent {
-      feedmeAppTheme {
+      FeedMeAppTheme {
         // A surface container using the 'background' color from the theme
         Surface(
             modifier = Modifier.fillMaxSize().semantics { testTag = C.Tag.main_screen_container },

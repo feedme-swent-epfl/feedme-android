@@ -44,6 +44,10 @@ mlkitTextRecognition = "16.0.0"
 mlkitbarcode = "17.2.0"
 volley = "1.2.1"
 firebaseStorageKtx = "20.3.0"
+testng = "6.9.6"
+kotlinxCoroutinesCore = "1.5.1"
+kotlinxCoroutinesAndroid = "1.5.1"
+securityCrypto = "1.1.0-alpha03"
 
 
 
@@ -106,6 +110,10 @@ camera-extensions = { group = "androidx.camera", name = "camera-extensions", ver
 androidx-navigation-compose = { group = "androidx.navigation", name = "navigation-compose", version.ref = "navigationCompose" }
 volley = { module = "com.android.volley:volley", version.ref = "volley" }
 firebase-storage-ktx = { group = "com.google.firebase", name = "firebase-storage-ktx", version.ref = "firebaseStorageKtx" }
+testng = { module = "org.testng:testng", version.ref = "testng" }
+kotlinx-coroutines-core = { module = "org.jetbrains.kotlinx:kotlinx-coroutines-core", version.ref = "kotlinxCoroutinesCore" }
+kotlinx-coroutines-android = { module = "org.jetbrains.kotlinx:kotlinx-coroutines-android", version.ref = "kotlinxCoroutinesAndroid" }
+security-crypto = { module = "androidx.security:security-crypto", version.ref = "securityCrypto" }
 
 [plugins]
 androidApplication = { id = "com.android.application", version.ref = "agp" }

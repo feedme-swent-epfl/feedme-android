@@ -181,7 +181,7 @@ class InputViewModel(val context: Context? = null) : ViewModel() {
    *
    * @param newList The new list of [IngredientMetaData].
    */
-  fun addToList(newList: MutableList<IngredientMetaData>) {
+  fun addToList(newList: List<IngredientMetaData>) {
     _listOfIngredientMetadatas.value = newList + _listOfIngredientMetadatas.value
     _totalIngredientEntriesDisplayed.value += newList.size
     isListComplete()

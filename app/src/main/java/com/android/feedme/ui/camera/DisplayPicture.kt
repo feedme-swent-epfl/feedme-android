@@ -135,6 +135,7 @@ fun DisplayPicture(
                 // screen
                 if (analyzed) {
                   listOfIngredientToInput.value.toMutableList().forEach(cameraViewModel::updateIngredientList)
+
                   navigationActions.navigateTo(Screen.CAMERA)
                 }
               }

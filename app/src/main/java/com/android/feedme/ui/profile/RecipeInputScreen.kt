@@ -74,10 +74,11 @@ import com.android.feedme.ui.theme.TextBarColor
 fun RecipeInputScreen(
     navigationActions: NavigationActions,
     profileViewModel: ProfileViewModel,
-    cameraViewModel: CameraViewModel
+    cameraViewModel: CameraViewModel,
+    inputViewModelOpt: InputViewModel? = null
 ) {
   val recipeStepViewModel: RecipeStepViewModel = viewModel()
-  val inputViewModel: InputViewModel = viewModel()
+  val inputViewModel: InputViewModel = inputViewModelOpt ?: viewModel()
   val recipeViewModel: RecipeViewModel = viewModel()
 
   val title = remember { mutableStateOf("") }

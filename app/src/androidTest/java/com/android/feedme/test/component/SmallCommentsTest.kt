@@ -32,8 +32,8 @@ class SmallCommentsTest {
 
     composeTestRule.setContent { SmallCommentsDisplay(listComment = listOf(comment1)) }
 
-    // Comment Image
-    composeTestRule.onNodeWithContentDescription("Comment Image").assertIsDisplayed()
+    // Recipe Image
+    composeTestRule.onNodeWithContentDescription("Recipe Image").assertIsDisplayed()
 
     // Author name
     composeTestRule.onNodeWithText(comment1.commentId).assertIsDisplayed()

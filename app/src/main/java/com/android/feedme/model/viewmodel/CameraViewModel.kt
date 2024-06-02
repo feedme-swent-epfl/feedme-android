@@ -25,14 +25,14 @@ import com.android.feedme.model.data.Ingredient
 import com.android.feedme.model.data.IngredientMetaData
 import com.android.feedme.model.data.IngredientsRepository
 import com.android.feedme.model.data.MeasureUnit
-import kotlin.coroutines.resume
-import kotlin.coroutines.suspendCoroutine
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.suspendCancellableCoroutine
 import kotlinx.coroutines.withTimeoutOrNull
+import kotlin.coroutines.resume
+import kotlin.coroutines.suspendCoroutine
 
 class CameraViewModel : ViewModel() {
 
@@ -380,8 +380,9 @@ class CameraViewModel : ViewModel() {
             Log.e("CameraViewModel", "Request to Database failed ", it)
             updateIngredientInList(ing)
           })
+    } else {
+      updateIngredientInList(ing)
     }
-    updateIngredientInList(ing)
   }
   /**
    * Updates the ingredient in the list or adds it if it doesn't exist.

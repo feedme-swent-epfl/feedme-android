@@ -44,6 +44,7 @@ fun newRecipe(recipeId: String, title: String, url: String): Recipe {
       tags = listOf("Meat"),
       rating = 4.5,
       userid = "9vu1XpyZwrW5hSvEpHuuvcVVgiv2",
+      level = "Easy",
       imageUrl = url)
 }
 

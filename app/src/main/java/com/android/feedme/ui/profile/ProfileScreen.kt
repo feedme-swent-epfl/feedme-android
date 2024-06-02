@@ -66,6 +66,7 @@ import com.android.feedme.ui.theme.FollowButton
 import com.android.feedme.ui.theme.FollowButtonBorder
 import com.android.feedme.ui.theme.FollowingButton
 import com.android.feedme.ui.theme.TextBarColor
+import com.android.feedme.ui.theme.BlueUsername
 
 /**
  * A composable function that generates the profile screen.
@@ -324,7 +325,6 @@ fun ProfileButtons(
         } else {
           FollowUnfollowButton(profile, isFollowing, profileViewModel)
         }
-        ShareProfileButton()
       }
 }
 

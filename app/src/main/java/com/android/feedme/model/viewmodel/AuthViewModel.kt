@@ -1,11 +1,20 @@
 package com.android.feedme.model.viewmodel
 
+import android.content.Context
+import android.net.ConnectivityManager
+import android.net.NetworkCapabilities
+import android.util.Log
+import android.widget.Toast
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.android.feedme.model.data.Profile
 import com.android.feedme.model.data.ProfileRepository
+import com.android.feedme.ui.navigation.NavigationActions
+import com.android.feedme.ui.navigation.TOP_LEVEL_DESTINATIONS
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.GoogleAuthProvider
+import com.google.firebase.firestore.FirebaseFirestore
+import com.google.firebase.firestore.Source
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.tasks.await
 
@@ -89,14 +98,12 @@ class AuthViewModel : ViewModel() {
   /**
    * Creates a new profile and adds it to Firestore.
    *
-   * @param googleId The unique identifier for the Google user.
-   * @param name The display name of the user (nullable).
-   * @param email The email address of the user (nullable).
-   * @param photoUrl The URL of the user's profile photo (nullable).
    * @param onSuccess Callback to be invoked when the profile is successfully added.
    * @param onFailure Callback to be invoked when adding the profile fails with an exception.
    */
   fun makeNewProfile(onSuccess: () -> Unit = {}, onFailure: (Exception) -> Unit = {}) {
+    val context = FirebaseFirestore.getInstance().app.applicationContext
+
     FirebaseAuth.getInstance().currentUser?.let { firebaseUser ->
       val googleId = firebaseUser.uid
       val name = firebaseUser.displayName.orEmpty()
@@ -106,13 +113,13 @@ class AuthViewModel : ViewModel() {
       val newProfile =
           Profile(
               id = googleId,
-              name = name ?: "",
+              name = name,
               username =
                   if (name.length <= 15) name.replace("[^\\w]".toRegex(), "_").lowercase()
                   else name.replace("[^\\w]".toRegex(), "_").take(15).lowercase(),
-              email = email ?: "",
+              email = email,
               description = "",
-              imageUrl = photoUrl ?: "",
+              imageUrl = photoUrl,
               followers = listOf(),
               following = listOf(),
               filter = listOf(),
@@ -120,8 +127,57 @@ class AuthViewModel : ViewModel() {
               commentList = listOf())
 
       // Add the newly created profile to the Firestore database.
-      ProfileRepository.instance.addProfile(newProfile, onSuccess, onFailure)
+      ProfileRepository.instance.addProfile(newProfile, context, onSuccess, onFailure)
       onSuccess()
     }
   }
+
+  fun fetchUserProfileOffline(navigationActions: NavigationActions) {
+    val currentUser = FirebaseAuth.getInstance().currentUser
+    if (currentUser != null) {
+      val db = FirebaseFirestore.getInstance()
+      db.collection("profiles")
+          .document(currentUser.uid)[Source.CACHE]
+          .addOnSuccessListener { document ->
+            if (document != null && document.exists()) {
+              val userProfile = document.toObject(Profile::class.java)
+              if (userProfile != null) {
+                // Use the user profile
+                navigationActions.navigateTo(TOP_LEVEL_DESTINATIONS[1])
+              }
+            }
+          }
+          .addOnFailureListener { e ->
+            Log.d("LoginScreen", "Offline sign in failed")
+            Log.e("LoginScreen", "Error fetching user profile from cache", e)
+          }
+    } else {
+      Log.e("LoginScreen", "No user is signed in")
+    }
+  }
+}
+
+/**
+ * Checks if the device is connected to the internet.
+ *
+ * @param context The context of the application.
+ */
+fun isNetworkAvailable(context: Context): Boolean {
+  val connectivityManager =
+      context.getSystemService(Context.CONNECTIVITY_SERVICE) as ConnectivityManager
+  val activeNetwork = connectivityManager.activeNetwork
+  val networkCapabilities = connectivityManager.getNetworkCapabilities(activeNetwork)
+
+  return networkCapabilities != null &&
+      networkCapabilities.hasCapability(NetworkCapabilities.NET_CAPABILITY_INTERNET)
+}
+
+/**
+ * A function that displays a toast message when the user is offline
+ *
+ * @param context: the context in which the toast message is displayed
+ */
+fun displayToast(context: Context) {
+  Toast.makeText(context, "You are offline. Some features may not be available.", Toast.LENGTH_LONG)
+      .show()
 }

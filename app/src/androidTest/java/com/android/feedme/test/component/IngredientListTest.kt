@@ -160,4 +160,23 @@ class IngredientListTest : TestCase() {
 
     composeTestRule.waitForIdle()
   }
+
+  @Test
+  fun saveRefreshAndDeleteAllAppear() {
+    composeTestRule
+        .onNodeWithTag("TrashButton")
+        .assertIsDisplayed()
+        .assertHasClickAction()
+        .performClick()
+    composeTestRule
+        .onNodeWithTag("ReloadButton")
+        .assertIsDisplayed()
+        .assertHasClickAction()
+        .performClick()
+    composeTestRule
+        .onNodeWithTag("SaveButton")
+        .assertIsDisplayed()
+        .assertHasClickAction()
+        .performClick()
+  }
 }

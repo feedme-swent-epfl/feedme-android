@@ -1,10 +1,17 @@
 package com.android.feedme.model.data
 
+import android.content.Context
+import android.net.Uri
 import android.util.Log
+import com.android.feedme.model.viewmodel.displayToast
+import com.android.feedme.model.viewmodel.isNetworkAvailable
+import com.google.firebase.firestore.DocumentReference
 import com.google.firebase.firestore.DocumentSnapshot
 import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.firestore.Query
 import com.google.firebase.firestore.QuerySnapshot
+import com.google.firebase.firestore.Source
+import com.google.firebase.storage.FirebaseStorage
 import java.util.Locale
 
 /**
@@ -19,6 +26,7 @@ class RecipeRepository(private val db: FirebaseFirestore) {
 
   private val ingredientsRepository = IngredientsRepository(db)
   val collectionPath = "recipesFinal"
+  val databasePath = "recipes/"
 
   companion object {
     // Placeholder for the singleton instance
@@ -34,22 +42,61 @@ class RecipeRepository(private val db: FirebaseFirestore) {
   /**
    * Adds a recipe to the Firestore database.
    *
-   * This method serializes the Recipe object into a map, replacing complex objects like Ingredient
-   * with their IDs, and then stores it in Firestore under the recipes collection.
-   *
    * @param recipe The Recipe object to be added to Firestore.
+   * @param context The context of the calling activity.
    * @param onSuccess A callback invoked upon successful addition of the recipe.
    * @param onFailure A callback invoked upon failure to add the recipe, with an exception.
    */
-  fun addRecipe(recipe: Recipe, onSuccess: () -> Unit, onFailure: (Exception) -> Unit) {
+  fun addRecipe(
+      recipe: Recipe,
+      uri: Uri?,
+      context: Context = FirebaseFirestore.getInstance().app.applicationContext,
+      onSuccess: () -> Unit,
+      onFailure: (Exception) -> Unit
+  ) {
+    // Check if the user is offline
+    if (!isNetworkAvailable(context)) {
+      Log.d("addRecipe", "Offline mode: Cannot add recipe")
+      displayToast(context)
+      return
+    }
+
     // Convert Recipe to a map, replacing Ingredient objects with their IDs
-    val recipeMap = recipeToMap(recipe)
+
     val newDocRef = db.collection(collectionPath).document()
     recipe.recipeId = newDocRef.id
-    newDocRef
-        .set(recipeMap)
-        .addOnSuccessListener { onSuccess() }
-        .addOnFailureListener { onFailure(it) }
+
+    if (uri != null) {
+      val storageRef =
+          FirebaseStorage.getInstance().reference.child((databasePath + recipe.recipeId))
+      storageRef
+          .putFile(uri)
+          .addOnSuccessListener { taskSnapshot ->
+            taskSnapshot.metadata?.reference?.downloadUrl?.addOnSuccessListener { uri ->
+              recipe.imageUrl = uri.toString()
+              mapAndAddRecipe(recipe, newDocRef, onSuccess, onFailure)
+            }
+          }
+          .addOnFailureListener { exception -> onFailure(exception) }
+    } else {
+      recipe.imageUrl =
+          "https://firebasestorage.googleapis.com/v0/b/feedme-33341.appspot.com/o/recipestest%2Fdummy.jpg?alt=media&token=71de581c-9e1e-47c8-a4dc-8cccf1d0b640"
+      mapAndAddRecipe(recipe, newDocRef, onSuccess, onFailure)
+    }
+  }
+
+  /**
+   * This method serializes the Recipe object into a map, replacing complex objects like Ingredient
+   * with their IDs, and then stores it in Firestore under the recipes collection.
+   */
+  private fun mapAndAddRecipe(
+      recipe: Recipe,
+      id: DocumentReference,
+      onSuccess: () -> Unit,
+      onFailure: (Exception) -> Unit
+  ) {
+    val recipeMap = recipeToMap(recipe)
+    id.set(recipeMap).addOnSuccessListener { onSuccess() }.addOnFailureListener { onFailure(it) }
   }
 
   /**
@@ -60,10 +107,23 @@ class RecipeRepository(private val db: FirebaseFirestore) {
    * onFailure is called with an exception.
    *
    * @param recipeId The ID of the recipe to retrieve.
+   * @param context The context of the calling activity.
    * @param onSuccess A callback invoked with the retrieved Recipe object upon success.
    * @param onFailure A callback invoked upon failure to retrieve the recipe, with an exception.
    */
-  fun getRecipe(recipeId: String, onSuccess: (Recipe?) -> Unit, onFailure: (Exception) -> Unit) {
+  fun getRecipe(
+      recipeId: String,
+      context: Context,
+      onSuccess: (Recipe?) -> Unit,
+      onFailure: (Exception) -> Unit
+  ) {
+    // Check if the user is offline
+    if (!isNetworkAvailable(context)) {
+      Log.d("getRecipe", "Offline mode: Cannot fetch recipe")
+      displayToast(context)
+      return
+    }
+
     db.collection(collectionPath)
         .document(recipeId)
         .get()
@@ -81,21 +141,40 @@ class RecipeRepository(private val db: FirebaseFirestore) {
    * Fetches the recipes saved by the user from Firestore. The recipes are fetched by their IDs.
    *
    * @param ids The list of recipe IDs to fetch.
+   * @param context The context of the calling activity.
    * @param onSuccess A callback function invoked with the list of recipes on success.
    * @param onFailure A callback function invoked on failure to fetch the recipes, with an
    *   exception.
    */
   fun getSavedRecipes(
       ids: List<String>,
+      context: Context,
       onSuccess: (List<Recipe>, DocumentSnapshot?) -> Unit,
       onFailure: (Exception) -> Unit
   ) {
-    // Fetch the recipes with the given IDs
-    db.collection(collectionPath)
-        .whereIn("recipeId", ids)
-        .get()
-        .addOnSuccessListener { addSuccessListener(it, onSuccess, onFailure) }
-        .addOnFailureListener { exception -> onFailure(exception) }
+    // Function to fetch data from cache
+    fun fetchFromCache() {
+      db.collection(collectionPath)
+          .whereIn("recipeId", ids)[Source.CACHE]
+          .addOnSuccessListener { addSuccessListener(it, onSuccess, onFailure) }
+          .addOnFailureListener { exception -> onFailure(exception) }
+    }
+
+    if (isNetworkAvailable(context)) {
+      db.collection(collectionPath)
+          .whereIn("recipeId", ids)
+          .get()
+          .addOnSuccessListener {
+            println("getSavedRecipes: Success fetching online, falling back to cache")
+            addSuccessListener(it, onSuccess, onFailure)
+          }
+          .addOnFailureListener { exception ->
+            Log.e("getSavedRecipes", "Error fetching online, falling back to cache", exception)
+            fetchFromCache()
+          }
+    } else {
+      fetchFromCache()
+    }
   }
 
   /**
@@ -104,15 +183,24 @@ class RecipeRepository(private val db: FirebaseFirestore) {
    *
    * @param lastRecipe The last recipe fetched in the previous query. If null, fetches the first
    *   page of recipes.
+   * @param context The context of the calling activity.
    * @param onSuccess A callback function invoked with the list of recipes on success.
    * @param onFailure A callback function invoked on failure to fetch the recipes, with an
    *   exception.
    */
   fun getRatedRecipes(
       lastRecipe: DocumentSnapshot?,
+      context: Context,
       onSuccess: (List<Recipe>, DocumentSnapshot?) -> Unit,
       onFailure: (Exception) -> Unit
   ) {
+    // Check if the user is offline
+    if (!isNetworkAvailable(context)) {
+      Log.d("getRatedRecipes", "Offline mode: Cannot fetch rated recipes")
+      displayToast(context)
+      return
+    }
+
     // Create a query to fetch the top rated recipes
     var queryRef =
         db.collection(collectionPath).orderBy("rating", Query.Direction.DESCENDING).limit(6)
@@ -132,6 +220,7 @@ class RecipeRepository(private val db: FirebaseFirestore) {
    * Fetches all the recipes that contain the given query in their title.
    *
    * @param query The query string to search for in the recipe titles.
+   * @param context The context of the calling activity.
    * @param lastRecipe The last recipe fetched in the previous query. If null, fetches the first
    *   page of recipes.
    * @param onSuccess A callback function invoked with the list of recipes on success.
@@ -140,10 +229,18 @@ class RecipeRepository(private val db: FirebaseFirestore) {
    */
   fun getFilteredRecipes(
       query: String,
+      context: Context,
       lastRecipe: DocumentSnapshot?,
       onSuccess: (List<Recipe>, DocumentSnapshot?) -> Unit,
       onFailure: (Exception) -> Unit
   ) {
+    // Check if the user is offline
+    if (!isNetworkAvailable(context)) {
+      Log.d("getFilteredRecipes", "Offline mode: Cannot fetch filtered recipes")
+      displayToast(context)
+      return
+    }
+
     // Create Query for recipes that contain the input query in their title
     var queryRef =
         db.collection(collectionPath)
@@ -205,7 +302,9 @@ class RecipeRepository(private val db: FirebaseFirestore) {
         "tags" to recipe.tags,
         "rating" to recipe.rating,
         "userid" to recipe.userid,
-        "imageUrl" to recipe.imageUrl)
+        "imageUrl" to recipe.imageUrl,
+        "ingredientIds" to recipe.ingredients.map { it.ingredient.id },
+        "comments" to recipe.comments)
   }
 
   private fun IngredientMetaData.toMap(): Map<String, Any> =
@@ -286,6 +385,15 @@ class RecipeRepository(private val db: FirebaseFirestore) {
             listOf()
           }
 
+      // get the comment if they exist
+      val rawCommentsList = map["comments"]
+      val comments =
+          if (rawCommentsList is List<*>) {
+            rawCommentsList.mapNotNull { it as? String }
+          } else {
+            listOf()
+          }
+
       // Construct the Recipe object
       val recipe =
           Recipe(
@@ -297,7 +405,8 @@ class RecipeRepository(private val db: FirebaseFirestore) {
               tags = tags,
               rating = (map["rating"] as? Number)?.toDouble() ?: 0.0,
               userid = map["userid"] as? String ?: "",
-              imageUrl = map["imageUrl"] as? String ?: "")
+              imageUrl = map["imageUrl"] as? String ?: "",
+              comments = comments)
       Log.d("RecipeRepository", " Recipe fetched success $recipe ")
 
       onSuccess(recipe)
@@ -338,6 +447,7 @@ class RecipeRepository(private val db: FirebaseFirestore) {
       onFailure(IllegalArgumentException())
       return
     }
+    // Create a query to fetch the top rated recipes
     db.collection(collectionPath)
         .whereArrayContainsAny("ingredientIds", ingredientIds)
         .get()
@@ -369,6 +479,7 @@ class RecipeRepository(private val db: FirebaseFirestore) {
    *
    * @param ingredientIds The list of ingredient IDs to match against.
    * @param profile The user profile to consider for preferences.
+   * @param context The context of the calling activity.
    * @param onSuccess A callback function invoked with the ranked list of suggested recipes on
    *   success.
    * @param onFailure A callback function invoked on failure to fetch the recipes, with an
@@ -377,13 +488,23 @@ class RecipeRepository(private val db: FirebaseFirestore) {
   fun suggestRecipes(
       ingredientIds: List<String>,
       profile: Profile,
+      context: Context,
       onSuccess: (List<Recipe>) -> Unit,
       onFailure: (Exception) -> Unit
   ) {
+    // Check if the user is offline
+    if (!isNetworkAvailable(context)) {
+      Log.d("getFilteredRecipes", "Offline mode: Cannot fetch filtered recipes")
+      displayToast(context)
+      return
+    }
+
     fetchAndMapRecipes(
         ingredientIds,
         { allRecipes ->
+          Log.d("RecipeRepository", "recipe to filter $allRecipes")
           val rankedRecipes = rankRecipes(allRecipes, ingredientIds, profile)
+          Log.d("RecipeRepository", "order recipe  $rankedRecipes")
           onSuccess(rankedRecipes)
         },
         onFailure)
@@ -394,6 +515,7 @@ class RecipeRepository(private val db: FirebaseFirestore) {
    *
    * @param ingredientIds The list of ingredient IDs to match exactly.
    * @param profile The user profile to consider for preferences.
+   * @param context The context of the calling activity.
    * @param onSuccess A callback function invoked with the ranked list of suggested recipes on
    *   success.
    * @param onFailure A callback function invoked on failure to fetch the recipes, with an
@@ -402,9 +524,17 @@ class RecipeRepository(private val db: FirebaseFirestore) {
   fun suggestRecipesStrict(
       ingredientIds: List<String>,
       profile: Profile,
+      context: Context,
       onSuccess: (List<Recipe>) -> Unit,
       onFailure: (Exception) -> Unit
   ) {
+    // Check if the user is offline
+    if (!isNetworkAvailable(context)) {
+      Log.d("getFilteredRecipes", "Offline mode: Cannot fetch filtered recipes")
+      displayToast(context)
+      return
+    }
+
     fetchAndMapRecipes(
         ingredientIds,
         { allRecipes ->
@@ -436,17 +566,38 @@ class RecipeRepository(private val db: FirebaseFirestore) {
   ): List<Recipe> {
     return recipes.sortedWith(
         compareByDescending { recipe ->
+          val userPreferencesScore = recipe.tags.count { tag -> profile.filter.contains(tag) }
+          val ratingScore = recipe.rating
           val matchingIngredientsCount =
               recipe.ingredients.count { ingredientMetaData ->
                 ingredientIds.contains(ingredientMetaData.ingredient.id)
               }
 
-          val userPreferencesScore = recipe.tags.count { tag -> profile.filter.contains(tag) }
-
-          val ratingScore = recipe.rating
-
           // Combine the scores to form the final ranking score
           matchingIngredientsCount + userPreferencesScore + ratingScore
         })
+  }
+
+  /**
+   * Update the comment list in the recipe document in Firestore. Using transaction to ensure the
+   * data is consistent.
+   *
+   * @param recipeId The ID of the recipe to update.
+   * @param commentId The comment to add to the recipe.
+   */
+  fun addCommentToRecipe(
+      recipeId: String,
+      commentId: String,
+      onSuccess: () -> Unit,
+      onFailure: (Exception) -> Unit
+  ) {
+    val recipeRef = db.collection(collectionPath).document(recipeId)
+    db.runTransaction { transaction ->
+          val recipe = transaction[recipeRef]
+          val comments = recipe["comments"] as? List<*> ?: listOf<Comment>()
+          transaction.update(recipeRef, "comments", comments + commentId)
+        }
+        .addOnSuccessListener { onSuccess() }
+        .addOnFailureListener { onFailure(it) }
   }
 }

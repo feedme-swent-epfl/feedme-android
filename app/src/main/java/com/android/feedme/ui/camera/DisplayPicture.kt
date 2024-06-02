@@ -13,6 +13,7 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.ViewInAr
 import androidx.compose.material.icons.twotone.TextFields
 import androidx.compose.material3.BottomSheetScaffold
 import androidx.compose.material3.ExperimentalMaterial3Api
@@ -54,7 +55,8 @@ fun DisplayPicture(
   ///// Machine Learning Part /////
   // Switch off and on the text recognition functionality
   val textRecognitionMode = remember { mutableStateOf(true) }
-  val barcodeRecognition = remember { mutableStateOf(true) }
+  val barcodeRecognitionMode = remember { mutableStateOf(true) }
+  val objectLabellingMode = remember { mutableStateOf(true) }
   ///// Machine Learning Part /////
 
   val bitmaps by cameraViewModel.bitmaps.collectAsState()
@@ -99,7 +101,7 @@ fun DisplayPicture(
                       }
                 }
                 // Button for barcode scanner
-                if (barcodeRecognition.value) {
+                if (barcodeRecognitionMode.value) {
                   val barcodeScannerPainter = painterResource(id = R.drawable.barcode_scanner)
                   IconButton(
                       onClick = { cameraViewModel.barcodeScanButtonPressed() },
@@ -115,11 +117,24 @@ fun DisplayPicture(
                             tint = BottomIconColorSelected)
                       }
                 }
+                if (objectLabellingMode.value) {
+                  IconButton(
+                      onClick = { cameraViewModel.imageLabellingButtonPressed() },
+                      modifier =
+                          Modifier.size(56.dp)
+                              .background(CameraButtonsBackground, shape = CircleShape)
+                              .padding(10.dp)
+                              .testTag("MLObjectButton")) {
+                        Icon(
+                            imageVector = Icons.Filled.ViewInAr,
+                            contentDescription = "Object Labelling")
+                      }
+                }
 
                 // Once the photo is analyzed, we can add the ingredients and go back to the camera
                 // screen
                 if (analyzed) {
-                  inputViewModel.addToList(listOfIngredientToInput.value.toMutableList())
+                  inputViewModel.addToList(listOfIngredientToInput.value.toList())
                   cameraViewModel.emptyIngredients()
                   navigationActions.navigateTo(Screen.CAMERA)
                 }

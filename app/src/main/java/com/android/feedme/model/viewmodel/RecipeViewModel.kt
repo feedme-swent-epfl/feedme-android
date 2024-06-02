@@ -1,5 +1,8 @@
 package com.android.feedme.model.viewmodel
 
+import android.content.Context
+import android.net.Uri
+import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.android.feedme.model.data.IngredientMetaData
@@ -8,6 +11,7 @@ import com.android.feedme.model.data.ProfileRepository
 import com.android.feedme.model.data.Recipe
 import com.android.feedme.model.data.RecipeRepository
 import com.android.feedme.model.data.Step
+import com.google.firebase.firestore.FirebaseFirestore
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
@@ -26,6 +30,8 @@ class RecipeViewModel : ViewModel() {
 
   private val _recipe = MutableStateFlow<Recipe?>(null)
   val recipe: StateFlow<Recipe?> = _recipe
+  private val _picture = MutableStateFlow<Uri?>(null)
+  val picture: StateFlow<Uri?> = _picture
 
   private val _profiles = MutableStateFlow<Map<String, Profile>>(emptyMap())
   val profiles: StateFlow<Map<String, Profile>> = _profiles
@@ -41,6 +47,10 @@ class RecipeViewModel : ViewModel() {
    */
   fun selectRecipe(recipe: Recipe) {
     _recipe.value = recipe
+  }
+
+  fun updatePicture(uri: Uri) {
+    _picture.value = uri
   }
 
   /**
@@ -84,8 +94,16 @@ class RecipeViewModel : ViewModel() {
    *
    * @param id: the unique ID of the profile we want to fetch
    */
-  fun fetchProfile(id: String) {
+  fun fetchProfile(
+      id: String,
+      context: Context = FirebaseFirestore.getInstance().app.applicationContext
+  ) {
     if (id.isBlank()) return
+
+    if (!isNetworkAvailable(context)) {
+      Log.d("fetchProfile", "Offline mode, cannot fetch recipe profile")
+      return
+    }
 
     viewModelScope.launch {
       profileRepository.getProfile(
@@ -107,15 +125,35 @@ class RecipeViewModel : ViewModel() {
    *
    * @param recipe: the recipe to set in the database
    */
-  fun setRecipe(recipe: Recipe) {
+  fun setRecipe(
+      recipe: Recipe,
+      context: Context = FirebaseFirestore.getInstance().app.applicationContext,
+      onSuccess: () -> Unit = {}
+  ) {
     viewModelScope.launch {
       recipeRepository.addRecipe(
           recipe,
-          onSuccess = { _recipe.value = recipe },
-          onFailure = {
-            // Handle failure
-            throw error("Recipe could not get updated")
-          })
+          _picture.value,
+          context,
+          onSuccess = {
+            _recipe.value = recipe
+
+            profileRepository.linkRecipeToProfile(
+                recipe.userid,
+                recipe.recipeId,
+                onSuccess = {
+                  onSuccess()
+                  // Handle success
+                },
+                onFailure = {
+                  // Handle failure
+
+                })
+          },
+          onFailure = {},
+          // Handle failure
+
+      )
     }
   }
 }

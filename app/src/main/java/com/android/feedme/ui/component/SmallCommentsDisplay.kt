@@ -1,7 +1,6 @@
 package com.android.feedme.ui.component
 
 import androidx.compose.foundation.BorderStroke
-import androidx.compose.foundation.Image
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -12,7 +11,9 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
-import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.grid.GridCells
+import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
+import androidx.compose.foundation.lazy.grid.items
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.MaterialTheme
@@ -24,11 +25,11 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
-import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
-import com.android.feedme.R
+import coil.compose.AsyncImage
 import com.android.feedme.model.data.Comment
 import com.android.feedme.model.viewmodel.CommentViewModel
 import com.android.feedme.model.viewmodel.RecipeViewModel
@@ -51,13 +52,23 @@ fun SmallCommentsDisplay(
     navigationActions: NavigationActions,
     recipeViewModel: RecipeViewModel
 ) {
-  LazyColumn(modifier = modifier) {
-    items(listComment.size) { i ->
-      commentViewModel.fetchProfile(listComment[i].userId)
+  // Calculate the width of each image based on the screen width, we want to display 1 comment per
+  // line
+  val imageWidth = LocalConfiguration.current.screenWidthDp
 
-      CommentCard(comment = listComment[i], commentViewModel, navigationActions, recipeViewModel)
-    }
-  }
+  // Calculate the height of the grid based on the number of comments and the height of each card
+  // 152 is the height of each card with padding
+  val gridHeight = listComment.size * 152
+
+  // Using this instead of a LazyColumn should fix the "infinite scroll" bug
+  LazyVerticalGrid(
+      columns = GridCells.Adaptive(minSize = imageWidth.dp),
+      userScrollEnabled = false,
+      modifier = modifier.height(gridHeight.dp)) {
+        items(listComment) { item ->
+          CommentCard(comment = item, commentViewModel, navigationActions, recipeViewModel)
+        }
+      }
 }
 
 /**
@@ -81,23 +92,14 @@ fun CommentCard(
       modifier =
           Modifier.fillMaxWidth()
               .padding(horizontal = 16.dp, vertical = 8.dp)
-              .clickable(
-                  onClick = {
-                    /* TODO implement the comment linking to the recipe
-                    commentViewModel.selectComment(comment)
-                    // fetch the recipe that the comment was posted on
-                    commentViewModel.fetchRecipe(comment.recipeId)
-                    // navigate to said recipe if the comment card is clicked
-                    recipeViewModel.selectRecipe(commentViewModel.recipe.value ?: Recipe())
-                    navigationActions.navigateTo("Recipe/${Route.HOME}")*/
-                  }),
+              .clickable(onClick = {}),
       color = Color.White,
       shape = RoundedCornerShape(8.dp),
       border = BorderStroke(2.dp, Color.Black)) {
         Row(modifier = Modifier.fillMaxWidth().padding(16.dp)) {
-          // Comment image
-          Image(
-              painter = painterResource(id = R.drawable.test_image_pasta),
+          // Display the image that was uploaded on the comment by the user
+          AsyncImage(
+              model = comment.photoURL,
               contentDescription = "Comment Image",
               modifier = Modifier.size(100.dp).aspectRatio(1f).clip(RoundedCornerShape(8.dp)),
               contentScale = ContentScale.Crop)

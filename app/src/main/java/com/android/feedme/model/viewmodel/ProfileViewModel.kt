@@ -1,5 +1,6 @@
 package com.android.feedme.model.viewmodel
 
+import android.content.Context
 import android.net.Uri
 import android.util.Log
 import androidx.lifecycle.LiveData
@@ -8,7 +9,10 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.android.feedme.model.data.Profile
 import com.android.feedme.model.data.ProfileRepository
+import com.android.feedme.model.data.Recipe
+import com.android.feedme.model.data.RecipeRepository
 import com.google.firebase.auth.FirebaseAuth
+import com.google.firebase.firestore.FirebaseFirestore
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.launch
@@ -22,6 +26,7 @@ import kotlinx.coroutines.launch
 class ProfileViewModel : ViewModel() {
 
   private val repository = ProfileRepository.instance
+  private val recipeRepository = RecipeRepository.instance
 
   // Current User
   var currentUserId: String? = null
@@ -29,12 +34,16 @@ class ProfileViewModel : ViewModel() {
   private val _currentUserFollowers = MutableStateFlow<List<Profile>>(listOf())
   private val _currentUserFollowing = MutableStateFlow<List<Profile>>(listOf())
   private val _currentUserSavedRecipes = MutableStateFlow<List<String>>(listOf())
+  private val _currentUserRecipes = MutableStateFlow<List<Recipe>>(listOf())
+  private val _viewingUserRecipes = MutableStateFlow<List<Recipe>>(listOf())
   private val _isRecipeSaved = MutableLiveData<Boolean>()
   private val _showDialog = MutableStateFlow(true)
   val currentUserProfile: StateFlow<Profile?> = _currentUserProfile
   val currentUserFollowers: StateFlow<List<Profile>> = _currentUserFollowers
   val currentUserFollowing: StateFlow<List<Profile>> = _currentUserFollowing
   val currentUserSavedRecipes: StateFlow<List<String>> = _currentUserSavedRecipes
+  val currentUserRecipe: StateFlow<List<Recipe>> = _currentUserRecipes
+  val viewingUserRecipes: StateFlow<List<Recipe>> = _viewingUserRecipes
   val _imageUrl = MutableStateFlow<String?>(null)
   val showDialog: StateFlow<Boolean> = _showDialog
   val isRecipeSaved: LiveData<Boolean>
@@ -95,6 +104,7 @@ class ProfileViewModel : ViewModel() {
             if (profile != null) {
               fetchProfiles(profile.followers, _viewingUserFollowers)
               fetchProfiles(profile.following, _viewingUserFollowing)
+              fetchRecipes(profile.recipeList, _viewingUserRecipes)
             }
           },
           onFailure = {
@@ -105,7 +115,7 @@ class ProfileViewModel : ViewModel() {
   }
 
   /** A function that fetches the profile of the current user */
-  fun fetchCurrentUserProfile() {
+  fun fetchCurrentUserProfile(onSuccess: () -> Unit = {}) {
     currentUserId?.let { userId ->
       viewModelScope.launch {
         repository.getProfile(
@@ -118,6 +128,8 @@ class ProfileViewModel : ViewModel() {
                 fetchProfiles(profile.following, _currentUserFollowing)
                 _currentUserSavedRecipes.value = profile.savedRecipes
                 _showDialog.value = profile.showDialog
+                fetchRecipes(profile.recipeList, _currentUserRecipes)
+                onSuccess()
               }
             },
             onFailure = {
@@ -134,11 +146,17 @@ class ProfileViewModel : ViewModel() {
    *
    * @param profile: the profile to set in the database
    * @param isCurrent: a boolean to determine if the profile is the current user's profile
+   * @param context: the context of the application
    */
-  fun setProfile(profile: Profile, isCurrent: Boolean = true) {
+  fun setProfile(
+      profile: Profile,
+      isCurrent: Boolean = true,
+      context: Context = FirebaseFirestore.getInstance().app.applicationContext
+  ) {
     viewModelScope.launch {
       repository.addProfile(
           profile,
+          context,
           onSuccess = {
             if (isCurrent) {
               updateCurrentUserProfile(profile)
@@ -149,20 +167,34 @@ class ProfileViewModel : ViewModel() {
   }
 
   /**
+   * A function that adds a recipe to the current user's profile
+   *
+   * @param recipe: the recipe to add to the current user's profile
+   */
+  fun addRecipe(recipe: Recipe) {
+    _currentUserRecipes.value += recipe
+  }
+
+  /**
    * Deletes the current user's profile.
    *
    * This method deletes the profile of the current user from the database. It then resets the
    * current user's profile state to null.
    *
+   * @param context The context of the application.
    * @param onSuccess A callback function invoked on successful deletion of the profile.
    * @param onFailure A callback function invoked on failure to delete the profile, with an
    *   exception.
    */
-  fun deleteCurrentUserProfile(onSuccess: () -> Unit, onFailure: (Exception) -> Unit) {
+  fun deleteCurrentUserProfile(
+      context: Context = FirebaseFirestore.getInstance().app.applicationContext,
+      onSuccess: () -> Unit,
+      onFailure: (Exception) -> Unit
+  ) {
     currentUserId ?: throw IllegalStateException("Current user ID is null, and should never be")
     val delete = {
       if (currentUserFollowers.value.isEmpty() && _currentUserFollowing.value.isEmpty()) {
-        repository.deleteProfile(currentUserId!!, onSuccess, onFailure)
+        repository.deleteProfile(currentUserId!!, context, onSuccess, onFailure)
       }
     }
     delete.invoke()
@@ -179,15 +211,24 @@ class ProfileViewModel : ViewModel() {
    *
    * @param ids: the unique IDs of the profiles we want to fetch
    * @param fetchProfile: the MutableStateFlow that will store the fetched profiles
+   * @param context: the context of the application
    */
-  private fun fetchProfiles(ids: List<String>, fetchProfile: MutableStateFlow<List<Profile>>) {
+  private fun fetchProfiles(
+      ids: List<String>,
+      fetchProfile: MutableStateFlow<List<Profile>>,
+      context: Context = FirebaseFirestore.getInstance().app.applicationContext
+  ) {
+    if (ids.isEmpty()) {
+      fetchProfile.value = listOf()
+    }
     // Check if we actually need to fetch the profiles
     val currentIds = fetchProfile.value.map { it.id }.toSet()
-    if (currentIds != ids.toSet() && ids.isNotEmpty()) {
+    if (currentIds != ids.toSet()) {
       Log.d("ProfileViewModel", "Fetching profiles: $ids")
       viewModelScope.launch {
         repository.getProfiles(
             ids,
+            context,
             onSuccess = { profiles ->
               // Avoid unnecessary updates
               if (fetchProfile.value != profiles) {
@@ -199,6 +240,43 @@ class ProfileViewModel : ViewModel() {
             onFailure = {
               // Handle failure
               throw error("Profiles were not fetched")
+            })
+      }
+    }
+  }
+
+  /**
+   * A function that fetches the recipes of the given Ids
+   *
+   * @param ids: the unique IDs of the recipes we want to fetch
+   * @param fetchRecipe: the MutableStateFlow that will store the fetched recipes
+   * @param context: the context of the application
+   */
+  private fun fetchRecipes(
+      ids: List<String>,
+      fetchRecipe: MutableStateFlow<List<Recipe>>,
+      context: Context = FirebaseFirestore.getInstance().app.applicationContext
+  ) {
+    if (ids.isEmpty()) {
+      fetchRecipe.value = listOf()
+    }
+    val currentIds = fetchRecipe.value.map { it.recipeId }.toSet()
+    if (currentIds != ids.toSet()) {
+      Log.d("ProfileViewModel", "Fetching recipes: $ids")
+      viewModelScope.launch {
+        recipeRepository.getSavedRecipes(
+            ids,
+            context,
+            onSuccess = { recipes, _ ->
+              if (fetchRecipe.value != recipes) {
+                fetchRecipe.value = recipes
+              } else {
+                Log.d("ProfileViewModel", "Recipes already fetched")
+              }
+            },
+            onFailure = {
+              // Handle failure
+              throw error("Recipes were not fetched")
             })
       }
     }
@@ -251,6 +329,7 @@ class ProfileViewModel : ViewModel() {
     viewingUserId = profile.id
     fetchProfiles(profile.followers, _viewingUserFollowers)
     fetchProfiles(profile.following, _viewingUserFollowing)
+    fetchRecipes(profile.recipeList, _viewingUserRecipes)
   }
 
   /**
@@ -263,6 +342,7 @@ class ProfileViewModel : ViewModel() {
     currentUserId = profile.id
     fetchProfiles(profile.followers, _currentUserFollowers)
     fetchProfiles(profile.following, _currentUserFollowing)
+    fetchRecipes(profile.recipeList, _currentUserRecipes)
   }
 
   /**
@@ -276,10 +356,13 @@ class ProfileViewModel : ViewModel() {
     if (currentUserId == null) {
       return
     }
+    val context = FirebaseFirestore.getInstance().app.applicationContext
+
     viewModelScope.launch {
       repository.followUser(
           currentUserId!!,
           targetUser.id,
+          context,
           onSuccess = { curr, target ->
             Log.d("ProfileViewModel", "Successfully started following the user")
             _currentUserProfile.value = curr
@@ -332,10 +415,13 @@ class ProfileViewModel : ViewModel() {
     if (currentUserId == null) {
       return
     }
+    val context = FirebaseFirestore.getInstance().app.applicationContext
+
     viewModelScope.launch {
       repository.unfollowUser(
           currentUserId!!,
           targetUser.id,
+          context,
           onSuccess = { curr, target ->
             Log.d("ProfileViewModel", "Successfully unfollowed the user")
             _currentUserProfile.value = curr
@@ -388,10 +474,13 @@ class ProfileViewModel : ViewModel() {
     if (currentUserId == null) {
       return
     }
+    val context = FirebaseFirestore.getInstance().app.applicationContext
+
     viewModelScope.launch {
       repository.unfollowUser(
           follower.id,
           currentUserId!!,
+          context,
           onSuccess = { target, curr ->
             Log.d("ProfileViewModel", "Successfully removed follower and following")
             _currentUserProfile.value = curr
@@ -433,25 +522,34 @@ class ProfileViewModel : ViewModel() {
    * @param profileViewModel The ProfileViewModel of the user.
    * @param picture The URI of the new profile picture.
    */
-  fun updateProfilePicture(profileViewModel: ProfileViewModel, picture: Uri) {
+  fun updateProfilePicture(
+      picture: Uri,
+      context: Context = FirebaseFirestore.getInstance().app.applicationContext
+  ) {
     repository.uploadProfilePicture(
-        profileViewModel = profileViewModel,
-        onFailure = { throw error("Can't upload profile picture to the database") },
-        uri = picture)
+        this,
+        picture,
+        context,
+        onFailure = { throw error("Can't upload profile picture to the database") })
   }
 
   /**
    * Adds a saved recipe to the current user's saved recipes.
    *
    * @param recipe The recipe to add to the saved recipes.
+   * @param context The context of the application.
    */
-  fun addSavedRecipes(recipe: String) {
+  fun addSavedRecipes(
+      recipe: String,
+      context: Context = FirebaseFirestore.getInstance().app.applicationContext
+  ) {
     if (currentUserId == null) {
       return
     }
     repository.addSavedRecipe(
         currentUserId!!,
         recipe,
+        context,
         { _currentUserSavedRecipes.value += recipe },
         { throw error("Can't add recipe to the database") })
   }
@@ -460,14 +558,19 @@ class ProfileViewModel : ViewModel() {
    * Removes a saved recipe from the current user's saved recipes.
    *
    * @param recipe The recipe to remove from the saved recipes.
+   * @param context The context of the application.
    */
-  fun removeSavedRecipes(recipe: String) {
+  fun removeSavedRecipes(
+      recipe: String,
+      context: Context = FirebaseFirestore.getInstance().app.applicationContext
+  ) {
     if (currentUserId == null) {
       return
     }
     repository.removeSavedRecipe(
         currentUserId!!,
         recipe,
+        context,
         { _currentUserSavedRecipes.value = _currentUserSavedRecipes.value.filter { it != recipe } },
         { throw error("Can't remove recipe from the database") })
   }
@@ -476,15 +579,21 @@ class ProfileViewModel : ViewModel() {
    * Checks if a recipe has already been saved by the current user.
    *
    * @param recipe The recipe to check.
+   * @param context The context of the application.
    * @param onResult A callback function invoked with the result of the check.
    */
-  fun savedRecipeExists(recipe: String, onResult: (Boolean) -> Unit) {
+  fun savedRecipeExists(
+      recipe: String,
+      context: Context = FirebaseFirestore.getInstance().app.applicationContext,
+      onResult: (Boolean) -> Unit
+  ) {
     if (currentUserId == null) {
       return
     }
     repository.savedRecipeExists(
         currentUserId!!,
         recipe,
+        context,
         { exists -> onResult(exists) },
         { error ->
           onResult(false)
@@ -510,10 +619,20 @@ class ProfileViewModel : ViewModel() {
     if (currentUserId == null) {
       return
     }
+    val context = FirebaseFirestore.getInstance().app.applicationContext
+
     repository.modifyShowDialog(
         currentUserId!!,
         showDialog,
+        context,
         { _showDialog.value = showDialog },
         { throw error("Can't set dialog in the database") })
+  }
+
+  /** A function used in tests to mock a signed in ProfileViewModel */
+  fun initForTests() {
+    currentUserId = "test"
+    _imageUrl.value =
+        "https://firebasestorage.googleapis.com/v0/b/feedme-33341.appspot.com/o/recipestest%2Fdummy.jpg?alt=media&token=71de581c-9e1e-47c8-a4dc-8cccf1d0b640"
   }
 }

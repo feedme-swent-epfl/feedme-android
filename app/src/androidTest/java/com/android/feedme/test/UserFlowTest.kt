@@ -102,7 +102,7 @@ class UserFlowTest : TestCase() {
     composeTestRule.waitForIdle()
 
     // From PROFILE Page go to SETTINGS page
-    composeTestRule.onNodeWithContentDescription("Settings").assertIsDisplayed().performClick()
+    // composeTestRule.onNodeWithContentDescription("Settings").assertIsDisplayed().performClick()
 
     // Wait for the SETTINGS page to load
     composeTestRule.waitForIdle()

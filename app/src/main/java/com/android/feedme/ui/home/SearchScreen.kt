@@ -25,6 +25,7 @@ import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.unit.dp
 import com.android.feedme.model.data.Profile
 import com.android.feedme.model.data.Recipe
+import com.android.feedme.model.viewmodel.HomeViewModel
 import com.android.feedme.model.viewmodel.ProfileViewModel
 import com.android.feedme.model.viewmodel.RecipeViewModel
 import com.android.feedme.model.viewmodel.SearchViewModel
@@ -40,7 +41,7 @@ import com.android.feedme.ui.profile.FriendsCard
  * Composable function for the Search Screen. This function displays the search screen with the
  * search bar and the filtered content.
  *
- * @param route: the current route of the app
+ * @param navigationActions: the navigation actions to be performed
  * @param navigationActions: the navigation actions to be performed
  * @param searchViewModel: the [SearchViewModel] view model for the search functionality
  * @param recipeViewModel: the [RecipeViewModel] view model for the recipe functionality
@@ -48,21 +49,26 @@ import com.android.feedme.ui.profile.FriendsCard
  */
 @Composable
 fun SearchScreen(
-    route: String,
     navigationActions: NavigationActions,
     searchViewModel: SearchViewModel,
     recipeViewModel: RecipeViewModel,
+    homeViewModel: HomeViewModel,
     profileViewModel: ProfileViewModel
 ) {
   Scaffold(
       modifier = Modifier.fillMaxSize().testTag("SearchScreen"),
       topBar = { TopBarNavigation("Search Results", navigationActions) },
       bottomBar = {
-        BottomNavigationMenu(route, navigationActions::navigateTo, TOP_LEVEL_DESTINATIONS)
+        BottomNavigationMenu(Route.HOME, navigationActions::navigateTo, TOP_LEVEL_DESTINATIONS)
       },
       content = {
         SearchScreenContent(
-            it, navigationActions, searchViewModel, recipeViewModel, profileViewModel)
+            it,
+            navigationActions,
+            searchViewModel,
+            recipeViewModel,
+            homeViewModel,
+            profileViewModel)
       })
 }
 
@@ -74,6 +80,7 @@ fun SearchScreen(
  * @param navigationActions: the navigation actions to be performed
  * @param searchViewModel: the [SearchViewModel] view model for the search functionality
  * @param recipeViewModel: the [RecipeViewModel] view model for the recipe functionality
+ * @param homeViewModel: the [HomeViewModel] view model for the home functionality
  * @param profileViewModel: the [ProfileViewModel] view model for the profile functionality
  */
 @Composable
@@ -82,6 +89,7 @@ fun SearchScreenContent(
     navigationActions: NavigationActions,
     searchViewModel: SearchViewModel,
     recipeViewModel: RecipeViewModel,
+    homeViewModel: HomeViewModel,
     profileViewModel: ProfileViewModel
 ) {
   val tabSearchList = listOf("Recipes", "Accounts")
@@ -89,6 +97,8 @@ fun SearchScreenContent(
 
   val recipes = searchViewModel.filteredRecipes.collectAsState()
   val profiles = searchViewModel.filteredProfiles.collectAsState()
+
+  homeViewModel.setOnLanding(false)
 
   Column(modifier = Modifier.padding(padding)) {
     TabRow(
@@ -113,6 +123,7 @@ fun SearchScreenContent(
               selectedTabIndex,
               recipeViewModel,
               profileViewModel,
+              searchViewModel,
               searchViewModel::loadMoreRecipes)
       1 ->
           FilteredContent(
@@ -122,6 +133,7 @@ fun SearchScreenContent(
               selectedTabIndex,
               recipeViewModel,
               profileViewModel,
+              searchViewModel,
               searchViewModel::loadMoreProfiles)
     }
   }
@@ -136,6 +148,8 @@ fun SearchScreenContent(
  * @param mode: the mode to determine if the content is recipes or profiles
  * @param recipeViewModel: the [RecipeViewModel] view model for the recipe functionality
  * @param profileViewModel: the [ProfileViewModel] view model for the profile functionality
+ * @param searchViewModel: the [SearchViewModel] view model for the search functionality
+ * @param loadMore: the function to load more recipes or profiles
  */
 @Composable
 fun FilteredContent(
@@ -145,8 +159,12 @@ fun FilteredContent(
     mode: Int,
     recipeViewModel: RecipeViewModel,
     profileViewModel: ProfileViewModel,
+    searchViewModel: SearchViewModel,
     loadMore: () -> Unit
 ) {
+  val moreRecipes = searchViewModel.lastRecipe.collectAsState()
+  val moreProfiles = searchViewModel.lastProfile.collectAsState()
+
   if (recipes.isEmpty() && mode == 0 || profiles.isEmpty() && mode == 1) {
     Column(
         modifier = Modifier.fillMaxSize().testTag("EmptyList"),
@@ -166,20 +184,31 @@ fun FilteredContent(
   } else {
     LazyColumn(modifier = Modifier.fillMaxSize().testTag("FilteredList")) {
       when (mode) {
-        0 ->
-            items(recipes) { recipe ->
-              // Fetch the profile of the user who created the recipe
-              LaunchedEffect(recipe.userid) { recipeViewModel.fetchProfile(recipe.userid) }
-              val recipesProfiles by recipeViewModel.profiles.collectAsState()
-              val profile = recipesProfiles[recipe.userid]
+        0 -> {
+          items(recipes) { recipe ->
+            // Fetch the profile of the user who created the recipe
+            LaunchedEffect(recipe.userid) { recipeViewModel.fetchProfile(recipe.userid) }
+            val recipesProfiles by recipeViewModel.profiles.collectAsState()
+            val profile = recipesProfiles[recipe.userid]
 
-              RecipeCard(
-                  Route.HOME, recipe, profile, navigationActions, recipeViewModel, profileViewModel)
-            }
-        1 ->
-            items(profiles) { profile -> FriendsCard(profile, navigationActions, profileViewModel) }
+            RecipeCard(
+                Route.HOME, recipe, profile, navigationActions, recipeViewModel, profileViewModel)
+          }
+
+          // Display Load more button if there are more recipes to fetch
+          if (moreRecipes.value != null) {
+            item { LoadMoreButton(loadMore) }
+          }
+        }
+        1 -> {
+          items(profiles) { profile -> FriendsCard(profile, navigationActions, profileViewModel) }
+
+          // Display Load more button if there are more profiles to fetch
+          if (moreProfiles.value != null) {
+            item { LoadMoreButton(loadMore) }
+          }
+        }
       }
-      item { LoadMoreButton(loadMore) }
     }
   }
 }

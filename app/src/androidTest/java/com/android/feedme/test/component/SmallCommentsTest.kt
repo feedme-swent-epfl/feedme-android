@@ -150,7 +150,7 @@ class SmallCommentsTest {
           recipeViewModel = recipeViewModel)
     }
 
-    // Recipe Image
+    // Comment Image
     composeTestRule.onNodeWithContentDescription("Comment Image").assertIsDisplayed()
 
     // Author name

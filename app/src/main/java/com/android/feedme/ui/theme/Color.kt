@@ -37,6 +37,8 @@ val FollowButtonBorder = Color(0xFF8FC0A9)
 val NoInput = Color(0xFFE6DFEB)
 val InValidInput = Color(0xFFFFE1E1)
 val ValidInput = Color(0xFFE2FDC7)
+val GenerateColor = Color(0xff17b767)
+val CantGenerateColor = Color(0xFF6E7270)
 
 val CameraButtonsBackground = Color(0xFFC0C0C0)
 val deleteButtonColor = Color(0xffaf0f32)

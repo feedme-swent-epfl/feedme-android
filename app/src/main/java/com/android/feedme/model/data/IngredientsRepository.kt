@@ -161,8 +161,8 @@ class IngredientsRepository(val db: FirebaseFirestore) {
   ) {
     val queryRef =
         db.collection(collectionPath)
-            .whereGreaterThanOrEqualTo("name", query.trim())
-            .whereLessThan("name", query.trim() + "\uf8ff")
+            .whereGreaterThanOrEqualTo("name", query.trim().lowercase())
+            .whereLessThan("name", query.trim().lowercase() + "\uf8ff")
             .limit(5) // Limit the number of documents fetched to 10
 
     fetchIngredients(queryRef, onSuccess, onFailure)
@@ -181,7 +181,8 @@ class IngredientsRepository(val db: FirebaseFirestore) {
       onSuccess: (List<Ingredient>) -> Unit = {},
       onFailure: (Exception) -> Unit = {}
   ) {
-    val queryRef = db.collection(collectionPath).whereEqualTo("name", query.trim()).limit(1)
+    val queryRef =
+        db.collection(collectionPath).whereEqualTo("name", query.trim().lowercase()).limit(1)
 
     fetchIngredients(queryRef, onSuccess, onFailure)
   }

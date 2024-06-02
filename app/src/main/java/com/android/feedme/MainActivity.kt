@@ -71,10 +71,10 @@ class MainActivity : ComponentActivity() {
               val profileViewModel: ProfileViewModel = viewModel<ProfileViewModel>()
               val searchViewModel: SearchViewModel = viewModel<SearchViewModel>()
               val authViewModel: AuthViewModel = viewModel<AuthViewModel>()
-              val inputViewModel: InputViewModel = viewModel<InputViewModel>()
               val homeViewModel: HomeViewModel = viewModel<HomeViewModel>()
               val cameraViewModel: CameraViewModel = viewModel<CameraViewModel>()
               val generateViewModel = viewModel<GenerateViewModel>()
+              val inputViewModel = InputViewModel(this)
 
               // Navigation host for the app
               val navController = rememberNavController()
@@ -105,12 +105,14 @@ class MainActivity : ComponentActivity() {
                         profileViewModel,
                         searchViewModel)
                   }
-                  composable(Screen.SEARCH) { backStackEntry ->
-                    backStackEntry.arguments?.getString("sourceRoute")?.let {
-                      val recipeViewModel = viewModel<RecipeViewModel>()
-                      SearchScreen(
-                          it, navigationActions, searchViewModel, recipeViewModel, profileViewModel)
-                    }
+                  composable(Screen.SEARCH) {
+                    val recipeViewModel = viewModel<RecipeViewModel>()
+                    SearchScreen(
+                        navigationActions,
+                        searchViewModel,
+                        recipeViewModel,
+                        homeViewModel,
+                        profileViewModel)
                   }
                 }
 
@@ -147,7 +149,8 @@ class MainActivity : ComponentActivity() {
                     EditProfileScreen(navigationActions, profileViewModel)
                   }
                   composable(Screen.ADD_RECIPE) {
-                    RecipeInputScreen(navigationActions, profileViewModel, cameraViewModel)
+                    RecipeInputScreen(
+                        navigationActions, profileViewModel, cameraViewModel, inputViewModel)
                   }
                   composable(Screen.FRIENDS) { backStackEntry ->
                     backStackEntry.arguments?.getString("showFollowers")?.let {
@@ -165,7 +168,8 @@ class MainActivity : ComponentActivity() {
                   backStackEntry.arguments?.getString("sourceRoute")?.let {
                     val backScreen =
                         when (it) {
-                          Route.HOME -> Screen.HOME
+                          Route.HOME ->
+                              if (homeViewModel.isOnLanding.value) Screen.HOME else Screen.SEARCH
                           Route.SAVED -> Screen.SAVED
                           Route.PROFILE -> Screen.PROFILE
                           Route.FIND_RECIPE -> Screen.GENERATE
@@ -176,7 +180,8 @@ class MainActivity : ComponentActivity() {
                     // Link the shared view model to the composable
                     val navBackStackEntry = navController.getBackStackEntry(backScreen)
                     val recipeViewModel = viewModel<RecipeViewModel>(navBackStackEntry)
-                    RecipeFullDisplay(it, navigationActions, recipeViewModel, profileViewModel)
+                    RecipeFullDisplay(
+                        it, navigationActions, recipeViewModel, profileViewModel, cameraViewModel)
                   }
                 }
               }

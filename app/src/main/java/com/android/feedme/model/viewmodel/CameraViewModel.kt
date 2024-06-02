@@ -21,7 +21,6 @@ import com.android.feedme.ml.labelProcessing
 import com.android.feedme.ml.objectExtraction
 import com.android.feedme.ml.textExtraction
 import com.android.feedme.ml.textProcessing
-import com.android.feedme.model.data.Comment
 import com.android.feedme.model.data.Ingredient
 import com.android.feedme.model.data.IngredientMetaData
 import com.android.feedme.model.data.IngredientsRepository
@@ -105,7 +104,7 @@ class CameraViewModel : ViewModel() {
   fun galleryLauncher(
       profileViewModel: ProfileViewModel?,
       recipeViewModel: RecipeViewModel?,
-      comment: Comment?
+      commentViewModel: CommentViewModel?
   ): ManagedActivityResultLauncher<PickVisualMediaRequest, out Any?> {
     val context = LocalContext.current
 
@@ -116,7 +115,7 @@ class CameraViewModel : ViewModel() {
             when {
               profileViewModel != null -> profileViewModel.updateProfilePicture(uri)
               recipeViewModel != null -> recipeViewModel.updatePicture(uri)
-              comment != null -> print("TODO") // TODO
+              commentViewModel != null -> commentViewModel.updatePicture(uri)
               else -> galleryForCamera(context, uri)
             }
           }

@@ -3,6 +3,7 @@ package com.android.feedme.test.ui
 import androidx.compose.ui.test.assertHasClickAction
 import androidx.compose.ui.test.assertIsDisplayed
 import androidx.compose.ui.test.junit4.createComposeRule
+import androidx.compose.ui.test.onNodeWithTag
 import androidx.compose.ui.test.performClick
 import com.android.feedme.model.data.Profile
 import com.android.feedme.model.data.ProfileRepository
@@ -65,6 +66,8 @@ class SettingsTest {
         assertIsDisplayed()
         assertHasClickAction()
       }
+      composeTestRule.onNodeWithTag("ProfileIcon").assertIsDisplayed()
+      composeTestRule.onNodeWithTag("Username").assertIsDisplayed()
     }
   }
 

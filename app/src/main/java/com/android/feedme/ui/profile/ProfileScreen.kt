@@ -60,7 +60,6 @@ import com.android.feedme.ui.navigation.Route
 import com.android.feedme.ui.navigation.Screen
 import com.android.feedme.ui.navigation.TOP_LEVEL_DESTINATIONS
 import com.android.feedme.ui.navigation.TopBarNavigation
-import com.android.feedme.ui.theme.BlueUsername
 import com.android.feedme.ui.theme.DarkGrey
 import com.android.feedme.ui.theme.FabColor
 import com.android.feedme.ui.theme.FollowButton
@@ -204,7 +203,7 @@ fun ProfileBox(
 /** A composable function that generates the user's profile picture. */
 @SuppressLint("StateFlowValueCalledInComposition")
 @Composable
-fun UserProfilePicture(profileViewModel: ProfileViewModel) {
+fun UserProfilePicture(profileViewModel: ProfileViewModel, modifier: Modifier = Modifier) {
   val url =
       if (profileViewModel.isViewingProfile())
           profileViewModel.viewingUserProfile.collectAsState().value?.imageUrl
@@ -325,6 +324,7 @@ fun ProfileButtons(
         } else {
           FollowUnfollowButton(profile, isFollowing, profileViewModel)
         }
+        ShareProfileButton()
       }
 }
 

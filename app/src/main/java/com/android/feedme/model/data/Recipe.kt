@@ -12,7 +12,7 @@ data class Recipe(
     val userid: String = "", // User id of the recipe creator
     var imageUrl: String = "", // Image URL of the recipe
     var searchItems: List<String> = listOf("new"), // List of search items for the recipe
-    val comments: List<String> = emptyList() ,// List of comments for the recipe
+    val comments: List<String> = emptyList(), // List of comments for the recipe
 )
 
 data class Step(

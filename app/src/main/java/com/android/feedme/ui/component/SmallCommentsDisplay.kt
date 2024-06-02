@@ -1,7 +1,6 @@
 package com.android.feedme.ui.component
 
 import androidx.compose.foundation.BorderStroke
-import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
@@ -26,12 +25,10 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalConfiguration
-import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import coil.compose.AsyncImage
-import com.android.feedme.R
 import com.android.feedme.model.data.Comment
 import com.android.feedme.ui.theme.BlueUsername
 
@@ -74,19 +71,15 @@ fun SmallCommentsDisplay(listComment: List<Comment>, modifier: Modifier = Modifi
 @Composable
 fun CommentCard(comment: Comment) {
   Surface(
-      modifier = Modifier
-          .fillMaxWidth()
-          .padding(horizontal = 16.dp, vertical = 8.dp),
+      modifier = Modifier.fillMaxWidth().padding(horizontal = 16.dp, vertical = 8.dp),
       color = Color.White,
       shape = RoundedCornerShape(8.dp),
       border = BorderStroke(2.dp, Color.Black)) {
-        Row(modifier = Modifier
-            .fillMaxWidth()
-            .padding(16.dp)) {
-          // TODO replace this by the photo uploading code
-          Image(
-              painter = painterResource(id = R.drawable.test_image_pasta),
-              contentDescription = "Recipe Image",
+        Row(modifier = Modifier.fillMaxWidth().padding(16.dp)) {
+          // Display the image that was uploaded on the comment by the user
+          AsyncImage(
+              model = comment.photoURL,
+              contentDescription = "Comment Image",
               modifier = Modifier.size(100.dp).aspectRatio(1f).clip(RoundedCornerShape(8.dp)),
               contentScale = ContentScale.Crop)
 
@@ -95,10 +88,9 @@ fun CommentCard(comment: Comment) {
           // Author + title + description
           Column(
               modifier =
-              Modifier
-                  .fillMaxWidth()
-                  .padding(start = 16.dp)
-                  .align(Alignment.CenterVertically)) {
+                  Modifier.fillMaxWidth()
+                      .padding(start = 16.dp)
+                      .align(Alignment.CenterVertically)) {
 
                 // Comment authorId
                 Text(

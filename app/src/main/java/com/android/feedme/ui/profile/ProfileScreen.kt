@@ -32,6 +32,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
@@ -87,13 +88,11 @@ fun ProfileScreen(
     recipeViewModel: RecipeViewModel = RecipeViewModel()
 ) {
 
-
   val recipeList =
       if (profileViewModel.isViewingProfile())
           profileViewModel.viewingUserRecipes.collectAsState().value
       else profileViewModel.currentUserRecipe.collectAsState().value
   val commentList = listOf(comment1, comment1, comment1, comment1)
-
 
   val profile =
       if (profileViewModel.isViewingProfile()) profileViewModel.viewingUserProfile.collectAsState()
@@ -165,10 +164,10 @@ fun ProfileBox(
     navigationActions: NavigationActions,
     profileViewModel: ProfileViewModel,
     recipeViewModel: RecipeViewModel
-) { // TODO add font
+) {
 
   val tabList = listOf("Recipes", "Comments")
-  var selectedTabIndex by remember { mutableStateOf(0) }
+  var selectedTabIndex by remember { mutableIntStateOf(0) }
 
   LazyColumn(
       modifier = Modifier.padding(padding).testTag("ProfileBox"),

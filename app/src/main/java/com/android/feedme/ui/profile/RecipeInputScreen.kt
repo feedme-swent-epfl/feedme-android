@@ -115,8 +115,6 @@ fun RecipeInputScreen(
                 }
               }
               navigationActions.navigateTo(Route.PROFILE)
-              // TODO : we could display the recipe instead of going back to the profile
-
             }) {
               Icon(imageVector = Icons.Default.Check, contentDescription = "Validate Recipe Icon")
             }

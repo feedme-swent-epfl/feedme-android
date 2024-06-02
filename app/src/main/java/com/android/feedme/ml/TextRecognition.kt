@@ -63,9 +63,6 @@ fun textExtraction(
  *
  * @param text The [Text] object containing the text to be processed.
  * @return A concatenated string containing the text of each block.
- *
- * TODO("A lot of work on exact image processing an display of the relevant information's in a smart
- *   way")
  */
 fun textProcessing(text: Text): String {
   var blockText = ""

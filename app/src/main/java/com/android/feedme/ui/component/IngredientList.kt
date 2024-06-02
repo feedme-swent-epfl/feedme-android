@@ -254,9 +254,6 @@ fun IngredientInput(
                     modifier = Modifier.background(Color.LightGray).testTag("AddOption"),
                     text = { Text(text = "Add Ingredient") },
                     onClick = {
-                      // TODO check validty of addition with Chatgbt
-                      // TODO once the database is fix do pop up message to confirm addition to
-                      // database
                       ingredientsRepository.addIngredient(
                           Ingredient(name, "NO_ID", false, false),
                           {

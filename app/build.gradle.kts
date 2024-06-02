@@ -170,7 +170,7 @@ dependencies {
 
     testImplementation(libs.junit)
     testImplementation(libs.testng)
-    androidTestImplementation("org.testng:testng:6.9.6")
+    androidTestImplementation(libs.testng)
     globalTestImplementation(libs.androidx.junit)
     globalTestImplementation(libs.androidx.espresso.core)
     // Android Navigation

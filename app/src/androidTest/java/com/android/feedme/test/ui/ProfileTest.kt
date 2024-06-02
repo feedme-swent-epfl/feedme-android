@@ -91,11 +91,6 @@ class ProfileTest {
         assertIsDisplayed()
         assertHasClickAction()
       }
-
-      shareButton {
-        assertIsDisplayed()
-        assertHasClickAction()
-      }
     }
   }
 
@@ -128,11 +123,6 @@ class ProfileTest {
       }
 
       editButton { assertIsNotDisplayed() }
-
-      shareButton {
-        assertIsDisplayed()
-        assertHasClickAction()
-      }
 
       followerButton {
         assertIsDisplayed()

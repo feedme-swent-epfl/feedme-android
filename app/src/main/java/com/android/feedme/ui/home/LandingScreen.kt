@@ -282,13 +282,6 @@ fun RecipeCard(
                     color = TemplateColor,
                     modifier = Modifier.padding(bottom = 10.dp, end = 10.dp))
               }
-
-              Spacer(modifier = Modifier.height(10.dp))
-              // Description of the recipe
-              Text(
-                  text = recipe.description,
-                  modifier = Modifier.fillMaxWidth().height(50.dp),
-                  color = TemplateColor)
               if (profile != null) {
                 Text(
                     modifier =
@@ -303,6 +296,13 @@ fun RecipeCard(
                     color = BlueUsername,
                     style = TextStyle(fontSize = 16.sp, fontWeight = FontWeight.Medium))
               }
+
+              Spacer(modifier = Modifier.height(10.dp))
+              // Description of the recipe
+              Text(
+                  text = recipe.description,
+                  modifier = Modifier.fillMaxWidth().height(50.dp),
+                  color = TemplateColor)
             }
       }
 }
